@@ -1,0 +1,25 @@
+{
+  "name": "endgamewtf",
+  "version": "0.0.1",
+  "description": "Files for the endgame.wtf website",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "git+https://github.com/xNifty/endgamewtf.git",
+  "keywords": [
+    "snoring",
+    "ninja",
+    "snoringninja"
+  ],
+  "author": "Ryan M (xNifty)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xNifty/endgamewtf/issues"
+  },
+  "homepage": "https://github.com/xNifty/endgamewtf#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "express-handlebars": "^3.0.0"
+  }
+}
