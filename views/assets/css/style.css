@@ -26,12 +26,12 @@ h1 {
     font-size: 5em;
 }
 
-hr {
-    width: 400px;
-    border-top: 1px solid #F8F8F8;
-    border-bottom: 1px solid rgba(0,0,0,0.2);
-    max-width: 90%;
-}
+/*hr {*/
+    /*width: 400px;*/
+    /*border-top: 1px solid #F8F8F8;*/
+    /*border-bottom: 1px solid rgba(0,0,0,0.2);*/
+    /*max-width: 90%;*/
+/*}*/
 
 table {
     width: 100%;

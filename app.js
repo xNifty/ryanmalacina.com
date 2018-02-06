@@ -10,7 +10,9 @@ app.set('view engine', 'handlebars');
 app.use(express.static(path.join(__dirname, 'views')));
 
 app.get("/", function(req, res) {
-   res.render("index");
+   res.render("index", {
+      currentyear: new Date().getFullYear()
+   });
 });
 
 app.listen(8080);
