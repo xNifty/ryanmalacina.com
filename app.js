@@ -9,9 +9,24 @@ app.set('view engine', 'handlebars');
 
 app.use(express.static(path.join(__dirname, 'views')));
 
+// global, passed to all views that have the footer
+var currentyear = new Date().getFullYear();
+
 app.get("/", function(req, res) {
    res.render("index", {
-      currentyear: new Date().getFullYear()
+      currentyear: currentyear
+   });
+});
+
+app.get("/about", function(req, res) {
+    res.render("about", {
+        currentyear: currentyear
+    });
+});
+
+app.get("/contact", function(req, res) {
+   res.render("contact", {
+       currentyear: currentyear
    });
 });
 
