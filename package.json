@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/xNifty/endgamewtf#readme",
   "dependencies": {
+    "@types/express": "^4.11.1",
     "@types/express-handlebars": "^0.0.30",
     "express": "^4.16.2",
     "express-handlebars": "^3.0.0"
