@@ -8,7 +8,8 @@ var env = app.settings.env;
 app.engine('handlebars', exphbs({}));
 app.set('view engine', 'handlebars');
 
-app.use(express.static(__dirname + '/views'));
+//app.use(express.static(__dirname + '/views'));
+app.use(express.static('public'))
 
 // global, passed to all views that have the footer
 var currentyear = new Date().getFullYear();
