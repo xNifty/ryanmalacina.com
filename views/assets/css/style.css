@@ -56,6 +56,48 @@ td, th {
     text-align: left;
 }
 
+.site-footer {
+    position: relative;
+    margin: 1rem 0 0 0;
+    padding: 1rem 15px;
+    font-family: "Open Sans", sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.75em;
+    color: #BBC7CC;
+}
+
+.copyright {
+    display: block;
+    width: 45%;
+    float: right;
+    text-align: right;
+}
+
+.builtwith {
+    display: block;
+    width: 45%;
+    float: left;
+}
+
+.container  .img-responsive {
+    display: block;
+    width: auto;
+    max-height: 100%;
+}
+
+.greyimg {
+    /* filter: url(filters.svg#grayscale); Firefox 3.5+ */
+    filter: gray; /* IE5+ */
+    -webkit-filter: grayscale(1); /* Webkit Nightlies & Chrome Canary */
+    -webkit-transition: all .3s ease-in-out;
+}
+
+.greyimg:hover {
+    filter: none;
+    -webkit-filter: grayscale(0);
+    -webkit-transform: scale(1.01);
+}
+
 @media
 only screen and (max-width: 760px),
 (min-device-width: 768px) and (max-device-width: 1024px) {
