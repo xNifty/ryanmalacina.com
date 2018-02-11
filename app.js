@@ -19,12 +19,14 @@ var currentyear = new Date().getFullYear();
 // Globally accessed variables, can be overridden on a per-route basis as needed
 app.locals = {
     currentyear: currentyear,
-    title: "endgame.wtf"
+    title: "endgame.wtf",
+    pageNotFound: "Seems this page doesn't exist...sorry about that!",
+    serverError: "Uh oh, something went wrong when loading this page."
 }
 
 app.get("/", function(req, res) {
-   res.render("index", {
-   });
+    res.render("index", {
+    });
 });
 
 app.get("/about", function(req, res) {
@@ -51,32 +53,48 @@ app.use(function(req, res, next) {
     next(err);
 });
 
-// error handlers - these take err object.
-// these are per request error handlers.  They have two so in dev
-// you get a full stack trace.  In prod, first is never setup
+/*
+    Development Error Handling
 
-// development error handler
-// will print stacktrace
+    Catch both 404 and 500 in a manner I prefer, render appropriate view with error message
+*/
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
+        var status = err.status ? err.status : 500;
+        if (status === 404) {
+            res.render('error', {
+                message: err.message,
+                error: err
+            });
+        } else if (status === 500) {
+            res.render('error', {
+                message: err.message,
+                error: err
+            });
+        }
     });
 }
 
-// production error handler
-// no stacktraces leaked to user
+/*
+    Production Error Handling
+
+    Catch both 404 and 500 in a manner I prefer, render appropriate view with proper message
+*/
 if (app.get('env') === 'production') {
-    app.use(function (err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message
-        });
+    app.use(function(err, req, res, next) {
+        var status = err.status ? err.status : 500;
+        if (status === 404) {
+            res.render('error', {
+                error: app.locals.pageNotFound
+            });
+        } else if (status === 500) {
+            res.render('error', {
+                error: app.locals.serverError
+            });
+        }
     });
 }
 
+// Listen on 8080, output which mode the app is running in
 app.listen(8080);
 console.log("Server is now running in " + env + " mode.");
