@@ -1,34 +1,37 @@
 var express = require('express');
 var exphbs  = require('express-handlebars');
-var path = require('path');
 
 var app = express();
 var env = app.settings.env;
 
-app.engine('handlebars', exphbs({}));
+var hbs = exphbs.create({defaultLayout: 'main'});
+
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 //app.use(express.static(__dirname + '/views'));
 app.use(express.static('public'))
 
-// global, passed to all views that have the footer
+// needs to be access on all pages thanks to the footer
 var currentyear = new Date().getFullYear();
+
+// Globally accessed variables
+app.locals = {
+    currentyear: currentyear
+}
 
 app.get("/", function(req, res) {
    res.render("index", {
-      currentyear: currentyear
    });
 });
 
 app.get("/about", function(req, res) {
     res.render("about", {
-        currentyear: currentyear
     });
 });
 
 app.get("/contact", function(req, res) {
    res.render("contact", {
-       currentyear: currentyear
    });
 });
 
@@ -64,13 +67,15 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
+if (app.get('env') === 'production') {
+    app.use(function (err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: {}
+        });
     });
-});
+}
 
 app.listen(8080);
 console.log("Server is now running in " + env + " mode.");
