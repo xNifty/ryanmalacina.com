@@ -4,6 +4,7 @@ var exphbs  = require('express-handlebars');
 var app = express();
 var env = app.settings.env;
 
+// Set default layout, can be overridden per-route as needed
 var hbs = exphbs.create({defaultLayout: 'main'});
 
 app.engine('handlebars', hbs.engine);
@@ -15,9 +16,10 @@ app.use(express.static('public'))
 // needs to be access on all pages thanks to the footer
 var currentyear = new Date().getFullYear();
 
-// Globally accessed variables
+// Globally accessed variables, can be overridden on a per-route basis as needed
 app.locals = {
-    currentyear: currentyear
+    currentyear: currentyear,
+    title: "endgame.wtf"
 }
 
 app.get("/", function(req, res) {
@@ -35,7 +37,7 @@ app.get("/contact", function(req, res) {
    });
 });
 
-// Redirect to blog
+// Redirect to the blog subdomain
 app.get("/blog", function(req, res) {
   res.redirect(301, "https://blog.endgame.wtf");
 });
