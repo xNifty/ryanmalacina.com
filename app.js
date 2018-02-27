@@ -39,11 +39,6 @@ app.get("/contact", function(req, res) {
    });
 });
 
-// Redirect to the blog subdomain
-app.get("/blog", function(req, res) {
-  res.redirect(301, "https://blog.endgame.wtf");
-});
-
 // catch 404 and forward to error handler
 // note this is after all good routes and is not an error handler
 // to get a 404, it has to fall through to this route - no error involved
