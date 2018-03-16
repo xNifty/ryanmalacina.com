@@ -1,5 +1,7 @@
 var express = require('express');
 var exphbs  = require('express-handlebars');
+var favicon = require('serve-favicon');
+var path = require('path');
 
 var app = express();
 var env = app.settings.env;
@@ -12,6 +14,9 @@ app.set('view engine', 'handlebars');
 
 //app.use(express.static(__dirname + '/views'));
 app.use(express.static('public'))
+
+// Set favicon
+app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
 
 // needs to be access on all pages thanks to the footer
 var currentyear = new Date().getFullYear();
