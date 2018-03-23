@@ -24,7 +24,7 @@ var currentyear = new Date().getFullYear();
 // Globally accessed variables, can be overridden on a per-route basis as needed
 app.locals = {
     currentyear: currentyear,
-    title: "endgame.wtf",
+    title: "Ryan Malacina | ryanmalacina.com",
     pageNotFound: "Seems this page doesn't exist...sorry about that!",
     serverError: "Uh oh, something went wrong when loading this page."
 }
@@ -45,15 +45,11 @@ app.get("/contact", function(req, res) {
 });
 
 app.get("/blog", function(req, res) {
-   res.redirect(301, "https://blog.endgame.wtf");
+   res.redirect(301, "https://blog.ryanmalacina.com");
 });
 
 app.get("/docs", function(req, res) {
    res.redirect(301, "https://docs.endgame.wtf");
-});
-
-app.get("/community", function(req, res) {
-   res.redirect(301, "https://community.endgame.wtf");
 });
 
 // catch 404 and forward to error handler
