@@ -31,17 +31,20 @@ app.locals = {
 
 app.get("/", function(req, res) {
     res.render("index", {
+        title: "Ryan Malacina | Home",
     });
 });
 
 app.get("/about", function(req, res) {
     res.render("about", {
+        title: "Ryan Malacina | About",
     });
 });
 
 app.get("/contact", function(req, res) {
-   res.render("contact", {
-   });
+    res.render("contact", {
+        title: "Ryan Malacina | Contact",
+    });
 });
 
 app.get("/blog", function(req, res) {
