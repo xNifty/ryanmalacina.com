@@ -4,7 +4,7 @@ $(document).ready(function() {
    $("a[href^=http]").each(function(){
       var excluded = [
          'ryanmalacina.com',
-         ];
+      ];
       for(i=0; i<excluded.length; i++) {
          if(this.href.indexOf(excluded[i]) != -1) {
             return true;
