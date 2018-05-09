@@ -52,7 +52,7 @@ app.get("/blog", function(req, res) {
 });
 
 app.get("/docs", function(req, res) {
-   res.redirect(301, "https://docs.endgame.wtf");
+   res.redirect(301, "https://docs.ryanmalacina.com");
 });
 
 // catch 404 and forward to error handler
