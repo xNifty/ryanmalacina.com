@@ -3,6 +3,9 @@ var exphbs  = require('express-handlebars');
 var favicon = require('serve-favicon');
 var path = require('path');
 
+var bodyParser = require('body-parser');
+var nodemailer = require('nodemailer');
+
 var app = express();
 var env = app.settings.env;
 
@@ -14,6 +17,7 @@ app.set('view engine', 'handlebars');
 
 //app.use(express.static(__dirname + '/views'));
 app.use(express.static('public'))
+app.use(bodyParser.urlencoded({extended: true}));
 
 // Set favicon
 app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
@@ -44,6 +48,42 @@ app.get("/about", function(req, res) {
 app.get("/contact", function(req, res) {
     res.render("contact", {
         title: "Ryan Malacina | Contact",
+    });
+});
+
+app.post("/contact", function(req, res) {
+    var name = req.body["g52-name"];
+    var mail = req.body["g52-email"];
+    var subject = req.body["g52-website"];
+    var description = req.body["g52-comment"];
+
+    if(!subject || !mail || !name) {
+        res.send("Please provide a subject and message body.");
+        return false;
+    }
+    console.log("First check complete.");
+    var smtpTransport = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: '',
+            pass: ''
+        }
+    });
+    console.log("Second check complete.");
+    var mailOptions = {
+        from: mail,
+        to: "ryan@ryanmalacina.com",
+        subject: subject,
+        html: "<p>From: " + name + " (" + mail + ")</p><p>" + description + "</p>"
+    }
+    console.log("Third check complete.");
+    smtpTransport.sendMail(mailOptions, function(error, response) {
+        if (error) {
+            console.log("Email sending error: " + error);
+        } else {
+            console.log("Success.");
+            res.redirect(301, "/");
+        }
     });
 });
 

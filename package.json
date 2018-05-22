@@ -23,6 +23,7 @@
     "@types/express-handlebars": "^0.0.30",
     "express": "^4.16.2",
     "express-handlebars": "^3.0.0",
+    "nodemailer": "^4.6.4",
     "serve-favicon": "^2.4.5"
   }
 }

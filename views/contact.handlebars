@@ -1,4 +1,38 @@
 <div class="container">
     <div class="text-center"><h1>Contact Me</h1></div>
-    <p>Page coming soon.</p>
+    <p>
+<form action='/contact' method='post' class='contact-form commentsblock'>
+
+  <div>
+       <label for='g52-name' class='grunion-field-label name'>Name<span>
+       (required)</span></label>
+
+       <input type='text' name='g52-name' id='g52-name' value='' 
+       class='name'  
+       required aria-required='true'/>
+
+  </div>
+
+   <div>
+        <label for='g52-email' class='grunion-field-label email'>Email<span>
+         (required)</span></label>
+        <input type='email' name='g52-email' id='g52-email' value='' 
+         class='email'  required aria-required='true'/>
+   </div>
+
+    <div>
+        <label for='g52-website' class='grunion-field-label 
+        url'>Subject</label>
+        <input type='text' name='g52-website' id='g52-website' value='' 
+        class='url'  />
+    </div>
+
+<div>
+        <label for='contact-form-comment-g52-comment' class='grunion-field-label textarea'>Comment<span>(required)</span></label>
+        <textarea name='g52-comment' id='contact-form-comment-g52-comment' rows='20' class='textarea'  required aria-required='true'></textarea>
+    </div>
+    <p class='contact-submit'>
+        <input type='submit' value='Submit' class='pushbutton-wide'/>
+</form>
+</p>
 </div>
