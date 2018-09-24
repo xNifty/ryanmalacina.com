@@ -1,37 +1,51 @@
-var express = require('express');
-var exphbs  = require('express-handlebars');
-var favicon = require('serve-favicon');
-var path = require('path');
+/*
+    These are the files for my personal website, ryanmalacina.com
+    This site is far from complete, looks basic, and is being worked on slowly.
 
-var bodyParser = require('body-parser');
-var nodemailer = require('nodemailer');
+    TODO (in no particular order):
+        - Load projects from a database and have a single route to handle that based on project
+        - Overhaul homepage to redo project listing
+        - Create a real contact page (reverted to just link for now)
+        - Format keybase page
+        - Fix tabopen.js
+ */
 
-var app = express();
-var env = app.settings.env;
+const express = require('express');
+const exphbs  = require('express-handlebars');
+const favicon = require('serve-favicon');
+const path = require('path');
+
+const bodyParser = require('body-parser');
+
+const app = express();
+const env = app.settings.env;
 
 // Set default layout, can be overridden per-route as needed
-var hbs = exphbs.create({defaultLayout: 'main'});
+const hbs = exphbs.create({defaultLayout: 'main'});
 
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
-//app.use(express.static(__dirname + '/views'));
-app.use(express.static('public'))
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static('public'));
+app.use(bodyParser.urlencoded(
+    {
+        extended: true
+    }
+));
 
 // Set favicon
 app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
 
 // needs to be access on all pages thanks to the footer
-var currentyear = new Date().getFullYear();
+const currentyear = new Date().getFullYear();
 
-// Globally accessed variables, can be overridden on a per-route basis as needed
+// Override these as needed on a per-route basis
 app.locals = {
     currentyear: currentyear,
     title: "Ryan Malacina | ryanmalacina.com",
     pageNotFound: "Seems this page doesn't exist...sorry about that!",
     serverError: "Uh oh, something went wrong when loading this page."
-}
+};
 
 app.get("/", function(req, res) {
     res.render("index", {
@@ -51,48 +65,19 @@ app.get("/contact", function(req, res) {
     });
 });
 
-app.post("/contact", function(req, res) {
-    var name = req.body["g52-name"];
-    var mail = req.body["g52-email"];
-    var subject = req.body["g52-website"];
-    var description = req.body["g52-comment"];
-
-    if(!subject || !mail || !name) {
-        res.send("Please provide a subject and message body.");
-        return false;
-    }
-    console.log("First check complete.");
-    var smtpTransport = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: '',
-            pass: ''
-        }
-    });
-    console.log("Second check complete.");
-    var mailOptions = {
-        from: mail,
-        to: "ryan@ryanmalacina.com",
-        subject: subject,
-        html: "<p>From: " + name + " (" + mail + ")</p><p>" + description + "</p>"
-    }
-    console.log("Third check complete.");
-    smtpTransport.sendMail(mailOptions, function(error, response) {
-        if (error) {
-            console.log("Email sending error: " + error);
-        } else {
-            console.log("Success.");
-            res.redirect(301, "/");
-        }
+app.get("/keybase.txt", function(req, res) {
+    res.render("keybase", {
+        title: "Ryan Malacina | Keybase Identity",
+        layout: false
     });
 });
 
 app.get("/blog", function(req, res) {
-   res.redirect(301, "https://blog.ryanmalacina.com");
+    res.redirect(301, "https://blog.ryanmalacina.com");
 });
 
 app.get("/docs", function(req, res) {
-   res.redirect(301, "https://docs.ryanmalacina.com");
+    res.redirect(301, "https://docs.ryanmalacina.com");
 });
 
 // catch 404 and forward to error handler
@@ -110,8 +95,8 @@ app.use(function(req, res, next) {
     Catch both 404 and 500 in a manner I prefer, render appropriate view with error message
 */
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        var status = err.status ? err.status : 500;
+    app.use(function(err, req, res) {
+        let status = err.status ? err.status : 500;
         if (status === 404) {
             res.render('error', {
                 message: err.message,
@@ -132,8 +117,8 @@ if (app.get('env') === 'development') {
     Catch both 404 and 500 in a manner I prefer, render appropriate view with proper message
 */
 if (app.get('env') === 'production') {
-    app.use(function(err, req, res, next) {
-        var status = err.status ? err.status : 500;
+    app.use(function(err, req, res) {
+        let status = err.status ? err.status : 500;
         if (status === 404) {
             res.render('error', {
                 error: app.locals.pageNotFound
