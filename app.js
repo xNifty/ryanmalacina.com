@@ -55,6 +55,7 @@ const keybase = require('./routes/keybase');
 app.use('/', home);
 app.use('/about', about);
 app.use('/keybase', keybase);
+app.use('/keybase.txt', keybase); // For Keybase.io
 
 app.get("/blog", function(req, res) {
     res.redirect(301, "https://blog.ryanmalacina.com");
