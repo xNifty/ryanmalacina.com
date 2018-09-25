@@ -51,11 +51,13 @@ app.locals = {
 const home = require('./routes/home');
 const about = require('./routes/about');
 const keybase = require('./routes/keybase');
+const projects = require('./routes/projects');
 
 app.use('/', home);
 app.use('/about', about);
 app.use('/keybase', keybase);
 app.use('/keybase.txt', keybase); // For Keybase.io
+app.use('/projects', projects);
 
 app.get("/blog", function(req, res) {
     res.redirect(301, "https://blog.ryanmalacina.com");
