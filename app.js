@@ -22,6 +22,11 @@ const env = app.settings.env;
 // Set default layout, can be overridden per-route as needed
 const hbs = exphbs.create({defaultLayout: 'main'});
 
+// Connect to the database
+mongoose.connect('mongodb://localhost/ryanmalacina', {useNewUrlParser: true})
+    .then(() => console.log("Connected to the database."))
+    .catch(err => console.error("Error connecting to database: ", err));
+
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 

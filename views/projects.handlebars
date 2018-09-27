@@ -1,4 +1,40 @@
 <div class="container">
-    <div class="text-center"><h1>Placeholder Project Title</h1></div>
-    <p>Project listing coming soon!</p>
+    <div class="text-center"><h1>Welcome to my Projects Page</h1></div>
+    <p>Welcome to my projects listing page!  Coming soon, you'll be able to click a project name and load information
+    about that project, including a link to the project source code.  Unfortunately, the backend for this page
+    is not yet completed so the project listing is not yet working.</p>
+    {{!-- TODO: this needs to be loaded from the database, or maybe
+          we should hardcode this page and just load the project details themselves
+          and that should be enough...need to think about this more. For now, I'll hardcode this page and just
+          load the project details from the database.  Overhaul possible later.
+    --}}
+    <div class="row text-center">
+        <div class="col-md-3 col-xs-6">
+            <div class="thumbnail">
+                <a href="./project/niftybot">
+                    <img class="img-responsive greyimg" src="/images/niftybot.png"
+                         alt="Niftybot Discord Logo">
+                </a>
+                <div class="caption center-block">Niftybot-Discord</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-6">
+            <div class="thumbnail">
+                <a href="/niftybot">
+                    <img class="img-responsive greyimg" src="/images/lottomanager.png"
+                         alt="LottoManager Logo">
+                </a>
+                <div class="caption center-block">LottoManager</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-6">
+            <div class="thumbnail">
+                <a href="https://github.com/xNifty/egc">
+                    <img class="img-responsive greyimg" src="/images/crew_logo.jpg"
+                         alt="Crew Logo">
+                </a>
+                <div class="caption center-block">End Game [Crew]: Node Redesign</div>
+            </div>
+        </div>
+    </div>
 </div>
