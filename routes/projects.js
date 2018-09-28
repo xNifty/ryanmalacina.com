@@ -1,6 +1,6 @@
 // TODO: write logic to load project details from database
 
-const {Projects} = require('../models/projects');
+const {Project} = require('../models/projects');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
@@ -14,7 +14,7 @@ router.get("/", function(req, res) {
 // TODO: this really should use ID to load; we can hide that on the page per row if we load initial
 // project listing from the database
 router.get("/:name", async(req, res) => {
-   const project = await Projects.findOne({
+   const project = await Project.findOne({
        name: req.params.name
    });
 

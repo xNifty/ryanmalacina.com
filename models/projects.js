@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 
 const projectScheme = new mongoose.Schema({
+    name: String,
     title: String,
     source: String,
     description: String
 });
 
-const Projects = mongoose.model('Projects', projectScheme);
+const Project = mongoose.model('Project', projectScheme);
 
-exports.Projects = Projects;
+exports.Project = Project;
 

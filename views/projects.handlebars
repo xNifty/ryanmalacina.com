@@ -1,7 +1,6 @@
 {{#if is_valid}}
     <div class="container">
-        <div class="text-center"><h1>{{ project_title }}</h1></div>
-        <div class="text-center"><h3>{{ project_source }}</h3></div>
+        <div class="text-center"><h1><a href="{{ project_source }}">{{ project_title }}</a></h1></div>
         <p>{{project_description}}</p>
     </div>
 {{else}}
