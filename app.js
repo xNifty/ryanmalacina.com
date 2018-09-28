@@ -23,7 +23,7 @@ const env = app.settings.env;
 const hbs = exphbs.create({defaultLayout: 'main'});
 
 // Connect to the database
-mongoose.connect('mongodb://localhost/ryanmalacina', {useNewUrlParser: true})
+mongoose.connect('mongodb://localhost:27017/ryanmalacina', {useNewUrlParser: true})
     .then(() => console.log("Connected to the database."))
     .catch(err => console.error("Error connecting to database: ", err));
 
