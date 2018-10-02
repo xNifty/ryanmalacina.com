@@ -4,11 +4,16 @@ const {Project} = require('../models/projects');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/auth');
 
 router.get("/", function(req, res) {
     res.render("projects", {
         title: "Ryan Malacina | Projects",
     });
+});
+
+router.get('/new', auth, async(req, res) => {
+    res.render('project-new-template');
 });
 
 // TODO: this really should use ID to load; we can hide that on the page per row if we load initial
