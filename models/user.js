@@ -16,6 +16,12 @@ const userSchema = new mongoose.Schema({
         minlength: 5,
         maxlength: 1024
     },
+    realName: {
+        type: String,
+        required: true,
+        minlength: 5,
+        maxlength: 50
+    },
 });
 
 userSchema.methods.generateAuthToken = function() {

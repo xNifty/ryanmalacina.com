@@ -9,6 +9,7 @@
         - Format keybase page
         - Fix tabopen.js
  */
+const config = require('config');
 const mongoose = require('mongoose');
 const express = require('express');
 const exphbs  = require('express-handlebars');
@@ -21,6 +22,12 @@ const env = app.settings.env;
 
 // Set default layout, can be overridden per-route as needed
 const hbs = exphbs.create({defaultLayout: 'main'});
+
+// Make sure our private token exists
+if (!config.get('rmPrivateKey')) {
+    console.error('FATAL ERROR: rmPrivateKey is not defined.');
+    process.exit(1);
+}
 
 // Connect to the database
 mongoose.connect('mongodb://localhost:27017/ryanmalacina', {useNewUrlParser: true})
@@ -57,12 +64,14 @@ const home = require('./routes/home');
 const about = require('./routes/about');
 const keybase = require('./routes/keybase');
 const projects = require('./routes/projects');
+const auth = require('./routes/auth');
 
 app.use('/', home);
 app.use('/about', about);
 app.use('/keybase', keybase);
 app.use('/keybase.txt', keybase); // For Keybase.io
 app.use('/projects', projects);
+app.use('/api/auth', auth);
 
 app.get("/blog", function(req, res) {
     res.redirect(301, "https://blog.ryanmalacina.com");
