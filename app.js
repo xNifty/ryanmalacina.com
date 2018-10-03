@@ -9,13 +9,15 @@
         - Format keybase page
         - Fix tabopen.js
  */
-const config = require('config');
+
 const mongoose = require('mongoose');
 const express = require('express');
 const exphbs  = require('express-handlebars');
 const favicon = require('serve-favicon');
 const path = require('path');
 const bodyParser = require('body-parser');
+const config = require('config');
+const session = require('express-session');
 
 const app = express();
 const env = app.settings.env;
@@ -45,6 +47,18 @@ app.use(bodyParser.urlencoded(
     }
 ));
 
+app.use(session({
+    secret: config.get('rmPrivateKey'),
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false, httpOnly: true, maxAge: 60000 },
+}));
+
+app.use(function(req, res, next) {
+    res.locals.realName = req.session.name;
+    next();
+});
+
 // Set favicon
 app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
 
@@ -56,7 +70,7 @@ app.locals = {
     currentyear: currentyear,
     title: "Ryan Malacina | ryanmalacina.com",
     pageNotFound: "Seems this page doesn't exist...sorry about that!",
-    serverError: "Uh oh, something went wrong when loading this page."
+    serverError: "Uh oh, something went wrong when loading this page.",
 };
 
 // Routes
@@ -65,6 +79,7 @@ const about = require('./routes/about');
 const keybase = require('./routes/keybase');
 const projects = require('./routes/projects');
 const auth = require('./routes/auth');
+const login = require('./routes/login');
 
 app.use('/', home);
 app.use('/about', about);
@@ -72,6 +87,7 @@ app.use('/keybase', keybase);
 app.use('/keybase.txt', keybase); // For Keybase.io
 app.use('/projects', projects);
 app.use('/api/auth', auth);
+app.use('/login', login);
 
 app.get("/blog", function(req, res) {
     res.redirect(301, "https://blog.ryanmalacina.com");

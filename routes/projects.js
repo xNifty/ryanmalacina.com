@@ -13,7 +13,7 @@ router.get("/", function(req, res) {
 });
 
 router.get('/new', auth, async(req, res) => {
-    res.render('project-new-template');
+    res.render('new-project');
 });
 
 // TODO: this really should use ID to load; we can hide that on the page per row if we load initial

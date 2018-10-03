@@ -26,9 +26,12 @@
     "config": "^2.0.1",
     "express": "^4.16.2",
     "express-handlebars": "^3.0.0",
+    "express-session": "^1.15.6",
     "joi": "^13.6.0",
     "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.11",
     "mongoose": "^5.2.17",
+    "nodemon": "^1.18.4",
     "serve-favicon": "^2.4.5"
   }
 }

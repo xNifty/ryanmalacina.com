@@ -16,15 +16,21 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <!--<li><a href="/">Home</a></li>-->
-                <li><a href="/blog">Blog</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="mailto:ryan@ryanmalacina.com">Contact</a></li>
-                <li><a href="https://xnifty.github.io">Projects Documentation</a></li>
-                <li><a href="/projects">Projects</a></li>
+                <li class="nav-item"><a class="nav-link" href="/blog">Blog</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="mailto:ryan@ryanmalacina.com">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://xnifty.github.io">Projects Documentation</a></li>
+                <li class="nav-item"><a class="nav-link" href="/projects">Projects</a></li>
             </ul>
-            <!--<ul class="nav navbar-nav navbar-right">
-                <li><a href="https://github.com/xNifty/"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a></li>
-            </ul>-->
+            <ul class="nav navbar-nav navbar-right">
+                {{#if realName }} {{!-- This is coming from res.locals --}}
+                    <li class="nav-item"><a class="nav-link">Hello, {{ realName }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                {{ else }}
+                    <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                {{/if}}
+                <!--<li><a href="https://github.com/xNifty/"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a></li>-->
+            </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>

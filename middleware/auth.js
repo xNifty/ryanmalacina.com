@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const session = require('express-session');
 
 function auth(req, res, next) {
-    const token = req.header('x-auth-token');
+    const token = req.session.token;
     if (!token) return res.render("error", {
-       error: "Please login to access this content."
+       error: "Please <a href=\"/login\">login</a> to access this content."
     });
 
     try {
@@ -12,7 +13,7 @@ function auth(req, res, next) {
         next();
     } catch(ex) {
         return res.render('error', {
-           error: "Something went wrong, sorry about that."
+           error: "Please re-authenticate to access this content."
         });
     }
 }
