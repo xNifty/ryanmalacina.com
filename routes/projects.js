@@ -13,7 +13,9 @@ router.get("/", function(req, res) {
 });
 
 router.get('/new', auth, async(req, res) => {
-    res.render('new-project');
+    res.render('new-project', {
+        layout: 'new-project'
+    });
 });
 
 // TODO: this really should use ID to load; we can hide that on the page per row if we load initial
