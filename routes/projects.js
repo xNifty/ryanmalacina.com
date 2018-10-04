@@ -1,28 +1,68 @@
 // TODO: write logic to load project details from database
 
-const {Project} = require('../models/projects');
+const {Project, validate} = require('../models/projects');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const _ = require('lodash');
 
-router.get("/", function(req, res) {
+router.get("/", async (req, res) => {
+    let project_list = await listProjects();
     res.render("projects", {
         title: "Ryan Malacina | Projects",
+        projects: project_list
     });
 });
 
 router.get('/new', auth, async(req, res) => {
     res.render('new-project', {
-        layout: 'new-project'
+        layout: 'new-project',
+        new_project: true
     });
+});
+
+router.post('/new', auth, async(req, res) => {
+    const { error } = validate(req.body);
+    if (error) console.log(error);
+    if (error) return res.status(400).render('new-project', {
+        layout: 'new-project',
+        new_project: true,
+        error_message: 'An error has occurred. Please make sure all fields are filled and try again.',
+        project_name: req.body.project_name,
+        project_title: req.body.project_title,
+        project_source: req.body.project_source,
+        project_description: req.body.project_description,
+        project_image: req.body.project_image
+    });
+
+    let project = new Project(_.pick(req.body, [
+        'project_name', 'project_title', 'project_source', 'project_description', 'project_image'
+    ]));
+
+    try {
+        await project.save();
+    } catch(ex) {
+        console.log(ex);
+        return res.status(400).render('new-project', {
+            layout: 'new-project',
+            new_project: true,
+            error_message: 'An error has occurred. Please make sure all fields are filled and try again.',
+            project_name: req.body.project_name,
+            project_title: req.body.project_title,
+            project_source: req.body.project_source,
+            project_description: req.body.project_description,
+            project_image: req.body.project_image
+        });
+    }
+    res.redirect('/projects');
 });
 
 // TODO: this really should use ID to load; we can hide that on the page per row if we load initial
 // project listing from the database
 router.get("/:name", async(req, res) => {
    const project = await Project.findOne({
-       name: req.params.name
+       project_name: req.params.name
    });
 
    if (!project) return res.render("error", {
@@ -31,11 +71,15 @@ router.get("/:name", async(req, res) => {
    });
 
    res.render("projects", {
-       project_title: project.title,
-       project_source: project.source,
-       project_description: project.description,
+       project_title: project.project_title,
+       project_source: project.project_source,
+       project_description: project.project_description,
        is_valid: true
    });
 });
+
+async function listProjects() {
+    return Project.find().select({ project_name: 1, project_image: 1, project_title: 1, _id: 0 });
+}
 
 module.exports = router;

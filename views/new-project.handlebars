@@ -1,4 +1,14 @@
 <div class="container">
-    <div id="summernote"></div>
-
+    <div class="text-center">
+        {{#if error_message}}<div class="error">{{ error_message }}</div>{{/if}}
+        <h1>Create New Project</h1>
+    </div>
+    <form action="/projects/new" method="post">
+        Project Name<br> <input type="text" class="custom-text" name="project_name" {{#if project_name}}value="{{project_name}}"{{/if}}><br><br>
+        Project Title<br> <input type="text" class="custom-text" name="project_title"><br><br>
+        Source<br> <input type="text" class="custom-text" name="project_source"><br><br>
+        <textarea class="input-block-level" id="summernote" name="project_description" rows="18"></textarea>
+        Image URL<br> <input type="text" class="custom-text" name="project_image"><br><br>
+        <input type="submit" value="Submit New Project">
+    </form>
 </div>

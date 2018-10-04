@@ -9,32 +9,16 @@
           load the project details from the database.  Overhaul possible later.
     --}}
     <div class="row text-center">
-        <div class="col-md-3 col-xs-6">
-            <div class="thumbnail">
-                <a href="/projects/niftybot">
-                    <img class="img-responsive greyimg" src="/images/niftybot.png"
-                         alt="Niftybot Discord Logo">
-                </a>
-                <div class="caption center-block">Niftybot-Discord</div>
+        {{#each projects as |projects| }}
+            <div class="col-md-3 col-xs-6">
+                <div class="thumbnail">
+                    <a href="/projects/{{ projects.project_name }}">
+                        <img class="img-responsive greyimg" src="{{ projects.project_image }}"
+                             alt="Logo">
+                    </a>
+                    <div class="caption center-block">{{ projects.project_title }}</div>
+                </div>
             </div>
-        </div>
-        <div class="col-md-3 col-xs-6">
-            <div class="thumbnail">
-                <a href="/projects/lottomanager">
-                    <img class="img-responsive greyimg" src="/images/lottomanager.png"
-                         alt="LottoManager Logo">
-                </a>
-                <div class="caption center-block">LottoManager</div>
-            </div>
-        </div>
-        <div class="col-md-3 col-xs-6">
-            <div class="thumbnail">
-                <a href="/projects/egc">
-                    <img class="img-responsive greyimg" src="/images/crew_logo.jpg"
-                         alt="Crew Logo">
-                </a>
-                <div class="caption center-block">End Game [Crew]: Node Redesign</div>
-            </div>
-        </div>
+        {{/each}}
     </div>
 </div>
