@@ -18,6 +18,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const config = require('config');
 const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 const app = express();
 const env = app.settings.env;
@@ -53,6 +54,7 @@ app.use(session({
     saveUninitialized: true,
     name: 'safjhkashfjkasjkfhjkashfjhaskdfjhhsad',
     cookie: { secure: false, httpOnly: true, maxAge: 500000000 },
+    store: new MongoStore({ mongooseConnection: mongoose.connection  })
 }));
 
 app.use(function(req, res, next) {
