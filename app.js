@@ -49,9 +49,10 @@ app.use(bodyParser.urlencoded(
 
 app.use(session({
     secret: config.get('rmPrivateKey'),
-    resave: false,
+    resave: true,
     saveUninitialized: true,
-    cookie: { secure: false, httpOnly: true, maxAge: 60000 },
+    name: 'safjhkashfjkasjkfhjkashfjhaskdfjhhsad',
+    cookie: { secure: false, httpOnly: true, maxAge: 500000000 },
 }));
 
 app.use(function(req, res, next) {
@@ -80,6 +81,7 @@ const keybase = require('./routes/keybase');
 const projects = require('./routes/projects');
 const auth = require('./routes/auth');
 const login = require('./routes/login');
+const logout = require('./routes/logout');
 
 app.use('/', home);
 app.use('/about', about);
@@ -88,6 +90,7 @@ app.use('/keybase.txt', keybase); // For Keybase.io
 app.use('/projects', projects);
 app.use('/api/auth', auth);
 app.use('/login', login);
+app.use('/logout', logout);
 
 app.get("/blog", function(req, res) {
     res.redirect(301, "https://blog.ryanmalacina.com");
