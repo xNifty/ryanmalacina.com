@@ -6,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const _ = require('lodash');
+const uuid = require('uuid');
 
 router.get("/", async (req, res) => {
     let project_list = await listProjects();
@@ -18,9 +19,10 @@ router.get("/", async (req, res) => {
 router.get('/new', auth, async(req, res) => {
     res.render('new-project', {
         layout: 'new-project',
-        new_project: true
+        new_project: true,
     });
 });
+
 
 router.post('/new', auth, async(req, res) => {
     const { error } = validate(req.body);
