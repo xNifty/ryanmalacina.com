@@ -108,6 +108,15 @@ td, th {
     margin-bottom: 10px;
 }
 
+.success {
+    background:#e9ffd9 no-repeat 10px 75%;
+    border:1px solid #a6ca8a;
+    margin-bottom: 10px;
+    max-width: 100%;
+    min-width: 20%;
+    margin: 0 auto;
+}
+
 @media
 only screen and (max-width: 760px),
 (min-device-width: 768px) and (max-device-width: 1024px) {

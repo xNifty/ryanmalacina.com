@@ -6,13 +6,25 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const _ = require('lodash');
-const uuid = require('uuid');
+const session = require('express-session');
 
 router.get("/", async (req, res) => {
     let project_list = await listProjects();
+    let status = '';
+    let type = '';
+    if (req.session.success) {
+        if (req.session.success === 1) {
+            status = success;
+            type = 'success';
+            req.session.success.destroy();
+        }
+    }
+
     res.render("projects", {
         title: "Ryan Malacina | Projects",
-        projects: project_list
+        projects: project_list,
+        status: status,
+        type: type
     });
 });
 
@@ -57,6 +69,7 @@ router.post('/new', auth, async(req, res) => {
             project_image: req.body.project_image
         });
     }
+    req.session.project_success = 1;
     res.redirect('/projects');
 });
 
