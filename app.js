@@ -25,8 +25,19 @@ const uuid = require('uuid');
 const app = express();
 const env = app.settings.env;
 
+// Routes
+const home = require('./routes/home');
+const about = require('./routes/about');
+const keybase = require('./routes/keybase');
+const projects = require('./routes/projects');
+const auth = require('./routes/auth');
+const login = require('./routes/login');
+const logout = require('./routes/logout');
+
 // Set default layout, can be overridden per-route as needed
-const hbs = exphbs.create({defaultLayout: 'main'});
+const hbs = exphbs.create({
+    defaultLayout: 'main',
+});
 
 // Make sure our private token exists
 if (!config.get('rmPrivateKey')) {
@@ -73,6 +84,9 @@ mongoose.connect('mongodb://localhost:27017/ryanmalacina', {useNewUrlParser: tru
     .then(() => console.log("Connected to the database."))
     .catch(err => console.error("Error connecting to database: ", err));
 
+// For now, suppress message about using createIndexes
+mongoose.set('useCreateIndex', true);
+
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
@@ -89,8 +103,8 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     name: 'safjhkashfjkasjkfhjkashfjhaskdfjhhsad',
-    cookie: { secure: false, httpOnly: true, maxAge: 500000000 },
-    store: new MongoStore({ mongooseConnection: mongoose.connection  })
+    cookie: { secure: false, httpOnly: true, maxAge: 24 * 60 * 60 * 1000, },
+    store: new MongoStore({ mongooseConnection: mongoose.connection, clear_interval: 3600  })
 }));
 
 app.use(generateNonce);
@@ -112,14 +126,11 @@ app.locals = {
     serverError: "Uh oh, something went wrong when loading this page.",
 };
 
-// Routes
-const home = require('./routes/home');
-const about = require('./routes/about');
-const keybase = require('./routes/keybase');
-const projects = require('./routes/projects');
-const auth = require('./routes/auth');
-const login = require('./routes/login');
-const logout = require('./routes/logout');
+app.use(function(req, res, next){
+    res.locals.realName = req.session.name;
+    res.locals.token = req.session.token;
+    next();
+});
 
 app.use('/', home);
 app.use('/about', about);
