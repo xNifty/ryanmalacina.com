@@ -98,14 +98,21 @@ app.use(bodyParser.urlencoded(
     }
 ));
 
-app.use(session({
+let sess = {
     secret: config.get('rmPrivateKey'),
     resave: true,
     saveUninitialized: true,
     name: 'safjhkashfjkasjkfhjkashfjhaskdfjhhsad',
     cookie: { secure: false, httpOnly: true, maxAge: 24 * 60 * 60 * 1000, },
     store: new MongoStore({ mongooseConnection: mongoose.connection, clear_interval: 3600  })
-}));
+};
+
+// When pushed to production, we do want to use a secure cookie. Local testing we do not.
+if (app.get('env') === 'production') {
+    sess.cookie.secure = true
+}
+
+app.use(session(sess));
 
 app.use(generateNonce);
 app.use(csp({
