@@ -25,15 +25,6 @@ const uuid = require('uuid');
 const app = express();
 const env = app.settings.env;
 
-// Routes
-const home = require('./routes/home');
-const about = require('./routes/about');
-const keybase = require('./routes/keybase');
-const projects = require('./routes/projects');
-const auth = require('./routes/auth');
-const login = require('./routes/login');
-const logout = require('./routes/logout');
-
 // Set default layout, can be overridden per-route as needed
 const hbs = exphbs.create({
     defaultLayout: 'main',
@@ -102,15 +93,18 @@ let sess = {
     secret: config.get('rmPrivateKey'),
     resave: true,
     saveUninitialized: false,
-    name: 'safjhkashfjkasjkfhjkashfjhaskdfjhhsad',
-    cookie: { secure: false, httpOnly: true, maxAge: 24 * 60 * 60 * 1000, },
-    store: new MongoStore({ mongooseConnection: mongoose.connection, clear_interval: 3600  })
+    name: config.get('cookieName'),
+    cookie: {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+    },
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection, clear_interval: 3600
+    })
 };
 
 // When pushed to production, we do want to use a secure cookie. Local testing we do not.
-if (app.get('env') === 'production') {
-    sess.cookie.secure = true
-}
+sess.cookie.secure = app.get('env') === 'production';
 
 app.use(session(sess));
 
@@ -122,15 +116,22 @@ app.use(csp({
 // Set favicon
 app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
 
-// needs to be access on all pages thanks to the footer
-const currentyear = new Date().getFullYear();
+// Routes
+const home = require('./routes/home');
+const about = require('./routes/about');
+const keybase = require('./routes/keybase');
+const projects = require('./routes/projects');
+const auth = require('./routes/auth');
+const login = require('./routes/login');
+const logout = require('./routes/logout');
 
 // Override these as needed on a per-route basis
 app.locals = {
-    currentyear: currentyear,
+    currentyear: new Date().getFullYear(),
     title: "Ryan Malacina | ryanmalacina.com",
     pageNotFound: "Seems this page doesn't exist...sorry about that!",
     serverError: "Uh oh, something went wrong when loading this page.",
+    environment: app.get('env')
 };
 
 app.use(function(req, res, next){
@@ -162,46 +163,6 @@ app.use(function (req, res, next) {
     err.status = 404;
     next(err);
 });
-
-/*
-    Development Error Handling
-    Catch both 404 and 500 in a manner I prefer, render appropriate view with error message
-*/
-if (app.get('env') === 'development') {
-    app.use(function (err, req, res, next) {
-        let status = err.status ? err.status : 500;
-        if (status === 404) {
-            res.render('error', {
-                message: err.message,
-                error: err
-            });
-        } else if (status === 500) {
-            res.render('error', {
-                message: err.message,
-                error: err
-            });
-        }
-    });
-}
-
-/*
-    Production Error Handling
-    Catch both 404 and 500 in a manner I prefer, render appropriate view with proper message
-*/
-if (app.get('env') === 'production') {
-    app.use(function (err, req, res, next) {
-        let status = err.status ? err.status : 500;
-        if (status === 404) {
-            res.render('error', {
-                error: app.locals.pageNotFound
-            });
-        } else if (status === 500) {
-            res.render('error', {
-                error: app.locals.serverError
-            });
-        }
-    });
-}
 
 // Listen on 8080, output which mode the app is running in
 app.listen(8080);
