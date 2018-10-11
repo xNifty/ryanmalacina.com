@@ -101,7 +101,7 @@ app.use(bodyParser.urlencoded(
 let sess = {
     secret: config.get('rmPrivateKey'),
     resave: true,
-    saveUninitialized: true,
+    saveUninitialized: false,
     name: 'safjhkashfjkasjkfhjkashfjhaskdfjhhsad',
     cookie: { secure: false, httpOnly: true, maxAge: 24 * 60 * 60 * 1000, },
     store: new MongoStore({ mongooseConnection: mongoose.connection, clear_interval: 3600  })
