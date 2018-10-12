@@ -32,9 +32,12 @@
     "joi": "^13.7.0",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
+    "mdeditor": "^0.1.1",
     "mongoose": "^5.2.17",
     "nodemon": "^1.18.4",
+    "sanitize-html": "^1.19.1",
     "serve-favicon": "^2.4.5",
+    "showdown": "^1.8.6",
     "uuid": "^3.3.2"
   }
 }

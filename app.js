@@ -25,11 +25,6 @@ const uuid = require('uuid');
 const app = express();
 const env = app.settings.env;
 
-// Set default layout, can be overridden per-route as needed
-const hbs = exphbs.create({
-    defaultLayout: 'main',
-});
-
 // Make sure our private token exists
 if (!config.get('rmPrivateKey')) {
     console.error('FATAL ERROR: rmPrivateKey is not defined.');
@@ -38,13 +33,19 @@ if (!config.get('rmPrivateKey')) {
 
 function generateNonce(req, res, next) {
     const rhyphen = /-/g;
-    res.locals.nonce = uuid.v4().replace(rhyphen, ``);
+    app.locals.nonce = uuid.v4().replace(rhyphen, ``);
     next();
 }
 
 function getNonce (req, res) {
-    return `'nonce-${ res.locals.nonce }'`;
+    return `'nonce-${ app.locals.nonce }'`;
 }
+
+// Set default layout, can be overridden per-route as needed
+const hbs = exphbs.create({
+    defaultLayout: 'main',
+    nonce: app.locals.nonce
+});
 
 /* constants for CSP */
 function getDirectives() {
@@ -62,11 +63,15 @@ function getDirectives() {
         `https://cdnjs.cloudflare.com`, `https://fonts.gstatic.com`,
         `https://maxcdn.bootstrapcdn.com`
     ];
+    const connect = [
+      `https://cdn.jsdelivr.net`
+    ];
     return {
         defaultSrc: [self],
         scriptSrc: [self, getNonce, ...scripts],
         styleSrc: [self, getNonce, ...styles],
         fontSrc: [self, ...fonts],
+        connectSrc: [self, ...connect]
     };
 }
 

@@ -7,6 +7,10 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const _ = require('lodash');
 const session = require('express-session');
+const showdown = require('showdown');
+const sanitize = require('sanitize-html');
+
+let converter = new showdown.Converter();
 
 router.get("/", async (req, res) => {
     let project_list = await listProjects();
@@ -38,7 +42,6 @@ router.get('/new', auth, async(req, res) => {
 
 router.post('/new', auth, async(req, res) => {
     const { error } = validate(req.body);
-    if (error) console.log(error);
     if (error) return res.status(400).render('new-project', {
         layout: 'new-project',
         new_project: true,
@@ -47,7 +50,8 @@ router.post('/new', auth, async(req, res) => {
         project_title: req.body.project_title,
         project_source: req.body.project_source,
         project_description: req.body.project_description,
-        project_image: req.body.project_image
+        project_image: req.body.project_image,
+        nonce: req.app.locals.nonce
     });
 
     let project = new Project(_.pick(req.body, [
@@ -88,7 +92,7 @@ router.get("/:name", async(req, res) => {
    res.render("projects", {
        project_title: project.project_title,
        project_source: project.project_source,
-       project_description: project.project_description,
+       project_description: converter.makeHtml(project.project_description),
        is_valid: true
    });
 });
