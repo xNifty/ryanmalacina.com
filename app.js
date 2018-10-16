@@ -134,11 +134,21 @@ app.locals = {
     environment: app.get('env')
 };
 
-app.use(function(req, res, next){
+app.use(function(req, res, next) {
     res.locals.realName = req.session.name;
     res.locals.token = req.session.token;
+
+    if (req.session.loginStatus)
+        res.locals.loginStatus = req.session.loginStatus;
+
+    resetLoginStatus(req, res);
     next();
 });
+
+function resetLoginStatus(req, res) {
+    if (req.session.loginStatus)
+        req.session.loginStatus = null;
+}
 
 app.use('/', home);
 app.use('/about', about);

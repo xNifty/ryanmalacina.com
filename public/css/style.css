@@ -112,9 +112,9 @@ td, th {
     background:#e9ffd9 no-repeat 10px 75%;
     border:1px solid #a6ca8a;
     margin-bottom: 10px;
-    max-width: 100%;
-    min-width: 20%;
-    margin: 0 auto;
+    /*max-width: 100%;*/
+    /*min-width: 20%;*/
+    /*margin: 0 auto;*/
 }
 
 @media

@@ -9,6 +9,7 @@ router.get("/", async (req, res, next) => {
             if(err) {
                 return next(err);
             } else {
+                res.locals.loginStatus = 'You have been logged out';
                 return res.redirect('/');
             }
         });
