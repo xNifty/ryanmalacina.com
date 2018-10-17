@@ -9,6 +9,7 @@ const _ = require('lodash');
 const session = require('express-session');
 const showdown = require('showdown');
 const sanitize = require('sanitize-html');
+const genNonce = require('../functions/nonce');
 
 let converter = new showdown.Converter();
 
@@ -16,6 +17,7 @@ router.get("/", async (req, res) => {
     let project_list = await listProjects();
     let status = '';
     let type = '';
+
     if (req.session.success) {
         if (req.session.success === 1) {
             status = success;
@@ -28,19 +30,23 @@ router.get("/", async (req, res) => {
         title: "Ryan Malacina | Projects",
         projects: project_list,
         status: status,
-        type: type
+        type: type,
     });
 });
 
 router.get('/new', auth, async(req, res) => {
+    let nonce = genNonce.genNonce();
+    genNonce.genCSP(req, res, nonce);
     res.render('new-project', {
         layout: 'new-project',
         new_project: true,
+        nonce: nonce
     });
 });
 
 
 router.post('/new', auth, async(req, res) => {
+
     const { error } = validate(req.body);
     if (error) return res.status(400).render('new-project', {
         layout: 'new-project',

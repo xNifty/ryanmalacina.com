@@ -20,7 +20,6 @@ const config = require('config');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const csp = require('helmet-csp');
-const uuid = require('uuid');
 
 const app = express();
 const env = app.settings.env;
@@ -31,49 +30,10 @@ if (!config.get('rmPrivateKey')) {
     process.exit(1);
 }
 
-function generateNonce(req, res, next) {
-    const rhyphen = /-/g;
-    app.locals.nonce = uuid.v4().replace(rhyphen, ``);
-    next();
-}
-
-function getNonce (req, res) {
-    return `'nonce-${ app.locals.nonce }'`;
-}
-
 // Set default layout, can be overridden per-route as needed
 const hbs = exphbs.create({
     defaultLayout: 'main',
-    nonce: app.locals.nonce
 });
-
-/* constants for CSP */
-function getDirectives() {
-    const self = `'self'`;
-    const unsafeInline = `'unsafe-inline'`;
-    const scripts = [
-        `https://cdnjs.cloudflare.com`, `https://code.jquery.com`,
-        `https://maxcdn.bootstrapcdn.com`
-    ];
-    const styles = [
-        `https://cdnjs.cloudflare.com`, `https://fonts.googleapis.com`,
-        `https://maxcdn.bootstrapcdn.com`
-    ];
-    const fonts = [
-        `https://cdnjs.cloudflare.com`, `https://fonts.gstatic.com`,
-        `https://maxcdn.bootstrapcdn.com`
-    ];
-    const connect = [
-      `https://cdn.jsdelivr.net`
-    ];
-    return {
-        defaultSrc: [self],
-        scriptSrc: [self, getNonce, ...scripts],
-        styleSrc: [self, getNonce, ...styles],
-        fontSrc: [self, ...fonts],
-        connectSrc: [self, ...connect]
-    };
-}
 
 // Connect to the database
 mongoose.connect('mongodb://localhost:27017/ryanmalacina', {useNewUrlParser: true})
@@ -112,11 +72,6 @@ let sess = {
 sess.cookie.secure = app.get('env') === 'production';
 
 app.use(session(sess));
-
-app.use(generateNonce);
-app.use(csp({
-    directives: getDirectives()
-}));
 
 // Set favicon
 app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
