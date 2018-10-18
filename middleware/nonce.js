@@ -37,11 +37,17 @@ function getDirectives(nonce) {
     };
 }
 
-function genCSP(req, res, nonce) {
-    router.use(csp({
-        directives: getDirectives(nonce)
-    }));
+function genCSP(req, res, next) {
+    try {
+        let nonce = generateNonce();
+        req.nonce = nonce;
+        router.use(csp({
+            directives: getDirectives(nonce)
+        }));
+        next();
+    } catch(err) {
+        console.log(err);
+    }
 }
 
-module.exports.genNonce = generateNonce;
 module.exports.genCSP = genCSP;

@@ -43,6 +43,7 @@ router.post('/', async(req, res) => {
 
     req.session.token = user.generateAuthToken();
     req.session.name = user.realName;
+    req.session.session_authenticated = true;
     req.session.loginStatus = "You have been successfully logged in";
 
     return res.redirect('/');

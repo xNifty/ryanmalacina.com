@@ -22,6 +22,12 @@
         var simplemde = new SimpleMDE({ element: document.getElementById("editor") });
     </script>
 {{/if}}
+{{#if update_project}}
+    <script nonce="{{nonce}}" src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script nonce="{{nonce}}">
+        var simplemde = new SimpleMDE({ element: document.getElementById("editor") });
+    </script>
+{{/if}}
 <!--<script type="text/javascript" src="/js/tabopen.js"></script>-->
 </body>
 </html>

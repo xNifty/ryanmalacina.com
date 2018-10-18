@@ -81,7 +81,6 @@ const home = require('./routes/home');
 const about = require('./routes/about');
 const keybase = require('./routes/keybase');
 const projects = require('./routes/projects');
-const auth = require('./routes/auth');
 const login = require('./routes/login');
 const logout = require('./routes/logout');
 
@@ -115,7 +114,6 @@ app.use('/about', about);
 app.use('/keybase', keybase);
 app.use('/keybase.txt', keybase); // For Keybase.io
 app.use('/projects', projects);
-app.use('/api/auth', auth);
 app.use('/login', login);
 app.use('/logout', logout);
 

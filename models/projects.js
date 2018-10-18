@@ -19,11 +19,16 @@ const projectScheme = new mongoose.Schema({
         required: true,
         maxlength: 100
     },
-    project_description: {
+    project_description_markdown: {
         type: String,
         required: true,
         minlength: 20,
-        maxlength: 10000
+        maxlength: 25000
+    },
+    project_description_html: {
+        type: String,
+        minlength: 20,
+        maxlength: 25000
     },
     project_image: {
         type: String,

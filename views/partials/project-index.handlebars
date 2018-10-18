@@ -24,4 +24,10 @@
             </div>
         {{/each}}
     </div>
+    {{#if session_authenticated}}
+        <div id="edit">
+            <a href="projects/new/" class="btn btn-primary">
+                <span class="glyphicon glyphicon-pencil"></span> Add New Project</a>
+        </div>
+    {{/if}}
 </div>
