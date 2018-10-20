@@ -64,7 +64,8 @@ router.post('/new', auth, async(req, res) => {
     ]));
 
     project.project_description_markdown = req.body.project_description;
-    project.project_description_html = sanitize(converter.makeHtml(project.project_description_markdown));
+    project.project_description_html = converter.makeHtml(project.project_description_markdown);
+    //sanitize(converter.makeHtml(project.project_description_markdown));
     console.log(req.body.project_description);
     console.log(project);
 

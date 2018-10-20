@@ -54,13 +54,18 @@ app.use(bodyParser.urlencoded(
     }
 ));
 
+// Now we don't have to hardcode this into app.js
+const secret_key = config.get('privateKeyName');
+
+app.set('trust proxy', true);
 let sess = {
-    secret: config.get('rmPrivateKey'),
-    resave: true,
-    saveUninitialized: false,
+    secret: config.get(secret_key),
+    proxy: config.get('useProxy'),
+    resave: config.get('resave'),
+    saveUninitialized: config.get('saveUninitialized'),
     name: config.get('cookieName'),
     cookie: {
-        httpOnly: true,
+        httpOnly: config.get('httpOnly'),
         maxAge: 24 * 60 * 60 * 1000,
     },
     store: new MongoStore({
