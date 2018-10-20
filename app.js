@@ -138,44 +138,35 @@ app.use(function (req, res, next) {
 });
 
 /*
-    Development Error Handling
+    Error Handling
     Catch both 404 and 500 in a manner I prefer, render appropriate view with error message
 */
-if (app.get('env') === 'development') {
-    app.use(function (err, req, res, next) {
-        let status = err.status ? err.status : 500;
+app.use(function (err, req, res, next) {
+    let status = err.status ? err.status : 500;
+    if (app.get('env') === 'development') {
         if (status === 404) {
             res.render('error', {
                 message: err.message,
-                error: err
+                error: err.stack.replace("\n", "<br />")
             });
         } else if (status === 500) {
             res.render('error', {
                 message: err.message,
-                error: err
+                error: err.stack.replace("\n", "<br />")
             });
         }
-    });
-}
-
-/*
-    Production Error Handling
-    Catch both 404 and 500 in a manner I prefer, render appropriate view with proper message
-*/
-if (app.get('env') === 'production') {
-    app.use(function (err, req, res, next) {
-        let status = err.status ? err.status : 500;
+    } else {
         if (status === 404) {
             res.render('error', {
-                error: app.locals.pageNotFound
+                error: res.locals.pageNotFound
             });
         } else if (status === 500) {
             res.render('error', {
-                error: app.locals.serverError
+                error: res.locals.serverError
             });
         }
-    });
-}
+    }
+});
 
 // Listen on 8080, output which mode the app is running in
 app.listen(8080);
