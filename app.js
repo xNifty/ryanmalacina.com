@@ -143,28 +143,14 @@ app.use(function (req, res, next) {
 */
 app.use(function (err, req, res, next) {
     let status = err.status ? err.status : 500;
-    if (app.get('env') === 'development') {
-        if (status === 404) {
-            res.render('error', {
-                message: err.message,
-                error: err.stack.replace("\n", "<br />")
-            });
-        } else if (status === 500) {
-            res.render('error', {
-                message: err.message,
-                error: err.stack.replace("\n", "<br />")
-            });
-        }
-    } else {
-        if (status === 404) {
-            res.render('error', {
-                error: res.locals.pageNotFound
-            });
-        } else if (status === 500) {
-            res.render('error', {
-                error: res.locals.serverError
-            });
-        }
+    if (status === 404) {
+        res.render('error', {
+            error: env === 'development' ? err.stack.replace("\n", "<br />") : res.locals.pageNotFound
+        });
+    } else if (status === 500) {
+        res.render('error', {
+            error: env ==='development' ? err.stack.replace("\n", "<br />") : res.locals.serverError
+        });
     }
 });
 
