@@ -9,7 +9,6 @@ const _ = require('lodash');
 const session = require('express-session');
 const showdown = require('showdown');
 const sanitize = require('sanitize-html');
-const csp = require('../middleware/nonce');
 
 let converter = new showdown.Converter();
 
@@ -38,11 +37,10 @@ router.get("/", async (req, res) => {
     });
 });
 
-router.get('/new', [auth, csp.genCSP], async(req, res) => {
+router.get('/new', [auth], async(req, res) => {
     res.render('new-project', {
         layout: 'new-project',
         new_project: true,
-        nonce: req.nonce
     });
 });
 
@@ -88,7 +86,7 @@ router.post('/new', auth, async(req, res) => {
     res.redirect('/projects');
 });
 
-router.get('/:name/edit', [auth, csp.genCSP], async(req, res) => {
+router.get('/:name/edit', [auth], async(req, res) => {
     const project = await Project.findOne({
         project_name: req.params.name
     });
@@ -106,7 +104,6 @@ router.get('/:name/edit', [auth, csp.genCSP], async(req, res) => {
         project_source: project.project_source,
         project_description: project.project_description_markdown,
         project_image: project.project_image,
-        nonce: req.nonce,
         error_message: error_message
     });
 });

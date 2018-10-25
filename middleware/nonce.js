@@ -1,12 +1,12 @@
 // Use this to generate a nonce on any page that needs it; we don't want static nonce usage
 const uuid = require('uuid');
 const csp = require('helmet-csp');
-const express = require('express');
+const express = require('express')
 const router = express.Router();
 
 function generateNonce() {
     const rhyphen = /-/g;
-    return uuid.v4().replace(rhyphen, ``);
+    return 'nonce-' + uuid.v4().replace(rhyphen, ``);
 }
 
 /* constants for CSP */
@@ -15,11 +15,11 @@ function getDirectives(nonce) {
     const unsafeInline = `'unsafe-inline'`;
     const scripts = [
         `https://cdnjs.cloudflare.com`, `https://code.jquery.com`,
-        `https://maxcdn.bootstrapcdn.com`
+        `https://maxcdn.bootstrapcdn.com`, `https://cdn.jsdelivr.net`
     ];
     const styles = [
         `https://cdnjs.cloudflare.com`, `https://fonts.googleapis.com`,
-        `https://maxcdn.bootstrapcdn.com`
+        `https://maxcdn.bootstrapcdn.com`, `https://cdn.jsdelivr.net`
     ];
     const fonts = [
         `https://cdnjs.cloudflare.com`, `https://fonts.gstatic.com`,
@@ -30,7 +30,7 @@ function getDirectives(nonce) {
     ];
     return {
         defaultSrc: [self],
-        scriptSrc: [self, nonce, ...scripts],
+        scriptSrc: [self, unsafeInline, ...scripts],
         styleSrc: [self, nonce, ...styles],
         fontSrc: [self, ...fonts],
         connectSrc: [self, ...connect]
@@ -50,4 +50,6 @@ function genCSP(req, res, next) {
     }
 }
 
+module.exports.generateNonce = generateNonce;
+module.exports.getDirectives = getDirectives;
 module.exports.genCSP = genCSP;

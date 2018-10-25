@@ -20,6 +20,7 @@ const config = require('config');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const csp = require('helmet-csp');
+const mNonce = require('./middleware/nonce');
 
 const app = express();
 const env = app.settings.env;
@@ -53,6 +54,15 @@ app.use(bodyParser.urlencoded(
         extended: true
     }
 ));
+
+app.use(function(req, res, next) {
+    res.locals.nonce = mNonce.generateNonce();
+    next();
+})
+
+app.use(csp({
+    directives: mNonce.getDirectives((req, res) => `'${res.locals.nonce}'`)
+}));
 
 // Now we don't have to hardcode this into app.js
 const secret_key = config.get('privateKeyName');
