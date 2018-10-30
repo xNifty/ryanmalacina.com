@@ -6,7 +6,7 @@ const router = express.Router();
 
 function generateNonce() {
     const rhyphen = /-/g;
-    return 'nonce-' + uuid.v4().replace(rhyphen, ``);
+    return uuid.v4().replace(rhyphen, ``);
 }
 
 /* constants for CSP */

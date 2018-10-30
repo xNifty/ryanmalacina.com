@@ -56,12 +56,14 @@ app.use(bodyParser.urlencoded(
 ));
 
 app.use(function(req, res, next) {
-    res.locals.nonce = mNonce.generateNonce();
+    nonce = mNonce.generateNonce();
+    res.locals.nonce = nonce;
+    res.locals.cspNonce = 'nonce-' + nonce;
     next();
 })
 
 app.use(csp({
-    directives: mNonce.getDirectives((req, res) => `'${res.locals.nonce}'`)
+    directives: mNonce.getDirectives((req, res) => `'${res.locals.cspNonce}'`)
 }));
 
 // Now we don't have to hardcode this into app.js
