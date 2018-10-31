@@ -13,6 +13,7 @@ function generateNonce() {
 function getDirectives(nonce) {
     const self = `'self'`;
     const unsafeInline = `'unsafe-inline'`;
+    const none = `'none'`;
     const scripts = [
         `https://cdnjs.cloudflare.com`, `https://code.jquery.com`,
         `https://maxcdn.bootstrapcdn.com`, `https://cdn.jsdelivr.net`
@@ -30,10 +31,12 @@ function getDirectives(nonce) {
     ];
     return {
         defaultSrc: [self],
-        scriptSrc: [self, unsafeInline, ...scripts],
+        scriptSrc: [self, nonce, ...scripts],
         styleSrc: [self, nonce, ...styles],
         fontSrc: [self, ...fonts],
-        connectSrc: [self, ...connect]
+        connectSrc: [self, ...connect],
+        objectSrc: [none],
+	baseUri: [none]
     };
 }
 

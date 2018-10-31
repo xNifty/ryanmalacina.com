@@ -26,17 +26,19 @@
             <h1>Update {{project_title}}</h1>
         </div>
         <form action="/projects/edit" method="post">
+	<div class="form-group">
             Project Name<br> <input type="text" class="custom-text" name="project_name"
                                     {{#if project_name}}value="{{project_name}}"{{/if}}><br><br>
             Project Title<br> <input type="text" class="custom-text" name="project_title"
                                      {{#if project_title}}value="{{project_title}}"{{/if}}><br><br>
             Source<br> <input type="text" class="custom-text" name="project_source"
                               {{#if project_source}}value="{{project_source}}"{{/if}}><br><br>
-            <textarea class="input-block-level" id="editor"
+            <textarea class="form-control" id="editor"
                       name="project_description">{{#if project_description}}{{ project_description }}{{/if}}</textarea>
             Image URL<br> <input type="text" class="custom-text" name="project_image"
                                  {{#if project_image}}value="{{project_image}}"{{/if}}><br><br>
             <input type="submit" value="Update Project">
+        </div>
         </form>
     </div>
 {{/if}}

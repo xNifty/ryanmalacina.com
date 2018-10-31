@@ -16,18 +16,9 @@
         nonce="{{nonce}}">
 </script>
 <script rel="text/javascript" nonce="{{nonce}}" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-{{#if new_project}}
     <script nonce="{{nonce}}" src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
     <script nonce="{{nonce}}">
-        var simplemde = new SimpleMDE({ element: document.getElementById("editor") });
+        var simplemde = new SimpleMDE({ element: document.getElementById("editor"), toolbar: false });
     </script>
-{{/if}}
-{{#if update_project}}
-    <script nonce="{{nonce}}" src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-    <script nonce="{{nonce}}">
-        var simplemde = new SimpleMDE({ element: document.getElementById("editor") });
-    </script>
-{{/if}}
-<!--<script type="text/javascript" src="/js/tabopen.js"></script>-->
 </body>
 </html>
