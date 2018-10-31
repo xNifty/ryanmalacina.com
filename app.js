@@ -113,6 +113,7 @@ app.locals = {
 app.use(function(req, res, next) {
     res.locals.realName = req.session.name;
     res.locals.token = req.session.token;
+    res.locals.authenticated = req.session.session_authenticated;
 
     if (req.session.loginStatus)
         res.locals.loginStatus = req.session.loginStatus;

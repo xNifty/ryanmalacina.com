@@ -4,7 +4,7 @@
         <h4><a href="{{ project_source }}" target="_blank">Source</a></h4>
     </div>
     <p>{{{ project_description }}}</p>
-    {{#if session_authenticated}}
+    {{#if authenticated}}
         <div id="edit">
             <a href="{{project_name}}/edit" class="btn btn-primary">
                 <span class="glyphicon glyphicon-pencil"></span> Edit Project</a>

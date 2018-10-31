@@ -20,7 +20,15 @@
                 <li><a class="nav-link" href="/about">About</a></li>
                 <li><a class="nav-link" href="mailto:ryan@ryanmalacina.com">Contact</a></li>
                 <li><a class="nav-link" href="https://xnifty.github.io">Projects Documentation</a></li>
-                <li><a class="nav-link" href="/projects">Projects</a></li>
+		<li class="dropdown">
+		    <a href="/projects">Projects</a>
+		    <ul class="dropdown-menu">
+		        <!--<li><a href="/projects">Projects Index</a></li>-->
+			{{#if authenticated}}
+                            <li><a href="projects/new"><span class="glyphicon glyphicon-pencil"></span> New Project</a></li>
+                        {{/if}}
+                    </ul>
+		</li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {{#if realName }} {{!-- This is coming from res.locals --}}

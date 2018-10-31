@@ -33,7 +33,6 @@ router.get("/", async (req, res) => {
         status: status,
         type: type,
         message: message,
-        session_authenticated: req.session.session_authenticated,
     });
 });
 
@@ -146,7 +145,6 @@ router.get("/:name", async(req, res) => {
        project_source: project.project_source,
        project_description: project.project_description_html,
        project_name: project.project_name,
-       session_authenticated: req.session.session_authenticated,
        is_valid: true
    });
 });
