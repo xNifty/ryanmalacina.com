@@ -46,7 +46,13 @@ router.post('/', async(req, res) => {
     req.session.session_authenticated = true;
     req.session.loginStatus = "You have been successfully logged in";
 
-    return res.redirect('/');
+    if (req.session.returnTo) {
+        var returnTo = req.session.returnTo;
+	delete req.session.returnTo;
+        return res.redirect(returnTo);
+    } else {
+        return res.redirect('/');
+    }
 });
 
 module.exports = router;
