@@ -4,11 +4,17 @@ const session = require('express-session');
 
 function auth(req, res, next) {
     const token = req.session.token;
-    if (!token) return res.render("error", {
-       error: "Please <a href=\"/login\">login</a> to access this content."
-    });
+    if (!token) {
+        req.session.returnTo = req.originalUrl;
+	res.locals.requiresLogin = "Please login to access this content.";
+	return res.redirect('/login');
+        /*return res.render("login", {
+            error: "Please <a href=\"/login\">login</a> to access this content."
+        });*/
+    }
 
     try {
+	// Need to remove this hardcode...
         req.user = jwt.verify(token, config.get('rmPrivateKey'));
         next();
     } catch(ex) {

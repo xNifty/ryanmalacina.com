@@ -3,19 +3,26 @@
 <html>
 {{> header }}
 <body>
-{{> nav}}
+    {{> nav}}
+    {{#if loginStatus}}
+        <div class="container">
+            <div class="text-center">
+                <div class="success">{{ loginStatus }}</div>
+            </div>
+        </div>
+        {{ resetLoginStatus }}
+    {{/if}}
+    {{{ body }}}
 
-{{{ body }}}
-
-{{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
-{{> footer currentyear=currentyear }}
-<script
+    {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
+    {{> footer currentyear=currentyear }}
+    <script
         src="https://code.jquery.com/jquery-3.3.1.min.js"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"
         nonce="{{nonce}}">
-</script>
-<script rel="text/javascript" nonce="{{nonce}}" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    </script>
+    <script rel="text/javascript" nonce="{{nonce}}" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script nonce="{{nonce}}" src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
     <script nonce="{{nonce}}">
         var simplemde = new SimpleMDE({ element: document.getElementById("editor"), toolbar: false });
