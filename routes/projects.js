@@ -121,7 +121,14 @@ router.post('/edit', auth, async(req, res) => {
         req.session.success = 1;
         req.session.success_message = "Project edited successfully";
         req.session.project_id = null;
-        res.redirect('/projects');
+
+	if (req.session.projectReturnTo) {
+            var returnTo = req.session.projectReturnTo;
+	    delete req.session.projectReturnTo;
+            return res.redirect(returnTo);
+        } else {
+            return res.redirect('/projects');
+        }
     } catch(ex) {
         req.session.error_message = 'Something went wrong; please try again.';
         res.redirect('back');
@@ -136,6 +143,21 @@ router.get("/:name", async(req, res) => {
        project_name: req.params.name
    });
 
+   let status = '';
+   let type = '';
+   let message = '';
+
+   if (req.session.success) {
+       if (req.session.success === 1) {
+           message = req.session.success_message;
+           type = 'success';
+           delete req.session.success;
+           delete req.session.success_message;
+       }
+   }
+
+   req.session.projectReturnTo = req.originalUrl;
+
    if (!project) return res.render("error", {
        error: "It appears as though you are trying to access an invalid project. " +
            "Perhaps try <a href=\"\\projects\">again</a>?"
@@ -146,7 +168,10 @@ router.get("/:name", async(req, res) => {
        project_source: project.project_source,
        project_description: project.project_description_html,
        project_name: project.project_name,
-       is_valid: true
+       is_valid: true,
+       status: status,
+       type: type,
+       message: message
    });
 });
 
