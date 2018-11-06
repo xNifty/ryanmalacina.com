@@ -60,11 +60,10 @@ router.post('/new', auth, async(req, res) => {
         'project_name', 'project_title', 'project_source', 'project_image'
     ]));
 
+    pDescription = converter.makeHtml(req.body.project_description);
+    pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
     project.project_description_markdown = req.body.project_description;
-    project.project_description_html = converter.makeHtml(project.project_description_markdown);
-    //sanitize(converter.makeHtml(project.project_description_markdown));
-    console.log(req.body.project_description);
-    console.log(project);
+    project.project_description_html = pSanitized;
 
     try {
         await project.save();
@@ -109,12 +108,14 @@ router.get('/:name/edit', [auth], async(req, res) => {
 
 router.post('/edit', auth, async(req, res) => {
     try {
+	pDescription = converter.makeHtml(req.body.project_description);
+	pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
         let project = await Project.findByIdAndUpdate({_id: req.session.project_id}, {
             project_name: req.body.project_name,
             project_title: req.body.project_title,
             project_source: req.body.project_source,
             project_description_markdown: req.body.project_description,
-            project_description_html: converter.makeHtml(req.body.project_description),
+            project_description_html: pSanitized,
             project_image: req.body.project_image
         });
         req.session.success = 1;
