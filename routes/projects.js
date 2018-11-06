@@ -60,8 +60,8 @@ router.post('/new', auth, async(req, res) => {
         'project_name', 'project_title', 'project_source', 'project_image'
     ]));
 
-    pDescription = converter.makeHtml(req.body.project_description);
-    pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
+    let pDescription = converter.makeHtml(req.body.project_description);
+    let pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
     project.project_description_markdown = req.body.project_description;
     project.project_description_html = pSanitized;
 
@@ -108,15 +108,18 @@ router.get('/:name/edit', [auth], async(req, res) => {
 
 router.post('/edit', auth, async(req, res) => {
     try {
-	pDescription = converter.makeHtml(req.body.project_description);
-	pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
+	let pDescription = converter.makeHtml(req.body.project_description);
+	let pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
+	let saveDate = new Date(Date.now());
+
         let project = await Project.findByIdAndUpdate({_id: req.session.project_id}, {
             project_name: req.body.project_name,
             project_title: req.body.project_title,
             project_source: req.body.project_source,
             project_description_markdown: req.body.project_description,
             project_description_html: pSanitized,
-            project_image: req.body.project_image
+            project_image: req.body.project_image,
+	    last_edited: saveDate
         });
         req.session.success = 1;
         req.session.success_message = "Project edited successfully";
@@ -131,7 +134,14 @@ router.post('/edit', auth, async(req, res) => {
         }
     } catch(ex) {
         req.session.error_message = 'Something went wrong; please try again.';
-        res.redirect('back');
+        if (req.session.projectReturnTo) {
+            var returnTo = req.session.projectReturnTo;
+            delete req.session.projectReturnTo;
+            return res.redirect(returnTo);
+        } else {
+            return res.redirect('/projects');
+        }
+
     }
 
 });
@@ -171,7 +181,8 @@ router.get("/:name", async(req, res) => {
        is_valid: true,
        status: status,
        type: type,
-       message: message
+       message: message,
+       last_save_date: project.last_edited
    });
 });
 

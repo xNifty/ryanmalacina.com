@@ -33,6 +33,9 @@ const projectScheme = new mongoose.Schema({
     project_image: {
         type: String,
         maxlength: 150
+    },
+    last_edited: {
+        type: String
     }
 });
 
