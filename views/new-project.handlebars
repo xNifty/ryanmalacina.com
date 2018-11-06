@@ -5,6 +5,7 @@
             <h1>Create New Project</h1>
         </div>
         <form action="/projects/new" method="post">
+	<div class="form-group">
             Project Name<br> <input type="text" class="custom-text" name="project_name"
                                     {{#if project_name}}value="{{project_name}}"{{/if}}><br><br>
             Project Title<br> <input type="text" class="custom-text" name="project_title"
@@ -15,7 +16,9 @@
                       name="project_description">{{#if project_description}}{{ project_description }}{{/if}}</textarea>
             Image URL<br> <input type="text" class="custom-text" name="project_image"
                                  {{#if project_image}}value="{{project_image}}"{{/if}}><br><br>
-            <input type="submit" value="Submit New Project">
+	</div>
+	<button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-pencil"></span> Submit New Project</button>
         </form>
     </div>
 {{/if}}
@@ -37,8 +40,9 @@
                       name="project_description">{{#if project_description}}{{ project_description }}{{/if}}</textarea>
             Image URL<br> <input type="text" class="custom-text" name="project_image"
                                  {{#if project_image}}value="{{project_image}}"{{/if}}><br><br>
-            <input type="submit" value="Update Project">
         </div>
+	<button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-pencil"></span> Update Project</button>
         </form>
     </div>
 {{/if}}
