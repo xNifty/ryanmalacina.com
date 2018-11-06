@@ -114,7 +114,7 @@ router.post('/edit', auth, async(req, res) => {
             project_title: req.body.project_title,
             project_source: req.body.project_source,
             project_description_markdown: req.body.project_description,
-            project_description_html: sanitize(converter.makeHtml(req.body.project_description)),
+            project_description_html: converter.makeHtml(req.body.project_description),
             project_image: req.body.project_image
         });
         req.session.success = 1;
