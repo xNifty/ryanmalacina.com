@@ -168,3 +168,11 @@ only screen and (max-width: 760px),
 li.dropdown:hover > .dropdown-menu {
     display: block;
 }
+
+p#lastedit {
+    font-size: 75%;
+}
+
+.container#footer-container {
+    margin-top: -1%;
+}

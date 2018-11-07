@@ -9,6 +9,7 @@ const _ = require('lodash');
 const session = require('express-session');
 const showdown = require('showdown');
 const sanitize = require('sanitize-html');
+const dateformat = require('dateformat');
 
 let converter = new showdown.Converter();
 
@@ -182,7 +183,7 @@ router.get("/:name", async(req, res) => {
        status: status,
        type: type,
        message: message,
-       last_save_date: project.last_edited
+       last_save_date: dateformat(project.last_edited, "dd/mm/yyyy @ h:MM TT")
    });
 });
 
