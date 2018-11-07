@@ -158,11 +158,11 @@ app.use(function (err, req, res, next) {
     let status = err.status ? err.status : 500;
     if (status === 404) {
         res.render('error', {
-            error: env === 'development' ? err.stack.replace("\n", "<br />") : res.locals.pageNotFound
+            error: env === 'development' ? err.stack.replace("\n", "<br />") : app.locals.pageNotFound
         });
     } else if (status === 500) {
         res.render('error', {
-            error: env ==='development' ? err.stack.replace("\n", "<br />") : res.locals.serverError
+            error: env ==='development' ? err.stack.replace("\n", "<br />") : app.locals.serverError
         });
     }
 });
