@@ -65,6 +65,7 @@ router.post('/new', auth, async(req, res) => {
     let pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
     project.project_description_markdown = req.body.project_description;
     project.project_description_html = pSanitized;
+    let saveDate = new Date(Date.now());
 
     try {
         await project.save();
@@ -77,7 +78,8 @@ router.post('/new', auth, async(req, res) => {
             project_title: req.body.project_title,
             project_source: req.body.project_source,
             project_description: req.body.project_description,
-            project_image: req.body.project_image
+            project_image: req.body.project_image,
+	    last_edited: saveDate
         });
     }
     req.session.success = 1;
