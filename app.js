@@ -76,7 +76,7 @@ let sess = {
     name: config.get('cookieName'),
     cookie: {
         httpOnly: config.get('httpOnly'),
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 3600 * 1000,
     },
     store: new MongoStore({
         mongooseConnection: mongoose.connection, clear_interval: 3600

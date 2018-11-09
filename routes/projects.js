@@ -185,7 +185,7 @@ router.get("/:name", async(req, res) => {
        status: status,
        type: type,
        message: message,
-       last_save_date: dateformat(project.last_edited, "dd/mm/yyyy @ h:MM TT")
+       last_save_date: dateformat(project.last_edited, "mmmm dd, yyyy @ h:MM TT")
    });
 });
 
