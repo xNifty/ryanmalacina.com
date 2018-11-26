@@ -177,3 +177,7 @@ li.dropdown:hover > .dropdown-menu {
 .container#footer-container {
     margin-top: -1%;
 }
+
+.input-group {
+    width: 100%;
+}
