@@ -27,6 +27,7 @@
     "connect-mongo": "^2.0.1",
     "dateformat": "^3.0.3",
     "express": "^4.16.2",
+    "express-fileupload": "^1.0.0",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
     "helmet-csp": "^2.7.1",
