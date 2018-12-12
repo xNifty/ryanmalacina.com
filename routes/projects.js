@@ -58,7 +58,6 @@ router.post('/new', auth, async(req, res) => {
         project_title: req.body.project_title,
         project_source: req.body.project_source,
         project_description: req.body.project_description,
-        project_image: req.files.project_image.name
     });
 
     let project = new Project(_.pick(req.body, [
@@ -67,14 +66,22 @@ router.post('/new', auth, async(req, res) => {
 
     let pDescription = converter.makeHtml(req.body.project_description);
     let pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
+
     let pImage = req.files.project_image;
+
+    // If there is no image, use a default image
+    if (!pImage)
+        project.project_image = "default.png";
+    else
+        project.project_image = pImage.name; // File name, nothing else
+
     project.project_description_markdown = req.body.project_description;
     project.project_description_html = pSanitized;
-    project.project_image = pImage.name; // File name, nothing else
     let saveDate = new Date(Date.now());
 
     try {
-        await pImage.mv('./public/images/' + pImage.name);
+	if (pImage)
+            await pImage.mv('./public/images/' + pImage.name);
         await project.save();
     } catch(ex) {
         console.log(ex);
@@ -86,7 +93,7 @@ router.post('/new', auth, async(req, res) => {
             project_title: req.body.project_title,
             project_source: req.body.project_source,
             project_description: req.body.project_description,
-	        last_edited: saveDate
+	    last_edited: saveDate
         });
     }
     req.session.success = 1;
