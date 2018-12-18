@@ -1,4 +1,8 @@
-// Use this to generate a nonce on any page that needs it; we don't want static nonce usage
+/*
+    nonce.js
+    This is a piece of middleware that we can use to generate a nonce on a page load
+    The nonce is regenerated on every load
+*/
 const uuid = require('uuid');
 const csp = require('helmet-csp');
 const express = require('express')
@@ -12,7 +16,7 @@ function generateNonce() {
 /* constants for CSP */
 function getDirectives(nonce) {
     const self = `'self'`;
-    const unsafeInline = `'unsafe-inline'`;
+    const unsafeInline = `'unsafe-inline'`; // Ideally, never going to use this anywhere for any reason
     const none = `'none'`;
     const scripts = [
         `https://cdnjs.cloudflare.com`, `https://code.jquery.com`,

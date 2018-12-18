@@ -18,6 +18,8 @@ const config = require('config');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const csp = require('helmet-csp');
+
+// @TODO : rename this, this is a bad variable name
 const mNonce = require('./middleware/nonce');
 
 const app = express();
@@ -53,6 +55,7 @@ app.use(bodyParser.urlencoded(
     }
 ));
 
+// Add nonce to res.locals
 app.use(function(req, res, next) {
     nonce = mNonce.generateNonce();
     res.locals.nonce = nonce;
@@ -60,6 +63,7 @@ app.use(function(req, res, next) {
     next();
 })
 
+// Finally, use the nonce middleware
 app.use(csp({
     directives: mNonce.getDirectives((req, res) => `'${res.locals.cspNonce}'`)
 }));
