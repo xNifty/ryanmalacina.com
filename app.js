@@ -19,13 +19,13 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const csp = require('helmet-csp');
 
-// @TODO : rename this, this is a bad variable name
-const mNonce = require('./middleware/nonce');
+const nonce_middleware = require('./middleware/nonce');
 
 const app = express();
 const env = app.settings.env;
 
 // Make sure our private token exists
+// @TODO: remove this hard-code and load from config file
 if (!config.get('rmPrivateKey')) {
     console.error('FATAL ERROR: rmPrivateKey is not defined.');
     process.exit(1);
@@ -57,7 +57,7 @@ app.use(bodyParser.urlencoded(
 
 // Add nonce to res.locals
 app.use(function(req, res, next) {
-    nonce = mNonce.generateNonce();
+    nonce = nonce_middleware.generateNonce();
     res.locals.nonce = nonce;
     res.locals.cspNonce = 'nonce-' + nonce;
     next();
@@ -65,10 +65,10 @@ app.use(function(req, res, next) {
 
 // Finally, use the nonce middleware
 app.use(csp({
-    directives: mNonce.getDirectives((req, res) => `'${res.locals.cspNonce}'`)
+    directives: nonce_middleware.getDirectives((req, res) => `'${res.locals.cspNonce}'`)
 }));
 
-// Now we don't have to hardcode this into app.js
+// Now we don't have to hard-code this into app.js
 const secret_key = config.get('privateKeyName');
 
 app.set('trust proxy', true);
@@ -103,7 +103,8 @@ const projects = require('./routes/projects');
 const login = require('./routes/login');
 const logout = require('./routes/logout');
 
-// Override these as needed on a per-route basis
+// Default values; we can override this on a per-route basis if needed
+// Should I maybe make these a language file and load from there?
 app.locals = {
     currentyear: new Date().getFullYear(),
     title: "Ryan Malacina | ryanmalacina.com",
@@ -129,6 +130,7 @@ function resetLoginStatus(req, res) {
         req.session.loginStatus = null;
 }
 
+// All of our paths
 app.use('/', home);
 app.use('/about', about);
 app.use('/keybase', keybase);
@@ -145,17 +147,18 @@ app.get("/docs", function(req, res) {
     res.redirect(301, "https://docs.ryanmalacina.com");
 });
 
-// Error handling
+/*
+    Error Handling
+    Catch both 404 and 500 in a manner I prefer, render appropriate view with error message
+
+    Can we move all this error logging stuff to it's own file instead of actually writing it here?
+*/
 app.use(function (req, res, next) {
     let err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
-/*
-    Error Handling
-    Catch both 404 and 500 in a manner I prefer, render appropriate view with error message
-*/
 app.use(function (err, req, res, next) {
     let status = err.status ? err.status : 500;
     if (status === 404) {
@@ -169,6 +172,6 @@ app.use(function (err, req, res, next) {
     }
 });
 
-// Listen on 8080, output which mode the app is running in
+// @TODO: move port declaration into config file instead of hardcoding it
 app.listen(8080);
 console.log("Server is now running in " + env + " mode.");

@@ -35,7 +35,7 @@
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
     "mongoose": "^5.3.2",
-    "nodemon": "^1.18.8",
+    "nodemon": "^1.18.9",
     "sanitize-html": "^1.19.1",
     "serve-favicon": "^2.4.5",
     "showdown": "^1.8.6",
