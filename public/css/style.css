@@ -181,3 +181,7 @@ li.dropdown:hover > .dropdown-menu {
 .input-group {
     width: 100%;
 }
+
+.alert {
+    width: 50%;
+}

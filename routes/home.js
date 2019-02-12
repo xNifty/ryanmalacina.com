@@ -3,10 +3,17 @@ const router = express.Router();
 const csp = require('../middleware/nonce');
 
 router.get("/", csp.genCSP, async (req, res) => {
-    return res.render("index", {
-        title: "Ryan Malacina | Home",
-        name: req.session.name,
-    });
+
+    if (req.user) {
+        return res.render("index", {
+            title: "Ryan Malacina | Home",
+            name: req.user.realName
+        });
+    } else {
+        return res.render("index", {
+            title: "Ryan Malacina | Home",
+        });
+    }
 });
 
 module.exports = router;

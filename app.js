@@ -18,6 +18,10 @@ const config = require('config');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const csp = require('helmet-csp');
+const flash = require('connect-flash');
+//const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const User = require('./models/user');
 
 const nonce_middleware = require('./middleware/nonce');
 
@@ -34,6 +38,30 @@ if (!config.get('rmPrivateKey')) {
 // Set default layout, can be overridden per-route as needed
 const hbs = exphbs.create({
     defaultLayout: 'main',
+    helpers: {
+        iff: function(a, operator, b, opts) {
+            let bool = false;
+            switch(operator) {
+                case '===':
+                    bool = a === b;
+                    break;
+                case '>':
+                    bool = a > b;
+                    break;
+                case '<':
+                    bool = a < b;
+                    break;
+                default:
+                    throw "Unknown operator " + operator;
+            }
+
+            if (bool) {
+                return opts.fn(this);
+            } else {
+                return opts.inverse(this);
+            }
+        }
+    }
 });
 
 // Connect to the database
@@ -68,10 +96,12 @@ app.use(csp({
     directives: nonce_middleware.getDirectives((req, res) => `'${res.locals.cspNonce}'`)
 }));
 
+//app.use(cookieParser());
+
 // Now we don't have to hard-code this into app.js
 const secret_key = config.get('privateKeyName');
 
-app.set('trust proxy', true);
+//app.set('trust proxy', true);
 let sess = {
     secret: config.get(secret_key),
     proxy: config.get('useProxy'),
@@ -81,6 +111,7 @@ let sess = {
     cookie: {
         httpOnly: config.get('httpOnly'),
         maxAge: 3600 * 1000,
+        secure: config.get('secureCookie'),
     },
     store: new MongoStore({
         mongooseConnection: mongoose.connection, clear_interval: 3600
@@ -90,7 +121,34 @@ let sess = {
 // When pushed to production, we do want to use a secure cookie. Local testing we do not.
 sess.cookie.secure = app.get('env') === 'production';
 
+app.use(flash());
 app.use(session(sess));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function(user, done) {
+    done(null, user._id);
+});
+
+passport.deserializeUser(function(userId, done) {
+    User.findById(userId, (err, user) => done(err, user));
+});
+
+// Passport Local
+const LocalStrategy = require("passport-local").Strategy;
+const local = new LocalStrategy((username, password, done) => {
+    User.findOne({ username })
+        .then(user => {
+            if (!user || !user.validPassword(password)) {
+                done(null, false, { message: "Invalid username or password" });
+            } else {
+                done(null, user);
+            }
+        })
+        .catch(e => done(e));
+});
+passport.use("local", local);
 
 // Set favicon
 app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
@@ -116,10 +174,14 @@ app.locals = {
 app.use(function(req, res, next) {
     res.locals.realName = req.session.name;
     res.locals.token = req.session.token;
-    res.locals.authenticated = req.session.session_authenticated;
+    res.locals.authenticated = req.isAuthenticated();
 
-    if (req.session.loginStatus)
-        res.locals.loginStatus = req.session.loginStatus;
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+
+    if (req.user) {
+        res.locals.realName = req.user.realName;
+    }
 
     resetLoginStatus(req, res);
     next();

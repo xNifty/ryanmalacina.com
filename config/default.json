@@ -1,8 +1,9 @@
 {
   "cookieName": "rm2245",
   "privateKeyName": "rmPrivateKey",
-  "useProxy": false,
-  "resave": false,
+  "useProxy": true,
+  "resave": true,
   "saveUninitialized": false,
-  "httpOnly": true
+  "httpOnly": true,
+  "secureCookie": true
 }

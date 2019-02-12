@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const Joi = require('joi');
 const config = require('config');
 const jwt = require('jsonwebtoken');
+const uniqueValidator = require('mongoose-unique-validator');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -28,16 +29,12 @@ userSchema.methods.generateAuthToken = function() {
     return jwt.sign({_id: this._id}, config.get('rmPrivateKey'));
 };
 
+userSchema.plugin(uniqueValidator);
+
+userSchema.methods.validPassword = function(password) {
+    return bcrypt.compareSync(password, this.password);
+};
+
 const User = mongoose.model('User', userSchema);
 
-function validate(user) {
-    const schema = {
-        username: Joi.string().min(5).max(255).required(),
-        password: Joi.string().min(5).max(255).required()
-    };
-
-    return Joi.validate(user, schema);
-}
-
-exports.User = User;
-exports.validate = validate;
+module.exports = User;

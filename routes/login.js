@@ -4,55 +4,30 @@ const {User, validate} = require('../models/user');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-const session = require('express-session');
-const errorHandler = require('../functions/errorhandler');
+const passport = require('passport');
 
-router.get("/", async (req, res) => {
-    let error_message = '';
+// Authentication Middleware
+const loggedInOnly = (req, res, next) => {
+    if (req.isAuthenticated()) next();
+    else res.redirect("/login");
+};
 
-    if (req.session.errorMessage) {
-        error_message = req.session.errorMessage;
-        delete req.session.errorMessage;
-    }
+const loggedOutOnly = (req, res, next) => {
+    if (req.isUnauthenticated()) next();
+    else res.redirect("/");
+};
 
+router.get("/", loggedOutOnly, async (req, res) => {
     return res.render("login", {
-        title: "Ryan Malacina | Login",
-        error_message: error_message,
+        title: "Ryan Malacina | Login"
     });
 });
 
-router.post('/', async(req, res) => {
-    const { error } = validate(req.body);
-    if (error) {
-        return errorHandler.renderErrorPage(500, error.message, req, res);
-    }
-
-    let user = await User.findOne({username: req.body.username});
-    if (!user) {
-        res.status(500);
-        req.session.errorMessage = 'Invalid username or password';
-        return res.redirect('/login');
-    }
-
-    let validPassword = await bcrypt.compare(req.body.password, user.password);
-    if (!validPassword) {
-        res.status(500);
-        req.session.errorMessage = 'Invalid username or password';
-        return res.redirect('/login');
-    }
-
-    req.session.token = user.generateAuthToken();
-    req.session.name = user.realName;
-    req.session.session_authenticated = true;
-    req.session.loginStatus = "You have been successfully logged in";
-
-    if (req.session.returnTo) {
-        var returnTo = req.session.returnTo;
-	delete req.session.returnTo;
-        return res.redirect(returnTo);
-    } else {
-        return res.redirect('/');
-    }
-});
+router.post('/', passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+    failureFlash: true,
+    successFlash: 'You have been successfully logged in!'
+}));
 
 module.exports = router;
