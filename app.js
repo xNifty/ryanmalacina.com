@@ -19,7 +19,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const csp = require('helmet-csp');
 const flash = require('connect-flash');
-//const cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const User = require('./models/user');
 
@@ -96,12 +96,12 @@ app.use(csp({
     directives: nonce_middleware.getDirectives((req, res) => `'${res.locals.cspNonce}'`)
 }));
 
-//app.use(cookieParser());
+app.use(cookieParser());
 
 // Now we don't have to hard-code this into app.js
 const secret_key = config.get('privateKeyName');
 
-//app.set('trust proxy', true);
+app.set('trust proxy', true);
 let sess = {
     secret: config.get(secret_key),
     proxy: config.get('useProxy'),
