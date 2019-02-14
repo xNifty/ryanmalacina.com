@@ -5,19 +5,9 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const auth = require('../middleware/auth');
 
-// Authentication Middleware
-const loggedInOnly = (req, res, next) => {
-    if (req.isAuthenticated()) next();
-    else res.redirect("/login");
-};
-
-const loggedOutOnly = (req, res, next) => {
-    if (req.isUnauthenticated()) next();
-    else res.redirect("/");
-};
-
-router.get("/", loggedOutOnly, async (req, res) => {
+router.get("/", [auth.isLoggedOut], async (req, res) => {
     return res.render("login", {
         title: "Ryan Malacina | Login"
     });

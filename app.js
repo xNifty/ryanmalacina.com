@@ -141,7 +141,7 @@ const local = new LocalStrategy((username, password, done) => {
     User.findOne({ username })
         .then(user => {
             if (!user || !user.validPassword(password)) {
-                done(null, false, { message: "Invalid username or password" });
+                done(null, false, { message: "Invalid username or password!" });
             } else {
                 done(null, user);
             }
