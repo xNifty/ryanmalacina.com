@@ -8,7 +8,6 @@ const passport = require('passport');
 const auth = require('../middleware/auth');
 
 router.get("/", [auth.isLoggedOut], async (req, res) => {
-    console.log(req.session);
     return res.render("login", {
         title: "Ryan Malacina | Login"
     });
