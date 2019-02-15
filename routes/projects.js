@@ -123,7 +123,7 @@ router.get('/:name/edit', [auth.isLoggedIn], async(req, res) => {
         delete req.session.project_name;
         delete req.session.project_title;
         delete req.session.project_source;
-        delete req.session.project_description_markdown
+        delete req.session.project_description_markdown;
         delete req.session.project_image;
     }
 });
