@@ -4,14 +4,14 @@
 {{> header }}
 <body>
     {{> nav}}
-    {{#if loginStatus}}
-        <div class="container">
-            <div class="text-center">
-                <div class="success">{{ loginStatus }}</div>
+    {{#iff success.length '>' 0}}
+        <div class="text-center">
+            <div class="alert alert-success alert-dismissible center-block">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ success }}
             </div>
         </div>
-        {{ resetLoginStatus }}
-    {{/if}}
+    {{/iff}}
     {{{ body }}}
 
     {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}

@@ -1,9 +1,13 @@
 {{#if new_project }}
     <div class="container">
-        <div class="text-center">
-            {{#if error_message}}<div class="error">{{ error_message }}</div>{{/if}}
-            <h1>Create New Project</h1>
-        </div>
+        {{#iff error.length '>' 0}}
+            <div class="text-center">
+                <div class="alert alert-danger alert-dismissible center-block">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    {{ error }}
+                </div>
+            </div>
+        {{/iff}}
         <form action="/projects/new" method="post" enctype="multipart/form-data">
 	        <div class="form-group">
                 Project Name<br> <input type="text" class="custom-text" name="project_name"

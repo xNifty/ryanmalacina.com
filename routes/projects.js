@@ -18,25 +18,10 @@ router.use(fileUpload());
 
 router.get("/", async (req, res) => {
     let project_list = await listProjects();
-    let status = '';
-    let type = '';
-    let message = '';
-
-    if (req.session.success) {
-        if (req.session.success === 1) {
-            message = req.session.success_message;
-            type = 'success';
-            req.session.success = null;
-            req.session.success_message = null;
-        }
-    }
 
     res.render("projects", {
         title: "Ryan Malacina | Projects",
         projects: project_list,
-        status: status,
-        type: type,
-        message: message,
     });
 });
 
@@ -50,20 +35,23 @@ router.get('/new', [auth.isLoggedIn], async(req, res) => {
 router.post('/new', auth.isLoggedIn, async(req, res) => {
     const { error } = validate(req.body);
 
-    if (error) return res.status(400).render('new-project', {
-        layout: 'new-project',
-        new_project: true,
-        error_message: 'An error has occurred. Please make sure all fields are filled and try again.',
-        project_name: req.body.project_name,
-        project_title: req.body.project_title,
-        project_source: req.body.project_source,
-        project_description: req.body.project_description,
-    });
+    if (error) {
+        return res.status(400).render('new-project', {
+            layout: 'new-project',
+            new_project: true,
+            error: 'An error has occurred. Please make sure all fields are filled and try again.',
+            project_name: req.body.project_name,
+            project_title: req.body.project_title,
+            project_source: req.body.project_source,
+            project_description: req.body.project_description,
+        });
+    }
 
     let project = new Project(_.pick(req.body, [
         'project_name', 'project_title', 'project_source'
     ]));
 
+    // @TODO : name these things better
     let pDescription = converter.makeHtml(req.body.project_description);
     let pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
 
@@ -88,7 +76,7 @@ router.post('/new', auth.isLoggedIn, async(req, res) => {
         return res.status(400).render('new-project', {
             layout: 'new-project',
             new_project: true,
-            error_message: 'An error has occurred. Please make sure all fields are filled and try again #2.',
+            error: 'An error has occurred. Please make sure all fields are filled and try again.',
             project_name: req.body.project_name,
             project_title: req.body.project_title,
             project_source: req.body.project_source,
@@ -96,8 +84,7 @@ router.post('/new', auth.isLoggedIn, async(req, res) => {
 	    last_edited: saveDate
         });
     }
-    req.session.success = 1;
-    req.session.success_message = "Project added successfully";
+    req.flash('success', 'Project added successfully!');
     res.redirect('/projects');
 });
 
@@ -111,9 +98,6 @@ router.get('/:name/edit', [auth.isLoggedIn], async(req, res) => {
     // For if the edit fails, otherwise we want to return to the normal project information page
     req.session.projectEditReturnTo = req.originalUrl;
 
-    let error_message = req.session.error_message;
-    req.session.error_message = null;
-
     // If not load from session, then load normally; else, load from session
     if (!req.session.loadProjectFromSession) {
         res.render('new-project', {
@@ -124,7 +108,6 @@ router.get('/:name/edit', [auth.isLoggedIn], async(req, res) => {
             project_source: project.project_source,
             project_description: project.project_description_markdown,
             project_image: project.project_image,
-            error_message: error_message
         });
     } else {
         res.render('new-project', {
@@ -135,7 +118,6 @@ router.get('/:name/edit', [auth.isLoggedIn], async(req, res) => {
             project_source: req.session.project_source,
             project_description: req.session.project_description_markdown,
             project_image: req.session.project_image,
-            error_message: error_message
         });
         delete req.session.loadProjectFromSession;
         delete req.session.project_name;
@@ -214,16 +196,16 @@ router.post('/edit', auth.isLoggedIn, async(req, res) => {
             }
         }
 
-        req.session.success = 1;
-        req.session.success_message = "Project edited successfully!";
         req.session.project_id = null;
 
         if (req.session.projectReturnTo) {
             let returnTo = req.session.projectReturnTo;
             delete req.session.projectReturnTo;
             delete req.session.projectEditReturnTo; // Still need to delete even though we didn't use it
+            req.flash('success', 'Project updated successfully!');
             return res.redirect(returnTo);
         } else {
+            req.flash('success', 'Project updated successfully!');
             return res.redirect('/projects');
         }
     } catch(ex) {
@@ -235,12 +217,13 @@ router.post('/edit', auth.isLoggedIn, async(req, res) => {
         req.session.project_description_markdown = req.body.project_description;
         req.session.project_image = currentImage[0].project_image;
 
-        req.session.error_message = ex.message;
         if (req.session.projectReturnTo) {
             let returnToEdit = req.session.projectEditReturnTo;
             delete req.session.projectEditReturnTo;
+            req.flash('error', ex.message);
             return res.redirect(returnToEdit);
         } else {
+            req.flash('error', ex.message);
             return res.redirect('/projects');
         }
 
@@ -255,23 +238,11 @@ router.get("/:name", async(req, res) => {
        project_name: req.params.name
    });
 
-   let status = '';
-   let type = '';
-   let message = '';
-
-   if (req.session.success) {
-       if (req.session.success === 1) {
-           message = req.session.success_message;
-           type = 'success';
-           delete req.session.success;
-           delete req.session.success_message;
-       }
-   }
-
    req.session.projectReturnTo = req.originalUrl;
 
+   // Intentionally leaving this different, as our "custom" error page doesn't display the text via alerts
    if (!project) return res.render("error", {
-       error: "It appears as though you are trying to access an invalid project. " +
+       error_message: "It appears as though you are trying to access an invalid project. " +
            "Perhaps try <a href=\"\\projects\">again</a>?"
    });
 
@@ -281,9 +252,6 @@ router.get("/:name", async(req, res) => {
        project_description: project.project_description_html,
        project_name: project.project_name,
        is_valid: true,
-       status: status,
-       type: type,
-       message: message,
        last_save_date: dateformat(project.last_edited, "mmmm dd, yyyy @ h:MM TT")
    });
 });

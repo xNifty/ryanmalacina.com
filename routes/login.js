@@ -8,13 +8,14 @@ const passport = require('passport');
 const auth = require('../middleware/auth');
 
 router.get("/", [auth.isLoggedOut], async (req, res) => {
+    console.log(req.session);
     return res.render("login", {
         title: "Ryan Malacina | Login"
     });
 });
 
 router.post('/', passport.authenticate("local", {
-    successRedirect: "/",
+    successReturnToOrRedirect: '/',
     failureRedirect: "/login",
     failureFlash: true,
     successFlash: 'You have been successfully logged in!'
