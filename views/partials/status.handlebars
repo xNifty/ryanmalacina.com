@@ -1,0 +1,20 @@
+{{#if success}}
+    {{#iff success.length '>' 0}}
+        <div class="text-center">
+            <div class="alert alert-success alert-dismissible center-block">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ success }}
+            </div>
+        </div>
+    {{/iff}}
+{{/if}}
+{{#if error}}
+    {{#iff error.length '>' 0}}
+        <div class="text-center">
+            <div class="alert alert-danger alert-dismissible center-block">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ error }}
+            </div>
+        </div>
+    {{/iff}}
+{{/if}}

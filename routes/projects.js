@@ -134,6 +134,8 @@ router.post('/edit', auth.isLoggedIn, async(req, res) => {
 
     try {
         const { error } = validate(req.body);
+        // I should clean up this error messaging code to provide detailed feedback for all required fields
+        // that are either missing or not long enough
         if (error) {
             for (let i = 0; i < error.details.length; i++) {
                 console.log(error.details[i].context.key);

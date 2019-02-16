@@ -1,13 +1,6 @@
 {{#if new_project }}
+    {{> status}}
     <div class="container">
-        {{#iff error.length '>' 0}}
-            <div class="text-center">
-                <div class="alert alert-danger alert-dismissible center-block">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    {{ error }}
-                </div>
-            </div>
-        {{/iff}}
         <form action="/projects/new" method="post" enctype="multipart/form-data">
 	        <div class="form-group">
                 Project Name<br> <input type="text" class="custom-text" name="project_name"
@@ -18,7 +11,8 @@
                                   {{#if project_source}}value="{{project_source}}"{{/if}}><br><br>
                 Project Description<br>
                 <textarea class="input-block-level" id="editor"
-                          name="project_description">{{#if project_description}}{{ project_description }}{{/if}}</textarea>
+                          name="project_description">{{#if project_description}}{{ project_description }}{{/if}}
+                </textarea>
                 Image<br> <input type="file" class="custom-text" name="project_image"><br><br>
 	        </div>
 	        <button type="submit" class="btn btn-primary">
@@ -42,7 +36,8 @@
                                   {{#if project_source}}value="{{project_source}}"{{/if}}><br><br>
                 Project Description<br>
                 <textarea class="form-control" id="editor"
-                          name="project_description">{{#if project_description}}{{ project_description }}{{/if}}</textarea>
+                          name="project_description">{{#if project_description}}{{ project_description }}{{/if}}
+                </textarea>
                 Image<br> <img src="/images/{{ project_image}}">
                 <input type="file" class="custom-text" name="project_image"><br><br>
             </div>
