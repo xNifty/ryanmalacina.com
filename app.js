@@ -119,7 +119,7 @@ let sess = {
 };
 
 // When pushed to production, we do want to use a secure cookie. Local testing we do not.
-sess.cookie.secure = app.get('env') === 'production';
+// This didn't seem to be working in production, so the above was added as a config file option which is probably better
 
 app.use(flash());
 app.use(session(sess));
@@ -182,15 +182,9 @@ app.use(function(req, res, next) {
     if (req.user) {
         res.locals.realName = req.user.realName;
     }
-
-    resetLoginStatus(req, res);
     next();
 });
 
-function resetLoginStatus(req, res) {
-    if (req.session.loginStatus)
-        req.session.loginStatus = null;
-}
 
 // All of our paths
 app.use('/', home);
@@ -234,6 +228,5 @@ app.use(function (err, req, res, next) {
     }
 });
 
-// @TODO: move port declaration into config file instead of hardcoding it
-app.listen(8080);
+app.listen(config.get("port"));
 console.log("Server is now running in " + env + " mode.");
