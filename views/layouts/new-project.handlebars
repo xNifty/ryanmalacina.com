@@ -4,14 +4,7 @@
 {{> header }}
 <body>
     {{> nav}}
-    {{#iff success.length '>' 0}}
-        <div class="text-center">
-            <div class="alert alert-success alert-dismissible center-block">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                {{ success }}
-            </div>
-        </div>
-    {{/iff}}
+    {{> status}}
     {{{ body }}}
 
     {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
