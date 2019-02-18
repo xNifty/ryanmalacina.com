@@ -5,6 +5,6 @@
   "resave": true,
   "saveUninitialized": false,
   "httpOnly": true,
-  "secureCookie": true,
+  "secureCookie": false,
   "port": 8080
 }
