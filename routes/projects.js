@@ -1,4 +1,5 @@
-// TODO: write logic to load project details from database
+// projects.js
+// Handles all of the different project routes
 
 const {Project, validate} = require('../models/projects');
 const mongoose = require('mongoose');
