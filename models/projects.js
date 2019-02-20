@@ -22,12 +22,12 @@ const projectScheme = new mongoose.Schema({
     project_description_markdown: {
         type: String,
         required: true,
-        minlength: 20,
+        minlength: 10,
         maxlength: 25000
     },
     project_description_html: {
         type: String,
-        minlength: 20,
+        minlength: 10,
         maxlength: 25000
     },
     project_image: {
