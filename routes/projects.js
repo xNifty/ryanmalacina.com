@@ -26,14 +26,14 @@ router.get("/", async (req, res) => {
     });
 });
 
-router.get('/new', [auth.isLoggedIn], async(req, res) => {
+router.get('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     res.render('new-project', {
         layout: 'new-project',
         new_project: true,
     });
 });
 
-router.post('/new', auth.isLoggedIn, async(req, res) => {
+router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     const { error } = validate(req.body);
 
     if (error) {
@@ -89,7 +89,7 @@ router.post('/new', auth.isLoggedIn, async(req, res) => {
     res.redirect('/projects');
 });
 
-router.get('/:name/edit', [auth.isLoggedIn], async(req, res) => {
+router.get('/:name/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     const project = await Project.findOne({
         project_name: req.params.name
     });
@@ -129,7 +129,7 @@ router.get('/:name/edit', [auth.isLoggedIn], async(req, res) => {
     }
 });
 
-router.post('/edit', auth.isLoggedIn, async(req, res) => {
+router.post('/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     let currentImage = await Project.find({_id: req.session.project_id}).select(
         { project_image: 1, _id: 0 });
 
