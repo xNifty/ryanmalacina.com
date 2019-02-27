@@ -39,26 +39,30 @@ if (!config.get('rmPrivateKey')) {
 const hbs = exphbs.create({
     defaultLayout: 'main',
     helpers: {
-        iff: function(a, operator, b, opts) {
-            let bool = false;
-            switch(operator) {
+        iff: function(v1, operator, v2, options) {
+            switch (operator) {
+                case '==':
+                    return (v1 == v2) ? options.fn(this) : options.inverse(this);
                 case '===':
-                    bool = a === b;
-                    break;
-                case '>':
-                    bool = a > b;
-                    break;
+                    return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                case '!==':
+                    return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+                case '!=':
+                    return (v1 != v2) ? options.fn(this) : options.inverse(this);
                 case '<':
-                    bool = a < b;
-                    break;
+                    return (v1 < v2) ? options.fn(this) : options.inverse(this);
+                case '<=':
+                    return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+                case '>':
+                    return (v1 > v2) ? options.fn(this) : options.inverse(this);
+                case '>=':
+                    return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+                case '&&':
+                    return (v1 && v2) ? options.fn(this) : options.inverse(this);
+                case '||':
+                    return (v1 || v2) ? options.fn(this) : options.inverse(this);
                 default:
-                    throw "Unknown operator " + operator;
-            }
-
-            if (bool) {
-                return opts.fn(this);
-            } else {
-                return opts.inverse(this);
+                    return options.inverse(this);
             }
         }
     }
@@ -181,6 +185,7 @@ app.use(function(req, res, next) {
 
     if (req.user) {
         res.locals.realName = req.user.realName;
+        res.locals.isAdmin = req.user.isAdmin;
     }
     next();
 });
