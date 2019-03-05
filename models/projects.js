@@ -36,6 +36,10 @@ const projectScheme = new mongoose.Schema({
     },
     last_edited: {
         type: String
+    },
+    is_published: {
+        type: Boolean,
+        default: true
     }
 });
 

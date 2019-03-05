@@ -4,17 +4,22 @@
         contributed to over time.  You can click the project image to learn more about a specific project.  Not every
         project I have worked on may be listed on this page.  To see more things I have worked on that may not be
         listed here, you can visit my GitHub, which you can find by clicking the icon in the footer of the page.</p>
-    <div class="row text-center">
-        {{#each projects as |projects| }}
-            <div class="col-md-3 col-xs-6">
-                <div class="thumbnail">
-                    <a href="/projects/{{ projects.project_name }}">
-                        <img class="img-responsive greyimg" src="/images/{{ projects.project_image }}"
-                             alt="Logo">
-                    </a>
-                    <div class="caption center-block">{{ projects.project_title }}</div>
+    {{#iff projects.length ">" 0}}
+        <div class="row text-center">
+            {{#each projects as |projects| }}
+                <div class="col-md-3 col-xs-6">
+                    <div class="thumbnail">
+                        <a href="/projects/{{ projects.project_name }}">
+                            <img class="img-responsive greyimg" src="/images/{{ projects.project_image }}"
+                                 alt="Logo">
+                        </a>
+                        <div class="caption center-block">{{ projects.project_title }}</div>
+                    </div>
                 </div>
-            </div>
-        {{/each}}
-    </div>
+            {{/each}}
+        </div>
+    {{else}}
+        <hr>
+        There are no published projects at this time.
+    {{/iff}}
 </div>

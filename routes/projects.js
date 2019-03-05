@@ -260,7 +260,12 @@ router.get("/:name", async(req, res) => {
 });
 
 async function listProjects() {
-    return Project.find().select({ project_name: 1, project_image: 1, project_title: 1, _id: 0 });
+    return Project.find({is_published: 1}).select({
+        project_name: 1,
+        project_image: 1,
+        project_title: 1,
+        _id: 0
+    });
 }
 
 module.exports = router;

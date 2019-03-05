@@ -6,10 +6,10 @@
     <p>{{{ project_description }}}</p>
     <hr>
     <div id="edit">
-        {{#if authenticated}}
+        {{#iff authenticated '&&' isAdmin}}
             <div><a href="{{project_name}}/edit" class="btn btn-primary">
                 <span class="glyphicon glyphicon-pencil"></span> Edit Project</a></div>
-        {{/if}}
+        {{/iff}}
         {{#if last_save_date}}<div id="lastedit">Last Updated: {{ last_save_date }}</div>{{/if}}
     </div>
 </div>
