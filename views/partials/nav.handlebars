@@ -35,10 +35,13 @@
                 {{/iff}}
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                {{#if realName }} {{!-- This is coming from res.locals --}}
+                {{#if authenticated }} {{!-- This is coming from res.locals --}}
 		            <li class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">Hello, {{ realName }}</a>
 			            <ul class="dropdown-menu">
+                            {{#if isAdmin}}
+                                <li><a class="nav-link" href="/admin">Admin <span class="fa fa-unlock"></span></a></li>
+                            {{/if}}
                             <li><a class="nav-link" href="/logout">Logout <span class="fa fa-sign-out"></span></a></li>
 			            </ul>
 		            </li>
