@@ -164,6 +164,7 @@ const keybase = require('./routes/keybase');
 const projects = require('./routes/projects');
 const login = require('./routes/login');
 const logout = require('./routes/logout');
+const administration = require('./routes/admin');
 
 // Default values; we can override this on a per-route basis if needed
 // Should I maybe make these a language file and load from there?
@@ -199,6 +200,7 @@ app.use('/keybase.txt', keybase); // For Keybase.io
 app.use('/projects', projects);
 app.use('/login', login);
 app.use('/logout', logout);
+app.use('/admin', administration);
 
 app.get("/blog", function(req, res) {
     res.redirect(301, "https://blog.ryanmalacina.com");
