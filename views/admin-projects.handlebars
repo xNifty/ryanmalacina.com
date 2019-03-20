@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="text-center"><h1>Admin Backend - Projects</h1></div>
+    {{#iff projects.length ">" 0}}
+        <div class="row text-center">
+            {{#each projects as |projects| }}
+                <div class="col-md-2 col-xs-3">
+                    <div class="thumbnail">
+                        <a href="/projects/{{ projects.project_name }}">
+                            <img class="img-responsive greyimg" src="/images/{{ projects.project_image }}"
+                                 alt="Logo">
+                        </a>
+                        <div class="caption center-block">
+                            {{#if projects.is_published}}
+                                {{ projects.project_title }} - Published
+                            {{else}}
+                                {{ projects.project_title }} - Unpublished
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    {{else}}
+        <hr>
+        There are no published projects at this time.
+    {{/iff}}
+</div>

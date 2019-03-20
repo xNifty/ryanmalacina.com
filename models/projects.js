@@ -39,7 +39,7 @@ const projectScheme = new mongoose.Schema({
     },
     is_published: {
         type: Boolean,
-        default: true
+        default: false
     }
 });
 
