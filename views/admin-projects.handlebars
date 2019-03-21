@@ -3,17 +3,18 @@
     {{#iff projects.length ">" 0}}
         <div class="row text-center">
             {{#each projects as |projects| }}
-                <div class="col-md-2 col-xs-3">
+                <div class="col-md-3 col-xs-3">
                     <div class="thumbnail">
                         <a href="/projects/{{ projects.project_name }}">
                             <img class="img-responsive greyimg" src="/images/{{ projects.project_image }}"
                                  alt="Logo">
                         </a>
                         <div class="caption center-block">
+                            {{ projects.project_title }}<br />
                             {{#if projects.is_published}}
-                                {{ projects.project_title }} - Published
+                                Published - <a id="unpublish" href="#">Unpublish</a>
                             {{else}}
-                                {{ projects.project_title }} - Unpublished
+                                Unpublished - <a id="publish" href="#">Publish</a>
                             {{/if}}
                         </div>
                     </div>

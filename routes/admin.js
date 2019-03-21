@@ -21,14 +21,35 @@ router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     });
 });
 
+router.put("/projects/publish/:id", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+   let id = req.params.id;
+   try {
+       await publishProject(id);
+   } catch (e) {
+       console.log(e);
+   }
+});
+
 async function listProjects() {
     return Project.find().select({
         project_name: 1,
         project_image: 1,
         project_title: 1,
         is_published: 1,
-        _id: 0
+        _id: 1
     });
+}
+
+async function publishProject(id) {
+    await Project.findByIdAndUpdate({_id: id}, {
+        is_published: true
+    });
+}
+
+async function unpublishProject(id) {
+    await Project.findByIdAndUpdate({_id: id}, {
+        is_published: false
+    })
 }
 
 module.exports = router;
