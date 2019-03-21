@@ -12,9 +12,9 @@
                         <div class="caption center-block">
                             {{ projects.project_title }}<br />
                             {{#if projects.is_published}}
-                                Published - <a id="unpublish" href="#">Unpublish</a>
+                                Published - <a id="unpublish" href="#" data-id="{{ projects._id}}">Unpublish</a>
                             {{else}}
-                                Unpublished - <a id="publish" href="#">Publish</a>
+                                Unpublished - <a id="publish" href="#" data-id="{{ projects._id}}">Publish</a>
                             {{/if}}
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 //client.js
 $(document).ready(function(){
-    $('.publish').on('click', publishProject);
+    $('#publish').on('click', publishProject);
 });
 
 function publishProject(){
@@ -8,7 +8,6 @@ function publishProject(){
     $.ajax({
         type:'PUT',
         url: '/admin/projects/publish/'+ $(this).data('id'),
-        data: {event_name: change},
     }).done(function(response){
         console.log(response);
         window.location.replace('http://localhost:3030/');
