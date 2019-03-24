@@ -21,13 +21,22 @@ router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     });
 });
 
-router.put("/projects/publish/:id", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+router.put("/projects/publish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
    let id = req.params.id;
    try {
        await publishProject(id);
    } catch (e) {
        console.log(e);
    }
+});
+
+router.put("/projects/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
+    let id = req.params.id;
+    try {
+        await unpublishProject(id);
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 async function listProjects() {

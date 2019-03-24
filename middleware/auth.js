@@ -17,13 +17,14 @@ function loggedOutOnly (req, res, next) {
 }
 
 // Make sure the user is an admin
-function isAdmin( req, res, next) {
+function isAdmin(req, res, next) {
     if (req.user.isAdmin) next();
     else {
         req.flash('error', 'You do not have permission to access this content.');
         res.redirect("/");
     }
 }
+
 
 module.exports.isLoggedIn = loggedInOnly;
 module.exports.isLoggedOut = loggedOutOnly;

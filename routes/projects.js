@@ -244,7 +244,7 @@ router.get("/:name", async(req, res) => {
    req.session.projectReturnTo = req.originalUrl;
 
    // Intentionally leaving this different, as our "custom" error page doesn't display the text via alerts
-   if (!project) return res.render("error", {
+   if (!project || !project.is_published) return res.render("error", {
        error_message: "It appears as though you are trying to access an invalid project. " +
            "Perhaps try <a href=\"\\projects\">again</a>?"
    });
