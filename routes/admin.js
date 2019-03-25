@@ -53,12 +53,16 @@ async function publishProject(id) {
     await Project.findByIdAndUpdate({_id: id}, {
         is_published: true
     });
+
+    return success;
 }
 
 async function unpublishProject(id) {
     await Project.findByIdAndUpdate({_id: id}, {
         is_published: false
-    })
+    });
+
+    return success;
 }
 
 module.exports = router;

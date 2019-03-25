@@ -1,31 +1,36 @@
 //client.js
 $(document).ready(function(){
-    $('#publish').on('click', publishProject);
-    $('#unpublish').on('click', unpublishProject);
+    $('.publish').on('click', publishProject);
+});
+
+$(document).ready(function(){
+    $('.unpublish').on('click', unpublishProject);
 });
 
 function publishProject(){
-    alert("Publish");
     $.ajax({
         type:'PUT',
         url: '/admin/projects/publish/'+ $(this).data('id'),
-    }).done(function(response){
-        console.log(response);
-        window.location.replace('http://localhost:8080/');
+    }).done(function(res) {
+        if (res.success) {
+            // reload page
+            window.location.reload();
+        }
     }).fail(function(response){
-        console.log("Oops not working");
+        alert("Oops not working");
     });
 }
 
 function unpublishProject() {
-    alert("Unpublish");
     $.ajax({
         type:'PUT',
         url: '/admin/projects/unpublish/'+ $(this).data('id'),
-    }).done(function(response){
-        console.log(response);
-        window.location.replace('http://localhost:3030/');
+    }).done(function(res) {
+        if (res.success) {
+            // reload page
+            window.location.reload();
+        }
     }).fail(function(response){
-        console.log("Oops not working");
+        alert("Oops not working");
     });
 }
