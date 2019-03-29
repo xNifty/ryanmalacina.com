@@ -7,10 +7,17 @@ $(document).ready(function(){
     $('.unpublish').on('click', unpublishProject);
 });
 
+$(document).ready(function() {
+    $.ajaxSetup({ cache: false }); // This part addresses an IE bug.  without it, IE will only load the first number and will never refresh
+    setInterval(function() {
+        $('#projectlist').load('/admin/projects/api/get');
+    }, 3000); // the "3000" here refers to the time to refresh the div.  it is in milliseconds.
+});
+
 function publishProject(){
     $.ajax({
         type:'PUT',
-        url: '/admin/projects/publish/'+ $(this).data('id'),
+        url: '/admin/projects/api/publish/'+ $(this).data('id'),
     }).done(function(res) {
         if (res.success) {
             // reload page
@@ -24,7 +31,7 @@ function publishProject(){
 function unpublishProject() {
     $.ajax({
         type:'PUT',
-        url: '/admin/projects/unpublish/'+ $(this).data('id'),
+        url: '/admin/projects/api/unpublish/'+ $(this).data('id'),
     }).done(function(res) {
         if (res.success) {
             // reload page
@@ -34,3 +41,13 @@ function unpublishProject() {
         alert("Oops not working");
     });
 }
+
+function getProjects() {
+    $.ajax({
+        type: 'GET',
+        url: '/admin/projects/api/get',
+    }).done(function(res) {
+
+    })
+}
+

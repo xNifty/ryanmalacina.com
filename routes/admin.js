@@ -17,11 +17,10 @@ router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 
     res.render("admin-projects", {
         title: "Ryan Malacina | Admin Backend - Projects",
-        projects: project_list,
     });
 });
 
-router.put("/projects/publish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
+router.put("/projects/api/publish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
    let id = req.params.id;
    try {
        await publishProject(id);
@@ -30,13 +29,22 @@ router.put("/projects/publish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, 
    }
 });
 
-router.put("/projects/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
+router.put("/projects/api/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     let id = req.params.id;
     try {
         await unpublishProject(id);
     } catch (e) {
         console.log(e);
     }
+});
+
+router.put("/projects/api/get", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
+    let project_list = await listProjects();
+    res.render('partials/api-getprojects', {
+        layout: false,
+        projects: project_list,
+    })
+
 });
 
 async function listProjects() {
@@ -59,7 +67,7 @@ async function publishProject(id) {
 
 async function unpublishProject(id) {
     await Project.findByIdAndUpdate({_id: id}, {
-        is_published: false
+        is_published: false,
     });
 
     return success;
