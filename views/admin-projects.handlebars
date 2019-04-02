@@ -1,21 +1,6 @@
 <div class="container">
     <div class="text-center"><h1>Admin Backend - Projects</h1></div>
-    {{#iff projects.length ">" 0}}
-        <div class="row text-center">
-            {{#each projects as |projects| }}
-                <div class="col-md-12 col-xs-3">
-                    <div class="thumbnail">
-                        <a href="/projects/{{ projects.project_name }}">
-                            <img class="img-responsive greyimg" src="/images/{{ projects.project_image }}"
-                                 alt="Logo">
-                        </a>
-                        {{> api-getprojects }}
-                    </div>
-                </div>
-            {{/each}}
-        </div>
-    {{else}}
-        <hr>
-        There are no published projects at this time.
-    {{/iff}}
+    <div id="adminprojectlist">
+        {{> api-getprojects }}
+    </div>
 </div>

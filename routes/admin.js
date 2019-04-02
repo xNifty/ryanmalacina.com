@@ -13,8 +13,6 @@ router.get("/", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 });
 
 router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
-    let project_list = await listProjects();
-
     res.render("admin-projects", {
         title: "Ryan Malacina | Admin Backend - Projects",
     });
@@ -38,22 +36,23 @@ router.put("/projects/api/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async
     }
 });
 
-router.put("/projects/api/get", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
-    let project_list = await listProjects();
-    res.render('partials/api-getprojects', {
-        layout: false,
-        projects: project_list,
-    })
-
+router.get("/projects/api/get", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
+    return await listProjects('', function(err, prj) {
+        if (err) {
+            console.log(err);
+        }
+        res.render('partials/api-getprojects', {
+            layout: false,
+            projects: prj
+        });
+    });
 });
 
-async function listProjects() {
-    return Project.find().select({
-        project_name: 1,
-        project_image: 1,
-        project_title: 1,
-        is_published: 1,
-        _id: 1
+async function listProjects({}, callback) {
+    return Project.find().
+    exec(function(err, prj) {
+        prj.reverse();
+        callback(err, prj);
     });
 }
 
