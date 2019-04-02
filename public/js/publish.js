@@ -1,20 +1,20 @@
-//client.js
-$(document).ready(function(){
-    $('.publish').on('click', publishProject);
-});
-
-$(document).ready(function(){
-    $('.unpublish').on('click', unpublishProject);
-});
-
 $(document).ready(function() {
-    $.ajaxSetup({ cache: false }); // This part addresses an IE bug.  without it, IE will only load the first number and will never refresh
-    setInterval(function() {
-        $('#adminprojectlist').load('/admin/projects/api/get');
-    }, 3000); // the "3000" here refers to the time to refresh the div.  it is in milliseconds.
+    $.ajaxSetup({ cache: false });
+    $('#adminprojectlist').load('/admin/projects/api/get');
 });
 
-function publishProject(){
+$(document).on("click", ".publish", function() {
+    publishProject();
+    $('#adminprojectlist').load('/admin/projects/api/get');
+});
+
+$(document).on("click", ".unpublish", function() {
+    unpublishProject();
+    $('#adminprojectlist').load('/admin/projects/api/get');
+});
+
+function publishProject() {
+    alert("CLICKED");
     $.ajax({
         type:'PUT',
         url: '/admin/projects/api/publish/'+ $(this).data('id'),
@@ -29,6 +29,7 @@ function publishProject(){
 }
 
 function unpublishProject() {
+    alert("CLICKED");
     $.ajax({
         type:'PUT',
         url: '/admin/projects/api/unpublish/'+ $(this).data('id'),
@@ -40,14 +41,5 @@ function unpublishProject() {
     }).fail(function(response){
         alert("Oops not working");
     });
-}
-
-function getProjects() {
-    $.ajax({
-        type: 'GET',
-        url: '/admin/projects/api/get',
-    }).done(function(res) {
-
-    })
 }
 
