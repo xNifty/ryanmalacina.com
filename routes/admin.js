@@ -54,7 +54,6 @@ async function publishProject(id) {
         await Project.findByIdAndUpdate({_id: id}, {
             is_published: true
         });
-        console.log('completed publish');
         return true;
     } catch(err) {
         console.log(err);
@@ -67,7 +66,6 @@ async function unpublishProject(id) {
         await Project.findByIdAndUpdate({_id: id}, {
             is_published: false
         });
-        console.log('completed unpublish');
         return true;
     } catch(err) {
         console.log(err);
