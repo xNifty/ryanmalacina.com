@@ -23,19 +23,19 @@ router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 
 router.put("/projects/publish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     let id = req.params.id;
-    try {
-        await publishProject(id);
-    } catch (e) {
-        console.log(e);
+    if (await publishProject(id)) {
+        return res.end('{"success" : "Updated Successfully", "status" : 200}');
+    } else {
+        return res.end('{"success" : "Server error", "status" : 500}');
     }
 });
 
 router.put("/projects/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     let id = req.params.id;
-    try {
-        await unpublishProject(id);
-    } catch (e) {
-        console.log(e);
+    if (await unpublishProject(id)) {
+        return res.end('{"success" : "Updated Successfully", "status" : 200}');
+    } else {
+        return res.end('{"success" : "Server error", "status" : 500}');
     }
 });
 
@@ -50,15 +50,29 @@ async function listProjects() {
 }
 
 async function publishProject(id) {
-    await Project.findByIdAndUpdate({_id: id}, {
-        is_published: true
-    });
+    try {
+        await Project.findByIdAndUpdate({_id: id}, {
+            is_published: true
+        });
+        console.log('completed publish');
+        return true;
+    } catch(err) {
+        console.log(err);
+        return false;
+    }
 }
 
 async function unpublishProject(id) {
-    await Project.findByIdAndUpdate({_id: id}, {
-        is_published: false
-    });
+    try {
+        await Project.findByIdAndUpdate({_id: id}, {
+            is_published: false
+        });
+        console.log('completed unpublish');
+        return true;
+    } catch(err) {
+        console.log(err);
+        return false;
+    }
 }
 
 module.exports = router;

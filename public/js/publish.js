@@ -1,30 +1,36 @@
 //client.js
-$(document).ready(function(){
+$(document).ready(function() {
     $('.publish').on('click', publishProject);
 });
 
-$(document).ready(function(){
+$(document).ready(function() {
     $('.unpublish').on('click', unpublishProject);
 });
 
-function publishProject(){
+function publishProject() {
     $.ajax({
         type:'PUT',
         url: '/admin/projects/publish/'+ $(this).data('id'),
+        datatype: "json",
     }).done(function()  {
-        alert("Success.");
+        window.location.reload();
     }).fail(function()  {
-        alert("Sorry. Server unavailable. ");
+        alert("There was an issue publishing.  Check the error log.")
     });
+
+    return false;
 }
 
 function unpublishProject() {
     $.ajax({
         type:'PUT',
         url: '/admin/projects/unpublish/'+ $(this).data('id'),
+        datatype: "json",
     }).done(function()  {
-        alert("Success.");
+        window.location.reload();
     }).fail(function()  {
-        alert("Sorry. Server unavailable. ");
+        alert("There was an issue unpublishing.  Check the error log.")
     });
+
+    return false;
 }
