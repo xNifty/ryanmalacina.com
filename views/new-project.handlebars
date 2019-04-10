@@ -33,7 +33,15 @@
                 <textarea class="form-control" id="editor"
                           name="project_description">{{#if project_description}}{{ project_description }}{{/if}}
                 </textarea>
-                Image<br> <img src="/images/{{ project_image}}">
+                <div class="col-md-3 col-xs-6">
+                    <div class="thumbnail">
+                        <a href="/projects/{{ projects.project_name }}">
+                            <img class="img-responsive" src="/images/{{ project_image}}""
+                                 alt="Logo">
+                        </a>
+                        <div class="caption center-block">Current Image</div>
+                    </div>
+                </div>
                 <input type="file" class="custom-text" name="project_image"><br><br>
             </div>
 	        <button type="submit" class="btn btn-primary">

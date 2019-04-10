@@ -238,7 +238,7 @@ router.post('/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 // We can clearly get the ID like we do in other routes, so this really needs to be changed to ID loading
 router.get("/:name", async(req, res) => {
    const project = await Project.findOne({
-       project_name: req.params.name
+       project_name: req.params.name,
    });
 
    req.session.projectReturnTo = req.originalUrl;
@@ -255,7 +255,8 @@ router.get("/:name", async(req, res) => {
        project_description: project.project_description_html,
        project_name: project.project_name,
        is_valid: true,
-       last_save_date: dateformat(project.last_edited, "mmmm dd, yyyy @ h:MM TT")
+       last_save_date: dateformat(project.last_edited, "mmmm dd, yyyy @ h:MM TT"),
+       title: 'Ryan Malacina | ' + project.project_name,
    });
 });
 

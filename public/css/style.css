@@ -198,3 +198,7 @@ input[type="text"] {
 .editor-toolbar {
     background-color: white;
 }
+
+.container a, a:hover, a:active, a:visited > div:not(#edit) > div:not(#update) {
+    color: #00CF32;
+}
