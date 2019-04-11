@@ -26,6 +26,19 @@ html {
     color: white;
 }
 
+#project-header {
+    text-align: center;
+    position: relative;
+}
+
+#project-header #editbtn-wrapper {
+    position: absolute;
+}
+
+#project-header h1 {
+    display: inline;
+}
+
 h1 {
     font-weight: 700;
     font-size: 2em;
@@ -100,7 +113,7 @@ td, th {
 .greyimg:hover {
     filter: none;
     -webkit-filter: grayscale(0);
-    -webkit-transform: scale(1.01);
+    /*-webkit-transform: scale(1.01);*/
 }
 
 .custom-text {
@@ -163,15 +176,25 @@ only screen and (max-width: 760px),
 }
 
 #edit {
-    float: left;
+    float: right;
 }
 
-.navbar-default .navbar-nav > li.dropdown:hover > a, .navbar-default .navbar-nav > li.dropdown:hover > a:hover, .navbar-default .navbar-nav > li.dropdown:hover > a:focus {
+.navbar-default .navbar-nav > li.dropdown:hover > a,
+.navbar-default .navbar-nav > li.dropdown:hover > a:hover, .navbar-default .navbar-nav > li.dropdown:hover > a:focus {
     background-color: rgb(231, 231, 231);
     color: rgb(85, 85, 85);
 }
+
 li.dropdown:hover > .dropdown-menu {
     display: block;
+}
+
+li.dropdown:hover > .dropdown-menu a {
+    color: black;
+}
+
+.container .navbar-header a.navbar-brand {
+    color: #777;
 }
 
 #lastedit {
@@ -199,6 +222,27 @@ input[type="text"] {
     background-color: white;
 }
 
-.container a, a:hover, a:active, a:visited > div:not(#edit) > div:not(#update) {
+.container a, .container a:active, .container a:visited {
     color: #00CF32;
+}
+
+.container a:hover {
+    color: orange;
+    text-decoration: none;
+}
+
+a.publish, a:hover.publish, a:active.publish, a:visited.publish {
+    color: blue;
+}
+
+a.unpublish, a:hover.unpublish, a:active.unpublish, a:visited.unpublish {
+    color: blue;
+}
+
+a.btn.btn-primary {
+    color: white;
+}
+
+section.social a:hover {
+    color: orange;
 }

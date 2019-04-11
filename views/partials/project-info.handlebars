@@ -1,15 +1,19 @@
 <div class="container">
     <div class="text-center">
-        <h1>{{ project_title }}</h1>
+        <div id="project-header">
+            {{#iff authenticated '&&' isAdmin}}
+                <div id="editbtn-wrapper">
+                    <span id="editbutton"><a href="{{project_name}}/edit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-pencil"></span> Edit Project</a>
+                    </span>
+                </div>
+            {{/iff}}
+            <h1>{{ project_title }}</h1>
+        </div>
         <h4><a href="{{ project_source }}" target="_blank">Source</a></h4>
     </div>
     <p>{{{ project_description }}}</p>
-    <hr>
     <div id="edit">
-        {{#iff authenticated '&&' isAdmin}}
-            <div><a href="{{project_name}}/edit" class="btn btn-primary">
-                <span class="glyphicon glyphicon-pencil"></span> Edit Project</a></div>
-        {{/iff}}
         {{#if last_save_date}}<div id="lastedit">Last Updated: {{ last_save_date }}</div>{{/if}}
     </div>
 </div>
