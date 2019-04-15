@@ -21,7 +21,7 @@ function isAdmin(req, res, next) {
     if (req.user.isAdmin) next();
     else {
         req.flash('error', 'You do not have permission to access this content.');
-        res.redirect("/");
+        res.status(401);
     }
 }
 

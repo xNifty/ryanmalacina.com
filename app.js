@@ -173,7 +173,8 @@ app.locals = {
     title: "Ryan Malacina | ryanmalacina.com",
     pageNotFound: "Seems this page doesn't exist...sorry about that!",
     serverError: "Uh oh, something went wrong when loading this page.",
-    environment: app.get('env')
+    environment: app.get('env'),
+    notAuthorized: "Unauthorized"
 };
 
 app.use(function(req, res, next) {
@@ -226,12 +227,19 @@ app.use(function (err, req, res, next) {
     let status = err.status ? err.status : 500;
     if (status === 404) {
         res.render('error', {
-            error: env === 'development' ? err.stack.replace("\n", "<br />") : app.locals.pageNotFound
+            error: env === 'development' ? err.stack.replace("\n", "<br />") : app.locals.pageNotFound,
+            status_code: "404 - Not Found"
         });
     } else if (status === 500) {
         res.render('error', {
-            error: env ==='development' ? err.stack.replace("\n", "<br />") : app.locals.serverError
+            error: env ==='development' ? err.stack.replace("\n", "<br />") : app.locals.serverError,
+            status_code: "500 - Server Error"
         });
+    } else if (status === 401) {
+        res.render('error', {
+            error: app.locals.notAuthorized,
+            status_code: "401 - Unauthorized"
+        })
     }
 });
 

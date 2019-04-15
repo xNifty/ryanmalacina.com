@@ -277,3 +277,13 @@ section.social a:hover {
     opacity:1;filter:"alpha(opacity=100)";
     -ms-filter:"alpha(opacity=100)";
 }
+
+#homepage {
+    opacity: 1;
+    transition: 1s opacity;
+}
+
+#homepage.fade-out {
+    opacity: 0;
+    transition: none;
+}

@@ -48,3 +48,5 @@ $(document).ready(function(){
         return false;
     });
 });
+
+$("#homepage").hide().show("slide", { direction: "left" }, 1500);
