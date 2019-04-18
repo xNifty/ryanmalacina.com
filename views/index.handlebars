@@ -1,7 +1,35 @@
-<div class="container">
+<div class="container" id="welcome">
     <div class="text-center"><h1>Ryan Malacina</h1></div>
     <p>Hey there, and welcome to my site!</p>
     <p>I am currently working on updating the site and making overhauling changes to make the site more unique
     to me and only me.  You can navigate around what portions of the site are complete by clicking the relevant link
     in the navigation bar.</p>
+</div>
+<hr>
+<div class="container" id="projects">
+    <div class="text-center"><h1>Projects</h1></div>
+    <p>I work on multiple different projects in my free time, some of which are completed, and others that are
+    simply basic ideas that I started but may not have finished.  Below are the top three projects that I am
+    either working on or have finished and are what I consider major things I've worked on.  To visit the full
+    list of all projects I have worked on, you can either click Projects in the navigation bar or access them
+    by clicking <a href="projects">here</a>.</p>
+    {{#iff projects.length ">" 0}}
+        <div class="row text-center">
+            {{#each projects as |projects| }}
+                <div class="col-md-3 col-xs-3">
+                    <div class="thumbnail">
+                        <a href="/projects/{{ projects.project_name }}/edit">
+                            <img class="img-responsive greyimg" src="/images/{{ projects.project_image }}"
+                                 alt="Logo">
+                        </a>
+                        <div class="caption center-block">
+                            {{ projects.project_title }}
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    {{else}}
+        There are no published projects at this time.
+    {{/iff}}
 </div>

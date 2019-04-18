@@ -22,6 +22,7 @@ const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const User = require('./models/user');
+const auth = require('./middleware/auth');
 
 const nonce_middleware = require('./middleware/nonce');
 
@@ -166,6 +167,7 @@ const login = require('./routes/login');
 const logout = require('./routes/logout');
 const administration = require('./routes/admin');
 
+
 // Default values; we can override this on a per-route basis if needed
 // Should I maybe make these a language file and load from there?
 app.locals = {
@@ -191,7 +193,6 @@ app.use(function(req, res, next) {
     }
     next();
 });
-
 
 // All of our paths
 app.use('/', home);
