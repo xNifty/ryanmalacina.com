@@ -39,6 +39,12 @@
     <section class="mb-4">
         <!--Section heading-->
         <h2 class="h1-responsive font-weight-bold text-center my-4">Contact Me</h2>
+        <div class="text-center">
+            <div class="alert alert-danger alert-dismissible center-block">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <span id="emailerror"></span>
+            </div>
+        </div>
         <!--Section description-->
         <p class="text-center w-responsive mx-auto mb-5">Shoot me a message and I'll get back to you as soon as I can.</p>
         <div class="row">
@@ -51,7 +57,7 @@
                         <div class="col-md-6">
                             <div class="md-form mb-0">
                                 <input type="text" id="name" name="name" class="form-control">
-                                <label for="name" class="">Your name</label>
+                                <label for="name" class="">Name</label>
                             </div>
                         </div>
                         <!--Grid column-->
@@ -91,7 +97,7 @@
                 <div class="text-center text-md-left">
                     <a class="btn btn-primary" id="submitmail">Send</a>
                 </div>
-                <div class="status"></div>
+                <div id="status"></div>
             </div>
         </div>
     </section>

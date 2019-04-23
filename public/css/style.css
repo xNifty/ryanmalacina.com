@@ -287,3 +287,7 @@ section.social a:hover {
     opacity: 0;
     transition: none;
 }
+
+.errortext {
+    color: indianred;
+}

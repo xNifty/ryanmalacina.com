@@ -48,36 +48,36 @@ $(document).ready(function(){
         return false;
     });
     $('#submitmail').click(function() {
-        validateForm;
+        validateForm();
     });
 });
 
 function validateForm() {
     let name =  document.getElementById('name').value;
-    console.log(name);
+    let errortext = '';
     if (name === "") {
-        document.getElementById('status').innerHTML = "Name cannot be empty";
-        return false;
+        errortext += 'Name is a required field.<br />';
     }
     let email =  document.getElementById('email').value;
     if (email === "") {
-        document.getElementById('status').innerHTML = "Email cannot be empty";
-        return false;
+        errortext += 'Email is a required field.<br />'
     } else {
         let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if(!re.test(email)){
-            document.getElementById('status').innerHTML = "Email format invalid";
-            return false;
+            errortext += 'Please provide a valid email.<br />'
         }
     }
     let subject =  document.getElementById('subject').value;
     if (subject === "") {
-        document.getElementById('status').innerHTML = "Subject cannot be empty";
-        return false;
+        errortext += 'Subject is a required field.<br />'
     }
     let message =  document.getElementById('message').value;
     if (message === "") {
-        document.getElementById('status').innerHTML = "Message cannot be empty";
+        errortext += 'Message is a required field.'
+    }
+
+    if (errortext !== '') {
+        document.getElementById('emailerror').innerHTML = errortext;
         return false;
     }
     document.getElementById('status').innerHTML = "Sending...";
