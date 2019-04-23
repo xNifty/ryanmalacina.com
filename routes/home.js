@@ -20,6 +20,18 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.post('/send', async(req, res) => {
+   let name = req.body.name;
+   let email = req.body.email;
+   let subject = req.body.subject;
+   let message = req.body.message;
+   console.log(name);
+   console.log(email);
+   console.log(subject);
+   console.log(message);
+   res.redirect('/');
+});
+
 async function listProjects() {
     return Project.find({is_published: 1}).select({
         project_name: 1,
