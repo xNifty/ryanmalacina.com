@@ -54,7 +54,7 @@ $(document).ready(function(){
 
 function validateForm() {
     let name =  document.getElementById('name').value;
-    let errortext = '';
+    let errortext = "";
     if (name === "") {
         errortext += 'Name is a required field.<br />';
     }
@@ -76,12 +76,11 @@ function validateForm() {
         errortext += 'Message is a required field.'
     }
 
-    if (errortext !== '') {
+    if (errortext === 'test') {
         document.getElementById('emailerror').innerHTML = errortext;
+        document.getElementById('emailalert').style.visibility = 'visible';
         return false;
     }
-    document.getElementById('status').innerHTML = "Sending...";
-    document.getElementById('contact-form').submit();
 
 }
 

@@ -291,3 +291,7 @@ section.social a:hover {
 .errortext {
     color: indianred;
 }
+
+.emailalert {
+    visibility: hidden;
+}
