@@ -292,6 +292,7 @@ section.social a:hover {
     color: indianred;
 }
 
-.emailalert {
-    visibility: hidden;
+#emailalert {
+    position: absolute;
+    opacity: 0;
 }

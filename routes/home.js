@@ -21,15 +21,9 @@ router.get("/", async (req, res) => {
 });
 
 router.post('/send', async(req, res) => {
-   let name = req.body.name;
-   let email = req.body.email;
-   let subject = req.body.subject;
-   let message = req.body.message;
-   console.log(name);
-   console.log(email);
-   console.log(subject);
-   console.log(message);
-   res.redirect('/');
+   // Handle all of the mail sending stuff, and then update tha entire div to say thank you
+   console.log("Mail should have been sent.");
+   return true;
 });
 
 async function listProjects() {

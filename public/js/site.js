@@ -50,7 +50,18 @@ $(document).ready(function(){
     $('#submitmail').click(function() {
         validateForm();
     });
+
 });
+
+function SubmitMail (){
+    $.ajax({
+        url:'/send',
+        type:'post',
+        data:$('#contact-form').serialize(),
+    }).success(function() {
+        document.getElementById('contactformdiv').innerHTML = "Message sent!";
+    });
+}
 
 function validateForm() {
     let name =  document.getElementById('name').value;
@@ -76,11 +87,14 @@ function validateForm() {
         errortext += 'Message is a required field.'
     }
 
-    if (errortext === 'test') {
+    if (errortext !== '') {
         document.getElementById('emailerror').innerHTML = errortext;
-        document.getElementById('emailalert').style.visibility = 'visible';
+        document.getElementById('emailalert').style.position = 'static';
+        document.getElementById('emailalert').style.opacity = '1';
         return false;
     }
+
+    SubmitMail();
 
 }
 
