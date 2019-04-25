@@ -2,6 +2,21 @@ const express = require('express');
 const router = express.Router();
 const {Project, validate} = require('../models/projects');
 const mongoose = require('mongoose');
+const config = require('config');
+
+const nodemailer = require('nodemailer');
+const mg = require('nodemailer-mailgun-transport');
+
+// This is your API key that you retrieve from www.mailgun.com/cp (free up to 10K monthly emails)
+const auth = {
+    auth: {
+        api_key: config.get("mailgunAPI"),
+        domain: config.get("mailgunDomain")
+    },
+    proxy: 'http://user:pass@localhost:8080' // optional proxy, default is false
+};
+
+const nodemailerMailgun = nodemailer.createTransport(mg(auth));
 
 router.get("/", async (req, res) => {
     let project_list = await listProjects();
@@ -21,9 +36,30 @@ router.get("/", async (req, res) => {
 });
 
 router.post('/send', async(req, res) => {
-   // Handle all of the mail sending stuff, and then update tha entire div to say thank you
-   console.log("Mail should have been sent.");
-   return true;
+   let fromEmail = req.body.email;
+   let toEmail = 'ryan@ryanmalacina.com';
+   let subject = req.body.subject;
+   let message = req.body.message;
+   try {
+       nodemailerMailgun.sendMail({
+           from: fromEmail,
+           to: toEmail, // An array if you have multiple recipients.
+           subject: subject,
+           //html: message,
+           text: message,
+       }, (err, info) => {
+           if (err) {
+               console.log(`Error: ${err}`);
+           }
+           else {
+               console.log(`Response: ${info}`);
+           }
+       });
+       return res.end('{"success" : "Updated Successfully", "status" : 200}');
+   } catch (ex) {
+       console.log(ex);
+       return res.end('{"fail" : "Email sending issue", "status" : 500}');
+   }
 });
 
 async function listProjects() {

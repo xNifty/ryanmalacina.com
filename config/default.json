@@ -6,5 +6,8 @@
   "saveUninitialized": false,
   "httpOnly": true,
   "secureCookie": false,
-  "port": 8080
+  "port": 8080,
+  "mailgunAPI": "apikey",
+  "mailgunDomain": "domain",
+  "mailgunToEmail": "myemail"
 }

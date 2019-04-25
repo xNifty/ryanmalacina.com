@@ -35,7 +35,7 @@ router.put("/projects/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req
     if (await unpublishProject(id)) {
         return res.end('{"success" : "Updated Successfully", "status" : 200}');
     } else {
-        return res.end('{"success" : "Server error", "status" : 500}');
+        return res.end('{"fail" : "Server error", "status" : 500}');
     }
 });
 
