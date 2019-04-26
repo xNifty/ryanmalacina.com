@@ -14,7 +14,7 @@ function publishProject() {
         datatype: "json",
     }).done(function()  {
         window.location.reload();
-    }).fail(function()  {
+    }).error(function()  {
         alert("There was an issue publishing.  Check the error log.")
     });
 
@@ -28,7 +28,7 @@ function unpublishProject() {
         datatype: "json",
     }).done(function()  {
         window.location.reload();
-    }).fail(function()  {
+    }).error(function()  {
         alert("There was an issue unpublishing.  Check the error log.")
     });
 
@@ -66,7 +66,7 @@ function SubmitMail (){
         document.getElementById('emailerror').innerHTML = '';
         document.getElementById('emailalert').style.position = 'absolute';
         document.getElementById('emailalert').style.opacity = '0';
-    }).fail(function()  {
+    }).error(function()  {
         document.getElementById('emailerror').innerHTML = "There was an error sending an email..." +
             "please try again and let me know if it doesn't work.";
         document.getElementById('emailalert').style.position = 'absolute';

@@ -13,7 +13,7 @@ const auth = {
         api_key: config.get("mailgunAPI"),
         domain: config.get("mailgunDomain")
     },
-    proxy: 'http://user:pass@localhost:8080' // optional proxy, default is false
+    proxy: false // optional proxy, default is false
 };
 
 const nodemailerMailgun = nodemailer.createTransport(mg(auth));
@@ -50,12 +50,13 @@ router.post('/send', async(req, res) => {
        }, (err, info) => {
            if (err) {
                console.log(`Error: ${err}`);
+               return res.end('{"fail" : "Email sending issue", "status" : 500}');
            }
            else {
-               console.log(`Response: ${info}`);
+               console.log("This should have worked...");
+               return res.end('{"success" : "Updated Successfully", "status" : 200}');
            }
        });
-       return res.end('{"success" : "Updated Successfully", "status" : 200}');
    } catch (ex) {
        console.log(ex);
        return res.end('{"fail" : "Email sending issue", "status" : 500}');
