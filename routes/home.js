@@ -37,7 +37,7 @@ router.get("/", async (req, res) => {
 
 router.post('/send', async(req, res) => {
    let fromEmail = req.body.email;
-   let toEmail = 'ryan@ryanmalacina.com';
+   let toEmail = config.get('mailgunToEmail');
    let subject = req.body.subject;
    let message = req.body.message;
    try {
@@ -50,16 +50,18 @@ router.post('/send', async(req, res) => {
        }, (err, info) => {
            if (err) {
                console.log(`Error: ${err}`);
-               return res.end('{"fail" : "Email sending issue", "status" : 500}');
+               res.setHeader('Content-Type', 'application/json');
+               return res.end(JSON.stringify({fail : "Updated Successfully", status : 400}));
            }
            else {
-               console.log("This should have worked...");
-               return res.end('{"success" : "Updated Successfully", "status" : 200}');
+               res.setHeader('Content-Type', 'application/json');
+               return res.end(JSON.stringify({success : "Updated Successfully", status : 200}));
            }
        });
    } catch (ex) {
        console.log(ex);
-       return res.end('{"fail" : "Email sending issue", "status" : 500}');
+       res.setHeader('Content-Type', 'application/json');
+       return res.end(JSON.stringify({fail : "Updated Successfully", status : 500}));
    }
 });
 

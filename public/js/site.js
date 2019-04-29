@@ -14,7 +14,7 @@ function publishProject() {
         datatype: "json",
     }).done(function()  {
         window.location.reload();
-    }).error(function()  {
+    }).fail(function()  {
         alert("There was an issue publishing.  Check the error log.")
     });
 
@@ -28,7 +28,7 @@ function unpublishProject() {
         datatype: "json",
     }).done(function()  {
         window.location.reload();
-    }).error(function()  {
+    }).fail(function()  {
         alert("There was an issue unpublishing.  Check the error log.")
     });
 
@@ -58,19 +58,28 @@ function SubmitMail (){
         url:'/send',
         type:'post',
         data:$('#contact-form').serialize(),
-        datatype: "json",
-    }).done(function()  {
-        document.getElementById('contactformdiv').innerHTML = "<div class=\"text-center\">\n" +
-            "<div class=\"alert alert-success alert-dismissible center-block\">Message sent! I'll get back to you" +
-            " as soon as I can!</div></div>";
-        document.getElementById('emailerror').innerHTML = '';
-        document.getElementById('emailalert').style.position = 'absolute';
-        document.getElementById('emailalert').style.opacity = '0';
-    }).error(function()  {
+        datatype: "jsonp",
+    success: function(json)  {
+            alert(json.status);
+            if (json.status === 200) {
+                document.getElementById('contactformdiv').innerHTML = "<div class=\"text-center\">\n" +
+                    "<div class=\"alert alert-success alert-dismissible center-block\">Message sent! I'll get back to you" +
+                    " as soon as I can!</div></div>";
+                document.getElementById('emailerror').innerHTML = '';
+                document.getElementById('emailalert').style.position = 'absolute';
+                document.getElementById('emailalert').style.opacity = '0';
+            } else {
+                alert("REEEE");
+                document.getElementById('emailerror').innerHTML = "There was an error sending an email..." +
+                    "please try again.";
+            }
+    },
+    error: function()  {
         document.getElementById('emailerror').innerHTML = "There was an error sending an email..." +
             "please try again and let me know if it doesn't work.";
         document.getElementById('emailalert').style.position = 'absolute';
         document.getElementById('emailalert').style.opacity = '0';
+    }
     });
 }
 
