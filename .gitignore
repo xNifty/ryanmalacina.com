@@ -4,4 +4,4 @@ node_modules/
 yarn-error.log
 /public/images/
 TODO.md
-config/default.json
+/config/default.json
