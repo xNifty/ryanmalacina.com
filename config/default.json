@@ -7,7 +7,7 @@
   "httpOnly": true,
   "secureCookie": false,
   "port": 8080,
-  "mailgunAPI": "apikey",
-  "mailgunDomain": "domain",
-  "mailgunToEmail": "myemail"
+  "mailgunAPI": "mailgunKey",
+  "mailgunDomain": "mailgunDomain",
+  "mailgunToEmail": "mailgunToEmail"
 }

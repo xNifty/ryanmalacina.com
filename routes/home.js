@@ -40,6 +40,7 @@ router.post('/send', async(req, res) => {
    let toEmail = config.get('mailgunToEmail');
    let subject = req.body.subject;
    let message = req.body.message;
+
    try {
        nodemailerMailgun.sendMail({
            from: fromEmail,
@@ -49,9 +50,16 @@ router.post('/send', async(req, res) => {
            text: message,
        }, (err, info) => {
            if (err) {
-               console.log(`Error: ${err}`);
-               res.setHeader('Content-Type', 'application/json');
-               return res.end(JSON.stringify({fail : "Updated Successfully", status : 400}));
+               console.log(`Error: ${err.message}`);
+
+               // Boy, this is hacky
+               if (err.message === "'from' parameter is not a valid address. please check documentation") {
+                   res.setHeader('Content-Type', 'application/json');
+                   return res.end(JSON.stringify({fail: "Error", status: 406}));
+               } else {
+                   res.setHeader('Content-Type', 'application/json');
+                   return res.end(JSON.stringify({fail: "Error", status: 400}));
+               }
            }
            else {
                res.setHeader('Content-Type', 'application/json');
@@ -61,7 +69,7 @@ router.post('/send', async(req, res) => {
    } catch (ex) {
        console.log(ex);
        res.setHeader('Content-Type', 'application/json');
-       return res.end(JSON.stringify({fail : "Updated Successfully", status : 500}));
+       return res.end(JSON.stringify({fail : "Server error", status : 500}));
    }
 });
 
