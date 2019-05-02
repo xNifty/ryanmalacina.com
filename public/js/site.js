@@ -50,6 +50,14 @@ $(document).ready(function(){
     $('#submitmail').click(function() {
         validateForm();
     });
+    $('.cookie').slick({
+        infinite: true,
+        slidesToShow: 4,
+        slidesToScroll: 4,
+        arrows: true,
+        nextArrow: '<i class="fa fa-arrow-right nextArrowBtn"></i>',
+        prevArrow: '<i class="fa fa-arrow-left prevArrowBtn"></i>'
+    });
 
 });
 

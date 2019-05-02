@@ -79,7 +79,7 @@ async function listProjects() {
         project_image: 1,
         project_title: 1,
         _id: 0
-    }).limit(4);
+    });
 }
 
 module.exports = router;

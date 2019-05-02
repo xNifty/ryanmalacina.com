@@ -296,3 +296,18 @@ section.social a:hover {
     position: absolute;
     opacity: 0;
 }
+
+.nextArrowBtn{
+    position: absolute;
+    z-index: 1000;
+    top: 50%;
+    right: 0;
+    color: #BFAFB2;
+}
+.prevArrowBtn{
+    position: absolute;
+    z-index: 1000;
+    top: 50%;
+    left: 0;
+    color: #BFAFB2;
+}
