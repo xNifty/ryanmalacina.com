@@ -65,7 +65,8 @@ $(document).ready(function(){
         slidesToScroll: 3,
         arrows: true,
         nextArrow: '<i class="fa fa-arrow-right nextArrowBtn"></i>',
-        prevArrow: '<i class="fa fa-arrow-left prevArrowBtn"></i>'
+        prevArrow: '<i class="fa fa-arrow-left prevArrowBtn"></i>',
+        useTransform: false
     });
 
 });
