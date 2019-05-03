@@ -36,24 +36,33 @@ function unpublishProject() {
 }
 
 $(document).ready(function(){
+
+    /*Scroll to top when arrow up clicked BEGIN*/
     $(window).scroll(function() {
-        if ($(this).scrollTop() > 100) {
+        var height = $(window).scrollTop();
+        if (height > 100) {
             $('#scroll').fadeIn();
         } else {
             $('#scroll').fadeOut();
         }
     });
-    $('#scroll').click(function() {
-        $("html, body").animate({ scrollTop: 0 }, 600);
-        return false;
+    $(document).ready(function() {
+        $("#scroll").click(function(event) {
+            event.preventDefault();
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            return false;
+        });
+
     });
+    /*Scroll to top when arrow up clicked END*/
+
     $('#submitmail').click(function() {
         validateForm();
     });
-    $('.cookie').slick({
+    $('.prjlist').slick({
         infinite: true,
-        slidesToShow: 4,
-        slidesToScroll: 4,
+        slidesToShow: 3,
+        slidesToScroll: 3,
         arrows: true,
         nextArrow: '<i class="fa fa-arrow-right nextArrowBtn"></i>',
         prevArrow: '<i class="fa fa-arrow-left prevArrowBtn"></i>'

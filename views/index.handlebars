@@ -14,9 +14,9 @@
     list of all projects I have worked on, you can either click Projects in the navigation bar or access them
     by clicking <a href="projects">here</a>.</p>
     {{#iff projects.length ">" 0}}
-        <div class="row text-center cookie">
+        <div class="row text-center prjlist">
             {{#each projects as |projects| }}
-                <div class="col-md-3 col-xs-3">
+                <div class="col-md-4 col-xs-4">
                     <div class="thumbnail">
                         <a href="/projects/{{ projects.project_name }}/edit">
                             <img class="img-responsive greyimg" src="/images/{{ projects.project_image }}"
@@ -31,6 +31,19 @@
         </div>
     {{else}}
         There are no published projects at this time.
+    {{/iff}}
+    <hr>
+</div>
+<div class="container" id="site-news">
+    <div class="text-center"><h1>Site News and Updates</h1></div>
+    {{#iff news.length ">" 0}}
+        <div class="row text-center">
+            {{#each news as |news| }}
+                <p>Site news and updates is still being worked on.</p>
+            {{/each}}
+        </div>
+    {{else}}
+        This section coming soon.
     {{/iff}}
     <hr>
 </div>
