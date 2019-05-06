@@ -173,6 +173,16 @@ only screen and (max-width: 760px),
         padding-right: 10px;
         white-space: nowrap;
     }
+
+    body {
+        padding-top: 200px;
+    }
+}
+
+@media (min-width: 768px) {
+    body {
+        padding-top: 60px;
+    }
 }
 
 #edit {
