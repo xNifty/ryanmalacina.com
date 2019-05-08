@@ -61,8 +61,8 @@ $(document).ready(function(){
     });
     $('.prjlist').slick({
         infinite: true,
-        slidesToShow: 3,
-        slidesToScroll: 3,
+        slidesToShow: 4,
+        slidesToScroll: 4,
         arrows: true,
         nextArrow: '<i class="fa fa-arrow-right nextArrowBtn"></i>',
         prevArrow: '<i class="fa fa-arrow-left prevArrowBtn"></i>',
