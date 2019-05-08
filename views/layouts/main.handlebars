@@ -3,7 +3,11 @@
 <html>
 {{> header }}
 <body>
-    {{> nav}}
+    {{#if index}}
+        {{> nav}}
+    {{else}}
+        {{> nav2}}
+    {{/if}}
     {{> status}}
     {{{ body }}}
 

@@ -25,12 +25,14 @@ router.get("/", async (req, res) => {
         return res.render("index", {
             title: "Ryan Malacina | Home",
             name: req.user.realName,
-            projects: project_list
+            projects: project_list,
+            index: true
         });
     } else {
         return res.render("index", {
             title: "Ryan Malacina | Home",
-            projects: project_list
+            projects: project_list,
+            index: true
         });
     }
 });

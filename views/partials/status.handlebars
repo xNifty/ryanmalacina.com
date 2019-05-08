@@ -13,7 +13,11 @@
         <div class="text-center">
             <div class="alert alert-danger alert-dismissible center-block">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                {{ status_code }}
+                {{#if status_code}}
+                    {{ status_code }}
+                {{else}}
+                    {{ error }}
+                {{/if}}
             </div>
         </div>
     {{/iff}}
