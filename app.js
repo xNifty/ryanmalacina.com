@@ -94,7 +94,7 @@ app.use(function(req, res, next) {
     res.locals.nonce = nonce;
     res.locals.cspNonce = 'nonce-' + nonce;
     next();
-})
+});
 
 // Finally, use the nonce middleware
 app.use(csp({

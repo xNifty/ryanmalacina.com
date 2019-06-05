@@ -20,7 +20,8 @@ function getDirectives(nonce) {
     const none = `'none'`;
     const scripts = [
         `https://cdnjs.cloudflare.com`, `https://code.jquery.com`,
-        `https://maxcdn.bootstrapcdn.com`, `https://cdn.jsdelivr.net`
+        `https://maxcdn.bootstrapcdn.com`, `https://cdn.jsdelivr.net`,
+        `https://www.google.com/recaptcha/`, `https://www.gstatic.com/recaptcha/`
     ];
     const styles = [
         `https://cdnjs.cloudflare.com`, `https://fonts.googleapis.com`,
@@ -33,12 +34,16 @@ function getDirectives(nonce) {
     const connect = [
         `https://cdn.jsdelivr.net`
     ];
+    const frame = [
+        `https://www.google.com/recaptcha/`
+    ]
     return {
         defaultSrc: [self],
         scriptSrc: [self, nonce, ...scripts],
         styleSrc: [self, nonce, ...styles],
         fontSrc: [self, ...fonts],
         connectSrc: [self, ...connect],
+        frameSrc: [self, ...frame],
         objectSrc: [none],
 	baseUri: [none]
     };

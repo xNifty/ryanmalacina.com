@@ -3,9 +3,15 @@ const router = express.Router();
 const {Project, validate} = require('../models/projects');
 const mongoose = require('mongoose');
 const config = require('config');
+const Recaptcha = require('express-recaptcha').RecaptchaV2;
 
 const nodemailer = require('nodemailer');
 const mg = require('nodemailer-mailgun-transport');
+
+const recaptcha = new Recaptcha(
+    config.get('siteKey'),
+    config.get('secretKey')
+);
 
 // This is your API key that you retrieve from www.mailgun.com/cp (free up to 10K monthly emails)
 const auth = {
@@ -18,60 +24,78 @@ const auth = {
 
 const nodemailerMailgun = nodemailer.createTransport(mg(auth));
 
-router.get("/", async (req, res) => {
+router.get("/", recaptcha.middleware.render, async (req, res) => {
     let project_list = await listProjects();
+
+    // This is really, really dumb - awesome!
+    let recaptcha = res.recaptcha;
+    let recaptchaNonce = res.locals.nonce;
+    recaptcha = recaptcha.replace('defer></script>', `" defer nonce="${recaptchaNonce}"></script>`); //<script>grecaptcha
+    recaptcha = recaptcha.replace('<script>grecaptcha', `<script nonce="${recaptchaNonce}">grecaptcha`);
 
     if (req.user) {
         return res.render("index", {
             title: "Ryan Malacina | Home",
             name: req.user.realName,
             projects: project_list,
-            index: true
+            index: true,
+            captcha: recaptcha,
+            siteKey: config.get('siteKey')
         });
     } else {
         return res.render("index", {
             title: "Ryan Malacina | Home",
             projects: project_list,
-            index: true
+            index: true,
+            captcha: recaptcha,
+            siteKey: config.get('siteKey')
         });
     }
 });
 
-router.post('/send', async(req, res) => {
+router.post('/send', recaptcha.middleware.verify, async(req, res) => {
    let fromEmail = req.body.email;
    let toEmail = config.get('mailgunToEmail');
    let subject = req.body.subject;
    let message = req.body.message;
 
-   try {
-       nodemailerMailgun.sendMail({
-           from: fromEmail,
-           to: toEmail, // An array if you have multiple recipients.
-           subject: subject,
-           //html: message,
-           text: message,
-       }, (err, info) => {
-           if (err) {
-               console.log(`Error: ${err.message}`);
+   // console.log(req.params);
+   console.log(req.recaptcha.error);
 
-               // Boy, this is hacky
-               if (err.message === "'from' parameter is not a valid address. please check documentation") {
-                   res.setHeader('Content-Type', 'application/json');
-                   return res.end(JSON.stringify({fail: "Error", status: 406}));
+   if (!req.recaptcha.error) {
+       try {
+           nodemailerMailgun.sendMail({
+               from: fromEmail,
+               to: toEmail, // An array if you have multiple recipients.
+               subject: subject,
+               //html: message,
+               text: message,
+           }, (err, info) => {
+               if (err) {
+                   console.log(`Error: ${err.message}`);
+
+                   // Boy, this is hacky
+                   if (err.message === "'from' parameter is not a valid address. please check documentation") {
+                       res.setHeader('Content-Type', 'application/json');
+                       return res.end(JSON.stringify({fail: "Error", status: 406}));
+                   } else {
+                       res.setHeader('Content-Type', 'application/json');
+                       return res.end(JSON.stringify({fail: "Error", status: 400}));
+                   }
                } else {
                    res.setHeader('Content-Type', 'application/json');
-                   return res.end(JSON.stringify({fail: "Error", status: 400}));
+                   return res.end(JSON.stringify({success: "Updated Successfully", status: 200}));
                }
-           }
-           else {
-               res.setHeader('Content-Type', 'application/json');
-               return res.end(JSON.stringify({success : "Updated Successfully", status : 200}));
-           }
-       });
-   } catch (ex) {
-       console.log(ex);
+           });
+       } catch (ex) {
+           console.log(ex);
+           res.setHeader('Content-Type', 'application/json');
+           return res.end(JSON.stringify({fail: "Server error", status: 500}));
+       }
+   } else {
+       console.log("This happened.");
        res.setHeader('Content-Type', 'application/json');
-       return res.end(JSON.stringify({fail : "Server error", status : 500}));
+       return res.end(JSON.stringify({fail: "Server error", status: 500}));
    }
 });
 
