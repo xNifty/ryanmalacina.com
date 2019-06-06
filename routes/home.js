@@ -33,24 +33,13 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
     recaptcha = recaptcha.replace('defer></script>', `" defer nonce="${recaptchaNonce}"></script>`); //<script>grecaptcha
     recaptcha = recaptcha.replace('<script>grecaptcha', `<script nonce="${recaptchaNonce}">grecaptcha`);
 
-    if (req.user) {
-        return res.render("index", {
-            title: "Ryan Malacina | Home",
-            name: req.user.realName,
-            projects: project_list,
-            index: true,
-            captcha: recaptcha,
-            siteKey: config.get('siteKey')
-        });
-    } else {
-        return res.render("index", {
-            title: "Ryan Malacina | Home",
-            projects: project_list,
-            index: true,
-            captcha: recaptcha,
-            siteKey: config.get('siteKey')
-        });
-    }
+    return res.render("index", {
+        title: "Ryan Malacina | Home",
+        projects: project_list,
+        index: true,
+        captcha: recaptcha,
+        siteKey: config.get('siteKey')
+    });
 });
 
 router.post('/send', recaptcha.middleware.verify, async(req, res) => {
@@ -60,7 +49,7 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
    let message = req.body.message;
 
    // console.log(req.params);
-   console.log(req.recaptcha.error);
+   // console.log(req.recaptcha.error);
 
    if (!req.recaptcha.error) {
        try {
@@ -93,7 +82,6 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
            return res.end(JSON.stringify({fail: "Server error", status: 500}));
        }
    } else {
-       console.log("This happened.");
        res.setHeader('Content-Type', 'application/json');
        return res.end(JSON.stringify({fail: "Server error", status: 500}));
    }

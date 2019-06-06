@@ -1,18 +1,18 @@
 {{!-- Main Layout Template --}}
 <!doctype HTML>
 <html>
-{{> [ages/header }}
+{{> header}}
 <body>
     {{#if index}}
-        {{> pages/nav}}
+        {{> nav}}
     {{else}}
-        {{> pages/nav2}}
+        {{> nav2}}
     {{/if}}
-    {{> pages/status}}
+    {{> status}}
     {{{ body }}}
 
     {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
-    {{> footer currentyear=currentyear }}
+    {{> footer currentyear=currentyear}}
     <script
             src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="

@@ -39,9 +39,8 @@ if (!config.get('rmPrivateKey')) {
 // Set default layout, can be overridden per-route as needed
 const hbs = exphbs.create({
     defaultLayout: 'main',
-    partialsDir: [
-        'views/partials/'
-    ],
+    partialsDir: 'views/partials/',
+    layoutsDir: 'views/layouts/',
     helpers: {
         iff: function(v1, operator, v2, options) {
             switch (operator) {
