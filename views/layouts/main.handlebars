@@ -1,14 +1,14 @@
 {{!-- Main Layout Template --}}
 <!doctype HTML>
 <html>
-{{> header }}
+{{> [ages/header }}
 <body>
     {{#if index}}
-        {{> nav}}
+        {{> pages/nav}}
     {{else}}
-        {{> nav2}}
+        {{> pages/nav2}}
     {{/if}}
-    {{> status}}
+    {{> pages/status}}
     {{{ body }}}
 
     {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
