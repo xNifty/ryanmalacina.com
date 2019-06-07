@@ -19,6 +19,9 @@ const newsScheme = new mongoose.Schema({
         minlength: 10,
         maxlength: 25000
     },
+    published_date: {
+        type: String
+    },
     last_edited: {
         type: String
     },
