@@ -9,10 +9,10 @@
 <div class="container" id="projects">
     <div class="text-center"><h1>Projects</h1></div>
     <p>I work on multiple different projects in my free time, some of which are completed, and others that are
-    simply basic ideas that I started but may not have finished.  Below are the top three projects that I am
-    either working on or have finished and are what I consider major things I've worked on.  To visit the full
-    list of all projects I have worked on, you can either click Projects in the navigation bar or access them
-    by clicking <a href="projects">here</a>.</p>
+    simply basic ideas that I started but may not have finished.  Below is the list of projects I have worked on; simply click
+    the arrows on either side to scroll through the carousel of different projects I am either working on or have finished 
+    and are what I consider major things I've worked on.  To visit the full
+    list of all projects I have worked on, in a page list instead of a carousel, you can click <a href="projects">here</a>.</p>
     {{#iff projects.length ">" 0}}
         <div class="row text-center prjlist">
             {{#each projects as |projects| }}
@@ -59,7 +59,8 @@
         </div>
         <!--Section description-->
         <div id="contactformdiv">
-            <p class="text-center w-responsive mx-auto mb-5">Shoot me a message and I'll get back to you as soon as I can.</p>
+            <p class="text-center w-responsive mx-auto mb-5">Shoot me a message and I'll get back to you as soon as I can.<br>
+            Please note: if the captcha times out, please wait a minute and try again.  Sorry about that.</p>
             <div class="row">
                 <!--Grid column-->
                 <div class="col-md-12 mb-md-0 mb-5">
