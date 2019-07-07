@@ -9,5 +9,7 @@
   "port": 8080,
   "mailgunAPI": "mailgunKey",
   "mailgunDomain": "mailgunDomain",
-  "mailgunToEmail": "mailgunToEmail"
+  "mailgunToEmail": "mailgunToEmail",
+  "siteKey": "captchaSiteKey",
+  "secretKey": "captchaSecretKey"
 }

@@ -320,3 +320,7 @@ section.social a:hover {
 .img-responsive {
     width: 100% !important;
 }
+
+#login {
+    margin-bottom: 1em;
+}
