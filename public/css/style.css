@@ -324,3 +324,11 @@ section.social a:hover {
 #login {
     margin-bottom: 1em;
 }
+
+#contactformdiv {
+    padding-bottom: 1em;
+}
+
+.g-recaptcha {
+    display: inline-block;
+}
