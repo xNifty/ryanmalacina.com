@@ -99,7 +99,9 @@ function SubmitMail (){
     },
     error: function()  {
         document.getElementById('emailerror').innerHTML = "There was an error sending an email..." +
-            "please try again and let me know if it doesn't work.";
+            "please try again.  If you continue to experience issues, please " + 
+            "<a href=\"https://github.com/xnifty/ryanmalacina.com/issues\">submit</a> an issue " +
+            "on GitHub.";
         document.getElementById('emailalert').style.position = 'static';
         document.getElementById('emailalert').style.opacity = '1';
     }
