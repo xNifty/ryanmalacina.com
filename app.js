@@ -3,7 +3,6 @@
     This site is far from complete, looks basic, and is being worked on slowly.
 
     TODO (in no particular order):
-        - Create a real contact page (reverted to just link for now)
         - Format keybase page
         - Fix tabopen.js
  */
