@@ -22,6 +22,7 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const User = require('./models/user');
 const auth = require('./middleware/auth');
+const helpers = require('./functions/helpers');
 
 const nonce_middleware = require('./middleware/nonce');
 
@@ -30,8 +31,8 @@ const env = app.settings.env;
 
 // Make sure our private token exists
 // @TODO: remove this hard-code and load from config file
-if (!config.get('rmPrivateKey')) {
-    console.error('FATAL ERROR: rmPrivateKey is not defined.');
+if (!config.get('privateKey')) {
+    console.error('FATAL ERROR: Private key is not defined. Please double check that everything is setup correctly');
     process.exit(1);
 }
 
@@ -41,32 +42,7 @@ const hbs = exphbs.create({
     partialsDir: 'views/partials/',
     layoutsDir: 'views/layouts/',
     helpers: {
-        iff: function(v1, operator, v2, options) {
-            switch (operator) {
-                case '==':
-                    return (v1 == v2) ? options.fn(this) : options.inverse(this);
-                case '===':
-                    return (v1 === v2) ? options.fn(this) : options.inverse(this);
-                case '!==':
-                    return (v1 !== v2) ? options.fn(this) : options.inverse(this);
-                case '!=':
-                    return (v1 != v2) ? options.fn(this) : options.inverse(this);
-                case '<':
-                    return (v1 < v2) ? options.fn(this) : options.inverse(this);
-                case '<=':
-                    return (v1 <= v2) ? options.fn(this) : options.inverse(this);
-                case '>':
-                    return (v1 > v2) ? options.fn(this) : options.inverse(this);
-                case '>=':
-                    return (v1 >= v2) ? options.fn(this) : options.inverse(this);
-                case '&&':
-                    return (v1 && v2) ? options.fn(this) : options.inverse(this);
-                case '||':
-                    return (v1 || v2) ? options.fn(this) : options.inverse(this);
-                default:
-                    return options.inverse(this);
-            }
-        }
+        iff: helpers.iff,
     }
 });
 

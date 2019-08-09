@@ -1,6 +1,6 @@
 {
   "cookieName": "rm2245",
-  "privateKeyName": "rmPrivateKey",
+  "privateKeyName": "privateKey",
   "useProxy": true,
   "resave": true,
   "saveUninitialized": false,
