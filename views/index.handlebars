@@ -7,7 +7,7 @@
     <hr>
 </div>
 <div class="container" id="projects">
-    <div class="text-center"><h1>Projects</h1></div>
+    <h1>Projects</h1>
     <p>I work on multiple different projects in my free time, some of which are completed, and others that are
     simply basic ideas that I started but may not have finished.  Below is the list of projects I have worked on; simply click
     the arrows on either side to scroll through the carousel of different projects I am either working on or have finished 
@@ -35,7 +35,7 @@
     <hr>
 </div>
 <div class="container" id="site-news">
-    <div class="text-center"><h1>Site News and Updates</h1></div>
+    <h1>Site News and Updates</h1>
     {{#iff news.length ">" 0}}
         <div class="row text-center">
             {{#each news as |news| }}
@@ -43,7 +43,8 @@
             {{/each}}
         </div>
     {{else}}
-        This section coming soon.
+        This section is still undergoing construction and is not yet ready.  In terms of news, the biggest
+        update is that the news section is being worked on and will hopefully be ready in the coming weeks.
     {{/iff}}
     <hr>
 </div>
@@ -51,12 +52,12 @@
     <!--Section: Contact v.2-->
     <section class="mb-4">
         <!--Section heading-->
-        <h2 class="h1-responsive font-weight-bold text-center my-4">Contact Me</h2>
+        <h2 class="h1-responsive font-weight-bold my-4">Contact Me</h2>
         <!--Section description-->
         <div id="contactformdiv">
-            <p class="text-center w-responsive mx-auto mb-5 contactformtext">Shoot me a message and I'll get back to you as soon as I can.
-            If you are reporting an issue that is not a security vulnerability, please do so <a href="https://github.com/xNifty/ryanmalacina.com/issues">here</a>.
-            Please note: if the captcha times out, please wait a minute and try again.  Sorry about that.</p>
+            <p class="w-responsive mx-auto mb-5 contactformtext">Shoot me a message and I'll get back to you as soon as I can.
+If you are reporting an issue that is not a security vulnerability, please do so <a href="https://github.com/xNifty/ryanmalacina.com/issues">here</a>.
+Please note: if the captcha times out, please wait a minute and try again.  Sorry about that.</p>
             <div class="text-center" id="emailalert">
                 <div class="alert alert-danger center-block">
                     <span id="emailerror"></span>
