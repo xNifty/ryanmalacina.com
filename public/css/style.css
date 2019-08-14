@@ -325,8 +325,9 @@ section.social a:hover {
     margin-bottom: 1em;
 }
 
-#contactformdiv {
+#contactformdiv p.contactformtext{
     padding-bottom: 1em;
+    white-space: pre;
 }
 
 .g-recaptcha {
