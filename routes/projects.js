@@ -82,7 +82,7 @@ router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             project_title: req.body.project_title,
             project_source: req.body.project_source,
             project_description: req.body.project_description,
-	    last_edited: saveDate
+	        last_edited: saveDate
         });
     }
     req.flash('success', 'Project added successfully!');

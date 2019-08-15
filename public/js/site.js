@@ -7,6 +7,10 @@ $(document).ready(function() {
     $('.unpublish').on('click', unpublishProject);
 });
 
+$(document).ready(function() {
+    $('#loginform').on('click', login);
+});
+
 function publishProject() {
     $.ajax({
         type:'PUT',
@@ -33,6 +37,40 @@ function unpublishProject() {
     });
 
     return false;
+}
+
+function login() {
+    var form = document.getElementById('loginform');
+    form.onsubmit = function (e) {
+        e.preventDefault();
+        var user = form.username.value;
+        var pass = form.password.value;
+        $.ajax({
+            type: "POST",
+            url: "/login",
+            data: {
+                username: user,
+                password: pass
+            },
+            datatype: "json",
+            done: function () {
+                location.reload();
+            },
+            fail: function () {
+                location.reload();
+            },
+            success: function () {
+                location.reload();
+            },
+            error: function () {
+                location.reload();
+            },
+            always: function () {
+                location.reload();
+            },
+        });
+        form.reset();
+    };
 }
 
 $(document).ready(function(){

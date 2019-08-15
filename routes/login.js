@@ -13,11 +13,23 @@ router.get("/", [auth.isLoggedOut], async (req, res) => {
     });
 });
 
-router.post('/', passport.authenticate("local", {
-    successReturnToOrRedirect: '/',
-    failureRedirect: "/login",
-    failureFlash: true,
-    successFlash: 'You have been successfully logged in!'
-}));
+// router.post('/', passport.authenticate("local", {
+//     successReturnToOrRedirect: '/',
+//     failureRedirect: "/login",
+//     failureFlash: true,
+//     successFlash: 'You have been successfully logged in!'
+// }));
+
+router.post('/', passport.authenticate("local", { failWithError: true }),
+    function(req, res, next) {
+        req.flash('success', 'You have been successfully logged in!');
+        return res.send('{"success" : "Updated Successfully", "status" : 200}');
+    },
+    function(err, req, res, next) {
+        console.log(err);
+        req.flash('error', 'Invalid username or password.');
+        return res.send('{"fail" : "Login failed", "status" : 400}');
+      }
+);
 
 module.exports = router;

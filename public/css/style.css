@@ -333,3 +333,8 @@ section.social a:hover {
 .g-recaptcha {
     display: inline-block;
 }
+
+.login-ddl {
+    width:  20em;
+    padding: 5px;
+}
