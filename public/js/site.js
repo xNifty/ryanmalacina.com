@@ -1,4 +1,4 @@
-//client.js
+// JavaScript for the site
 $(document).ready(function() {
     $('.publish').on('click', publishProject);
 });
@@ -9,6 +9,10 @@ $(document).ready(function() {
 
 $(document).ready(function() {
     $('#loginform').on('click', login);
+});
+
+$(document).ready(function() {
+    $('#logoutlink').on('click', logout);
 });
 
 function publishProject() {
@@ -71,6 +75,20 @@ function login() {
         });
         form.reset();
     };
+}
+
+function logout() {
+    $.ajax({
+        type:'post',
+        url: '/logout',
+        datatype: "json",
+    }).done(function()  {
+        location.reload();
+    }).fail(function()  {
+        alert("There was an issue logging out.  Check the error log.")
+    });
+
+    return false;
 }
 
 $(document).ready(function(){

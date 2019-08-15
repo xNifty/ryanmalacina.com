@@ -23,7 +23,7 @@ router.get("/", [auth.isLoggedOut], async (req, res) => {
 router.post('/', passport.authenticate("local", { failWithError: true }),
     function(req, res, next) {
         req.flash('success', 'You have been successfully logged in!');
-        return res.send('{"success" : "Updated Successfully", "status" : 200}');
+        return res.send('{"success" : "Log in success", "status" : 200}');
     },
     function(err, req, res, next) {
         console.log(err);
