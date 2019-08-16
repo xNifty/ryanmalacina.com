@@ -41,7 +41,7 @@ const hbs = exphbs.create({
     defaultLayout: 'main',
     partialsDir: 'views/partials/',
     layoutsDir: 'views/layouts/',
-    helpers: {
+    helpers: { // Create helper functions in functions/helpers.js
         iff: helpers.iff,
     }
 });
