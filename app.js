@@ -175,16 +175,18 @@ app.use(function(req, res, next) {
 app.use('/', home);
 app.use('/about', about);
 app.use('/keybase', keybase);
-app.use('/keybase.txt', keybase); // For Keybase.io
+app.use('/keybase.txt', keybase); // for Keybase.io
 app.use('/projects', projects);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/admin', administration);
 
+// Send user to my blog via a 301 redirect
 app.get("/blog", function(req, res) {
     res.redirect(301, "https://blog.ryanmalacina.com");
 });
 
+// Send user to my documentation site via a 301 redirect
 app.get("/docs", function(req, res) {
     res.redirect(301, "https://docs.ryanmalacina.com");
 });
@@ -193,7 +195,9 @@ app.get("/docs", function(req, res) {
     Error Handling
     Catch both 404 and 500 in a manner I prefer, render appropriate view with error message
 
-    Can we move all this error logging stuff to it's own file instead of actually writing it here?
+    This is still required to render the right view with the right error message.  In the development environment
+    we show the error message right on the screen so that we can fix it, while on production we just render
+    the error page with the generic error message relevant to that error message.
 */
 app.use(function (req, res, next) {
     let err = new Error('Not Found');
@@ -218,8 +222,14 @@ app.use(function (err, req, res, next) {
             error: app.locals.notAuthorized,
             status_code: "401 - Unauthorized"
         })
+    } else {
+        res.render('error', {
+            error: env ==='development' ? err.stack.replace("\n", "<br />") : app.locals.serverError,
+            status_code: '500 - Server Error'
+        })
     }
 });
 
+// Start everything and enjoy. :heart:
 app.listen(config.get("port"));
 console.log("Server is now running in " + env + " mode.");
