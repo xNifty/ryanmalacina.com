@@ -11,9 +11,9 @@ $(document).ready(function() {
     $('#loginform').on('click', login);
 });
 
-$(document).ready(function() {
-    $('#logoutlink').on('click', logout);
-});
+// $(document).ready(function() {
+//     $('#logoutlink').on('click', logout);
+// });
 
 function publishProject() {
     $.ajax({
