@@ -100,9 +100,6 @@ let sess = {
     })
 };
 
-// When pushed to production, we do want to use a secure cookie. Local testing we do not.
-// This didn't seem to be working in production, so the above was added as a config file option which is probably better
-
 app.use(flash());
 app.use(session(sess));
 
@@ -144,9 +141,7 @@ const login = require('./routes/login');
 const logout = require('./routes/logout');
 const administration = require('./routes/admin');
 
-
 // Default values; we can override this on a per-route basis if needed
-// Should I maybe make these a language file and load from there?
 app.locals = {
     currentyear: new Date().getFullYear(),
     title: "Ryan Malacina | ryanmalacina.com",
