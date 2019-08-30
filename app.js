@@ -73,7 +73,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-// Finally, use the nonce middleware
+// Setup to use the nonce middlewear that we created
 app.use(csp({
     directives: nonce_middleware.getDirectives((req, res) => `'${res.locals.cspNonce}'`)
 }));
@@ -114,7 +114,7 @@ passport.deserializeUser(function(userId, done) {
     User.findById(userId, (err, user) => done(err, user));
 });
 
-// Passport Local
+// Passport Stuff
 const LocalStrategy = require("passport-local").Strategy;
 const local = new LocalStrategy((username, password, done) => {
     User.findOne({ username })
@@ -129,7 +129,7 @@ const local = new LocalStrategy((username, password, done) => {
 });
 passport.use("local", local);
 
-// Set favicon
+// Set the favicon for the site
 app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
 
 // Routes

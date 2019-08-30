@@ -1,19 +1,25 @@
 /*
     nonce.js
+
     This is a piece of middleware that we can use to generate a nonce on a page load
-    The nonce is regenerated on every load
+    The nonce is regenerated on every page load so that we don't reuse nonces across different pages
 */
 const uuid = require('uuid');
 const csp = require('helmet-csp');
 const express = require('express')
 const router = express.Router();
 
+/*
+    Generate nonce
+*/
 function generateNonce() {
     const rhyphen = /-/g;
     return uuid.v4().replace(rhyphen, ``);
 }
 
-/* constants for CSP */
+/*
+    Setup the directives for use in CSP and then return it
+*/
 function getDirectives(nonce) {
     const self = `'self'`;
     const unsafeInline = `'unsafe-inline'`; // Ideally, never going to use this anywhere for any reason
@@ -45,10 +51,13 @@ function getDirectives(nonce) {
         connectSrc: [self, ...connect],
         frameSrc: [self, ...frame],
         objectSrc: [none],
-	baseUri: [none]
+	    baseUri: [none]
     };
 }
 
+/*
+    Function to generate the nonce and then setup the directives
+*/
 function genCSP(req, res, next) {
     try {
         let nonce = generateNonce();
