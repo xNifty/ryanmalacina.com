@@ -26,13 +26,15 @@ const helpers = require('./functions/helpers');
 
 const nonce_middleware = require('./middleware/nonce');
 
+const constants = require('./models/constants');
+
 const app = express();
 const env = app.settings.env;
 
 // Make sure our private token exists
 // @TODO: remove this hard-code and load from config file
 if (!config.get('privateKey')) {
-    console.error('FATAL ERROR: Private key is not defined. Please double check that everything is setup correctly');
+    console.error(constants.errors.missingKey);
     process.exit(1);
 }
 
@@ -120,7 +122,7 @@ const local = new LocalStrategy((username, password, done) => {
     User.findOne({ username })
         .then(user => {
             if (!user || !user.validPassword(password)) {
-                done(null, false, { message: "Invalid username or password!" });
+                done(null, false, { message: constants.errors.invalidLogin });
             } else {
                 done(null, user);
             }
@@ -145,10 +147,10 @@ const administration = require('./routes/admin');
 app.locals = {
     currentyear: new Date().getFullYear(),
     title: "Ryan Malacina | ryanmalacina.com",
-    pageNotFound: "Seems this page doesn't exist...sorry about that!",
-    serverError: "Uh oh, something went wrong when loading this page.",
+    pageNotFound: constants.errors.pageNotFound,
+    serverError: constants.errors.serverError,
     environment: app.get('env'),
-    notAuthorized: "Unauthorized"
+    notAuthorized: constants.errors.notAuthorized
 };
 
 app.use(function(req, res, next) {
@@ -205,22 +207,22 @@ app.use(function (err, req, res, next) {
     if (status === 404) {
         res.render('error', {
             error: env === 'development' ? err.stack.replace("\n", "<br />") : app.locals.pageNotFound,
-            status_code: "404 - Not Found"
+            status_code: constants.statusCodes[404]
         });
     } else if (status === 500) {
         res.render('error', {
             error: env ==='development' ? err.stack.replace("\n", "<br />") : app.locals.serverError,
-            status_code: "500 - Server Error"
+            status_code: constants.statusCodes[500]
         });
     } else if (status === 401) {
         res.render('error', {
             error: app.locals.notAuthorized,
-            status_code: "401 - Unauthorized"
+            status_code: constants.statusCodes[401]
         })
     } else {
         res.render('error', {
             error: env ==='development' ? err.stack.replace("\n", "<br />") : app.locals.serverError,
-            status_code: '500 - Server Error'
+            status_code: constants.statusCodes[500]
         })
     }
 });

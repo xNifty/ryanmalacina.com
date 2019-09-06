@@ -1,11 +1,13 @@
 // Authentication Middleware
 
+var constants = require('../models/constants');
+
 // Make sure the user is logged in, and if not, redirect to login with a message
 function loggedInOnly (req, res, next) {
     if (req.isAuthenticated()) next();
     else {
         req.session.returnTo = req.originalUrl;
-        req.flash('error', 'Please login to access this content.');
+        req.flash('error', constants.errors.loginRequired);
         res.redirect("/login");
     }
 }
@@ -20,7 +22,7 @@ function loggedOutOnly (req, res, next) {
 function isAdmin(req, res, next) {
     if (req.user.isAdmin) next();
     else {
-        req.flash('error', 'You do not have permission to access this content.');
+        req.flash('error', constants.errors.accessDenied);
         res.status(401);
     }
 }
