@@ -53,34 +53,38 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
 
    if (!req.recaptcha.error) {
        try {
-           nodemailerMailgun.sendMail({
-               from: fromEmail,
-               to: toEmail, // An array if you have multiple recipients.
-               subject: subject,
-               //html: message,
+            nodemailerMailgun.sendMail({
+                from: fromEmail,
+                to: toEmail, // An array if you have multiple recipients.
+                subject: subject,
+                //html: message,
                text: message,
-           }, (err, info) => {
-               if (err) {
-                   console.log(`Error: ${err.message}`);
+            }, (err, info) => {
+                if (err) {
+                    console.log(`Error: ${err.message}`);
 
-                   // Boy, this is hacky
-                   if (err.message === "'from' parameter is not a valid address. please check documentation") {
-                       res.setHeader('Content-Type', 'application/json');
-                       return res.end(JSON.stringify({fail: "Error", status: 406}));
-                   } else {
-                       res.setHeader('Content-Type', 'application/json');
-                       return res.end(JSON.stringify({fail: "Error", status: 400}));
-                   }
-               } else {
-                   res.setHeader('Content-Type', 'application/json');
-                   return res.end(JSON.stringify({success: "Updated Successfully", status: 200}));
-               }
-           });
-       } catch (ex) {
-           console.log(ex);
-           res.setHeader('Content-Type', 'application/json');
-           return res.end(JSON.stringify({fail: "Server error", status: 500}));
-       }
+                    /*
+                        So we're going to replace some error messages that are returned from mailgun,
+                        so that we can display some more userfriendly errors that are actually helpful
+                        for the user if they see it.
+                    */
+                    if (err.message === "'from' parameter is not a valid address. please check documentation") {
+                        res.setHeader('Content-Type', 'application/json');
+                        return res.end(JSON.stringify({fail: "Error", status: 406}));
+                    } else {
+                        res.setHeader('Content-Type', 'application/json');
+                        return res.end(JSON.stringify({fail: "Error", status: 400}));
+                    }
+                } else {
+                    res.setHeader('Content-Type', 'application/json');
+                    return res.end(JSON.stringify({success: "Updated Successfully", status: 200}));
+                }
+            });
+        } catch (ex) {
+            console.log(ex);
+            res.setHeader('Content-Type', 'application/json');
+            return res.end(JSON.stringify({fail: "Server error", status: 500}));
+        }
    } else {
        res.setHeader('Content-Type', 'application/json');
        return res.end(JSON.stringify({fail: "Server error", status: 500}));

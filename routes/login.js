@@ -11,7 +11,7 @@ const constants = require('../models/constants');
 
 router.get("/", [auth.isLoggedOut], async (req, res) => {
     return res.render("login", {
-        title: "Ryan Malacina | Login"
+        title: constants.pageHeader.login
     });
 });
 

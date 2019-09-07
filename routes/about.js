@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
+const constants = require('../models/constants');
+
 router.get("/", function(req, res) {
     res.render("about", {
-        title: "Ryan Malacina | About",
+        title: constants.pageHeader.about,
     });
 });
 

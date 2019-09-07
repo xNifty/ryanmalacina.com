@@ -29,6 +29,16 @@ var successStrings = {
     projectUpdated: "Project updated successfully!",
 }
 
+var pageHeaderStrings = {
+    index: "Ryan Malacina | ryanmalacina.com",
+    notFound: "Ryan Malacina | Not Found",
+    login: "Ryan Malacina | Login",
+    about: "Ryan Malacina | About",
+    admin: "Ryan Malacina | Admin Backend",
+    adminProject: "Ryan Malacina | Admin Backend - Projects",
+}
+
 exports.errors = Object.freeze(errorStrings);
 exports.statusCodes = Object.freeze(statusCodeStrings);
 exports.success = Object.freeze(successStrings);
+exports.pageHeader = Object.freeze(pageHeaderStrings);

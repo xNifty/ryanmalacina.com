@@ -6,9 +6,11 @@ const auth = require('../middleware/auth');
 const _ = require('lodash');
 const session = require('express-session');
 
+const constants = require('../models/constants');
+
 router.get("/", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     res.render("admin", {
-        title: "Ryan Malacina | Admin Backend"
+        title: constants.pageHeader.admin
     });
 });
 
@@ -16,7 +18,7 @@ router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     let project_list = await listProjects();
 
     res.render("admin-projects", {
-        title: "Ryan Malacina | Admin Backend - Projects",
+        title: constants.pageHeader.adminProject,
         projects: project_list,
     });
 });

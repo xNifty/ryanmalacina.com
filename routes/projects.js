@@ -247,8 +247,8 @@ router.get("/:name", async(req, res) => {
     if (!project || !project.is_published) {
         return res.render("error", {
             error: constants.errors.invalidProject,
-            title: "Ryan Malacina | Invalid Project",
-            status_code: "404 - Not Found"
+            title: constants.pageHeader.notFound,
+            status_code: constants.statusCodes[404]
         });
     }
 
