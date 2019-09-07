@@ -13,6 +13,8 @@ const sanitize = require('sanitize-html');
 const dateformat = require('dateformat');
 const fileUpload = require('express-fileupload');
 
+const constants = require('../models/constants');
+
 let converter = new showdown.Converter();
 
 router.use(fileUpload());
@@ -40,7 +42,7 @@ router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
         return res.status(400).render('new-project', {
             layout: 'new-project',
             new_project: true,
-            error: 'An error has occurred. Please make sure all fields are filled and try again.',
+            error: constants.errors.allFieldsRequired,
             project_name: req.body.project_name,
             project_title: req.body.project_title,
             project_source: req.body.project_source,
@@ -77,7 +79,7 @@ router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
         return res.status(400).render('new-project', {
             layout: 'new-project',
             new_project: true,
-            error: 'An error has occurred. Please make sure all fields are filled and try again.',
+            error: constants.errors.allFieldsRequired,
             project_name: req.body.project_name,
             project_title: req.body.project_title,
             project_source: req.body.project_source,
@@ -85,7 +87,7 @@ router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 	        last_edited: saveDate
         });
     }
-    req.flash('success', 'Project added successfully!');
+    req.flash('success', constants.success.projectAdded);
     res.redirect('/projects');
 });
 
@@ -141,7 +143,7 @@ router.post('/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             for (let i = 0; i < error.details.length; i++) {
                 console.log(error.details[i].context.key);
                 if (error.details[i].context.key === 'project_description')
-                    throw new Error("The project description must be at least 20 characters in length.");
+                    throw new Error(constants.errors.projectDescriptionLength);
             }
         }
 
@@ -174,14 +176,13 @@ router.post('/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
                 });
             }
             else {
-                throw new Error("You must upload an image.")
+                throw new Error(constants.errors.imageRequired);
             }
         } else {
             // Only move if the image has a different name; unique names only, not that hard
             // @TODO : really should limit file sizes to the ideal image size of 263x263
             if (pImage.name === currentImage[0].project_image) { // Boy, this is just dumb
-                throw new Error("Please make sure file names are unique.  If you've already uploaded " +
-                    "this image, you do not need to upload it again.");
+                throw new Error(constants.errors.uniqueImageName);
             } else {
                 // Not the same, so move it!
                 // This condition is only ever going to be met if it's a new image, but maybe should add some security
@@ -205,10 +206,10 @@ router.post('/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             let returnTo = req.session.projectReturnTo;
             delete req.session.projectReturnTo;
             delete req.session.projectEditReturnTo; // Still need to delete even though we didn't use it
-            req.flash('success', 'Project updated successfully!');
+            req.flash('success', constants.success.projectUpdated);
             return res.redirect(returnTo);
         } else {
-            req.flash('success', 'Project updated successfully!');
+            req.flash('success', constants.success.projectUpdated);
             return res.redirect('/projects');
         }
     } catch(ex) {
@@ -229,7 +230,6 @@ router.post('/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             req.flash('error', ex.message);
             return res.redirect('/projects');
         }
-
     }
 
 });
@@ -237,27 +237,30 @@ router.post('/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 // TODO: this really should use ID to load; we can hide that on the page per row if we load initial
 // We can clearly get the ID like we do in other routes, so this really needs to be changed to ID loading
 router.get("/:name", async(req, res) => {
-   const project = await Project.findOne({
-       project_name: req.params.name,
-   });
+    const project = await Project.findOne({
+        project_name: req.params.name,
+    });
 
-   req.session.projectReturnTo = req.originalUrl;
+    req.session.projectReturnTo = req.originalUrl;
 
-   // Intentionally leaving this different, as our "custom" error page doesn't display the text via alerts
-   if (!project || !project.is_published) return res.render("error", {
-       error_message: "It appears as though you are trying to access an invalid project. " +
-           "Perhaps try <a href=\"\\projects\">again</a>?"
-   });
+    // Intentionally leaving this different, as our "custom" error page doesn't display the text via alerts
+    if (!project || !project.is_published) {
+        return res.render("error", {
+            error: constants.errors.invalidProject,
+            title: "Ryan Malacina | Invalid Project",
+            status_code: "404 - Not Found"
+        });
+    }
 
-   res.render("projects", {
-       project_title: project.project_title,
-       project_source: project.project_source,
-       project_description: project.project_description_html,
-       project_name: project.project_name,
-       is_valid: true,
-       last_save_date: dateformat(project.last_edited, "mmmm dd, yyyy @ h:MM TT"),
-       title: 'Ryan Malacina | ' + project.project_name,
-   });
+    res.render("projects", {
+        project_title: project.project_title,
+        project_source: project.project_source,
+        project_description: project.project_description_html,
+        project_name: project.project_name,
+        is_valid: true,
+        last_save_date: dateformat(project.last_edited, "mmmm dd, yyyy @ h:MM TT"),
+        title: 'Ryan Malacina | ' + project.project_name,
+    });
 });
 
 async function listProjects() {
