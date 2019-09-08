@@ -1,6 +1,7 @@
 // Declare a lot of constants, organized in a somewhat useful manner
 // Mostly, this is just strings for use throughout the system so I can stop writing the same thing over and over
 
+// Error string constants
 var errorStrings = {
     accessDenied: "You do not have permission to access this content.",
     loginRequired: "Please login to access this content.",
@@ -16,12 +17,14 @@ var errorStrings = {
     invalidProject: "It appears as though you are trying to access an invalid project. Perhaps try <a href=\"\\projects\">again</a>?",
 };
 
+// Status code constants
 var statusCodeStrings = {
     401: "401 - Unauthorized",
     500: "500 - Server Error",
     404: "404 - Not Found"
 };
 
+// Success string constants
 var successStrings = {
     loginSuccess: "You have been successfully logged in!",
     logoutSuccess: "You have been successfully logged out!",
@@ -29,6 +32,7 @@ var successStrings = {
     projectUpdated: "Project updated successfully!",
 }
 
+// String constants for what the tab show in the browser
 var pageHeaderStrings = {
     index: "Ryan Malacina | ryanmalacina.com",
     notFound: "Ryan Malacina | Not Found",
