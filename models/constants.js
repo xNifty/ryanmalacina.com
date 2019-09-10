@@ -40,8 +40,10 @@ var pageHeaderStrings = {
     about: "Ryan Malacina | About",
     admin: "Ryan Malacina | Admin Backend",
     adminProject: "Ryan Malacina | Admin Backend - Projects",
+    keybase: "Ryan Malacina | Keybase Identity",
 }
 
+// Finally, allow everything to be accessed when using constants in file
 exports.errors = Object.freeze(errorStrings);
 exports.statusCodes = Object.freeze(statusCodeStrings);
 exports.success = Object.freeze(successStrings);

@@ -65,7 +65,7 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
 
                     /*
                         So we're going to replace some error messages that are returned from mailgun,
-                        so that we can display some more userfriendly errors that are actually helpful
+                        so that we can display some more user friendly errors that are actually helpful
                         for the user if they see it.
                     */
                     if (err.message === "'from' parameter is not a valid address. please check documentation") {
