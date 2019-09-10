@@ -185,9 +185,9 @@ only screen and (max-width: 760px),
     }
 }
 
-#edit {
-    float: right;
-}
+/* #edit {
+    float: left;
+} */
 
 .navbar-default .navbar-nav > li.dropdown:hover > a,
 .navbar-default .navbar-nav > li.dropdown:hover > a:hover, .navbar-default .navbar-nav > li.dropdown:hover > a:focus {
@@ -208,6 +208,12 @@ li.dropdown:hover > .dropdown-menu a {
 }
 
 #lastedit {
+    font-size: 75%;
+    float: right;
+}
+
+/* In case we need it later. */
+#editfooterleftfloat {
     font-size: 75%;
     float: left;
 }
