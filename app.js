@@ -146,7 +146,7 @@ const administration = require('./routes/admin');
 // Default values; we can override this on a per-route basis if needed
 app.locals = {
     currentyear: new Date().getFullYear(),
-    title: "Ryan Malacina | ryanmalacina.com",
+    title: constants.pageHeader.index,
     pageNotFound: constants.errors.pageNotFound,
     serverError: constants.errors.serverError,
     environment: app.get('env'),
