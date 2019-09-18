@@ -33,7 +33,7 @@ const env = app.settings.env;
 
 // Make sure our private token exists
 // @TODO: remove this hard-code and load from config file
-if (!config.get('privateKey')) {
+if (!config.get('privateKeyName')) {
     console.error(constants.errors.missingKey);
     process.exit(1);
 }
@@ -49,7 +49,8 @@ const hbs = exphbs.create({
 });
 
 // Connect to the database
-mongoose.connect('mongodb://localhost:27017/ryanmalacina', {useNewUrlParser: true})
+mongoose.connect('mongodb://localhost:27017/ryanmalacina', {
+    useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => console.log("Connected to the database."))
     .catch(err => console.error("Error connecting to database: ", err));
 
