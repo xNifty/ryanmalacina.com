@@ -139,6 +139,11 @@ td, th {
 only screen and (max-width: 760px),
 (min-device-width: 768px) and (max-device-width: 1024px) {
 
+    body {
+        padding-top: 70px;font: 
+         sans-serif;
+    }
+
     /* Force table to not be like tables anymore */
     table, thead, tbody, th, td, tr {
         display: block;
@@ -173,13 +178,9 @@ only screen and (max-width: 760px),
         padding-right: 10px;
         white-space: nowrap;
     }
-
-    body {
-        padding-top: 200px;
-    }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 750px) {
     body {
         padding-top: 60px;
     }
@@ -334,6 +335,7 @@ section.social a:hover {
 #contactformdiv p.contactformtext{
     padding-bottom: 1em;
     white-space: pre;
+    word-break: break-all;
 }
 
 .g-recaptcha {
