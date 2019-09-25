@@ -33,7 +33,7 @@ const env = app.settings.env;
 
 // Make sure our private token exists
 // @TODO: remove this hard-code and load from config file
-if (!config.get('privateKey')) {
+if (!config.get('privateKeyName')) {
     console.error(constants.errors.missingKey);
     process.exit(1);
 }
@@ -49,7 +49,9 @@ const hbs = exphbs.create({
 });
 
 // Connect to the database
-mongoose.connect('mongodb://localhost:27017/ryanmalacina', {useNewUrlParser: true, useUnifiedTopology: true})
+
+mongoose.connect('mongodb://localhost:27017/ryanmalacina', {
+    useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => console.log("Connected to the database."))
     .catch(err => console.error("Error connecting to database: ", err));
 
@@ -146,7 +148,7 @@ const administration = require('./routes/admin');
 // Default values; we can override this on a per-route basis if needed
 app.locals = {
     currentyear: new Date().getFullYear(),
-    title: "Ryan Malacina | ryanmalacina.com",
+    title: constants.pageHeader.index,
     pageNotFound: constants.errors.pageNotFound,
     serverError: constants.errors.serverError,
     environment: app.get('env'),

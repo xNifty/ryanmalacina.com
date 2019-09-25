@@ -77,7 +77,7 @@ td, th {
 .site-footer {
     position: relative;
     margin: 1rem 0 0 0;
-    padding: 1rem 15px;
+    padding: 0 1rem;
     font-family: "Open Sans", sans-serif;
     font-size: 1.1rem;
     line-height: 1.75em;
@@ -89,12 +89,14 @@ td, th {
     width: 45%;
     float: right;
     text-align: right;
+    margin-top: -1%;
 }
 
 .builtwith {
     display: block;
     width: 45%;
     float: left;
+    margin-top: -1%;
 }
 
 .container  .img-responsive {
@@ -211,6 +213,7 @@ li.dropdown:hover > .dropdown-menu a {
 #lastedit {
     font-size: 75%;
     float: right;
+    margin-bottom: -1%;
 }
 
 /* In case we need it later. */
@@ -219,9 +222,9 @@ li.dropdown:hover > .dropdown-menu a {
     float: left;
 }
 
-.container#footer-container {
+/* .container#footer-container {
     margin-top: -1%;
-}
+} */
 
 .input-group {
     width: 100%;
