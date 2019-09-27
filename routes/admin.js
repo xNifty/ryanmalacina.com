@@ -1,4 +1,5 @@
-const {Project, validate} = require('../models/projects');
+const {Project, validateProject} = require('../models/projects');
+const {News, validateNews} = require('../models/news');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
@@ -41,6 +42,15 @@ router.put("/projects/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req
     }
 });
 
+router.get("/news", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+    let news_list = await getNewsListing();
+
+    res.render("admin-news", {
+        title: constants.pageHeader.adminProject,
+        news: news_list,
+    });
+});
+
 async function listProjects() {
     return Project.find().select({
         project_name: 1,
@@ -73,6 +83,14 @@ async function unpublishProject(id) {
         console.log(err);
         return false;
     }
+}
+
+async function getNewsListing() {
+    return News.find().select({
+        news_title: 1,
+        is_published: 1,
+        _id: 1
+    });
 }
 
 module.exports = router;

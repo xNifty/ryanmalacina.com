@@ -32,7 +32,7 @@ const projectScheme = new mongoose.Schema({
     },
     project_image: {
         type: String,
-        maxlength: 150
+        maxlength: 150,
     },
     last_edited: {
         type: String
@@ -46,17 +46,18 @@ const projectScheme = new mongoose.Schema({
 const Project = mongoose.model('Project', projectScheme);
 
 function validateProject(user) {
-    const schema = {
+    console.log(user);
+    const schema = Joi.object({
         project_name: Joi.string().max(125).required(),
         project_title: Joi.string().max(125).required(),
         project_source: Joi.string().max(100).required(),
         project_description: Joi.string().min(20).max(10000).required(),
-        project_image: Joi.string().max(150)
-    };
+        project_image: Joi.string().max(150).optional()
+    });
 
-    return Joi.validate(user, schema);
+    return schema.validate(user);
 }
 
-exports.validate = validateProject;
+exports.validateProject = validateProject;
 exports.Project = Project;
 

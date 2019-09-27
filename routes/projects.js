@@ -1,7 +1,7 @@
 // projects.js
 // Handles all of the different project routes
 
-const {Project, validate} = require('../models/projects');
+const {Project, validateProject} = require('../models/projects');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
@@ -36,7 +36,7 @@ router.get('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 });
 
 router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
-    const { error } = validate(req.body);
+    const { error } = validateProject(req.body);
 
     if (error) {
         return res.status(400).render('new-project', {
@@ -136,7 +136,7 @@ router.post('/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
         { project_image: 1, _id: 0 });
 
     try {
-        const { error } = validate(req.body);
+        const { error } = validateProject(req.body);
         // I should clean up this error messaging code to provide detailed feedback for all required fields
         // that are either missing or not long enough
         if (error) {

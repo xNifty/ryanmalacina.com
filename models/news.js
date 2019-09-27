@@ -33,5 +33,15 @@ const newsScheme = new mongoose.Schema({
 
 const News = mongoose.model('News', newsScheme);
 
+function validateNews(user) {
+    const schema = {
+        news_title: Joi.string().max(125).required(),
+        news_description: Joi.string().min(20).max(10000).required(),
+    };
+
+    return Joi.validate(user, schema);
+}
+
+exports.validateNews = validateNews;
 exports.News = News;
 

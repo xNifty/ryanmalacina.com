@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="text-center"><h1>Admin Backend - News</h1></div>
+    {{#iff news.length ">" 0}}
+        <div class="row text-center">
+            {{#each news as |news| }}
+                <div class="col-md-3 col-xs-3">
+                    <div class="thumbnail">
+                        <a href="/news/{{ news.news_title }}/edit">
+                        </a>
+                        <div class="caption center-block">
+                            {{ news.news_title }}<br />
+                            {{#if news.is_published}}
+                                Published - <a class="unpublish" href="#" data-id="{{ news._id}}">Unpublish</a>
+                            {{else}}
+                                Unpublished - <a class="publish" href="#" data-id="{{ news._id}}">Publish</a>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    {{else}}
+        <hr>
+        There are no news articles at this time.
+    {{/iff}}
+</div>

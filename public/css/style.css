@@ -48,12 +48,13 @@ h1 {
     font-weight: 400;
 }
 
-/*hr {*/
-    /*width: 400px;*/
-    /*border-top: 1px solid #F8F8F8;*/
-    /*border-bottom: 1px solid rgba(0,0,0,0.2);*/
-    /*max-width: 90%;*/
-/*}*/
+hr {
+    margin-bottom: 0px;
+}
+
+hr.footer {
+    margin-bottom: 20px;
+}
 
 table {
     width: 100%;
@@ -353,4 +354,9 @@ section.social a:hover {
 .loginbtn {
     width: 100%;
     padding: 5px;
+}
+
+.admin-index-text {
+    font-weight: bold;
+    font-size: 2em;
 }
