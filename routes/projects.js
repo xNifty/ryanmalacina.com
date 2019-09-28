@@ -42,11 +42,12 @@ router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
         return res.status(400).render('new-project', {
             layout: 'new-project',
             new_project: true,
-            error: constants.errors.allFieldsRequired,
+            error: constants.errors.allFieldsRequiredUploadImage,
             project_name: req.body.project_name,
             project_title: req.body.project_title,
             project_source: req.body.project_source,
             project_description: req.body.project_description,
+            project_image: req.body.project_image ? req.body.project_image : '',
         });
     }
 
@@ -77,7 +78,7 @@ router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     let saveDate = new Date(Date.now());
 
     try {
-	if (pImage)
+	    if (pImage)
             await pImage.mv('./public/images/' + pImage.name);
         await project.save();
     } catch(ex) {
@@ -90,6 +91,7 @@ router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             project_title: req.body.project_title,
             project_source: req.body.project_source,
             project_description: req.body.project_description,
+            project_image: req.body.project_image ? req.body.project_image : '',
 	        last_edited: saveDate
         });
     }
@@ -142,7 +144,7 @@ router.post('/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
         { project_image: 1, _id: 0 });
 
     try {
-        const { error } = validateProject(req.body);
+        const { allFieldsRequired} = validateProject(req.body);
         // I should clean up this error messaging code to provide detailed feedback for all required fields
         // that are either missing or not long enough
         if (error) {

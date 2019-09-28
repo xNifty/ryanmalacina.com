@@ -2,11 +2,11 @@
     <div class="container">
         <form action="/projects/new" method="post" enctype="multipart/form-data">
 	        <div class="form-group">
-                Project Name<br> <input type="text" class="custom-text" name="project_name"
+                Project Name<br> <input type="text" class="custom-text" name="project_name" placeholder="Project Name"
                                         {{#if project_name}}value="{{project_name}}"{{/if}}><br><br>
-                Project Title<br> <input type="text" class="custom-text" name="project_title"
+                Project Title<br> <input type="text" class="custom-text" name="project_title" placeholder="Project Title"
                                          {{#if project_title}}value="{{project_title}}"{{/if}}><br><br>
-                Source<br> <input type="text" class="custom-text" name="project_source"
+                Source<br> <input type="text" class="custom-text" name="project_source" placeholder="https://github.com/account/project"
                                   {{#if project_source}}value="{{project_source}}"{{/if}}><br><br>
                 Project Description<br>
                 <textarea class="input-block-level" id="editor"name="project_description">{{#if project_description}}{{ project_description }}{{/if}}</textarea>

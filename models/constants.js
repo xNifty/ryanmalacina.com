@@ -11,6 +11,7 @@ var errorStrings = {
     serverError: "Uh oh, something went wrong when loading this page.",
     notAuthorized: "Unauthorized",
     allFieldsRequired: "An error has occurred. Please make sure all fields are filled and try again.",
+    allFieldsRequiredUploadImage: "An error has occurred. Please make sure all fields are filled and try again. You may need to reselect your image if you were uploading one.",
     projectDescriptionLength: "The project description must be at least 20 characters in length.",
     imageRequired: "You must upload an image.",
     uniqueImageName: "Please make sure file names are unique.  If you've already uploaded this image, you do not need to upload it again.",

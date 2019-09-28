@@ -46,7 +46,6 @@ const projectScheme = new mongoose.Schema({
 const Project = mongoose.model('Project', projectScheme);
 
 function validateProject(user) {
-    console.log(user);
     const schema = Joi.object({
         project_name: Joi.string().max(125).required(),
         project_title: Joi.string().max(125).required(),

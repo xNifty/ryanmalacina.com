@@ -17,7 +17,7 @@ const newsScheme = new mongoose.Schema({
     news_description_html: {
         type: String,
         minlength: 10,
-        maxlength: 25000
+        maxlength: 280
     },
     published_date: {
         type: String
