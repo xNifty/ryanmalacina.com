@@ -9,9 +9,7 @@
                 Source<br> <input type="text" class="custom-text" name="project_source"
                                   {{#if project_source}}value="{{project_source}}"{{/if}}><br><br>
                 Project Description<br>
-                <textarea class="input-block-level" id="editor"
-                          name="project_description">{{#if project_description}}{{ project_description }}{{/if}}
-                </textarea>
+                <textarea class="input-block-level" id="editor"name="project_description">{{#if project_description}}{{ project_description }}{{/if}}</textarea>
                 Image<br> <input type="file" class="custom-text" name="project_image"><br><br>
 	        </div>
 	        <button type="submit" class="btn btn-primary">
@@ -30,13 +28,11 @@
                 Source<br> <input type="text" class="custom-text" name="project_source"
                                   {{#if project_source}}value="{{project_source}}"{{/if}}><br><br>
                 Project Description<br>
-                <textarea class="form-control" id="editor"
-                          name="project_description">{{#if project_description}}{{ project_description }}{{/if}}
-                </textarea>
+                <textarea class="form-control" id="editor"name="project_description">{{#if project_description}}{{ project_description }}{{/if}}</textarea>
                 <div class="col-md-3 col-xs-6">
                     <div class="thumbnail">
                         <a href="/projects/{{ projects.project_name }}">
-                            <img class="img-responsive" src="/images/{{ project_image}}""
+                            <img class="img-responsive" src="/images/{{ project_image}}"
                                  alt="Logo">
                         </a>
                         <div class="caption center-block">Current Image</div>

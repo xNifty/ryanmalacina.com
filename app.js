@@ -51,7 +51,7 @@ const hbs = exphbs.create({
 // Connect to the database
 
 mongoose.connect('mongodb://localhost:27017/ryanmalacina', {
-    useNewUrlParser: true, useUnifiedTopology: true})
+    useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false})
     .then(() => console.log("Connected to the database."))
     .catch(err => console.error("Error connecting to database: ", err));
 

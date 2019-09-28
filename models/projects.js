@@ -52,7 +52,7 @@ function validateProject(user) {
         project_title: Joi.string().max(125).required(),
         project_source: Joi.string().max(100).required(),
         project_description: Joi.string().min(20).max(10000).required(),
-        project_image: Joi.string().max(150).optional()
+        project_image: Joi.string().max(150).allow('')
     });
 
     return schema.validate(user);

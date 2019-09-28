@@ -58,7 +58,13 @@ router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     let pDescription = converter.makeHtml(req.body.project_description);
     let pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
 
-    let pImage = req.files.project_image;
+    let pImage = '';
+
+    // So this ended up breaking things after the hapi update, so now we default it above
+    // and if it exists, we set it, otherwise, we just move on and leave it as an empty string and use
+    // our default image
+    if (req.body.project_image)
+        pImage = req.files.project_image;
 
     // If there is no image, use a default image
     if (!pImage)
