@@ -61,9 +61,11 @@ router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 
     let pImage = '';
 
-    // So this ended up breaking things after the hapi update, so now we default it above
-    // and if it exists, we set it, otherwise, we just move on and leave it as an empty string and use
-    // our default image
+    /*
+        So this ended up breaking things after the hapi update, so now we default it above
+        and if it exists, we set it, otherwise, we just move on and leave it as an empty string and use
+        our default image
+    */
     if (req.body.project_image)
         pImage = req.files.project_image;
 
@@ -78,8 +80,10 @@ router.post('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     let saveDate = new Date(Date.now());
 
     try {
-	    if (pImage)
+        // Try moving the image; if that fails, redirect back with error message
+	    if (pImage) {
             await pImage.mv('./public/images/' + pImage.name);
+        }
         await project.save();
     } catch(ex) {
         console.log(ex);
@@ -130,6 +134,8 @@ router.get('/:name/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             project_description: req.session.project_description_markdown,
             project_image: req.session.project_image,
         });
+
+        // Finally, clear up the session variables
         delete req.session.loadProjectFromSession;
         delete req.session.project_name;
         delete req.session.project_title;
