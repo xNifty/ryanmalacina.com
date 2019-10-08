@@ -6,8 +6,13 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const _ = require('lodash');
 const session = require('express-session');
+const showdown = require('showdown');
+const sanitize = require('sanitize-html');
+const dateformat = require('dateformat');
 
 const constants = require('../models/constants');
+
+let converter = new showdown.Converter();
 
 router.get("/", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     res.render("admin", {
@@ -48,6 +53,13 @@ router.get("/news", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     res.render("admin-news", {
         title: constants.pageHeader.adminProject,
         news: news_list,
+    });
+});
+
+router.get('/news/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+    res.render('new-news-entry', {
+        layout: 'new-project',
+        new_news_entry: true
     });
 });
 
