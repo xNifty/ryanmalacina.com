@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {Project, validate} = require('../models/projects');
+const {Project, validateProject} = require('../models/projects');
+const {News, validateNews} = require('../models/news');
 const mongoose = require('mongoose');
 const config = require('config');
 const Recaptcha = require('express-recaptcha').RecaptchaV2;
@@ -26,6 +27,7 @@ const nodemailerMailgun = nodemailer.createTransport(mg(auth));
 
 router.get("/", recaptcha.middleware.render, async (req, res) => {
     let project_list = await listProjects();
+    let news_list = await listNews();
 
     // This is really, really dumb - awesome!
     let recaptcha = res.recaptcha;
@@ -38,7 +40,8 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
         projects: project_list,
         index: true,
         captcha: recaptcha,
-        siteKey: config.get('siteKey')
+        siteKey: config.get('siteKey'),
+        news: news_list
     });
 });
 
@@ -98,6 +101,14 @@ async function listProjects() {
         project_title: 1,
         _id: 0
     });
+}
+
+async function listNews() {
+    return News.find({is_published: 1}).select({
+        news_title: 1,
+        published_date: 1,
+        _id: 0
+    });//.limit(5).sort({_id: -1});
 }
 
 module.exports = router;

@@ -1,11 +1,12 @@
 {{#if new_news_entry }}
     <div class="container">
-        <form action="/news/new" method="post" enctype="multipart/form-data">
+        <form action="/admin/news/new" method="post">
 	        <div class="form-group">
                 News Title<br> <input type="text" class="custom-text" name="news_title" placeholder="News Title"
                                         {{#if news_title}}value="{{news_title}}"{{/if}}><br><br>
                 News Content - Max 280 characters<br>
-                <textarea class="input-block-level" id="editor"name="news_content">{{#if news_content}}{{ news_content }}{{/if}}</textarea>
+                <textarea class="input-block-level" id="editor" name="news_description">{{#if news_description}}{{ news_description }}{{/if}}</textarea>
+            </div>
 	        <button type="submit" class="btn btn-primary">
             <span class="glyphicon glyphicon-pencil"></span> Submit News</button>
         </form>

@@ -37,11 +37,9 @@
 <div class="container" id="site-news">
     <h1>Site News and Updates</h1>
     {{#iff news.length ">" 0}}
-        <div class="row text-center">
-            {{#each news as |news| }}
-                <p>Site news and updates is still being worked on.</p>
-            {{/each}}
-        </div>
+        {{#each news as |news| }}
+            {{ news.news_title }} | {{ news.published_date }}<br>
+        {{/each}}
     {{else}}
         This section is still undergoing construction and is not yet ready.  In terms of news, the biggest
         update is that the news section is being worked on and will hopefully be ready in the coming weeks.
@@ -56,7 +54,7 @@
         <!--Section description-->
         <div id="contactformdiv">
             Shoot me a message and I'll get back to you as soon as I can.
-If you are reporting an issue that is not a security vulnerability, please do so <a href="https://github.com/xNifty/ryanmalacina.com/issues">here</a>.
+If you are reporting an issue that is not a security vulnerability, please do so <a href="https://github.com/xNifty/ryanmalacina.com/issues">here</a>.<br>
 Please note: if the captcha times out, please wait a minute and try again.  Sorry about that.
             <div class="text-center" id="emailalert">
                 <div class="alert alert-danger center-block">

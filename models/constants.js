@@ -31,6 +31,7 @@ var successStrings = {
     logoutSuccess: "You have been successfully logged out!",
     projectAdded: "Project added successfully!",
     projectUpdated: "Project updated successfully!",
+    newsAdded: "News entry successfully added!",
 }
 
 // String constants for what the tab show in the browser

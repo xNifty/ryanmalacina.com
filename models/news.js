@@ -17,7 +17,7 @@ const newsScheme = new mongoose.Schema({
     news_description_html: {
         type: String,
         minlength: 10,
-        maxlength: 280
+        maxlength: 2000
     },
     published_date: {
         type: String
@@ -34,13 +34,14 @@ const newsScheme = new mongoose.Schema({
 const News = mongoose.model('News', newsScheme);
 
 function validateNews(user) {
-    const schema = {
+    const schema = Joi.object({
         news_title: Joi.string().max(125).required(),
         news_description: Joi.string().min(20).max(10000).required(),
-    };
+    });
 
-    return Joi.validate(user, schema);
+    return schema.validate(user);
 }
+
 
 exports.validateNews = validateNews;
 exports.News = News;

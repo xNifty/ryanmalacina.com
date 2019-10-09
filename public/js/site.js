@@ -8,6 +8,14 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
+    $('.publishNews').on('click', publishNews);
+});
+
+$(document).ready(function() {
+    $('.unpublishNews').on('click', unpublishNews);
+});
+
+$(document).ready(function() {
     $('#loginform').on('click', login);
 });
 
@@ -33,6 +41,34 @@ function unpublishProject() {
     $.ajax({
         type:'PUT',
         url: '/admin/projects/unpublish/'+ $(this).data('id'),
+        datatype: "json",
+    }).done(function()  {
+        window.location.reload();
+    }).fail(function()  {
+        alert("There was an issue unpublishing.  Check the error log.")
+    });
+
+    return false;
+}
+
+function publishNews() {
+    $.ajax({
+        type:'PUT',
+        url: '/admin/news/publish/'+ $(this).data('id'),
+        datatype: "json",
+    }).done(function()  {
+        window.location.reload();
+    }).fail(function()  {
+        alert("There was an issue publishing.  Check the error log.")
+    });
+
+    return false;
+}
+
+function unpublishNews() {
+    $.ajax({
+        type:'PUT',
+        url: '/admin/news/unpublish/'+ $(this).data('id'),
         datatype: "json",
     }).done(function()  {
         window.location.reload();

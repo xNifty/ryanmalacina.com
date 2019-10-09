@@ -63,15 +63,66 @@ router.get('/news/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     });
 });
 
-async function listProjects() {
-    return Project.find().select({
-        project_name: 1,
-        project_image: 1,
-        project_title: 1,
-        is_published: 1,
-        _id: 1
-    });
-}
+// Publish the news entry
+router.post('/news/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+    const { error } = validateNews(req.body);
+
+    let news = new News(_.pick(req.body, [
+        'news_title'
+    ]));
+
+    if (error) {
+        return res.status(400).render('new-news-entry', {
+            layout: 'new-project',
+            new_news_entry: true,
+            error: constants.errors.allFieldsRequired,
+            news_title: req.body.news_title,
+            news_content: req.body.news_description
+        });
+    }
+    let newsDescription = converter.makeHtml(req.body.news_description);
+    let newsSanitized = sanitize(newsDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
+
+    news.news_description_markdown = req.body.news_description;
+    news.news_description_html = newsSanitized;
+    let saveDate = new Date(Date.now());
+
+    news.published_date = dateformat(saveDate, "mmmm dd, yyyy @ h:MM TT");
+
+    try {
+        await news.save();
+    } catch(ex) {
+        console.log('Error 2: ', ex);
+        return res.status(400).render('new-news-entry', {
+            layout: 'new-project',
+            new_news_entry: true,
+            error: constants.errors.allFieldsRequired,
+            news_title: req.body.news_title,
+            news_content: req.body.news_description,
+            last_edited: saveDate
+        });
+    }
+    req.flash('success', constants.success.newsAdded);
+    res.redirect('/admin/news');
+});
+
+router.put("/news/publish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
+    let id = req.params.id;
+    if (await publishNews(id)) {
+        return res.end('{"success" : "Updated Successfully", "status" : 200}');
+    } else {
+        return res.end('{"success" : "Server error", "status" : 500}');
+    }
+});
+
+router.put("/news/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
+    let id = req.params.id;
+    if (await unpublishNews(id)) {
+        return res.end('{"success" : "Updated Successfully", "status" : 200}');
+    } else {
+        return res.end('{"fail" : "Server error", "status" : 500}');
+    }
+});
 
 async function publishProject(id) {
     try {
@@ -95,6 +146,40 @@ async function unpublishProject(id) {
         console.log(err);
         return false;
     }
+}
+
+async function publishNews(id) {
+    try {
+        await News.findByIdAndUpdate({_id: id}, {
+            is_published: true
+        });
+        return true;
+    } catch(err) {
+        console.log(err);
+        return false;
+    }
+}
+
+async function unpublishNews(id) {
+    try {
+        await News.findByIdAndUpdate({_id: id}, {
+            is_published: false
+        });
+        return true;
+    } catch(err) {
+        console.log(err);
+        return false;
+    }
+}
+
+async function listProjects() {
+    return Project.find().select({
+        project_name: 1,
+        project_image: 1,
+        project_title: 1,
+        is_published: 1,
+        _id: 1
+    });
 }
 
 async function getNewsListing() {
