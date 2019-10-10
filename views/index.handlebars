@@ -38,7 +38,17 @@
     <h1>Site News and Updates</h1>
     {{#iff news.length ">" 0}}
         {{#each news as |news| }}
-            {{ news.news_title }} | {{ news.published_date }}<br>
+        <div class="panel panel-info">
+            <div class="panel-heading collapsed" data-toggle="collapse" data-target="#coll{{ news.counter }}">
+                <i class="fa fa-fw fa-chevron-down"></i>
+                <i class="fa fa-fw fa-chevron-right"></i>{{ news.news_title }} | {{ news.published_date }}
+            </div>
+            <div class="panel-body">
+                <div class="collapse custom-text" id="coll{{ news.counter }}">
+                    {{ news.news_description }}
+                </div>
+            </div>
+        </div>
         {{/each}}
     {{else}}
         This section is still undergoing construction and is not yet ready.  In terms of news, the biggest

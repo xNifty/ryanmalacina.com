@@ -29,6 +29,15 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
     let project_list = await listProjects();
     let news_list = await listNews();
 
+    for (var x in news_list) {
+        let counter_number = x;
+        counter_number++;
+        news_list[x].counter = counter_number;
+        console.log(news_list[x]);
+    };
+
+    //console.log(news_list);
+
     // This is really, really dumb - awesome!
     let recaptcha = res.recaptcha;
     let recaptchaNonce = res.locals.nonce;
@@ -107,8 +116,9 @@ async function listNews() {
     return News.find({is_published: 1}).select({
         news_title: 1,
         published_date: 1,
+        news_description: 1,
         _id: 0
-    });//.limit(5).sort({_id: -1});
+    }).limit(5).sort({_id: -1}).lean();
 }
 
 module.exports = router;

@@ -23,4 +23,13 @@
         <hr>
         There are no news articles at this time.
     {{/iff}}
+    <hr><br>
+    <form action="/admin/news/new" method="post">
+        <div class="form-group">
+            <input type="text" name="news_title" placeholder="News Title" size="40" {{#if news_title}}value="{{news_title}}"{{/if}}>
+            <input type="text" name="news_description" placeholder="News Content" size="100" {{#if news_description}}value="{{news_description}}"{{/if}}>
+        </div>
+        <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-pencil"></span> Submit News</button>
+    </form>
 </div>

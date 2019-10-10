@@ -6,18 +6,13 @@ const newsScheme = new mongoose.Schema({
         type: String,
         unique: true,
         required: true,
-        maxlength: 125
+        maxlength: 40
     },
-    news_description_markdown: {
+    news_description: {
         type: String,
         required: true,
         minlength: 10,
-        maxlength: 280
-    },
-    news_description_html: {
-        type: String,
-        minlength: 10,
-        maxlength: 2000
+        maxlength: 140
     },
     published_date: {
         type: String
@@ -27,7 +22,7 @@ const newsScheme = new mongoose.Schema({
     },
     is_published: {
         type: Boolean,
-        default: false
+        default: true
     }
 });
 
@@ -36,7 +31,7 @@ const News = mongoose.model('News', newsScheme);
 function validateNews(user) {
     const schema = Joi.object({
         news_title: Joi.string().max(125).required(),
-        news_description: Joi.string().min(20).max(10000).required(),
+        news_description: Joi.string().min(10).max(140).required(),
     });
 
     return schema.validate(user);
