@@ -56,22 +56,36 @@ router.get("/news", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     });
 });
 
+router.get('/news/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+    res.render('new-news-entry', {
+        layout: 'new-project',
+        new_news_entry: true
+    });
+});
+
 // Publish the news entry
 router.post('/news/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     const { error } = validateNews(req.body);
+    console.log(error);
 
     let news = new News(_.pick(req.body, [
-        'news_title', 'news_description'
+        'news_title'
     ]));
 
     if (error) {
-        return res.status(400).render('admin-news', {
+        return res.status(400).render('new-news-entry', {
+            layout: 'new-project',
+            new_news_entry: true,
             error: constants.errors.allFieldsRequired,
             news_title: req.body.news_title,
-            news_description: req.body.news_description
+            news_content: req.body.news_description
         });
     }
+    let newsDescription = converter.makeHtml(req.body.news_description);
+    let newsSanitized = sanitize(newsDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
 
+    news.news_description_markdown = req.body.news_description;
+    news.news_description_html = newsSanitized;
     let saveDate = new Date(Date.now());
 
     news.published_date = dateformat(saveDate, "mmmm dd, yyyy @ h:MM TT");
@@ -80,10 +94,12 @@ router.post('/news/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
         await news.save();
     } catch(ex) {
         console.log('Error 2: ', ex);
-        return res.status(400).render('admin-news', {
+        return res.status(400).render('new-news-entry', {
+            layout: 'new-project',
+            new_news_entry: true,
             error: constants.errors.allFieldsRequired,
             news_title: req.body.news_title,
-            news_description: req.body.news_description,
+            news_content: req.body.news_description,
             last_edited: saveDate
         });
     }

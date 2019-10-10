@@ -33,10 +33,8 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
         let counter_number = x;
         counter_number++;
         news_list[x].counter = counter_number;
-        console.log(news_list[x]);
+        //console.log(news_list[x]);
     };
-
-    //console.log(news_list);
 
     // This is really, really dumb - awesome!
     let recaptcha = res.recaptcha;
@@ -116,7 +114,7 @@ async function listNews() {
     return News.find({is_published: 1}).select({
         news_title: 1,
         published_date: 1,
-        news_description: 1,
+        news_description_html: 1,
         _id: 0
     }).limit(5).sort({_id: -1}).lean();
 }
