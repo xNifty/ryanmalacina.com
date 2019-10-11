@@ -64,9 +64,8 @@ router.get('/news/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 });
 
 // Publish the news entry
-router.post('/news/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     const { error } = validateNews(req.body);
-    console.log(error);
 
     let news = new News(_.pick(req.body, [
         'news_title'

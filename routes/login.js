@@ -22,16 +22,31 @@ router.get("/", [auth.isLoggedOut], async (req, res) => {
 //     successFlash: 'You have been successfully logged in!'
 // }));
 
+/* 
+    I do some funky stuff here...if the base uri is login, we need to do a proper
+    flash and redirect.  If it's coming from a JSON post (e.g. using nav bar login)
+    we actually return JSON for the browser, so we don't need to do any redirects
+    By doing this, we prevent the /login showing the JSON codes and actually doing something
+*/
 router.post('/', passport.authenticate("local", { failWithError: true }),
     function(req, res, next) {
-        req.flash('success', constants.success.loginSuccess);
-        return res.send('{"success" : "Log in success", "status" : 200}');
+        if (req.originalUrl !== "/login") {
+            req.flash('success', constants.success.loginSuccess);
+            return res.send('{"success" : "Log in success", "status" : 200}');
+        } else {
+            req.flash('success', constants.success.loginSuccess);
+            res.redirect(req.session.returnTo)
+        }
     },
     function(err, req, res, next) {
         console.log(err);
-        req.flash('error', constants.errors.invalidLogin);
-        return res.send('{"fail" : "Login failed", "status" : 400}');
-      }
+        if (req.originalUrl !== "/login") {
+            req.flash('error', constants.errors.invalidLogin);
+            return res.send('{"fail" : "Login failed", "status" : 400}');
+        } else {
+            req.flash('error', constants.errors.invalidLogin);
+        }
+    }
 );
 
 module.exports = router;
