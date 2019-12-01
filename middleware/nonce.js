@@ -42,7 +42,7 @@ function getDirectives(nonce) {
     ];
     const frame = [
         `https://www.google.com/recaptcha/`
-    ]
+    ];
     return {
         defaultSrc: [self],
         scriptSrc: [self, nonce, ...scripts],
@@ -51,7 +51,9 @@ function getDirectives(nonce) {
         connectSrc: [self, ...connect],
         frameSrc: [self, ...frame],
         objectSrc: [none],
-	    baseUri: [none]
+        baseUri: [none],
+        formAction: [self],
+        frameAncestors: [none]
     };
 }
 
