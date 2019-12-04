@@ -23,6 +23,7 @@ const passport = require('passport');
 const User = require('./models/user');
 const auth = require('./middleware/auth');
 const helpers = require('./functions/helpers');
+const errorhandler = require('./functions/errorhandler');
 
 const nonce_middleware = require('./middleware/nonce');
 
@@ -206,27 +207,7 @@ app.use(function (req, res, next) {
 
 app.use(function (err, req, res, next) {
     let status = err.status ? err.status : 500;
-    if (status === 404) {
-        res.render('error', {
-            error: env === 'development' ? err.stack.replace("\n", "<br />") : app.locals.pageNotFound,
-            status_code: constants.statusCodes[404]
-        });
-    } else if (status === 500) {
-        res.render('error', {
-            error: env ==='development' ? err.stack.replace("\n", "<br />") : app.locals.serverError,
-            status_code: constants.statusCodes[500]
-        });
-    } else if (status === 401) {
-        res.render('error', {
-            error: app.locals.notAuthorized,
-            status_code: constants.statusCodes[401]
-        })
-    } else {
-        res.render('error', {
-            error: env ==='development' ? err.stack.replace("\n", "<br />") : app.locals.serverError,
-            status_code: constants.statusCodes[500]
-        })
-    }
+    errorhandler.renderError(env, status, err, req, res);
 });
 
 // Start everything and enjoy. :heart:

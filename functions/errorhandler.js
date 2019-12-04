@@ -1,41 +1,30 @@
-const express = require('express');
+/* Display the proper error page based on error code and environment. */
 
-module.exports = {
-    renderErrorPage: function (status, error, req, res) {
-        if (req.app.locals.environment === 'development') {
-            if (status === 404) {
-               res.render('error', {
-                    error: error,
-                });
-            } else if (status === 500) {
-                res.render('error', {
-                    error: error,
-                });
-            } else {
-                res.render('error', {
-                    error: 'Something went wrong.'
-                });
-            }
-        }
+var constants = require('../models/constants');
 
-        /*
-            Production Error Handling
-            Catch both 404 and 500 in a manner I prefer, render appropriate view with proper message
-        */
-        if (req.app.locals.environment === 'production') {
-            if (status === 404) {
-                res.render('error', {
-                    error: req.app.locals.pageNotFound
-                });
-            } else if (status === 500) {
-                res.render('error', {
-                    error: req.app.locals.serverError
-                });
-            } else {
-                res.render('error', {
-                    error: 'Something went wrong.'
-                });
-            }
-        }
+function renderErrorPage(env, status, err, req, res) {
+    if (status === 404) {
+        console.log("We're using the function app error handler.");
+        res.render('error', {
+            error: env === 'development' ? err.stack.replace("\n", "<br />") : app.locals.pageNotFound,
+            status_code: constants.statusCodes[404]
+        });
+    } else if (status === 500) {
+        res.render('error', {
+            error: env ==='development' ? err.stack.replace("\n", "<br />") : app.locals.serverError,
+            status_code: constants.statusCodes[500]
+        });
+    } else if (status === 401) {
+        res.render('error', {
+            error: app.locals.notAuthorized,
+            status_code: constants.statusCodes[401]
+        })
+    } else {
+        res.render('error', {
+            error: env ==='development' ? err.stack.replace("\n", "<br />") : app.locals.serverError,
+            status_code: constants.statusCodes[500]
+        })
     }
 };
+
+module.exports.renderError = renderErrorPage;
