@@ -99,6 +99,7 @@ let sess = {
         httpOnly: config.get('httpOnly'),
         maxAge: 3600 * 1000,
         secure: config.get('secureCookie'),
+        sameSite: 'none',
     },
     store: new MongoStore({
         mongooseConnection: mongoose.connection, clear_interval: 3600
