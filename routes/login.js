@@ -47,7 +47,7 @@ router.post('/', passport.authenticate("local", { failWithError: true }),
             req.flash('error', constants.errors.invalidLogin);
             return res.send('{"error" : "Login failed", "status" : 400}');
         } else {
-            req.flash('error', constatns.errors.invalidLogin);
+            req.flash('error', constants.errors.invalidLogin);
             return res.redirect('/login');
         }
     }
