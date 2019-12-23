@@ -15,6 +15,11 @@ const fileUpload = require('express-fileupload');
 
 const constants = require('../models/constants');
 
+const safeTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
+                  'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br',
+                  'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre'
+];
+
 let converter = new showdown.Converter();
 
 router.use(fileUpload());
@@ -57,7 +62,7 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
 
     // @TODO : name these things better
     let pDescription = converter.makeHtml(req.body.project_description);
-    let pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
+    let pSanitized = sanitize(pDescription, { allowedTags: safeTags });
 
     let pImage = '';
 
@@ -164,7 +169,7 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         let pDescription = converter.makeHtml(req.body.project_description);
 
         // We want to allow the h1 tag in our sanitizing
-        let pSanitized = sanitize(pDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
+        let pSanitized = sanitize(pDescription, { allowedTags: safeTags });
         let saveDate = new Date(Date.now());
         let pImage = '';
 
