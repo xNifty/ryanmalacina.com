@@ -44,6 +44,10 @@ h1 {
     font-size: 2em;
 }
 
+h2 {
+    font-size: 1.8em;
+}
+
 .footer {
     font-weight: 400;
 }
@@ -386,4 +390,8 @@ i.fa {
 
 .collapsing.custom-text {
     color: black;
+}
+
+.thumbnail .caption {
+    font-size: 0.9em;
 }

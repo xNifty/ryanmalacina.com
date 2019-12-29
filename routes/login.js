@@ -30,22 +30,23 @@ router.get("/", [auth.isLoggedOut], async (req, res) => {
 */
 router.post('/', passport.authenticate("local", { failWithError: true }),
     function(req, res, next) {
-        if (req.originalUrl !== '/login' || req.session.returnTo !== 'undefined') {
+        console.log(req.originalUrl + ', ' + req.session.returnTo);
+        if (req.originalUrl === '/login' && typeof req.session.returnTo === 'undefined') {
             req.flash('success', constants.success.loginSuccess);
             return res.send('{"success" : "Log in success", "status" : 200}');
         } else {
-            req.flash('success', constants.success.loginSuccess);
             if (req.session.returnTo) {
+                req.flash('success', constants.success.loginSuccess);
                 res.redirect(req.session.returnTo)
+                delete req.session.returnTo;
             } else {
+                req.flash('success', constants.success.loginSuccess);
                 res.redirect('/');
             }
         }
     },
     function(err, req, res, next) {
-        //console.log(req.session.returnTo);
         if (req.session.returnTo == null) {
-            //console.log("This ran for some reason...");
             req.flash('error', constants.errors.invalidLogin);
             return res.send('{"error" : "Login failed", "status" : 400}');
         } else {
