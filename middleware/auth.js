@@ -7,9 +7,14 @@ function loggedInOnly (req, res, next) {
     if (req.isAuthenticated()) next();
     else {
         req.session.returnTo = req.originalUrl;
-        req.flash('error', constants.errors.loginRequired);
-        res.status(401);
-        res.redirect("/login");
+        if (req.session.returnTo !== '/logout') {
+            req.flash('error', constants.errors.loginRequired);
+            res.status(401);
+            res.redirect("/login");
+        } else {
+            // Just redirect if trying to access /logout when not even logged in
+            res.redirect('/');
+        }
     }
 }
 
@@ -25,7 +30,7 @@ function loggedInOnlyJson (req, res, next) {
     }
 }
 
-// User is already authenticated, so redirect them back to the root
+// Only allow unauthenticated users access (e.g. for /login)
 function loggedOutOnly (req, res, next) {
     if (req.isUnauthenticated()) next();
     else res.redirect("/");

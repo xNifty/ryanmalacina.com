@@ -11,7 +11,7 @@ var constants = require('../models/constants');
 
 function renderErrorPage(env, status, err, req, res) {
     if (status === 404) {
-        console.log("We're using the function app error handler.");
+        console.log(err);
         res.render('error', {
             error: env === 'development' ? err.stack.replace("\n", "<br />") : res.locals.pageNotFound,
             status_code: constants.statusCodes[404]
