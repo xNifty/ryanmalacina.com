@@ -40,7 +40,7 @@
     "lodash": "^4.17.14",
     "lodash.mergewith": "^4.6.2",
     "mem": "^5.1.1",
-    "mongoose": "^5.7.1",
+    "mongoose": "^5.8.9",
     "mongoose-unique-validator": "^2.0.2",
     "nodemailer": "^6.1.1",
     "nodemailer-mailgun-transport": "^1.4.0",
