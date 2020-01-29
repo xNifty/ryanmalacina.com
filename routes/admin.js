@@ -179,7 +179,7 @@ async function listProjects() {
         project_title: 1,
         is_published: 1,
         _id: 1
-    });
+    }).lean();
 }
 
 async function getNewsListing() {
@@ -187,7 +187,7 @@ async function getNewsListing() {
         news_title: 1,
         is_published: 1,
         _id: 1
-    });
+    }).lean();
 }
 
 module.exports = router;
