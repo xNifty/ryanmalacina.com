@@ -34,7 +34,7 @@ router.post('/', passport.authenticate("local", { failWithError: true }),
         let returnToURL = req.session.returnTo;
         delete req.session.returnTo;
         if (req.originalUrl === '/login' && (typeof returnToURL === 'undefined' || returnToURL === '/logout')) {
-            req.flash('success', constants.success.loginSuccess);
+            //req.flash('success', constants.success.loginSuccess);
             res.send('{"success" : "Log in success", "status" : 200}');
         } else {
             if (returnToURL) {

@@ -395,3 +395,7 @@ i.fa {
 .thumbnail .caption {
     font-size: 0.9em;
 }
+
+.modal-title {
+    display: inline-block;
+}

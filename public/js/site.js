@@ -81,6 +81,8 @@ function unpublishNews() {
 
 function login() {
     var form = document.getElementById('loginform');
+    var loginSubmit = document.getElementById('modal-footer');
+    /*var loginContent = loginSubmit.value();*/
     form.onsubmit = function (e) {
         e.preventDefault();
         var user = form.username.value;
@@ -100,7 +102,10 @@ function login() {
                 location.reload();
             },
             success: function () {
-                location.reload();
+                $('#loginFooter').html('<div class="alert alert-success alert-dismissible center-block">You have been successfully logged in!</div>');
+                $('#sp_uname').prop('disabled', true);
+                $('#sp_pass').prop('disabled', true);
+                setTimeout(location.reload.bind(location), 3000);
             },
             error: function () {
                 location.reload();
@@ -109,7 +114,7 @@ function login() {
                 location.reload();
             },
         });
-        form.reset();
+        // form.reset();
     };
 }
 
