@@ -102,13 +102,14 @@ function login() {
                 location.reload();
             },
             success: function () {
-                $('#loginFooter').html('<div class="alert alert-success alert-dismissible center-block">You have been successfully logged in!</div>');
+                $('#loginSubmit').hide();
+                $('#loginStatus').html('<div class="alert alert-success alert-dismissible center-block">You have been successfully logged in!</div>');
                 $('#sp_uname').prop('disabled', true);
                 $('#sp_pass').prop('disabled', true);
                 setTimeout(location.reload.bind(location), 3000);
             },
             error: function () {
-                location.reload();
+                $('#loginStatus').html('<div class="alert alert-danger alert-dismissible center-block">Invalid username or password!</div>');
             },
             always: function () {
                 location.reload();
