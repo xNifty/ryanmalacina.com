@@ -110,6 +110,7 @@ function login() {
             },
             error: function () {
                 $('#loginStatus').html('<div class="alert alert-danger alert-dismissible center-block">Invalid username or password!</div>');
+                $('#loginModal').effect('shake');
             },
             always: function () {
                 location.reload();
