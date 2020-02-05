@@ -47,8 +47,8 @@
 			            </ul>
 		            </li>
                 {{ else }}
-                    <!--<li><a class="nav-link" href="/login">Login <span class="fa fa-sign-in"></span></a></li>-->
-                    <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+                    <li><a href="#loginModal" class="trigger-btn" data-toggle="modal">Login <span class="fa fa-sign-in"></span></a></li>
+                    {{!-- <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-log-in"></span> Login</a>
 				        <div class="dropdown-menu login-ddl">
 				            <form class="form-horizontal"  method="post" action="#" accept-charset="UTF-8" id="loginform">
 				                <input id="sp_uname" class="form-control login" type="text" name="username" placeholder="Username" />
@@ -56,7 +56,7 @@
 				                <input class="btn btn-primary loginbtn" type="submit" name="submit" value="Login" />
 				            </form>
 				        </div>
-			        </li>
+			        </li> --}}
                 {{/if}}
             </ul>
         </div><!-- /.navbar-collapse -->
