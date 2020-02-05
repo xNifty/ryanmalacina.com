@@ -11,24 +11,23 @@ var constants = require('../models/constants');
 
 function renderErrorPage(env, status, err, req, res) {
     if (status === 404) {
-        console.log(err);
         res.render('error', {
-            error: env === 'development' ? err.stack.replace("\n", "<br />") : res.locals.pageNotFound,
+            error: env === 'development' ? err.stack.replace("\n", "<br />") : constants.errors.pageNotFound,
             status_code: constants.statusCodes[404]
         });
     } else if (status === 500) {
         res.render('error', {
-            error: env ==='development' ? err.stack.replace("\n", "<br />") : res.locals.serverError,
+            error: env ==='development' ? err.stack.replace("\n", "<br />") : constants.errors.serverError,
             status_code: constants.statusCodes[500]
         });
     } else if (status === 401) {
         res.render('error', {
-            error: res.locals.notAuthorized,
+            error: constants.errors.notAuthorized,
             status_code: constants.statusCodes[401]
         })
     } else {
         res.render('error', {
-            error: env ==='development' ? err.stack.replace("\n", "<br />") : res.locals.serverError,
+            error: env ==='development' ? err.stack.replace("\n", "<br />") : constants.errors.serverError,
             status_code: constants.statusCodes[500]
         })
     }
