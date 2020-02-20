@@ -32,6 +32,10 @@ const constants = require('./models/constants');
 const app = express();
 const env = app.settings.env;
 
+// File versioning
+const jsFileVersion = '1.0.0';
+const cssFileVersion = '1.0.0';
+
 // Make sure our private token exists
 // @TODO: remove this hard-code and load from config file
 if (!config.get('privateKeyName')) {
@@ -154,7 +158,9 @@ app.locals = {
     pageNotFound: constants.errors.pageNotFound,
     serverError: constants.errors.serverError,
     environment: app.get('env'),
-    notAuthorized: constants.errors.notAuthorized
+    notAuthorized: constants.errors.notAuthorized,
+    jsFileVersion: jsFileVersion,
+    cssFileVersion: cssFileVersion,
 };
 
 app.use(function(req, res, next) {

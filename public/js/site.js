@@ -189,11 +189,13 @@ function SubmitMail (){
                     "try again.";
                 document.getElementById('emailalert').style.position = 'static';
                 document.getElementById('emailalert').style.opacity = '1';
+                grecaptcha.reset();
             } else {
             document.getElementById('emailerror').innerHTML = "There was an error sending the email..." +
                 "please try again.";
             document.getElementById('emailalert').style.position = 'static';
             document.getElementById('emailalert').style.opacity = '1';
+            grecaptcha.reset();
         }
     },
     error: function()  {
@@ -203,6 +205,7 @@ function SubmitMail (){
             "on GitHub.";
         document.getElementById('emailalert').style.position = 'static';
         document.getElementById('emailalert').style.opacity = '1';
+        grecaptcha.reset();
     }
     });
 }
