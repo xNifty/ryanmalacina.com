@@ -43,6 +43,7 @@ function getDirectives(nonce) {
     const frame = [
         `https://www.google.com/recaptcha/`
     ];
+    const reportTo = 'https://ryanmalacina.report-uri.com/r/d/csp/enforce';
     return {
         defaultSrc: [self],
         scriptSrc: [self, nonce, ...scripts],
@@ -53,7 +54,8 @@ function getDirectives(nonce) {
         objectSrc: [none],
         baseUri: [none],
         formAction: [self],
-        frameAncestors: [none]
+        frameAncestors: [none],
+        reportUri: reportTo
     };
 }
 
