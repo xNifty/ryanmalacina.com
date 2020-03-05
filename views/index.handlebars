@@ -75,6 +75,7 @@ Please note: if the captcha times out, please wait a minute and try again.  Sorr
                 <!--Grid column-->
                 <div class="col-md-12 mb-md-0 mb-5">
                     <form id="contact-form" name="contact-form" action="post" method="POST">
+                        {{{ captcha }}}
                         <!--Grid row-->
                         <div class="row">
                             <!--Grid column-->
@@ -111,14 +112,14 @@ Please note: if the captcha times out, please wait a minute and try again.  Sorr
                             <div class="col-md-12">
                                 <div class="md-form">
                                     <textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" placeholder="This is your email content."></textarea>
-                                    <label for="message">Message</label>
+                                    <label for="message">Message - This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.</label>
                                 </div>
 
                             </div>
                         </div>
                         <!--Grid row-->
                         <div class="text-center">
-                            <div class="g-recaptcha" data-sitekey="{{siteKey}}"></div>
+                            <!--<div class="g-recaptcha" data-sitekey="{{siteKey}}"></div>-->
                             <div class="text-md-left">
                                 <a class="btn btn-primary" id="submitmail">Send Email</a>
                             </div>

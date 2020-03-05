@@ -399,3 +399,7 @@ i.fa {
 .modal-title {
     display: inline-block;
 }
+
+.grecaptcha-badge {
+    visibility: hidden;
+}

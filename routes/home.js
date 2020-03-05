@@ -4,14 +4,15 @@ const {Project, validateProject} = require('../models/projects');
 const {News, validateNews} = require('../models/news');
 const mongoose = require('mongoose');
 const config = require('config');
-const Recaptcha = require('express-recaptcha').RecaptchaV2;
+const Recaptcha = require('express-recaptcha').RecaptchaV3;
 
 const nodemailer = require('nodemailer');
 const mg = require('nodemailer-mailgun-transport');
 
 const recaptcha = new Recaptcha(
     config.get('siteKey'),
-    config.get('secretKey')
+    config.get('secretKey'),
+    {callback: 'cb'}
 );
 
 // This is your API key that you retrieve from www.mailgun.com/cp (free up to 10K monthly emails)
@@ -38,6 +39,7 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
 
     // This is really, really dumb - awesome!
     let recaptcha = res.recaptcha;
+    console.log(recaptcha);
     let recaptchaNonce = res.locals.nonce;
     recaptcha = recaptcha.replace('defer></script>', `" defer nonce="${recaptchaNonce}"></script>`); //<script>grecaptcha
     recaptcha = recaptcha.replace('<script>grecaptcha', `<script nonce="${recaptchaNonce}">grecaptcha`);
@@ -58,7 +60,7 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
    let subject = req.body.subject;
    let message = req.body.message;
 
-   // console.log(req.params);
+   console.log(req.params);
    // console.log(req.recaptcha.error);
 
    if (!req.recaptcha.error) {
@@ -97,6 +99,7 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
         }
    } else {
        res.setHeader('Content-Type', 'application/json');
+       console.log(req.recaptcha.error);
        return res.end(JSON.stringify({fail: "Server error", status: 500}));
    }
 });

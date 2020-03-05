@@ -19,6 +19,15 @@ $(document).ready(function() {
     $('#loginform').on('click', login);
 });
 
+function cb(token) {
+                console.log('token', token);
+                var input = document.createElement('input');
+                input.setAttribute('type', 'hidden');
+                input.setAttribute('name', 'g-recaptcha-response');
+                input.setAttribute('value', token);
+                document.getElementById('contact-form').appendChild(input);
+            }
+
 // $(document).ready(function() {
 //     $('#logoutlink').on('click', logout);
 // });
