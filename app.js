@@ -33,8 +33,8 @@ const app = express();
 const env = app.settings.env;
 
 // File versioning
-const jsFileVersion = '1.0.0';
-const cssFileVersion = '1.0.0';
+const jsFileVersion = '1.0.6';
+const cssFileVersion = '1.0.1';
 
 // Make sure our private token exists
 // @TODO: remove this hard-code and load from config file
@@ -92,7 +92,7 @@ app.use(cookieParser());
 // Now we don't have to hard-code this into app.js
 const secret_key = config.get('privateKeyName');
 
-app.set('trust proxy', true);
+//app.set('trust proxy', true);
 let sess = {
     secret: config.get(secret_key),
     proxy: config.get('useProxy'),
@@ -103,7 +103,7 @@ let sess = {
         httpOnly: config.get('httpOnly'),
         maxAge: 3600 * 1000,
         secure: config.get('secureCookie'),
-        sameSite: 'none',
+        sameSite: config.get('sameSite'),
     },
     store: new MongoStore({
         mongooseConnection: mongoose.connection, clear_interval: 3600
