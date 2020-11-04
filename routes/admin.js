@@ -53,6 +53,7 @@ router.get("/news", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     res.render("admin-news", {
         title: constants.pageHeader.adminProject,
         news: news_list,
+        loadJS: true
     });
 });
 
@@ -72,6 +73,7 @@ router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =>
     ]));
 
     if (error) {
+        console.log("Error 3: ", error);
         return res.status(400).render('new-news-entry', {
             layout: 'new-project',
             new_news_entry: true,
