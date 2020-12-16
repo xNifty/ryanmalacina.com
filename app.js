@@ -101,7 +101,7 @@ let sess = {
     name: config.get('cookieName'),
     cookie: {
         httpOnly: config.get('httpOnly'),
-        maxAge: 3600 * 1000,
+        maxAge: config.get('maxAge'),
         secure: config.get('secureCookie'),
         sameSite: config.get('sameSite'),
     },
