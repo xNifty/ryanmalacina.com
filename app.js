@@ -140,6 +140,7 @@ const local = new LocalStrategy((username, password, done) => {
 passport.use("local", local);
 
 // Set the favicon for the site
+// don't think this is working and needs to be fixed
 app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
 
 // Routes
