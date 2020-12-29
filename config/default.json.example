@@ -11,5 +11,9 @@
   "mailgunDomain": "mailgunDomain",
   "mailgunToEmail": "mailgunToEmail",
   "siteKey": "recaptchaSiteKey",
-  "secretKey": "recaptchaSecretKey"
+  "secretKey": "recaptchaSecretKey",
+  "sameSite": "lax",
+  "maxAge": 86400000,
+  "blogURL": "blogurl",
+  "docsURL": "docsurl"
 }

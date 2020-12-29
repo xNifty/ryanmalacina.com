@@ -191,12 +191,12 @@ app.use('/admin', administration);
 
 // Send user to my blog via a 301 redirect
 app.get("/blog", function(req, res) {
-    res.redirect(301, "https://blog.ryanmalacina.com");
+    res.redirect(301, config.get("blogURL"));
 });
 
 // Send user to my documentation site via a 301 redirect
 app.get("/docs", function(req, res) {
-    res.redirect(301, "https://docs.ryanmalacina.com");
+    res.redirect(301, config.get("docsURL"));
 });
 
 /*
