@@ -135,6 +135,48 @@ router.put("/news/delete/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) 
     }
 });
 
+// Edit News
+// router.get('/news/edit/:id', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+//     let id = req.params.id;
+//     const project = await News.findOne({
+//         _id: id
+//     });
+
+//     // For if the edit fails, otherwise we want to return to the normal project information page
+//     req.session.projectEditReturnTo = req.originalUrl;
+
+//     // If not load from session, then load normally; else, load from session
+//     if (!req.session.loadProjectFromSession) {
+//         res.render('new-project', {
+//             layout: 'new-project',
+//             update_project: true,
+//             project_name: project.project_name,
+//             project_title: project.project_title,
+//             project_source: project.project_source,
+//             project_description: project.project_description_markdown,
+//             project_image: project.project_image,
+//         });
+//     } else {
+//         res.render('new-project', {
+//             layout: 'new-project',
+//             update_project: true,
+//             project_name: req.session.project_name,
+//             project_title: req.session.project_title,
+//             project_source: req.session.project_source,
+//             project_description: req.session.project_description_markdown,
+//             project_image: req.session.project_image,
+//         });
+
+//         // Finally, clear up the session variables
+//         delete req.session.loadProjectFromSession;
+//         delete req.session.project_name;
+//         delete req.session.project_title;
+//         delete req.session.project_source;
+//         delete req.session.project_description_markdown;
+//         delete req.session.project_image;
+//     }
+// });
+
 async function publishProject(id) {
     try {
         await Project.findByIdAndUpdate({_id: id}, {
