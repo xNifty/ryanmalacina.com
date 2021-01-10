@@ -126,6 +126,15 @@ router.put("/news/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, re
     }
 });
 
+router.put("/news/delete/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
+    let id = req.params.id;
+    if (await deleteNews(id)) {
+        return res.end('{"success" : "News Entry Deleted", "status" : 200}');
+    } else {
+        return res.end('{"fail" : "Server error", "status" : 500}');
+    }
+});
+
 async function publishProject(id) {
     try {
         await Project.findByIdAndUpdate({_id: id}, {
@@ -167,6 +176,16 @@ async function unpublishNews(id) {
         await News.findByIdAndUpdate({_id: id}, {
             is_published: false
         });
+        return true;
+    } catch(err) {
+        console.log(err);
+        return false;
+    }
+}
+
+async function deleteNews(id) {
+    try {
+        await News.deleteOne({_id: id});
         return true;
     } catch(err) {
         console.log(err);

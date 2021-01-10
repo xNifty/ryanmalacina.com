@@ -16,6 +16,10 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
+    $('.deleteNews').on('click', deleteNews);
+});
+
+$(document).ready(function() {
     $('#loginform').on('click', login);
 });
 
@@ -77,6 +81,25 @@ function unpublishNews() {
     });
 
     return false;
+}
+
+function deleteNews() {
+    if (confirm("Are you sure you wish to delete this news entry?")) {
+        $.ajax({
+            type:'PUT',
+            url: '/admin/news/delete/'+ $(this).data('id'),
+            datatype: "json",
+        }).done(function()  {
+            window.location.reload();
+            alert("Entry deleted.");
+        }).fail(function()  {
+            alert("There was an issue deleting.  Check the error log.")
+        });
+    
+        return false;
+    } else {
+        return false;
+    }
 }
 
 function login() {

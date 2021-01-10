@@ -399,3 +399,36 @@ i.fa {
 .modal-title {
     display: inline-block;
 }
+
+/* Edit and Delete icons on the news page */
+.thumbnail .fa.fa-pencil {
+    color: black;
+    position: absolute;
+    top: 5px;
+    right: 30px;
+    /* margin: 5px 5px 0 0; */
+}
+
+.thumbnail .fa.fa-pencil:hover {
+    color: red;
+    position: absolute;
+    top: 5px;
+    right: 30px;
+    /* margin: 5px 5px 0 0; */
+}
+
+.thumbnail .fa.fa-trash {
+    color: black;
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    /* margin: 5px 5px 0 0; */
+}
+
+.thumbnail .fa.fa-trash:hover {
+    color: red;
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    /* margin: 5px 5px 0 0; */
+}

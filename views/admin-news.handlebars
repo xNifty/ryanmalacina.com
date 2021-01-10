@@ -5,14 +5,14 @@
             {{#each news as |news| }}
                 <div class="col-md-3 col-xs-3">
                     <div class="thumbnail">
-                        <a href="/news/{{ news.news_title }}/edit">
-                        </a>
                         <div class="caption center-block">
+                            <a class="editNews" href="/news/{{ news.news_title }}/edit" data-id="{{ news._id}}"> <i class="fa fa-pencil"></i></a>
+                            <a class="deleteNews" href="/news/{{ news.news_title }}/delete" data-id="{{ news._id}}"> <i class="fa fa-trash"></i></a>
                             {{ news.news_title }}<br />
                             {{#if news.is_published}}
-                                Published - <a class="unpublishNews" href="#" data-id="{{ news._id}}">Unpublish</a>
+                                Published - <a class="unpublishNews" href="" data-id="{{ news._id}}">Unpublish</a>
                             {{else}}
-                                Unpublished - <a class="publishNews" href="#" data-id="{{ news._id}}">Publish</a>
+                                Unpublished - <a class="publishNews" href="" data-id="{{ news._id}}">Publish</a>
                             {{/if}}
                         </div>
                     </div>
