@@ -427,12 +427,24 @@ i.fa {
 
 .thumbnail .fa.fa-trash:hover {
     color: red;
-    position: absolute;
-    top: 5px;
-    right: 15px;
     /* margin: 5px 5px 0 0; */
 }
 
 .newsback {
     float: right;
 }
+
+.thumbnail .deleteProject .fa.fa-trash {
+    color: black;
+    position: absolute;
+    top: 300px;
+    right: 15px;
+    /* margin: 5px 5px 0 0; */
+}
+
+.thumbnail .deleteProject .fa.fa-trash:hover {
+    color: red;
+    /* margin: 5px 5px 0 0; */
+}
+
+body > div:nth-child(3) > div.row.text-center > div:nth-child(4) > div > div > a.deleteProject > i

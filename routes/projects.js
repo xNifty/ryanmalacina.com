@@ -253,6 +253,16 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
 
 });
 
+// Delete project
+router.put("/delete/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
+    let id = req.params.id;
+    if (await deleteProject(id)) {
+        return res.end('{"success" : "Project Deleted", "status" : 200}');
+    } else {
+        return res.end('{"fail" : "Server error", "status" : 500}');
+    }
+});
+
 // TODO: this really should use ID to load; we can hide that on the page per row if we load initial
 // We can clearly get the ID like we do in other routes, so this really needs to be changed to ID loading
 router.get("/:name", async(req, res) => {
@@ -289,6 +299,16 @@ async function listProjects() {
         project_title: 1,
         _id: 0
     }).lean();
+}
+
+async function deleteProject(id) {
+    try {
+        await Project.deleteOne({_id: id});
+        return true;
+    } catch(err) {
+        console.log(err);
+        return false;
+    }
 }
 
 module.exports = router;

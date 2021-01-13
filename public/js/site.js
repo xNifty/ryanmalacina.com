@@ -20,6 +20,10 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
+    $('.deleteProject').on('click', deleteProject);
+});
+
+$(document).ready(function() {
     $('#loginform').on('click', login);
 });
 
@@ -92,6 +96,24 @@ function deleteNews() {
         }).done(function()  {
             window.location.reload();
             alert("Entry deleted.");
+        }).fail(function()  {
+            alert("There was an issue deleting.  Check the error log.")
+        });
+    
+        return false;
+    } else {
+        return false;
+    }
+}
+function deleteProject() {
+    if (confirm("Are you sure you wish to delete this project?")) {
+        $.ajax({
+            type:'PUT',
+            url: '/projects/delete/'+ $(this).data('id'),
+            datatype: "json",
+        }).done(function()  {
+            window.location.reload();
+            alert("Project deleted.");
         }).fail(function()  {
             alert("There was an issue deleting.  Check the error log.")
         });
