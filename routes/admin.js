@@ -57,16 +57,11 @@ router.get("/news", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     });
 });
 
-router.get('/news/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
-    res.render('new-news-entry', {
-        layout: 'new-project',
-        new_news_entry: true
-    });
-});
-
 // Publish the news entry
 router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     const { error } = validateNews(req.body);
+
+    let news_list = await getNewsListing();
 
     let news = new News(_.pick(req.body, [
         'news_title'
@@ -74,12 +69,12 @@ router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =>
 
     if (error) {
         console.log("Error 3: ", error);
-        return res.status(400).render('new-news-entry', {
-            layout: 'new-project',
-            new_news_entry: true,
+        return res.status(400).render('admin-news', {
             error: constants.errors.allFieldsRequired,
             news_title: req.body.news_title,
-            news_content: req.body.news_description
+            news_description: req.body.news_description,
+            loadJS: true,
+            news: news_list
         });
     }
     let newsDescription = converter.makeHtml(req.body.news_description);
@@ -95,13 +90,12 @@ router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =>
         await news.save();
     } catch(ex) {
         console.log('Error 2: ', ex);
-        return res.status(400).render('new-news-entry', {
-            layout: 'new-project',
-            new_news_entry: true,
+        return res.status(400).render('admin-news', {
             error: constants.errors.allFieldsRequired,
             news_title: req.body.news_title,
-            news_content: req.body.news_description,
-            last_edited: saveDate
+            news_description: req.body.news_description,
+            loadJS: true,
+            news: news_list
         });
     }
     req.flash('success', constants.success.newsAdded);
@@ -136,46 +130,104 @@ router.put("/news/delete/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) 
 });
 
 // Edit News
-// router.get('/news/edit/:id', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
-//     let id = req.params.id;
-//     const project = await News.findOne({
-//         _id: id
-//     });
+router.get('/news/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+    let id = req.params.id;
 
-//     // For if the edit fails, otherwise we want to return to the normal project information page
-//     req.session.projectEditReturnTo = req.originalUrl;
+    if (id == undefined) {
+        id = req.session.news_id;
+        req.session.news_id = null;
+    }
+        
 
-//     // If not load from session, then load normally; else, load from session
-//     if (!req.session.loadProjectFromSession) {
-//         res.render('new-project', {
-//             layout: 'new-project',
-//             update_project: true,
-//             project_name: project.project_name,
-//             project_title: project.project_title,
-//             project_source: project.project_source,
-//             project_description: project.project_description_markdown,
-//             project_image: project.project_image,
-//         });
-//     } else {
-//         res.render('new-project', {
-//             layout: 'new-project',
-//             update_project: true,
-//             project_name: req.session.project_name,
-//             project_title: req.session.project_title,
-//             project_source: req.session.project_source,
-//             project_description: req.session.project_description_markdown,
-//             project_image: req.session.project_image,
-//         });
+    let news = null;
 
-//         // Finally, clear up the session variables
-//         delete req.session.loadProjectFromSession;
-//         delete req.session.project_name;
-//         delete req.session.project_title;
-//         delete req.session.project_source;
-//         delete req.session.project_description_markdown;
-//         delete req.session.project_image;
-//     }
-// });
+    try {
+        news = await News.findOne({
+            _id: id
+        });
+    } catch(err) {
+        console.log("Edit err: ", err);
+        let news_list = await getNewsListing();
+        req.session.news_id = null;
+
+        res.render("admin-news", {
+            title: constants.pageHeader.adminProject,
+            news: news_list,
+            loadJS: true
+        });
+    }
+
+    req.session.news_id = news._id;
+
+    // Render edit news section - if no valid ID is found, send back to the news index and reset session var to be safe
+    if (id != undefined) {
+        res.render("edit-news", {
+            title: news.news_title,
+            news_title: news.news_title,
+            news_description: news.news_description_markdown,
+            loadJS: true
+        });
+    } else {
+        let news_list = await getNewsListing();
+        req.session.news_id = null;
+
+        res.render("admin-news", {
+            title: constants.pageHeader.adminProject,
+            news: news_list,
+            loadJS: true
+        });
+    }
+});
+
+// Publish the news entry
+router.post('/news/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
+    const { error } = validateNews(req.body);
+
+    let news_list = await getNewsListing();
+
+    let news = new News(_.pick(req.body, [
+        'news_title'
+    ]));
+
+    if (error) {
+        console.log("Error 3: ", error);
+        return res.status(400).render('edit-news', {
+            error: constants.errors.allFieldsRequired,
+            title: req.body.news_title,
+            news_title: req.body.news_title,
+            news_description: req.body.news_description,
+            loadJS: true
+        });
+    }
+    let newsDescription = converter.makeHtml(req.body.news_description);
+    let newsSanitized = sanitize(newsDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
+
+    news.news_description_markdown = req.body.news_description;
+    news.news_description_html = newsSanitized;
+    let saveDate = new Date(Date.now());
+
+    news.published_date = dateformat(saveDate, "mmmm dd, yyyy @ h:MM TT");
+
+    try {
+        await News.findByIdAndUpdate({_id: req.session.news_id}, {
+            news_title: req.body.news_title,
+            news_description_markdown: req.body.news_description,
+            news_description_html: newsSanitized
+        });
+    } catch(ex) {
+        console.log('Error 2: ', ex);
+        return res.status(400).render('edit-news', {
+            error: constants.errors.allFieldsRequired,
+            title: req.body.news_title,
+            news_title: req.body.news_title,
+            news_description: req.body.news_description,
+            loadJS: true
+        });
+    }
+    req.session.news_id = null;
+    req.flash('success', constants.success.newsEdited);
+    res.redirect('/admin/news');
+});
 
 async function publishProject(id) {
     try {

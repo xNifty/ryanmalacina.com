@@ -432,3 +432,7 @@ i.fa {
     right: 15px;
     /* margin: 5px 5px 0 0; */
 }
+
+.newsback {
+    float: right;
+}

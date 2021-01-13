@@ -32,6 +32,7 @@ var successStrings = {
     projectAdded: "Project added successfully!",
     projectUpdated: "Project updated successfully!",
     newsAdded: "News entry successfully added!",
+    newsEdited: "News entry successfully edited!"
 }
 
 // String constants for what the tab show in the browser
