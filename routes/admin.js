@@ -293,6 +293,7 @@ async function listProjects() {
         project_image: 1,
         project_title: 1,
         is_published: 1,
+        show_index: 1,
         _id: 1
     }).lean();
 }

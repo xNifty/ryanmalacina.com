@@ -292,6 +292,30 @@ router.get("/:name", async(req, res) => {
     });
 });
 
+router.put("/update/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
+    let id = req.params.id;
+    const project = await Project.findOne({
+        _id: id,
+    });
+
+    let status = project.show_index;
+
+    try {
+        if (status) {
+            await Project.findByIdAndUpdate({_id: id}, {
+                show_index: false
+            });
+        } else {
+            await Project.findByIdAndUpdate({_id: id}, {
+                show_index: true
+            });
+        }
+        return res.end('{"success" : "Index rating updated", "status" : 200}');
+    } catch(err) {
+        return res.end('{"fail" : "Server error", "status" : 500}');
+    }  
+});
+
 async function listProjects() {
     return Project.find({is_published: 1}).select({
         project_name: 1,

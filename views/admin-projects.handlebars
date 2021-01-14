@@ -16,6 +16,11 @@
                             {{else}}
                                 Unpublished - <a class="publish" href="" data-id="{{ projects._id}}">Publish</a>
                             {{/if}}
+                            {{#if projects.show_index}}
+                                <input class="projCheckbox" data-id="{{ projects._id}} "type="checkbox" name="projectCheckbox{{projects._id}}" value="projectCheckbox{{projects._id}}" checked>
+                            {{else}}
+                                <input class="projCheckbox" data-id="{{ projects._id}} "type="checkbox" name="projectCheckbox{{projects._id}}" value="projectCheckbox{{projects._id}}">
+                            {{/if}}
                             <a class="deleteProject" href="/projects/delete" data-id="{{ projects._id}}"> <i class="fa fa-trash"></i></a>
                         </div>
                     </div>

@@ -40,6 +40,10 @@ const projectScheme = new mongoose.Schema({
     is_published: {
         type: Boolean,
         default: false
+    },
+    show_index: {
+        type: Boolean,
+        default: false
     }
 });
 

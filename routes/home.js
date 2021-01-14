@@ -102,7 +102,7 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
 });
 
 async function listProjects() {
-    return Project.find({is_published: 1}).select({
+    return Project.find({show_index: 1, is_published: 1}).select({
         project_name: 1,
         project_image: 1,
         project_title: 1,

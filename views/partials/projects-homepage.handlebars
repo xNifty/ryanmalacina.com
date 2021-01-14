@@ -1,10 +1,8 @@
 <div class="container" id="projects">
     <h1>Projects</h1>
     <p>I work on multiple different projects in my free time, some of which are completed, and others that are
-    simply basic ideas that I started but may not have finished.  Below is the list of projects I have worked on; simply click
-    the arrows on either side to scroll through the carousel of different projects I am either working on or have finished 
-    and are what I consider major things I've worked on.  To visit the full
-    list of all projects I have worked on, in a page list instead of a carousel, you can click <a href="projects">here</a>.</p>
+    simply basic ideas that I started but may not have finished.  Below are some of the projects I have worked on, am working on
+    or have contributed to.  To view a list of all projects I have worked on you can click <a href="projects">here</a>.</p>
     {{#iff projects.length ">" 0}}
         <div class="row text-center prjlist">
             {{#each projects as |projects| }}
@@ -22,7 +20,7 @@
             {{/each}}
         </div>
     {{else}}
-        There are no published projects at this time.
+        Uh oh! It appears I haven't selected any projects to display here.
     {{/iff}}
     <hr>
 </div>

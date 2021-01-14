@@ -326,3 +326,55 @@ $('a[href*="#"]')
             }
         }
     });
+
+// projects checkboxes
+//client.js    
+$(document).ready(function(){
+    $('.projCheckbox').on('click', updateCheckbox);
+});
+
+function updateCheckbox() {
+    $(this).prop("disabled", "disabled");
+    $.ajax({
+        type:'put',
+        url: '/projects/update/'+$(this).data('id'),
+        data: "json",
+    }).done(function() {
+        $(this).removeAttr("disabled");
+        window.location.reload();
+    }).fail(function() {
+        alert("There was an issue updating.  Check the error log.")
+    });
+
+    return false;
+};
+
+// limit 3 checkboxes on projects page
+$("input[type=checkbox]").on("click", function () {
+    var count = $("input[type=checkbox]:checked").length;
+    if (count < 3) {  // we only want to allow 3 to be checked here.
+        $("input[type=checkbox]").removeAttr("disabled");
+        $("input[type=checkbox]").change(updateCheckbox);
+        // re-enable all checkboxes
+    } else {
+        $("input[type=checkbox]").prop("disabled","disabled");
+        // disable all checkboxes
+        $("input[type=checkbox]:checked").removeAttr("disabled");
+        // only enable the elements that are already checked.
+    }
+});
+
+// limit 3 checkboxes on projects page
+$(document).ready(function(){
+    var count = $("input[type=checkbox]:checked").length;
+    if (count < 3) {  // we only want to allow 3 to be checked here.
+        $("input[type=checkbox]").removeAttr("disabled");
+        $("input[type=checkbox]").change(updateCheckbox);
+        // re-enable all checkboxes
+    } else {
+        $("input[type=checkbox]").prop("disabled","disabled");
+        // disable all checkboxes
+        $("input[type=checkbox]:checked").removeAttr("disabled");
+        // only enable the elements that are already checked.
+    }
+});

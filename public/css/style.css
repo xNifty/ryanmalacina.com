@@ -450,3 +450,11 @@ i.fa {
 #projects > div > i.fa.fa-arrow-right.nextArrowBtn.slick-arrow {
     margin-right: -5px;
 }
+
+.thumbnail input[type=checkbox] {
+    color: black;
+    position: absolute;
+    top: 295px;
+    right: 35px;
+    /* margin: 5px 5px 0 0; */
+}
