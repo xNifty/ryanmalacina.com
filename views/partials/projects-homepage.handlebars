@@ -1,0 +1,28 @@
+<div class="container" id="projects">
+    <h1>Projects</h1>
+    <p>I work on multiple different projects in my free time, some of which are completed, and others that are
+    simply basic ideas that I started but may not have finished.  Below is the list of projects I have worked on; simply click
+    the arrows on either side to scroll through the carousel of different projects I am either working on or have finished 
+    and are what I consider major things I've worked on.  To visit the full
+    list of all projects I have worked on, in a page list instead of a carousel, you can click <a href="projects">here</a>.</p>
+    {{#iff projects.length ">" 0}}
+        <div class="row text-center prjlist">
+            {{#each projects as |projects| }}
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                    <div class="thumbnail">
+                        <a href="/projects/{{ projects.project_name }}">
+                            <img class="img-responsive greyimg" src="/images/{{ projects.project_image }}"
+                                 alt="Logo">
+                        </a>
+                        <div class="caption center-block">
+                            {{ projects.project_title }}
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    {{else}}
+        There are no published projects at this time.
+    {{/iff}}
+    <hr>
+</div>

@@ -1,0 +1,75 @@
+<div class="container" id="contact">
+    <!--Section: Contact v.2-->
+    <section class="mb-4">
+        <!--Section heading-->
+        <h2 class="h1-responsive font-weight-bold my-4">Contact Me</h2>
+        <!--Section description-->
+        <div id="contactformdiv">
+            Shoot me a message and I'll get back to you as soon as I can.
+If you are reporting an issue that is not a security vulnerability, please do so <a href="https://github.com/xNifty/ryanmalacina.com/issues">here</a>.<br>
+Please note: if the captcha times out, please wait a minute and try again.  Sorry about that.
+            <div class="text-center" id="emailalert">
+                <div class="alert alert-danger center-block">
+                    <span id="emailerror"></span>
+                </div>
+            </div>
+            <div class="row">
+                <!--Grid column-->
+                <div class="col-md-12 mb-md-0 mb-5">
+                    <form id="contact-form" name="contact-form" action="post" method="POST">
+                        <!--Grid row-->
+                        <div class="row">
+                            <!--Grid column-->
+                            <div class="col-md-6">
+                                <div class="md-form mb-0">
+                                    <input type="text" id="name" name="name" class="form-control" placeholder="John Doe">
+                                    <label for="name" class="">Your Name</label>
+                                </div>
+                            </div>
+                            <!--Grid column-->
+                            <!--Grid column-->
+                            <div class="col-md-6">
+                                <div class="md-form mb-0">
+                                    <input type="text" id="email" name="email" class="form-control" placeholder="you@your.email">
+                                    <label for="email" class="">Your Email</label>
+                                </div>
+                            </div>
+                            <!--Grid column-->
+                        </div>
+                        <!--Grid row-->
+                        <!--Grid row-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="md-form mb-0">
+                                    <input type="text" id="subject" name="subject" class="form-control" placeholder="Hello!">
+                                    <label for="subject" class="">Subject</label>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Grid row-->
+                        <!--Grid row-->
+                        <div class="row">
+                            <!--Grid column-->
+                            <div class="col-md-12">
+                                <div class="md-form">
+                                    <textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" placeholder="This is your email content."></textarea>
+                                    <label for="message">Message</label>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!--Grid row-->
+                        <div class="text-center">
+                            <div class="g-recaptcha" data-sitekey="{{siteKey}}"></div>
+                            <div class="text-md-left">
+                                <a class="btn btn-primary" id="submitmail">Send Email</a>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="status"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Section: Contact v.2-->
+</div>
