@@ -458,3 +458,5 @@ i.fa {
     right: 35px;
     /* margin: 5px 5px 0 0; */
 }
+
+.grecaptcha-badge { visibility: hidden; }

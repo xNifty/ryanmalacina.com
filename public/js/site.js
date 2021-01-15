@@ -226,21 +226,23 @@ function SubmitMail (){
                 document.getElementById('contactformdiv').innerHTML = "<div class=\"text-center\">\n" +
                     "<div class=\"alert alert-success alert-dismissible center-block\">Message sent! I'll get back " +
                     "to you as soon as I can!</div></div>";
-                document.getElementById('emailerror').innerHTML = '';
-                document.getElementById('emailalert').style.position = 'absolute';
-                document.getElementById('emailalert').style.opacity = '0';
+                if (document.getElementById('emailerror') != null) {
+                    document.getElementById('emailerror').innerHTML = '';
+                    document.getElementById('emailalert').style.position = 'absolute';
+                    document.getElementById('emailalert').style.opacity = '0';
+                }
             } else if (json.status === 406) {
                 document.getElementById('emailerror').innerHTML = "Invalid sender email; please verify and " +
                     "try again.";
                 document.getElementById('emailalert').style.position = 'static';
                 document.getElementById('emailalert').style.opacity = '1';
-                grecaptcha.reset();
+                //grecaptcha.reset();
             } else {
             document.getElementById('emailerror').innerHTML = "There was an error sending the email..." +
                 "please try again.";
             document.getElementById('emailalert').style.position = 'static';
             document.getElementById('emailalert').style.opacity = '1';
-            grecaptcha.reset();
+            //grecaptcha.reset();
         }
     },
     error: function()  {
@@ -250,7 +252,7 @@ function SubmitMail (){
             "on GitHub.";
         document.getElementById('emailalert').style.position = 'static';
         document.getElementById('emailalert').style.opacity = '1';
-        grecaptcha.reset();
+        //grecaptcha.reset();
     }
     });
 }
@@ -278,6 +280,8 @@ function validateForm() {
     if (message === "") {
         errortext += 'Message is a required field.'
     }
+
+
 
     if (errortext !== '') {
         document.getElementById('emailerror').innerHTML = errortext;
@@ -378,3 +382,12 @@ $(document).ready(function(){
         // only enable the elements that are already checked.
     }
 });
+
+function cb(token) {
+    console.log('token', token);
+    var input = document.createElement('input');
+    input.setAttribute('type', 'text');
+    input.setAttribute('name', 'g-recaptcha-response');
+    input.setAttribute('value', token);
+    document.getElementById('contact-form')[0].appendChild(input);
+}
