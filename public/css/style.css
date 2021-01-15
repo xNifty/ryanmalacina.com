@@ -115,6 +115,7 @@ td, th {
     filter: gray; /* IE5+ */
     -webkit-filter: grayscale(1); /* Webkit Nightlies & Chrome Canary */
     -webkit-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;;
 }
 
 .greyimg:hover {
