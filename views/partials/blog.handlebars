@@ -1,0 +1,22 @@
+<div class="container" id="blog">
+  <h1>Latest Blog Posts</h1>
+  These are the last 5 blog posts that I have made.  If you would like to visit the entire blog, you can do so by clicking <a href="{{blogURL}}">here</a>.
+  {{#iff blogPosts.length ">" 0}}
+      {{#each blogPosts as |posts| }}
+      <div class="panel panel-info">
+          <div class="panel-heading collapsed" data-toggle="collapse" data-target="#blog{{ posts.counter }}">
+              <i class="fa fa-fw fa-chevron-down"></i>
+              <i class="fa fa-fw fa-chevron-right"></i>{{ posts.title }}
+          </div>
+          <div class="panel-body">
+              <div class="collapse custom-text" id="blog{{ posts.counter }}">
+                  {{{ posts.excerpt }}} <a href="{{posts.url}}" data-toogle="tooltip" title="Go to blog post"><i class="fa fa-arrow-right"></i></a>
+              </div>
+          </div>
+      </div>
+      {{/each}}
+  {{else}}
+      There appears to have been an issue grabbing the latest blog posts. You can view the blog by clicking <a href="{{blogURL}}">here</a>.
+  {{/iff}}
+  <hr>
+</div>

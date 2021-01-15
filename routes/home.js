@@ -5,9 +5,11 @@ const {News, validateNews} = require('../models/news');
 const mongoose = require('mongoose');
 const config = require('config');
 const Recaptcha = require('express-recaptcha').RecaptchaV3;
+const ghostAPI = require('@tryghost/content-api');
 
 const nodemailer = require('nodemailer');
 const mg = require('nodemailer-mailgun-transport');
+const { default: GhostContentAPI } = require('@tryghost/content-api');
 
 const recaptcha = new Recaptcha(
     config.get('siteKey'),
@@ -31,6 +33,18 @@ const nodemailerMailgun = nodemailer.createTransport(mg(auth));
 router.get("/", recaptcha.middleware.render, async (req, res) => {
     let project_list = await listProjects();
     let news_list = await listNews();
+    var posts;
+
+    // only bother querying the blog if we have this set to true
+    if (config.get("showBlog")) {
+        posts = await getBlogPosts();
+        for (var x in posts) {
+            let counter_number = x;
+            counter_number++;
+            posts[x].counter = counter_number;
+            //console.log(posts[x]);
+        };
+    }
 
     for (var x in news_list) {
         let counter_number = x;
@@ -56,7 +70,10 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
         index: true,
         captcha: recaptcha,
         siteKey: config.get('siteKey'),
-        news: news_list
+        news: news_list,
+        showBlog: config.get("showBlog"),
+        blogPosts: posts,
+        blogURL: config.get("blogURL")
     });
 });
 
@@ -125,6 +142,20 @@ async function listNews() {
         news_description_html: 1,
         _id: 0
     }).limit(5).sort({_id: -1}).lean();
+}
+
+async function getBlogPosts() {
+    const ghost = new ghostAPI({
+        url: config.get("blogURL"),
+        key: config.get("blogAPI"),
+        version: config.get("blogVersion")
+    });
+
+    return ghost.posts.browse({
+        filter: "visibility: public",
+        limit: 5,
+        order: "published_at desc",
+    });
 }
 
 module.exports = router;

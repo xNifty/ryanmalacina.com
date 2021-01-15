@@ -20,6 +20,7 @@
   "homepage": "https://github.com/xNifty/ryanmalacina.com#readme",
   "dependencies": {
     "@hapi/joi": "^16.1.4",
+    "@tryghost/content-api": "^1.4.13",
     "@types/express": "^4.17.11",
     "@types/express-handlebars": "^3.1.0",
     "bcrypt": "^5.0.0",
