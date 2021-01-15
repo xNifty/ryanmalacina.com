@@ -33,8 +33,8 @@ const app = express();
 const env = app.settings.env;
 
 // File versioning
-const jsFileVersion = '1.0.6';
-const cssFileVersion = '1.0.1';
+const jsFileVersion = '1.0.7';
+const cssFileVersion = '1.0.2';
 
 // Make sure our private token exists
 // @TODO: remove this hard-code and load from config file
