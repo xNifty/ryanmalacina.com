@@ -15,5 +15,8 @@
   "sameSite": "lax",
   "maxAge": 86400000,
   "blogURL": "blogurl",
-  "docsURL": "docsurl"
+  "docsURL": "docsurl",
+  "showBlog": false,
+  "blogAPI": "ghostAPIKey",
+  "blogVersion": "GhostVersion"
 }
