@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const config = require('config');
 const Recaptcha = require('express-recaptcha').RecaptchaV3;
 const ghostAPI = require('@tryghost/content-api');
+const dateFormat = require('dateformat');
 
 const nodemailer = require('nodemailer');
 const mg = require('nodemailer-mailgun-transport');
@@ -40,8 +41,11 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
         posts = await getBlogPosts();
         for (var x in posts) {
             let counter_number = x;
+            let date = posts[x].published_at;
+            //console.log(date);
             counter_number++;
             posts[x].counter = counter_number;
+            posts[x].formatted_date = dateFormat(date, "mmmm dS, yyyy") + ' @ ' + dateFormat(date, "h:MM TT")
             //console.log(posts[x]);
         };
     }
@@ -83,8 +87,8 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
    let subject = req.body.subject;
    let message = req.body.message;
 
-   console.log(req.recaptcha.data);
-   console.log(req.recaptcha.error);
+//    console.log(req.recaptcha.data);
+//    console.log(req.recaptcha.error);
 
    if (!req.recaptcha.error) {
        try {
