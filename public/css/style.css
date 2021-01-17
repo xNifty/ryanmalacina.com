@@ -460,4 +460,16 @@ i.fa {
     /* margin: 5px 5px 0 0; */
 }
 
-.grecaptcha-badge { visibility: hidden; }
+.grecaptcha-badge {
+    visibility: hidden;
+}
+
+.custom-text .collapse {
+    height: 20px;
+}
+
+.recaptcha-font {
+    font-size: 1.1rem;
+    line-height: 1.75em;
+    float: right;
+}
