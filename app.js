@@ -141,7 +141,7 @@ passport.use("local", local);
 
 // Set the favicon for the site
 // works on localhost, not prod
-app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 // Routes
 const home = require('./routes/home');
