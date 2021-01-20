@@ -71,7 +71,6 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
     return res.render("index", {
         title: "Ryan Malacina | Home",
         projects: project_list,
-        index: true,
         captcha: recaptcha,
         siteKey: config.get('siteKey'),
         news: news_list,

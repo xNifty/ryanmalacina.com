@@ -21,15 +21,18 @@
                 {{!-- <li><a class="nav-link" href="https://xnifty.github.io" target="_blank">Projects Documentation</a></li> --}}
                 {{#iff authenticated '&&' isAdmin}}
                     <li class="dropdown">
-                        {{#if index}}<a href="/#projects">Projects</a>{{else}}<a href="/projects">Projects</a>{{/if}}
+                        <a href="/#projects">Projects</a>
                         <ul class="dropdown-menu">
-                            <li><a href="/projects/new"><span class="glyphicon glyphicon-pencil"></span>
-                                New Project</a></li>
+                            <li><a href="/projects/new"><span class="glyphicon glyphicon-pencil"></span> New Project</a></li>
+                            <li><a href="/projects">Projects Index</a></li>
                         </ul>
                     </li>
                 {{ else }}
-                    <li>
-                        {{#if index}}<a href="/#projects">Projects</a>{{else}}<a href="/projects">Projects</a>{{/if}}
+                    <li="dropdown">
+                        <a href="/#projects">Projects</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/projects">Projects Index</a></li>
+                        </ul>
                     </li>
                 {{/iff}}
                 <li><a class="nav-link" href="/#site-news">Site News</a></li>

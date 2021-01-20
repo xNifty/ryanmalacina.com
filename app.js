@@ -155,8 +155,7 @@ app.locals = {
     environment: app.get('env'),
     notAuthorized: constants.errors.notAuthorized,
     jsFileVersion: jsFileVersion,
-    cssFileVersion: cssFileVersion,
-    index: false
+    cssFileVersion: cssFileVersion
 };
 
 app.use(function(req, res, next) {
