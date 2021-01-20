@@ -51,9 +51,9 @@ router.get("/news", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     let news_list = await getNewsListing();
 
     res.render("admin-news", {
+        layout: 'news',
         title: constants.pageHeader.adminProject,
-        news: news_list,
-        loadJS: true
+        news: news_list
     });
 });
 
