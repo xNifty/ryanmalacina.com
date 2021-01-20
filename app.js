@@ -36,13 +36,13 @@ const jsFileVersion = '1.0.7';
 const cssFileVersion = '1.0.2';
 
 // Make sure our private token exists
-// @TODO: remove this hard-code and load from config file
 if (!config.get('privateKeyName')) {
     console.error(constants.errors.missingKey);
     process.exit(1);
 }
 
 // Set default layout, can be overridden per-route as needed
+// also make sure to load our helper function that we use all over the place
 const hbs = exphbs.create({
     defaultLayout: 'main',
     partialsDir: 'views/partials/',
@@ -53,22 +53,21 @@ const hbs = exphbs.create({
 });
 
 // Connect to the database
-
 mongoose.connect('mongodb://localhost:27017/ryanmalacina', {
-    useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false})
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true
+})
     .then(() => console.log("Connected to the database."))
     .catch(err => console.error("Error connecting to database: ", err));
-
-// For now, suppress message about using createIndexes
-mongoose.set('useCreateIndex', true);
 
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 app.use(express.json());
 app.use(express.static('public'));
-app.use(bodyParser.urlencoded(
-    {
+app.use(bodyParser.urlencoded({
         extended: true
     }
 ));
@@ -91,7 +90,6 @@ app.use(cookieParser());
 // Now we don't have to hard-code this into app.js
 const secret_key = config.get('privateKeyName');
 
-//app.set('trust proxy', true);
 let sess = {
     secret: config.get(secret_key),
     proxy: config.get('useProxy'),
@@ -105,7 +103,8 @@ let sess = {
         sameSite: config.get('sameSite'),
     },
     store: new MongoStore({
-        mongooseConnection: mongoose.connection, clear_interval: 3600
+        mongooseConnection: mongoose.connection,
+        clear_interval: 3600
     })
 };
 
