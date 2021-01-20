@@ -16,12 +16,12 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <!--<li><a href="/">Home</a></li>-->
-                <li><a class="nav-link" href="#blog">Blog</a></li>
+                <li><a class="nav-link" href="/#blog">Blog</a></li>
                 <li><a class="nav-link" href="/about">About</a></li>
                 {{!-- <li><a class="nav-link" href="https://xnifty.github.io" target="_blank">Projects Documentation</a></li> --}}
                 {{#iff authenticated '&&' isAdmin}}
                     <li class="dropdown">
-                        <a href="#projects">Projects</a>
+                        {{#if index}}<a href="/#projects">Projects</a>{{else}}<a href="/projects">Projects</a>{{/if}}
                         <ul class="dropdown-menu">
                             <li><a href="/projects/new"><span class="glyphicon glyphicon-pencil"></span>
                                 New Project</a></li>
@@ -29,11 +29,11 @@
                     </li>
                 {{ else }}
                     <li>
-                        <a href="#projects">Projects</a>
+                        {{#if index}}<a href="/#projects">Projects</a>{{else}}<a href="/projects">Projects</a>{{/if}}
                     </li>
                 {{/iff}}
-                <li><a class="nav-link" href="#site-news">Site News</a></li>
-                <li><a class="nav-link" href="#contact">Contact</a></li>
+                <li><a class="nav-link" href="/#site-news">Site News</a></li>
+                <li><a class="nav-link" href="/#contact">Contact</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {{#if authenticated }} {{!-- This is coming from res.locals --}}
