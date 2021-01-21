@@ -34,8 +34,8 @@ router.get("/", async (req, res) => {
 });
 
 router.get('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
-    res.render('new-project', {
-        layout: 'new-project',
+    res.render('admin/projects/new-project', {
+        layout: 'projects',
         new_project: true,
     });
 });
@@ -44,8 +44,8 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     const { error } = validateProject(req.body);
 
     if (error) {
-        return res.status(400).render('new-project', {
-            layout: 'new-project',
+        return res.status(400).render('admin/projects/new-project', {
+            layout: 'projects',
             new_project: true,
             error: constants.errors.allFieldsRequiredUploadImage,
             project_name: req.body.project_name,
@@ -92,8 +92,8 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         await project.save();
     } catch(ex) {
         console.log(ex);
-        return res.status(400).render('new-project', {
-            layout: 'new-project',
+        return res.status(400).render('admin/projects/new-project', {
+            layout: 'projects',
             new_project: true,
             error: constants.errors.allFieldsRequired,
             project_name: req.body.project_name,
@@ -120,8 +120,8 @@ router.get('/:name/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 
     // If not load from session, then load normally; else, load from session
     if (!req.session.loadProjectFromSession) {
-        res.render('new-project', {
-            layout: 'new-project',
+        res.render('admin/projects/new-project', {
+            layout: 'projects',
             update_project: true,
             project_name: project.project_name,
             project_title: project.project_title,
@@ -130,8 +130,8 @@ router.get('/:name/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             project_image: project.project_image,
         });
     } else {
-        res.render('new-project', {
-            layout: 'new-project',
+        res.render('projects', {
+            layout: 'projects',
             update_project: true,
             project_name: req.session.project_name,
             project_title: req.session.project_title,

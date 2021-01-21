@@ -23,7 +23,7 @@ router.get("/", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     let project_list = await listProjects();
 
-    res.render("admin-projects", {
+    res.render("admin/projects/projects", {
         title: constants.pageHeader.adminProject,
         projects: project_list,
     });
@@ -50,7 +50,7 @@ router.put("/projects/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req
 router.get("/news", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     let news_list = await getNewsListing();
 
-    res.render("admin-news", {
+    res.render("admin/news/news", {
         layout: 'news',
         title: constants.pageHeader.adminProject,
         news: news_list
@@ -150,10 +150,9 @@ router.get('/news/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) =>
         let news_list = await getNewsListing();
         req.session.news_id = null;
 
-        res.render("admin-news", {
+        res.render("admin/news/admin-news", {
             title: constants.pageHeader.adminProject,
-            news: news_list,
-            loadJS: true
+            news: news_list
         });
     }
 
@@ -161,7 +160,8 @@ router.get('/news/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) =>
 
     // Render edit news section - if no valid ID is found, send back to the news index and reset session var to be safe
     if (id != undefined) {
-        res.render("edit-news", {
+        res.render("admin/news/edit-news", {
+            layout: 'news',
             title: news.news_title,
             news_title: news.news_title,
             news_description: news.news_description_markdown,
@@ -171,7 +171,7 @@ router.get('/news/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) =>
         let news_list = await getNewsListing();
         req.session.news_id = null;
 
-        res.render("admin-news", {
+        res.render("admin/news/news", {
             title: constants.pageHeader.adminProject,
             news: news_list,
             loadJS: true
@@ -191,7 +191,7 @@ router.post('/news/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =
 
     if (error) {
         console.log("Error 3: ", error);
-        return res.status(400).render('edit-news', {
+        return res.status(400).render('admin/news/edit-news', {
             error: constants.errors.allFieldsRequired,
             title: req.body.news_title,
             news_title: req.body.news_title,
@@ -216,7 +216,7 @@ router.post('/news/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =
         });
     } catch(ex) {
         console.log('Error 2: ', ex);
-        return res.status(400).render('edit-news', {
+        return res.status(400).render('admin/news/edit-news', {
             error: constants.errors.allFieldsRequired,
             title: req.body.news_title,
             news_title: req.body.news_title,

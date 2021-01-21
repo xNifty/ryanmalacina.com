@@ -6,7 +6,7 @@
     is_valid gets passed if the project is valid; otherwise, render project index
 --}}
 {{#if is_valid}}
-    {{> project-info}}
+    {{> projects/project-info}}
 {{else}}
-    {{> project-index}}
+    {{> projects/project-index}}
 {{/if}}
