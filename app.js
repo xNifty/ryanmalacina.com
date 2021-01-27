@@ -42,7 +42,7 @@ if (!config.get('privateKeyName')) {
 }
 
 // Set default layout, can be overridden per-route as needed
-// also make sure to load our helper function that we use all over the place
+// We also load any helper functions we wrote within helpers.js inside the functions folder
 const hbs = exphbs.create({
     defaultLayout: 'main',
     partialsDir: 'views/partials/',

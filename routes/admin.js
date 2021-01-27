@@ -160,7 +160,7 @@ router.get('/news/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) =>
 
     // Render edit news section - if no valid ID is found, send back to the news index and reset session var to be safe
     if (id != undefined) {
-        res.render("admin/news/edit-news", {
+        res.render("admin/news/edit", {
             layout: 'news',
             title: news.news_title,
             news_title: news.news_title,
@@ -190,13 +190,13 @@ router.post('/news/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =
     ]));
 
     if (error) {
-        console.log("Error 3: ", error);
-        return res.status(400).render('admin/news/edit-news', {
+        //console.log("Error 3: ", error);
+        return res.status(400).render('admin/news/edit', {
+            layout: 'news',
             error: constants.errors.allFieldsRequired,
             title: req.body.news_title,
             news_title: req.body.news_title,
-            news_description: req.body.news_description,
-            loadJS: true
+            news_description: req.body.news_description
         });
     }
     let newsDescription = converter.makeHtml(req.body.news_description);
@@ -215,13 +215,13 @@ router.post('/news/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =
             news_description_html: newsSanitized
         });
     } catch(ex) {
-        console.log('Error 2: ', ex);
-        return res.status(400).render('admin/news/edit-news', {
+        //console.log('Error 2: ', ex);
+        return res.status(400).render('admin/news/edit', {
+            layout: 'news',
             error: constants.errors.allFieldsRequired,
             title: req.body.news_title,
             news_title: req.body.news_title,
-            news_description: req.body.news_description,
-            loadJS: true
+            news_description: req.body.news_description
         });
     }
     req.session.news_id = null;

@@ -5,7 +5,6 @@
 <body>
     {{> nav}}
     {{> status}}
-    {{> login}}
     {{{ body }}}
 
     {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
@@ -28,6 +27,5 @@
     <script nonce="{{nonce}}">
         var simplemde = new SimpleMDE({ element: document.getElementById("editor"), toolbar: ["preview"], placeholder: "News Description Here - Write in Markdown", });
     </script>
-    <!--<script type="text/javascript" src="/js/tabopen.js" nonce="{{nonce}}"></script>-->
 </body>
 </html>
