@@ -215,6 +215,14 @@ $(document).ready(function(){
 
 });
 
+function resetToken() {
+    grecaptcha.ready(function() {
+        grecaptcha.execute('6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG', {
+            action: 'homepage'
+        }).then(cb);
+    });
+}
+
 function SubmitMail (){
     $.ajax({
         url:'/send',
@@ -236,23 +244,19 @@ function SubmitMail (){
                     "try again.";
                 document.getElementById('emailalert').style.position = 'static';
                 document.getElementById('emailalert').style.opacity = '1';
-                //grecaptcha.reset();
             } else {
             document.getElementById('emailerror').innerHTML = "There was an error sending the email..." +
                 "please try again.";
             document.getElementById('emailalert').style.position = 'static';
             document.getElementById('emailalert').style.opacity = '1';
-            //grecaptcha.reset();
         }
     },
     error: function()  {
         document.getElementById('emailerror').innerHTML = "There was an error sending an email..." +
             "please try again.  If you continue to experience issues, please " + 
-            "<a href=\"https://github.com/xnifty/ryanmalacina.com/issues\">submit</a> an issue " +
-            "on GitHub.";
+            "<a href=\"https://github.com/xnifty/ryanmalacina.com/issues\">submit</a> an issue.";
         document.getElementById('emailalert').style.position = 'static';
         document.getElementById('emailalert').style.opacity = '1';
-        //grecaptcha.reset();
     }
     });
 }
@@ -281,14 +285,13 @@ function validateForm() {
         errortext += 'Message is a required field.'
     }
 
-
-
     if (errortext !== '') {
         document.getElementById('emailerror').innerHTML = errortext;
         document.getElementById('emailalert').style.position = 'static';
         document.getElementById('emailalert').style.opacity = '1';
         return false;
     } else {
+        resetToken();
         SubmitMail();
     }
 
@@ -383,11 +386,18 @@ $(document).ready(function(){
     }
 });
 
+// function cb(token) {
+//     console.log('token', token);
+//     var input = document.createElement('input');
+//     input.setAttribute('type', 'text');
+//     input.setAttribute('name', 'g-recaptcha-response');
+//     input.setAttribute('value', token);
+//     console.log(input);
+//     document.getElementById('contact-form')[0].appendChild(input);
+// }
+
 function cb(token) {
-    console.log('token', token);
-    var input = document.createElement('input');
-    input.setAttribute('type', 'text');
-    input.setAttribute('name', 'g-recaptcha-response');
-    input.setAttribute('value', token);
-    document.getElementById('contact-form')[0].appendChild(input);
+    //console.log('token:', token);
+    $('#g-recaptcha-response').val(token);
 }
+

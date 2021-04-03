@@ -8,9 +8,12 @@ const Recaptcha = require('express-recaptcha').RecaptchaV3;
 const ghostAPI = require('@tryghost/content-api');
 const dateFormat = require('dateformat');
 const words = require('number-to-words-en');
+const formData = require('form-data');
+const Mailgun = require('mailgun.js');
+const mailgun = new Mailgun(formData);
+const mg = mailgun.client({username: 'api', key: config.get('mailgunAPI')})
 
 const nodemailer = require('nodemailer');
-const mg = require('nodemailer-mailgun-transport');
 const { default: GhostContentAPI } = require('@tryghost/content-api');
 
 const recaptcha = new Recaptcha(
@@ -30,7 +33,7 @@ const auth = {
     proxy: false // optional proxy, default is false
 };
 
-const nodemailerMailgun = nodemailer.createTransport(mg(auth));
+//const nodemailerMailgun = nodemailer.createTransport(mg(auth));
 
 router.get("/", recaptcha.middleware.render, async (req, res) => {
     let project_list = await listProjects();
@@ -84,51 +87,47 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
 });
 
 router.post('/send', recaptcha.middleware.verify, async(req, res) => {
-   let fromEmail = req.body.email;
-   let toEmail = config.get('mailgunToEmail');
-   let subject = req.body.subject;
-   let message = req.body.message;
+    let fromEmail = req.body.email;
+    let toEmail = config.get('mailgunToEmail');
+    let subject = req.body.subject;
+    let message = req.body.message;
 
-//    console.log(req.recaptcha.data);
-//    console.log(req.recaptcha.error);
+    //console.log(req.recaptcha.data);
+    //console.log(req.recaptcha.error);
 
-   if (!req.recaptcha.error) {
-       try {
-            nodemailerMailgun.sendMail({
+    if (!req.recaptcha.error) {
+        try {
+            // nodemailerMailgun.sendMail({
+            //     from: fromEmail,
+            //     to: toEmail, // An array if you have multiple recipients.
+            //     subject: subject,
+            //     //html: message,
+            //    text: message,
+            mg.messages.create(config.get('mailgunDomain'), {
                 from: fromEmail,
                 to: toEmail, // An array if you have multiple recipients.
                 subject: subject,
                 //html: message,
-               text: message,
-            }, (err, info) => {
-                if (err) {
+                text: message,
+            })
+            .then(msg => {
+                res.setHeader('Content-Type', 'application/json');
+                return res.end(JSON.stringify({success: "Updated Successfully", status: 200}));
+            })
+            .catch(err => {
                     console.log(`Error: ${err.message}`);
-
-                    /*
-                        So we're going to replace some error messages that are returned from mailgun,
-                        so that we can display some more user friendly errors that are actually helpful
-                        for the user if they see it.
-                    */
-                    if (err.message === "'from' parameter is not a valid address. please check documentation") {
-                        res.setHeader('Content-Type', 'application/json');
-                        return res.end(JSON.stringify({fail: "Error", status: 406}));
-                    } else {
-                        res.setHeader('Content-Type', 'application/json');
-                        return res.end(JSON.stringify({fail: "Error", status: 400}));
-                    }
-                } else {
                     res.setHeader('Content-Type', 'application/json');
-                    return res.end(JSON.stringify({success: "Updated Successfully", status: 200}));
-                }
+                    req.recaptcha.re
+                    return res.end(JSON.stringify({fail: "Error", status: 400}));
             });
         } catch (ex) {
             console.log(ex);
             res.setHeader('Content-Type', 'application/json');
             return res.end(JSON.stringify({fail: "Server error", status: 500}));
         }
-   } else {
-       res.setHeader('Content-Type', 'application/json');
-       return res.end(JSON.stringify({fail: "Server error", status: 500}));
+    } else {
+        res.setHeader('Content-Type', 'application/json');
+        return res.end(JSON.stringify({fail: "Server error", status: 500}));
    }
 });
 
