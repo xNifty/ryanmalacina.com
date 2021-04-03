@@ -14,7 +14,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const config = require('config');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 const csp = require('helmet-csp');
 const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
@@ -90,6 +90,12 @@ app.use(cookieParser());
 // Now we don't have to hard-code this into app.js
 const secret_key = config.get('privateKeyName');
 
+const mongoStore = MongoStore.create({
+    mongoUrl: 'mongodb://localhost:27017/ryanmalacina',
+    collectionName: "sessions",
+    clear_interval: 3600
+});
+
 let sess = {
     secret: config.get(secret_key),
     proxy: config.get('useProxy'),
@@ -102,10 +108,7 @@ let sess = {
         secure: config.get('secureCookie'),
         sameSite: config.get('sameSite'),
     },
-    store: new MongoStore({
-        mongooseConnection: mongoose.connection,
-        clear_interval: 3600
-    })
+    store: mongoStore
 };
 
 app.use(flash());

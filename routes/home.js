@@ -138,6 +138,17 @@ async function listProjects() {
     }).lean();
 }
 
+// Return count of published projects since we only show 3 on the index and I'd like to
+// list how many published projects there are
+async function getProjectCount() {
+    return Project.find({show_index: 1, is_published: 1}).select({
+        project_name: 1,
+        project_image: 1,
+        project_title: 1,
+        _id: 0
+    }).count();
+}
+
 async function listNews() {
     return News.find({is_published: 1}).select({
         news_title: 1,
