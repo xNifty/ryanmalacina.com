@@ -32,7 +32,7 @@ const app = express();
 const env = app.settings.env;
 
 // File versioning
-const jsFileVersion = '1.0.7';
+const jsFileVersion = '1.0.8';
 const cssFileVersion = '1.0.2';
 
 // Make sure our private token exists
