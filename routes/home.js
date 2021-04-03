@@ -7,6 +7,7 @@ const config = require('config');
 const Recaptcha = require('express-recaptcha').RecaptchaV3;
 const ghostAPI = require('@tryghost/content-api');
 const dateFormat = require('dateformat');
+const words = require('number-to-words-en');
 
 const nodemailer = require('nodemailer');
 const mg = require('nodemailer-mailgun-transport');
@@ -34,6 +35,7 @@ const nodemailerMailgun = nodemailer.createTransport(mg(auth));
 router.get("/", recaptcha.middleware.render, async (req, res) => {
     let project_list = await listProjects();
     let news_list = await listNews();
+    var project_count = await getProjectCount();
     var posts;
 
     // only bother querying the blog if we have this set to true
@@ -76,7 +78,8 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
         news: news_list,
         showBlog: config.get("showBlog"),
         blogPosts: posts,
-        blogURL: config.get("blogURL")
+        blogURL: config.get("blogURL"),
+        project_count: words.toWords(project_count),
     });
 });
 
@@ -141,12 +144,7 @@ async function listProjects() {
 // Return count of published projects since we only show 3 on the index and I'd like to
 // list how many published projects there are
 async function getProjectCount() {
-    return Project.find({show_index: 1, is_published: 1}).select({
-        project_name: 1,
-        project_image: 1,
-        project_title: 1,
-        _id: 0
-    }).count();
+    return Project.find({is_published: 1}).countDocuments();
 }
 
 async function listNews() {
