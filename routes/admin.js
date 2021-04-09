@@ -9,14 +9,27 @@ const session = require('express-session');
 const showdown = require('showdown');
 const sanitize = require('sanitize-html');
 const dateformat = require('dateformat');
+const octokit = require('@octokit/rest');
+const config = require('config');
 
 const constants = require('../models/constants');
 
 let converter = new showdown.Converter();
 
+const octo = new octokit.Octokit({
+    auth: config.get('GitHubAuth'),
+});
+
 router.get("/", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+    var commits = await octo.rest.repos.listCommits({
+        owner: 'xNifty',
+        repo: 'ryanmalacina.com',
+        per_page: 1
+    });
+    console.log(commits)
     res.render("admin", {
-        title: constants.pageHeader.admin
+        title: constants.pageHeader.admin,
+        commits: commits.data
     });
 });
 

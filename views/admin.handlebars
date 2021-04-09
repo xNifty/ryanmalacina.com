@@ -4,4 +4,7 @@
     </div>
     <a href="admin/projects" class="admin-index-text">Projects</a><br />
     <a href="admin/news" class="admin-index-text">News</a><br />
+    {{#each commits as |commits| }}
+        {{ commits.commit.message }}
+    {{/each}}
 </div>
