@@ -1,6 +1,12 @@
 // Declare a lot of constants, organized in a somewhat useful manner
 // Mostly, this is just strings for use throughout the system so I can stop writing the same thing over and over
 
+// file versioning
+var fileVersions = {
+    cssFileVersion: "1.0.3",
+    jsFileVersion: "1.0.8"
+}
+
 // Error string constants
 var errorStrings = {
     accessDenied: "You do not have permission to access this content.",
@@ -51,3 +57,4 @@ exports.errors = Object.freeze(errorStrings);
 exports.statusCodes = Object.freeze(statusCodeStrings);
 exports.success = Object.freeze(successStrings);
 exports.pageHeader = Object.freeze(pageHeaderStrings);
+exports.fileVersions = Object.freeze(fileVersions);

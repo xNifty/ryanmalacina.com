@@ -31,8 +31,8 @@ const app = express();
 const env = app.settings.env;
 
 // File versioning
-const jsFileVersion = '1.0.8';
-const cssFileVersion = '1.0.2';
+const jsFileVersion = constants.fileVersions.cssFileVersion;
+const cssFileVersion = constants.fileVersions.jsFileVersion;
 
 // Make sure our private token exists
 if (!config.get('privateKeyName')) {

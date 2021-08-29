@@ -1,6 +1,6 @@
 {{#if new_project }}
     <div class="container">
-        <a href="{{return_to}}"><span class="fa fa-arrow-left"></span> Go Back</a>
+        <a class="back-button" href="{{return_to}}" data-toogle="tooltip" title="Go Back"></a>
         <form action="/projects/" method="post" enctype="multipart/form-data">
         <form action="/projects/new" method="post" enctype="multipart/form-data">
 	        <div class="form-group">
@@ -21,7 +21,7 @@
 {{/if}}
 {{#if update_project}}
     <div class="container">
-        <a href="/projects/"><span class="fa fa-arrow-left"></span> Go Back</a>
+        <a class="back-button" href="/projects/{{project_name}}" data-toogle="tooltip" title="Return to Project"></a>
         <form action="/projects/edit" method="post" enctype="multipart/form-data">
 	        <div class="form-group">
                 Project Name<br> <input type="text" class="custom-text" name="project_name"

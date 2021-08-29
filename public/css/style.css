@@ -431,8 +431,10 @@ i.fa {
     /* margin: 5px 5px 0 0; */
 }
 
-.newsback {
+.back-button::before {
     float: right;
+    font-family: FontAwesome;
+    content: "\f177";
 }
 
 .thumbnail .deleteProject .fa.fa-trash {
