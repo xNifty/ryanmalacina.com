@@ -3,7 +3,7 @@
         <div id="project-header">
             {{#iff authenticated '&&' isAdmin}}
                 <div id="editbtn-wrapper">
-                    <span id="editbutton"><a href="{{project_name}}/edit" class="btn btn-primary">
+                    <span id="editbutton"><a href="/projects/{{project_name}}/edit" class="btn btn-primary">
                         <span class="glyphicon glyphicon-pencil"></span> Edit Project</a>
                     </span>
                 </div>

@@ -14,6 +14,7 @@ const dateformat = require('dateformat');
 const fileUpload = require('express-fileupload');
 
 const constants = require('../models/constants');
+const { isSet } = require('lodash');
 
 const safeTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
                   'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br',
@@ -34,9 +35,13 @@ router.get("/", async (req, res) => {
 });
 
 router.get('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+    let returnTo = req.get('referrer');
+    if (!returnTo) returnTo = '/projects/';
+
     res.render('admin/projects/new-project', {
         layout: 'projects',
         new_project: true,
+        return_to: returnTo
     });
 });
 
@@ -127,7 +132,7 @@ router.get('/:name/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             project_title: project.project_title,
             project_source: project.project_source,
             project_description: project.project_description_markdown,
-            project_image: project.project_image,
+            project_image: project.project_image
         });
     } else {
         res.render('projects', {
@@ -137,10 +142,10 @@ router.get('/:name/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             project_title: req.session.project_title,
             project_source: req.session.project_source,
             project_description: req.session.project_description_markdown,
-            project_image: req.session.project_image,
+            project_image: req.session.project_image
         });
 
-        // Finally, clear up the session variables
+        // Finally, clear up the session variables -- can I move this to a function where we delete them if they exist?
         delete req.session.loadProjectFromSession;
         delete req.session.project_name;
         delete req.session.project_title;

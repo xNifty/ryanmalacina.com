@@ -252,7 +252,7 @@ function SubmitMail (){
         }
     },
     error: function()  {
-        document.getElementById('emailerror').innerHTML = "There was an error sending an email..." +
+        document.getElementById('emailerror').innerHTML = "There was an error sending the email..." +
             "please try again.  If you continue to experience issues, please " + 
             "<a href=\"https://github.com/xnifty/ryanmalacina.com/issues\">submit</a> an issue.";
         document.getElementById('emailalert').style.position = 'static';

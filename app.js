@@ -11,7 +11,6 @@ const mongoose = require('mongoose');
 const express = require('express');
 const exphbs  = require('express-handlebars');
 const path = require('path');
-const bodyParser = require('body-parser');
 const config = require('config');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -63,7 +62,7 @@ app.set('view engine', 'handlebars');
 
 app.use(express.json());
 app.use(express.static('public'));
-app.use(bodyParser.urlencoded({
+app.use(express.urlencoded({
         extended: true
     }
 ));

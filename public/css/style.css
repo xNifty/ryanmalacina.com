@@ -473,3 +473,7 @@ i.fa {
     line-height: 1.75em;
     float: right;
 }
+
+button.btn.btn-primary.right {
+    float:right;
+}
