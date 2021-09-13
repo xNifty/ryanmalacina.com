@@ -50,7 +50,7 @@
     "number-to-words-en": "^1.2.5",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "sanitize-html": "^2.4.0",
+    "sanitize-html": "^2.5.0",
     "showdown": "^1.9.1",
     "uuid": "^8.3.2"
   }
