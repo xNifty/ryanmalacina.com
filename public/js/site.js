@@ -134,7 +134,7 @@ function login() {
         var pass = form.password.value;
         $.ajax({
             type: "POST",
-            url: "/navlogin",
+            url: "/login",
             data: {
                 username: user,
                 password: pass
