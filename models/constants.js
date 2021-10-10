@@ -53,8 +53,16 @@ var pageHeaderStrings = {
 }
 
 // Finally, allow everything to be accessed when using constants in file
-exports.errors = Object.freeze(errorStrings);
-exports.statusCodes = Object.freeze(statusCodeStrings);
-exports.success = Object.freeze(successStrings);
-exports.pageHeader = Object.freeze(pageHeaderStrings);
-exports.fileVersions = Object.freeze(fileVersions);
+var errors = Object.freeze(errorStrings);
+var statusCodes = Object.freeze(statusCodeStrings);
+var success = Object.freeze(successStrings);
+var pageHeader = Object.freeze(pageHeaderStrings);
+var fileVersions = Object.freeze(fileVersions);
+
+export const constants = {
+    errors,
+    statusCodes,
+    success,
+    pageHeader,
+    fileVersions
+};

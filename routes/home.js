@@ -1,20 +1,33 @@
-const express = require('express');
-const router = express.Router();
-const {Project, validateProject} = require('../models/projects');
-const {News, validateNews} = require('../models/news');
-const mongoose = require('mongoose');
-const config = require('config');
-const Recaptcha = require('express-recaptcha').RecaptchaV3;
-const ghostAPI = require('@tryghost/content-api');
-const dateFormat = require('dateformat');
-const words = require('number-to-words-en');
-const formData = require('form-data');
-const Mailgun = require('mailgun.js');
-const mailgun = new Mailgun(formData);
-const mg = mailgun.client({username: 'api', key: config.get('mailgunAPI')})
+import express from 'express';
+import {Project, validateProject} from '../models/projects.js';
+import {News, validateNews} from '../models/news.js';
+import mongoose from 'mongoose';
+import config from 'config';
+import { RecaptchaV3 as Recaptcha } from 'express-recaptcha';
+import ghostAPI from '@tryghost/content-api';
+import dateFormat from 'dateformat';
+import words from 'number-to-words-en';
+import formData from 'form-data';
+import Mailgun from 'mailgun.js';
+import nodemailer from 'nodemailer';
 
-const nodemailer = require('nodemailer');
-const { default: GhostContentAPI } = require('@tryghost/content-api');
+// const express = require('express');
+// const {Project, validateProject} = require('../models/projects');
+// const {News, validateNews} = require('../models/news');
+// const mongoose = require('mongoose');
+// const config = require('config');
+// const Recaptcha = require('express-recaptcha').RecaptchaV3;
+// const ghostAPI = require('@tryghost/content-api');
+// const dateFormat = require('dateformat');
+// const words = require('number-to-words-en');
+// const formData = require('form-data');
+// const Mailgun = require('mailgun.js');
+// const nodemailer = require('nodemailer');
+// const { default: GhostContentAPI } = require('@tryghost/content-api');
+
+const mailgun = new Mailgun(formData);
+const router = express.Router();
+const mg = mailgun.client({username: 'api', key: config.get('mailgunAPI')})
 
 const recaptcha = new Recaptcha(
     config.get('siteKey'),
@@ -169,4 +182,5 @@ async function getBlogPosts() {
     });
 }
 
-module.exports = router;
+export { router as homeRoute }
+// module.exports = router;

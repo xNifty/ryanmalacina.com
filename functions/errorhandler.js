@@ -6,10 +6,10 @@
     we show the error message right on the screen so that we can fix it, while on production we just render
     the error page with the generic error message relevant to that error message.
 */
+import { constants } from '../models/constants.js';
+//var constants = require('../models/constants');
 
-var constants = require('../models/constants');
-
-function renderErrorPage(env, status, err, req, res) {
+export default function renderErrorPage(env, status, err, req, res) {
     if (status === 404) {
         res.render('error', {
             error: env === 'development' ? err.stack.replace("\n", "<br />") : constants.errors.pageNotFound,
@@ -32,5 +32,3 @@ function renderErrorPage(env, status, err, req, res) {
         })
     }
 };
-
-module.exports.renderError = renderErrorPage;

@@ -9,4 +9,6 @@ router.get("/", function(req, res) {
     });
 });
 
-module.exports = router;
+export { router as aboutRoute }
+
+//module.exports = router;

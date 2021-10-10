@@ -4,23 +4,28 @@
     This is a piece of middleware that we can use to generate a nonce on a page load
     The nonce is regenerated on every page load so that we don't reuse nonces across different pages
 */
-const uuid = require('uuid');
-const csp = require('helmet-csp');
-const express = require('express')
+import { v4 } from 'uuid';
+import csp from 'helmet-csp';
+import express from 'express';
+
+// const uuid = require('uuid');
+// const csp = require('helmet-csp');
+// const express = require('express')
+
 const router = express.Router();
 
 /*
     Generate nonce
 */
-function generateNonce() {
+export function generateNonce() {
     const rhyphen = /-/g;
-    return uuid.v4().replace(rhyphen, ``);
+    return v4().replace(rhyphen, ``);
 }
 
 /*
     Setup the directives for use in CSP and then return it
 */
-function getDirectives(nonce) {
+export function getDirectives(nonce) {
     const self = `'self'`;
     const unsafeInline = `'unsafe-inline'`; // Ideally, never going to use this anywhere for any reason
     const none = `'none'`;
@@ -62,7 +67,7 @@ function getDirectives(nonce) {
 /*
     Function to generate the nonce and then setup the directives
 */
-function genCSP(req, res, next) {
+export function genCSP(req, res, next) {
     try {
         let nonce = generateNonce();
         req.nonce = nonce;
@@ -75,6 +80,9 @@ function genCSP(req, res, next) {
     }
 }
 
-module.exports.generateNonce = generateNonce;
-module.exports.getDirectives = getDirectives;
-module.exports.genCSP = genCSP;
+export default {
+    generateNonce,
+    getDirectives,
+    genCSP
+};
+//module.exports.isLoggedIn = loggedInOnly;

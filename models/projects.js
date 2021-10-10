@@ -1,5 +1,8 @@
-const mongoose = require('mongoose');
-const Joi = require('@hapi/joi');
+import mongoose from 'mongoose';
+import Joi from '@hapi/joi';
+
+// const mongoose = require('mongoose');
+// const Joi = require('@hapi/joi');
 
 const projectScheme = new mongoose.Schema({
     project_name: {
@@ -47,7 +50,7 @@ const projectScheme = new mongoose.Schema({
     }
 });
 
-const Project = mongoose.model('Project', projectScheme);
+// const Project = mongoose.model('Project', projectScheme);
 
 function validateProject(user) {
     const schema = Joi.object({
@@ -61,6 +64,7 @@ function validateProject(user) {
     return schema.validate(user);
 }
 
-exports.validateProject = validateProject;
-exports.Project = Project;
+// exports.validateProject = validateProject;
 
+export {validateProject as validateProject}
+export const Project = mongoose.model('Project', projectScheme);

@@ -7,25 +7,43 @@
         - Fix tabopen.js
  */
 
-const mongoose = require('mongoose');
-const express = require('express');
-const exphbs  = require('express-handlebars');
-const path = require('path');
-const config = require('config');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const csp = require('helmet-csp');
-const flash = require('connect-flash');
-const cookieParser = require('cookie-parser');
-const passport = require('passport');
-const User = require('./models/user');
-const auth = require('./middleware/auth');
-const helpers = require('./functions/helpers');
-const errorhandler = require('./functions/errorhandler');
+import mongoose from 'mongoose';
+import express from 'express';
+import exphbs  from 'express-handlebars';
+import path from 'path';
+import config from 'config';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import csp from 'helmet-csp';
+import flash from 'connect-flash';
+import cookieParser from 'cookie-parser';
+import passport from 'passport';
 
-const nonce_middleware = require('./middleware/nonce');
+import { User } from './models/user.js';
+//import auth from './middleware/auth';
+import { iff } from './functions/helpers.js';
+import renderError from './functions/errorhandler.js';
+import { genCSP, generateNonce, getDirectives } from './middleware/nonce.js';
+import { constants } from './models/constants.js'
 
-const constants = require('./models/constants');
+// const mongoose = require('mongoose');
+// const express = require('express');
+// const exphbs  = require('express-handlebars');
+// const path = require('path');
+// const config = require('config');
+// const session = require('express-session');
+// const MongoStore = require('connect-mongo');
+// const csp = require('helmet-csp');
+// const flash = require('connect-flash');
+// const cookieParser = require('cookie-parser');
+// const passport = require('passport');
+
+// const User = require('./models/user');
+// const auth = require('./middleware/auth');
+// const helpers = require('./functions/helpers');
+// const errorhandler = require('./functions/errorhandler');
+// const nonce_middleware = require('./middleware/nonce');
+// const constants = require('./models/constants');
 
 const app = express();
 const env = app.settings.env;
@@ -47,7 +65,7 @@ const hbs = exphbs.create({
     partialsDir: 'views/partials/',
     layoutsDir: 'views/layouts/',
     helpers: {
-        iff: helpers.iff,
+        iff: iff,
     }
 });
 
@@ -69,7 +87,7 @@ app.use(express.urlencoded({
 
 // Add nonce to res.locals
 app.use(function(req, res, next) {
-    nonce = nonce_middleware.generateNonce();
+    var nonce = generateNonce();
     res.locals.nonce = nonce;
     res.locals.cspNonce = 'nonce-' + nonce;
     next();
@@ -77,7 +95,7 @@ app.use(function(req, res, next) {
 
 // Setup to use the nonce middlewear that we created
 app.use(csp({
-    directives: nonce_middleware.getDirectives((req, res) => `'${res.locals.cspNonce}'`)
+    directives: getDirectives((req, res) => `'${res.locals.cspNonce}'`)
 }));
 
 app.use(cookieParser());
@@ -120,8 +138,10 @@ passport.deserializeUser(function(userId, done) {
     User.findById(userId, (err, user) => done(err, user));
 });
 
+import LocalStrategy from 'passport-local';
+
 // Passport Stuff
-const LocalStrategy = require("passport-local").Strategy;
+//const LocalStrategy = require("passport-local").Strategy;
 const local = new LocalStrategy((username, password, done) => {
     User.findOne({ username })
         .then(user => {
@@ -136,13 +156,14 @@ const local = new LocalStrategy((username, password, done) => {
 passport.use("local", local);
 
 // Routes
-const home = require('./routes/home');
-const about = require('./routes/about');
-const keybase = require('./routes/keybase');
-const projects = require('./routes/projects');
-const login = require('./routes/login');
-const logout = require('./routes/logout');
-const administration = require('./routes/admin');
+import { homeRoute } from './routes/home.js';
+// const home = require('./routes/home');
+// const about = require('./routes/about');
+// const keybase = require('./routes/keybase');
+// const projects = require('./routes/projects');
+// const login = require('./routes/login');
+// const logout = require('./routes/logout');
+// const administration = require('./routes/admin');
 
 // Default values; we can override this on a per-route basis if needed
 app.locals = {
@@ -172,14 +193,14 @@ app.use(function(req, res, next) {
 });
 
 // All of our paths
-app.use('/', home);
-app.use('/about', about);
-app.use('/keybase', keybase);
-app.use('/keybase.txt', keybase); // for Keybase.io
-app.use('/projects', projects);
-app.use('/login', login);
-app.use('/logout', logout);
-app.use('/admin', administration);
+app.use('/', homeRoute);
+// app.use('/about', about);
+// app.use('/keybase', keybase);
+// app.use('/keybase.txt', keybase); // for Keybase.io
+// app.use('/projects', projects);
+// app.use('/login', login);
+// app.use('/logout', logout);
+// app.use('/admin', administration);
 
 // Send user to my blog via a 301 redirect
 app.get("/blog", function(req, res) {
@@ -202,7 +223,7 @@ app.use(function (req, res, next) {
 
 app.use(function (err, req, res, next) {
     let status = err.status ? err.status : 500;
-    errorhandler.renderError(env, status, err, req, res);
+    renderError(env, status, err, req, res);
 });
 
 // Start everything and enjoy. :heart:

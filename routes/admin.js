@@ -6,13 +6,15 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const _ = require('lodash');
 const session = require('express-session');
-const showdown = require('showdown');
+//const showdown = require('showdown');
 const sanitize = require('sanitize-html');
 const dateformat = require('dateformat');
+const MarkdownIt = require('markdown-it');
 
 const constants = require('../models/constants');
 
-let converter = new showdown.Converter();
+//let converter = new showdown.Converter();
+let md = new MarkdownIt();
 
 router.get("/", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     res.render("admin", {

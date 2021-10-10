@@ -1,8 +1,14 @@
-const mongoose = require('mongoose');
-const config = require('config');
-const jwt = require('jsonwebtoken');
-const uniqueValidator = require('mongoose-unique-validator');
-const bcrypt = require('bcrypt');
+import mongoose from 'mongoose';
+import config from 'config';
+import jwt from 'jsonwebtoken';
+import uniqueValidator from 'mongoose-unique-validator';
+import bcrypt from 'bcrypt';
+
+// const mongoose = require('mongoose');
+// const config = require('config');
+// const jwt = require('jsonwebtoken');
+// const uniqueValidator = require('mongoose-unique-validator');
+// const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -39,6 +45,4 @@ userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.password);
 };
 
-const User = mongoose.model('User', userSchema);
-
-module.exports = User;
+export const User = mongoose.model('User', userSchema);
