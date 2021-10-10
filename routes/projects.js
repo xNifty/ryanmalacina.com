@@ -1,7 +1,7 @@
 // projects.js
 // Handles all of the different project routes
 
-import {Project, validateProject} from '../models/projects.js';
+import { Project, validateProject } from '../models/projects.js';
 import mongoose from 'mongoose';
 import express from 'express';
 import auth from '../middleware/auth.js';

@@ -1,6 +1,6 @@
 import express from 'express';
-import {Project, validateProject} from '../models/projects.js';
-import {News, validateNews} from '../models/news.js';
+import { Project } from '../models/projects.js';
+import { News } from '../models/news.js';
 import mongoose from 'mongoose';
 import config from 'config';
 import { RecaptchaV3 as Recaptcha } from 'express-recaptcha';
@@ -9,7 +9,6 @@ import dateFormat from 'dateformat';
 import words from 'number-to-words-en';
 import formData from 'form-data';
 import Mailgun from 'mailgun.js';
-import nodemailer from 'nodemailer';
 
 // const express = require('express');
 // const {Project, validateProject} = require('../models/projects');
@@ -22,7 +21,6 @@ import nodemailer from 'nodemailer';
 // const words = require('number-to-words-en');
 // const formData = require('form-data');
 // const Mailgun = require('mailgun.js');
-// const nodemailer = require('nodemailer');
 // const { default: GhostContentAPI } = require('@tryghost/content-api');
 
 const mailgun = new Mailgun(formData);
@@ -45,8 +43,6 @@ const auth = {
     },
     proxy: false // optional proxy, default is false
 };
-
-//const nodemailerMailgun = nodemailer.createTransport(mg(auth));
 
 router.get("/", recaptcha.middleware.render, async (req, res) => {
     let project_list = await listProjects();
@@ -110,12 +106,6 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
 
     if (!req.recaptcha.error) {
         try {
-            // nodemailerMailgun.sendMail({
-            //     from: fromEmail,
-            //     to: toEmail, // An array if you have multiple recipients.
-            //     subject: subject,
-            //     //html: message,
-            //    text: message,
             mg.messages.create(config.get('mailgunDomain'), {
                 from: fromEmail,
                 to: toEmail, // An array if you have multiple recipients.
