@@ -1,10 +1,16 @@
-const express = require('express');
-const router = express.Router();
-const session = require('express-session');
-const config = require('config');
-const auth = require('../middleware/auth');
+import express from 'express';
+import session from 'express-session';
+import config from 'config';
+import auth from '../middleware/auth.js';
+import { constants } from '../models/constants.js';
 
-const constants = require('../models/constants');
+// const express = require('express');
+// const session = require('express-session');
+// const config = require('config');
+// const auth = require('../middleware/auth');
+// const constants = require('../models/constants');
+
+const router = express.Router();
 
 router.get("/", [auth.isLoggedIn], async (req, res, next) => {
     // Leaving this in place, on the off chance there isn't any JavaScript enabled
@@ -23,4 +29,4 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-module.exports = router;
+export { router as logoutRoute }

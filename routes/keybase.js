@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import { constants } from '../models/constants.js'
+
 const router = express.Router();
-const constants = require('../models/constants');
 
 router.get("/", function(req, res) {
     res.render("keybase", {
@@ -9,4 +10,4 @@ router.get("/", function(req, res) {
     });
 });
 
-module.exports = router;
+export { router as keybaseRoute }

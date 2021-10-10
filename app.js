@@ -157,6 +157,13 @@ passport.use("local", local);
 
 // Routes
 import { homeRoute } from './routes/home.js';
+import { aboutRoute } from './routes/about.js';
+import { keybaseRoute } from './routes/keybase.js';
+import { projectsRoute } from './routes/projects.js';
+import { loginRoute } from './routes/login.js';
+import { logoutRoute } from './routes/logout.js';
+import { adminRoute } from './routes/admin.js';
+
 // const home = require('./routes/home');
 // const about = require('./routes/about');
 // const keybase = require('./routes/keybase');
@@ -194,13 +201,13 @@ app.use(function(req, res, next) {
 
 // All of our paths
 app.use('/', homeRoute);
-// app.use('/about', about);
-// app.use('/keybase', keybase);
-// app.use('/keybase.txt', keybase); // for Keybase.io
-// app.use('/projects', projects);
-// app.use('/login', login);
-// app.use('/logout', logout);
-// app.use('/admin', administration);
+app.use('/about', aboutRoute);
+app.use('/keybase', keybaseRoute);
+app.use('/keybase.txt', keybaseRoute); // for Keybase.io
+app.use('/projects', projectsRoute);
+app.use('/login', loginRoute);
+app.use('/logout', logoutRoute);
+app.use('/admin', adminRoute);
 
 // Send user to my blog via a 301 redirect
 app.get("/blog", function(req, res) {

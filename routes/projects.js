@@ -1,27 +1,42 @@
 // projects.js
 // Handles all of the different project routes
 
-const {Project, validateProject} = require('../models/projects');
-const mongoose = require('mongoose');
-const express = require('express');
-const router = express.Router();
-const auth = require('../middleware/auth');
-const _ = require('lodash');
-const session = require('express-session');
-const showdown = require('showdown');
-const sanitize = require('sanitize-html');
-const dateformat = require('dateformat');
-const fileUpload = require('express-fileupload');
+import {Project, validateProject} from '../models/projects.js';
+import mongoose from 'mongoose';
+import express from 'express';
+import auth from '../middleware/auth.js';
+import _ from 'lodash';
+import session from 'express-session';
+import MarkdownIt from 'markdown-it';
+import sanitize from 'sanitize-html';
+import dateFormat from 'dateformat';
+import fileUpload from 'express-fileupload';
+import { constants } from '../models/constants.js'
 
-const constants = require('../models/constants');
-const { isSet } = require('lodash');
+// const {Project, validateProject} = require('../models/projects');
+// const mongoose = require('mongoose');
+// const express = require('express');
+// const auth = require('../middleware/auth');
+// const _ = require('lodash');
+// const session = require('express-session');
+// const showdown = require('showdown');
+// const sanitize = require('sanitize-html');
+// const dateformat = require('dateformat');
+// const fileUpload = require('express-fileupload');
+// const constants = require('../models/constants');
+// const { isSet } = require('lodash');
+
+const router = express.Router();
+const isSet = _;
+const md = new MarkdownIt();
+const dateformat = dateFormat;
 
 const safeTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
                   'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br',
                   'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre'
 ];
 
-let converter = new showdown.Converter();
+//let converter = new showdown.Converter();
 
 router.use(fileUpload());
 
@@ -56,8 +71,7 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
             project_name: req.body.project_name,
             project_title: req.body.project_title,
             project_source: req.body.project_source,
-            project_description: req.body.project_description,
-            project_image: req.body.project_image ? req.body.project_image : '',
+            project_description: req.body.project_description
         });
     }
 
@@ -66,7 +80,8 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     ]));
 
     // @TODO : name these things better
-    let pDescription = converter.makeHtml(req.body.project_description);
+    let pDescription = md.render(req.body.project_description);
+    //let pDescription = converter.makeHtml(req.body.project_description);
     let pSanitized = sanitize(pDescription, { allowedTags: safeTags });
 
     let pImage = '';
@@ -75,6 +90,8 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         So this ended up breaking things after the hapi update, so now we default it above
         and if it exists, we set it, otherwise, we just move on and leave it as an empty string and use
         our default image
+
+        @TODO: determine what exactly I meant by the above. Really need to leave better notes.
     */
     if (req.body.project_image)
         pImage = req.files.project_image;
@@ -171,7 +188,8 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
             }
         }
 
-        let pDescription = converter.makeHtml(req.body.project_description);
+        let pDescription = md.render(req.body.project_description);
+        //let pDescription = converter.makeHtml(req.body.project_description);
 
         // We want to allow the h1 tag in our sanitizing
         let pSanitized = sanitize(pDescription, { allowedTags: safeTags });
@@ -340,4 +358,4 @@ async function deleteProject(id) {
     }
 }
 
-module.exports = router;
+export {router as projectsRoute };

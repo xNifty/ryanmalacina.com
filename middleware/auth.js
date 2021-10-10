@@ -1,9 +1,8 @@
 // Authentication Middleware
-
-var constants = require('../models/constants');
+import { constants } from '../models/constants.js';
 
 // Make sure the user is logged in, and if not, redirect to login with a message
-function loggedInOnly (req, res, next) {
+export function loggedInOnly (req, res, next) {
     if (req.isAuthenticated()) next();
     else {
         req.session.returnTo = req.originalUrl;
@@ -19,7 +18,7 @@ function loggedInOnly (req, res, next) {
 }
 
 // Make sure the user is logged in, and if not, redirect to login with a message
-function loggedInOnlyJson (req, res, next) {
+export function loggedInOnlyJson (req, res, next) {
     if (req.isAuthenticated()) next();
     else {
         //req.session.returnTo = req.originalUrl;
@@ -31,13 +30,13 @@ function loggedInOnlyJson (req, res, next) {
 }
 
 // Only allow unauthenticated users access (e.g. for /login)
-function loggedOutOnly (req, res, next) {
+export function loggedOutOnly (req, res, next) {
     if (req.isUnauthenticated()) next();
     else res.redirect("/");
 }
 
 // Make sure the user is an admin
-function isAdmin(req, res, next) {
+export function ValidateAdmin(req, res, next) {
     if (req.user.isAdmin) next();
     else {
         req.flash('error', constants.errors.accessDenied);
@@ -46,7 +45,14 @@ function isAdmin(req, res, next) {
 }
 
 
-module.exports.isLoggedIn = loggedInOnly;
-module.exports.isLoggedInJson = loggedInOnlyJson;
-module.exports.isLoggedOut = loggedOutOnly;
-module.exports.isAdmin = isAdmin;
+var isLoggedIn = loggedInOnly;
+var isLoggedInJson = loggedInOnlyJson;
+var isLoggedOut = loggedOutOnly;
+var isAdmin = ValidateAdmin;
+
+export default {
+    isLoggedIn,
+    isLoggedInJson,
+    isLoggedOut,
+    isAdmin
+};

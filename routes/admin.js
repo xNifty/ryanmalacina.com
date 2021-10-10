@@ -1,20 +1,32 @@
-const {Project, validateProject} = require('../models/projects');
-const {News, validateNews} = require('../models/news');
-const mongoose = require('mongoose');
-const express = require('express');
-const router = express.Router();
-const auth = require('../middleware/auth');
-const _ = require('lodash');
-const session = require('express-session');
-//const showdown = require('showdown');
-const sanitize = require('sanitize-html');
-const dateformat = require('dateformat');
-const MarkdownIt = require('markdown-it');
+import {Project, validateProject} from '../models/projects.js';
+import {News, validateNews} from '../models/news.js';
+import mongoose from 'mongoose';
+import express from 'express';
+import auth from '../middleware/auth.js';
+import _ from 'lodash';
+import session from 'express-session';
+import sanitize from 'sanitize-html';
+import dateFormat from 'dateformat';
+import MarkdownIt from 'markdown-it';
+import { constants } from '../models/constants.js';
 
-const constants = require('../models/constants');
+// const {Project, validateProject} = require('../models/projects');
+// const {News, validateNews} = require('../models/news');
+// const mongoose = require('mongoose');
+// const express = require('express');
+// const auth = require('../middleware/auth');
+// const _ = require('lodash');
+// const session = require('express-session');
+// const sanitize = require('sanitize-html');
+// const dateformat = require('dateformat');
+// const MarkdownIt = require('markdown-it');
+// const constants = require('../models/constants');
+
+const router = express.Router();
 
 //let converter = new showdown.Converter();
 let md = new MarkdownIt();
+const dateformat = dateFormat;
 
 router.get("/", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     res.render("admin", {
@@ -79,7 +91,8 @@ router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =>
             news: news_list
         });
     }
-    let newsDescription = converter.makeHtml(req.body.news_description);
+    let newsDescription = md.render(req.body.news_description);
+    // let newsDescription = converter.makeHtml(req.body.news_description);
     let newsSanitized = sanitize(newsDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
 
     news.news_description_markdown = req.body.news_description;
@@ -201,7 +214,8 @@ router.post('/news/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =
             news_description: req.body.news_description
         });
     }
-    let newsDescription = converter.makeHtml(req.body.news_description);
+    let newsDescription = md.render(req.body.news_description);
+    // let newsDescription = converter.makeHtml(req.body.news_description);
     let newsSanitized = sanitize(newsDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
 
     news.news_description_markdown = req.body.news_description;
@@ -308,4 +322,4 @@ async function getNewsListing() {
     }).lean();
 }
 
-module.exports = router;
+export { router as adminRoute }

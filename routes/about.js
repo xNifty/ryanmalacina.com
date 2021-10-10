@@ -1,7 +1,7 @@
-const express = require('express');
-const router = express.Router();
+import express from 'express';
+import { constants } from '../models/constants.js'
 
-const constants = require('../models/constants');
+const router = express.Router();
 
 router.get("/", function(req, res) {
     res.render("about", {

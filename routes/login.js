@@ -1,13 +1,21 @@
-const _ = require('lodash');
-const bcrypt = require('bcrypt');
-const {User, validate} = require('../models/user');
-const mongoose = require('mongoose');
-const express = require('express');
-const router = express.Router();
-const passport = require('passport');
-const auth = require('../middleware/auth');
+import _ from 'lodash';
+import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
+import express from 'express';
+import passport from 'passport';
+import auth from '../middleware/auth.js';
+import { constants } from '../models/constants.js';
 
-const constants = require('../models/constants');
+// const _ = require('lodash');
+// const bcrypt = require('bcrypt');
+// const {User, validate} = require('../models/user');
+// const mongoose = require('mongoose');
+// const express = require('express');
+// const passport = require('passport');
+// const auth = require('../middleware/auth');
+// const constants = require('../models/constants');
+
+const router = express.Router();
 
 router.get("/", [auth.isLoggedOut], async (req, res) => {
     return res.render("login", {
@@ -30,7 +38,7 @@ router.get("/", [auth.isLoggedOut], async (req, res) => {
 */
 router.post('/', passport.authenticate("local", { failWithError: true }),
     function(req, res, next) {
-        //console.log(req.originalUrl + ', ' + req.session.returnTo);
+        console.log(req.originalUrl + ', ' + req.session.returnTo);
         let returnToURL = req.session.returnTo;
         delete req.session.returnTo;
         if (req.originalUrl === '/login' && (typeof returnToURL === 'undefined' || returnToURL === '/logout')) {
@@ -57,4 +65,34 @@ router.post('/', passport.authenticate("local", { failWithError: true }),
     }
 );
 
-module.exports = router;
+router.post('/navlogin', passport.authenticate("local", { failWithError: true }),
+    function(req, res, next) {
+        console.log('Nav login');
+        console.log(req.originalUrl + ', ' + req.session.returnTo);
+        let returnToURL = req.session.returnTo;
+        delete req.session.returnTo;
+        if (req.originalUrl === '/login' && (typeof returnToURL === 'undefined' || returnToURL === '/logout')) {
+            //req.flash('success', constants.success.loginSuccess);
+            res.send('{"success" : "Log in success", "status" : 200}');
+        } else {
+            if (returnToURL) {
+                req.flash('success', constants.success.loginSuccess);
+                res.redirect(returnToURL);
+            } else {
+                req.flash('success', constants.success.loginSuccess);
+                res.redirect('/');
+            }
+        }
+    },
+    function(err, req, res, next) {
+        if (req.session.returnTo == null) {
+            //req.flash('error', constants.errors.invalidLogin);
+            return res.send('{"error" : "Login failed", "status" : 400}');
+        } else {
+            req.flash('error', constants.errors.invalidLogin);
+            return res.redirect('/login');
+        }
+    }
+);
+
+export { router as loginRoute }

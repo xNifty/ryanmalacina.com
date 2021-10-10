@@ -52,7 +52,7 @@ const projectScheme = new mongoose.Schema({
 
 // const Project = mongoose.model('Project', projectScheme);
 
-function validateProject(user) {
+export function validateProject(user) {
     const schema = Joi.object({
         project_name: Joi.string().max(125).required(),
         project_title: Joi.string().max(125).required(),
@@ -66,5 +66,7 @@ function validateProject(user) {
 
 // exports.validateProject = validateProject;
 
-export {validateProject as validateProject}
+export default {
+    validateProject
+}
 export const Project = mongoose.model('Project', projectScheme);
