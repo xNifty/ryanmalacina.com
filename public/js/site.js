@@ -27,6 +27,24 @@ $(document).ready(function() {
     $('#loginform').on('click', login);
 });
 
+$(document).ready(function() {
+    const el = document.getElementById('password');
+    const msg = document.getElementById('password-message');
+
+    el.addEventListener('keyup', e => {
+        msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
+    });
+});
+
+$(document).ready(function() {
+    const el = document.getElementById('sp_pass');
+    const msg = document.getElementById('sp_pass_message');
+
+    el.addEventListener('keyup', e => {
+        msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
+    });
+});
+
 // $(document).ready(function() {
 //     $('#logoutlink').on('click', logout);
 // });
