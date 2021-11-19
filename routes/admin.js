@@ -26,6 +26,9 @@ const router = express.Router();
 
 //let converter = new showdown.Converter();
 let md = new MarkdownIt();
+let md_no_html = new MarkdownIt({
+    html: false,
+});
 const dateformat = dateFormat;
 
 router.get("/", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
@@ -94,9 +97,11 @@ router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =>
     let newsDescription = md.render(req.body.news_description);
     // let newsDescription = converter.makeHtml(req.body.news_description);
     let newsSanitized = sanitize(newsDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
+    let newsCleaned = sanitize(newsDescription, { allowedTags: []});
 
     news.news_description_markdown = req.body.news_description;
     news.news_description_html = newsSanitized;
+    news.news_clean_output = newsCleaned;
     let saveDate = new Date(Date.now());
 
     news.published_date = dateformat(saveDate, "mmmm dd, yyyy @ h:MM TT");
@@ -217,9 +222,11 @@ router.post('/news/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =
     let newsDescription = md.render(req.body.news_description);
     // let newsDescription = converter.makeHtml(req.body.news_description);
     let newsSanitized = sanitize(newsDescription, { allowedTags: sanitize.defaults.allowedTags.concat(['h1']) });
+    let newsCleaned = sanitize(newsDescription, { allowedTags: []});
 
     news.news_description_markdown = req.body.news_description;
     news.news_description_html = newsSanitized;
+    news.news_clean_output = newsCleaned;
     let saveDate = new Date(Date.now());
 
     news.published_date = dateformat(saveDate, "mmmm dd, yyyy @ h:MM TT");
@@ -228,7 +235,8 @@ router.post('/news/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =
         await News.findByIdAndUpdate({_id: req.session.news_id}, {
             news_title: req.body.news_title,
             news_description_markdown: req.body.news_description,
-            news_description_html: newsSanitized
+            news_description_html: newsSanitized,
+            news_clean_output: newsCleaned
         });
     } catch(ex) {
         //console.log('Error 2: ', ex);

@@ -163,6 +163,7 @@ import { projectsRoute } from './routes/projects.js';
 import { loginRoute } from './routes/login.js';
 import { logoutRoute } from './routes/logout.js';
 import { adminRoute } from './routes/admin.js';
+import { newsRoute } from './routes/news.js';
 
 // const home = require('./routes/home');
 // const about = require('./routes/about');
@@ -208,6 +209,7 @@ app.use('/projects', projectsRoute);
 app.use('/login', loginRoute);
 app.use('/logout', logoutRoute);
 app.use('/admin', adminRoute);
+app.use('/news', newsRoute);
 
 // Send user to my blog via a 301 redirect
 app.get("/blog", function(req, res) {

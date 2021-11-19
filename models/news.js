@@ -31,6 +31,11 @@ const newsScheme = new mongoose.Schema({
     is_published: {
         type: Boolean,
         default: true
+    },
+    news_clean_output: {
+        type: String,
+        minlength: 10,
+        maxlength: 2000
     }
 });
 
@@ -48,6 +53,6 @@ function validateNews(user) {
 
 // exports.validateNews = validateNews;
 
-export {validateNews as validateNews}
+export { validateNews as validateNews }
 
 export const News = mongoose.model('News', newsScheme);
