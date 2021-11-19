@@ -1,22 +1,23 @@
 <div class="container" id="site-news">
     <h1>Site News and Updates</h1>
     {{#iff news.length ">" 0}}
-        {{#each news as |news| }}
-        <div class="panel panel-info">
-            <div class="panel-heading collapsed" data-toggle="collapse" data-target="#coll{{ news.counter }}">
-                <i class="fa fa-fw fa-chevron-down"></i>
-                <i class="fa fa-fw fa-chevron-right"></i>{{ news.news_title }} | {{ news.published_date }}
-            </div>
-            <div class="panel-body">
-                <div class="collapse custom-text" id="coll{{ news.counter }}">
-                    {{{ news.news_description_html }}}
+        <div class="panel-group">
+            {{#each news as |news| }}
+            <div class="panel panel-info">
+                <div class="panel-heading collapsed">
+                    <i class="fa fa-fw fa-chevron-down" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>
+                    <i class="fa fa-fw fa-chevron-right" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>{{ news.news_title }} | {{ news.published_date }}
+                </div>
+                <div class="panel-collapse collapse custom-text" id="coll{{ news.counter }}">
+                    <div class="panel-body">
+                        {{{ news.news_description_html }}}
+                    </div>
                 </div>
             </div>
+            {{/each}}
         </div>
-        {{/each}}
     {{else}}
-        This section is still undergoing construction and is not yet ready.  In terms of news, the biggest
-        update is that the news section is being worked on and will hopefully be ready in the coming weeks.
+        There is no news, or something went wrong.
     {{/iff}}
     <hr>
 </div>

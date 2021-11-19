@@ -381,9 +381,9 @@ i.fa {
   margin-right: 5px;
 }
 
-.collapsed ~ .panel-body {
+/* .collapsed ~ .panel-body {
   padding: 0;
-}
+} */
 
 .collapse.custom-text {
     color: black;
@@ -466,9 +466,9 @@ i.fa {
     visibility: hidden;
 }
 
-.custom-text .collapse {
+/* .custom-text .collapse {
     height: 20px;
-}
+} */
 
 .recaptcha-font {
     font-size: 1.1rem;
