@@ -35,12 +35,10 @@ $(document).ready(function() {
     const el = document.getElementById('password');
     const msg = document.getElementById('password-message');
 
-    try {
+    if (el !== null) {
         el.addEventListener('keyup', e => {
             msg.style = e.getModifierState('CapsLock') ? 'display: none' : 'display: block';
         });
-    } catch (error) {
-
     }
 });
 
@@ -48,12 +46,10 @@ $(document).ready(function() {
     const el = document.getElementById('sp_uname');
     const msg = document.getElementById('sp_pass_message');
 
-    try {
+    if (el !== null) {
         el.addEventListener('keyup', e => {
             msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
         });
-    } catch (error) {
-        
     }
 });
 
@@ -67,10 +63,12 @@ function searchNews(e) {
             search: search,
         },
         datatype: "json",
-    }).done(function(data)  {
-        $( "#news-results" ).html(data);
-    }).fail(function()  {
-        alert("There was an issue searching.  Check the error log.")
+        success: function(data)  {
+            $("#news-results").html(data);
+        },
+        fail: function() {
+            alert("Error searching.");
+        }
     });
 
     return false;
@@ -81,10 +79,12 @@ function publishProject() {
         type:'PUT',
         url: '/admin/projects/publish/'+ $(this).data('id'),
         datatype: "json",
-    }).done(function()  {
-        window.location.reload();
-    }).fail(function()  {
-        alert("There was an issue publishing.  Check the error log.")
+        success: function () {
+            window.location.reload();
+        },
+        fail: function () {
+            alert("There was an issue publishing.  Check the error log.")
+        }
     });
 
     return false;
@@ -95,10 +95,12 @@ function unpublishProject() {
         type:'PUT',
         url: '/admin/projects/unpublish/'+ $(this).data('id'),
         datatype: "json",
-    }).done(function()  {
-        window.location.reload();
-    }).fail(function()  {
-        alert("There was an issue unpublishing.  Check the error log.")
+        success: function() {
+            window.location.reload();
+        },
+        fail: function() {
+            alert("There was an issue unpublishing.");
+        }
     });
 
     return false;
@@ -109,10 +111,12 @@ function publishNews() {
         type:'PUT',
         url: '/admin/news/publish/'+ $(this).data('id'),
         datatype: "json",
-    }).done(function()  {
-        window.location.reload();
-    }).fail(function()  {
-        alert("There was an issue publishing.  Check the error log.")
+        success: function() {
+            window.location.reload();
+        },
+        fail: function() {
+            alert("There was an issue publishing.");
+        }
     });
 
     return false;
@@ -123,10 +127,12 @@ function unpublishNews() {
         type:'PUT',
         url: '/admin/news/unpublish/'+ $(this).data('id'),
         datatype: "json",
-    }).done(function()  {
-        window.location.reload();
-    }).fail(function()  {
-        alert("There was an issue unpublishing.  Check the error log.")
+        success: function() {
+            window.location.reload();
+        },
+        fail: function() {
+            alert("There was an issue unpublishing.  Check the error log.")
+        }
     });
 
     return false;
@@ -138,11 +144,12 @@ function deleteNews() {
             type:'PUT',
             url: '/admin/news/delete/'+ $(this).data('id'),
             datatype: "json",
-        }).done(function()  {
-            window.location.reload();
-            alert("Entry deleted.");
-        }).fail(function()  {
-            alert("There was an issue deleting.  Check the error log.")
+            success: function() {
+                window.location.reload();
+            },
+            fail: function() {
+                alert("There was an issue deleting.");
+            }
         });
     
         return false;
@@ -150,17 +157,20 @@ function deleteNews() {
         return false;
     }
 }
+
 function deleteProject() {
     if (confirm("Are you sure you wish to delete this project?")) {
         $.ajax({
             type:'PUT',
             url: '/projects/delete/'+ $(this).data('id'),
             datatype: "json",
-        }).done(function()  {
-            window.location.reload();
-            alert("Project deleted.");
-        }).fail(function()  {
-            alert("There was an issue deleting.  Check the error log.")
+            success: function() {
+                window.location.reload();
+                alert("Project deleted.");
+            },
+            fail: function() {
+                alert("There was an issue deleting.  Check the error log.")
+            }
         });
     
         return false;
@@ -185,12 +195,6 @@ function login() {
                 password: pass
             },
             datatype: "json",
-            done: function () {
-                location.reload();
-            },
-            fail: function () {
-                location.reload();
-            },
             success: function () {
                 $('#loginSubmit').hide();
                 $('#loginStatus').html('<div class="alert alert-success alert-dismissible center-block">You have been successfully logged in!</div>');
@@ -215,10 +219,12 @@ function logout() {
         type:'post',
         url: '/logout',
         datatype: "json",
-    }).done(function()  {
-        location.reload();
-    }).fail(function()  {
-        alert("There was an issue logging out.  Check the error log.")
+        success: function() {
+            location.reload();
+        },
+        fail: function() {
+            alert("There was an issue logging out, please report this if it continues.")
+        }
     });
 
     return false;
@@ -274,7 +280,7 @@ function SubmitMail (){
         type:'post',
         data:$('#contact-form').serialize(),
         datatype: "jsonp",
-    success: function(json)  {
+        success: function(json)  {
             if (json.status === 200) {
                 document.getElementById('contactformdiv').innerHTML = "<div class=\"text-center\">\n" +
                     "<div class=\"alert alert-success alert-dismissible center-block\">Message sent! I'll get back " +
@@ -294,15 +300,15 @@ function SubmitMail (){
                 "please try again.";
             document.getElementById('emailalert').style.position = 'static';
             document.getElementById('emailalert').style.opacity = '1';
-        }
-    },
-    error: function()  {
-        document.getElementById('emailerror').innerHTML = "There was an error sending the email..." +
+            }
+        },
+        error: function()  {
+            document.getElementById('emailerror').innerHTML = "There was an error sending the email..." +
             "please try again.  If you continue to experience issues, please " + 
             "<a href=\"https://github.com/xnifty/ryanmalacina.com/issues\">submit</a> an issue.";
-        document.getElementById('emailalert').style.position = 'static';
-        document.getElementById('emailalert').style.opacity = '1';
-    }
+            document.getElementById('emailalert').style.position = 'static';
+            document.getElementById('emailalert').style.opacity = '1';
+        }
     });
 }
 
@@ -391,11 +397,13 @@ function updateCheckbox() {
         type:'put',
         url: '/projects/update/'+$(this).data('id'),
         data: "json",
-    }).done(function() {
-        $(this).removeAttr("disabled");
-        window.location.reload();
-    }).fail(function() {
-        alert("There was an issue updating.  Check the error log.")
+        success: function() {
+            $(this).removeAttr("disabled");
+            window.location.reload();
+        },
+        fail: function() {
+            alert("There was an issue updating.  Check the error log.")
+        }
     });
 
     return false;
