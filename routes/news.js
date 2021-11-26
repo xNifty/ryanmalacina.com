@@ -8,36 +8,47 @@ import dateFormat from 'dateformat';
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+  var news_list;
+  var searched;
 
-    var news_list;
-    var searched;
+  if (req.body.search) {
+    news_list = await newsSearch(req.body.search);
+  } else {
+    news_list = await listNews();
+  }
 
-    if (req.query.search) {
-        news_list = await newsSearch(req.query.search);
+  for (var x in news_list) {
+      let counter_number = x;
+      counter_number++;
+      news_list[x].counter = counter_number;
+  };
+  
+  return res.render("news-index", {
+      title: "Ryan Malacina | News",
+      news: news_list,
+      searched: searched
+  });
+});
 
-        searched = req.query.search;
+router.post("/search", async (req, res) => {
+  var news_list;
 
-      for (var x in news_list) {
-          let counter_number = x;
-          counter_number++;
-          news_list[x].counter = counter_number;
-          //console.log(news_list[x]);
-      };
-    } else {
-      news_list = await listNews();
+  if (req.body.search) {
+    news_list = await newsSearch(req.body.search);
+  } else {
+    news_list = await listNews();
+  }
 
-      for (var x in news_list) {
-          let counter_number = x;
-          counter_number++;
-          news_list[x].counter = counter_number;
-          //console.log(news_list[x]);
-      };
-    }
-    return res.render("news-index", {
-        title: "Ryan Malacina | News",
-        news: news_list,
-        searched: searched
-    });
+  for (var x in news_list) {
+      let counter_number = x;
+      counter_number++;
+      news_list[x].counter = counter_number;
+  };
+  
+  return res.render("partials/news/news-display", {
+    layout: false,
+    news: news_list,
+  });
 });
 
 async function listNews() {

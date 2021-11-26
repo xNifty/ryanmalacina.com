@@ -1,21 +1,13 @@
 <div class="container" id="site-news">
     <h1>Site News and Updates</h1>
-    <p>Welcome to the searchable news index.  Enter your search below to find matching news entries regarding the site.  Search is done against the title and content.</p>
-    {{#iff news.length ">" 0}}
-        {{#each news as |news| }}
-        <div class="panel panel-info">
-            <div class="panel-heading collapsed" data-toggle="collapse" data-target="#coll{{ news.counter }}">
-                <i class="fa fa-fw fa-chevron-down"></i>
-                <i class="fa fa-fw fa-chevron-right"></i>{{ news.news_title }} | {{ news.published_date }}
-            </div>
-            <div class="panel-body">
-                <div class="collapse custom-text" id="coll{{ news.counter }}">
-                    {{{ news.news_description_html }}}
-                </div>
-            </div>
-        </div>
-        {{/each}}
-    {{else}}
-        No news content found that contained the searched string:<br /> {{searched}}
-    {{/iff}}
+    <div class="input-group custom-search">
+        <input type="search" class="form-control" id="news-search-box">
+        <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" id="news-search">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                Search!
+            </button>
+        </span>
+    </div>
+    <div id="news-results">{{> news/news-display}}</div>
 </div>

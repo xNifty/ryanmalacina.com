@@ -232,9 +232,9 @@ li.dropdown:hover > .dropdown-menu a {
     margin-top: -1%;
 } */
 
-.input-group {
+/* .input-group {
     width: 100%;
-}
+} */
 
 .alert {
     width: 50%;
@@ -483,4 +483,17 @@ button.btn.btn-primary.right {
 #password-message {
     display: none;
     color: black;
+}
+
+.input-group.custom-search {
+    width: 40%;
+    padding-bottom: 0.5em;
+}
+
+#sp_pass_message {
+    display: none;
+}
+
+#password-message {
+    display: none;
 }

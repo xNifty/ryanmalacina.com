@@ -28,26 +28,53 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-    const el = document.getElementById('password');
-    const msg = document.getElementById('password-message');
-
-    el.addEventListener('keyup', e => {
-        msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
-    });
+    $('#news-search').on('click', searchNews);
 });
 
 $(document).ready(function() {
-    const el = document.getElementById('sp_pass');
-    const msg = document.getElementById('sp_pass_message');
+    const el = document.getElementById('password');
+    const msg = document.getElementById('password-message');
 
-    el.addEventListener('keyup', e => {
-        msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
-    });
+    try {
+        el.addEventListener('keyup', e => {
+            msg.style = e.getModifierState('CapsLock') ? 'display: none' : 'display: block';
+        });
+    } catch (error) {
+
+    }
 });
 
-// $(document).ready(function() {
-//     $('#logoutlink').on('click', logout);
-// });
+$(document).ready(function() {
+    const el = document.getElementById('sp_uname');
+    const msg = document.getElementById('sp_pass_message');
+
+    try {
+        el.addEventListener('keyup', e => {
+            msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
+        });
+    } catch (error) {
+        
+    }
+});
+
+function searchNews(e) {
+    var search = $('#news-search-box').val();
+    e.preventDefault();
+    $.ajax({
+        type:'POST',
+        url: '/news/search',
+        data: {
+            search: search,
+        },
+        datatype: "json",
+    }).done(function(data)  {
+        $( "#news-results" ).html(data);
+    }).fail(function()  {
+        alert("There was an issue searching.  Check the error log.")
+    });
+
+    return false;
+}
 
 function publishProject() {
     $.ajax({
