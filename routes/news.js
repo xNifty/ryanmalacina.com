@@ -61,7 +61,7 @@ async function listNews() {
 }
 
 async function newsSearch(strSearch) {
-  var query = {$text: {$search: strSearch, $language: 'en'}};
+  var query = {$text: {$search: strSearch}};
 
   return News.find(query).select({
     news_title: 1,
