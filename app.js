@@ -1,16 +1,7 @@
-/*
-    These are the files for my personal website, ryanmalacina.com
-    This site is far from complete, looks basic, and is being worked on slowly.
-
-    TODO (in no particular order):
-        - Format keybase page
-        - Fix tabopen.js
- */
-
 import mongoose from 'mongoose';
 import express from 'express';
 import exphbs  from 'express-handlebars';
-import path from 'path';
+import path from 'path'; // is this even used for anything?
 import config from 'config';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
@@ -20,30 +11,10 @@ import cookieParser from 'cookie-parser';
 import passport from 'passport';
 
 import { User } from './models/user.js';
-//import auth from './middleware/auth';
 import { iff } from './functions/helpers.js';
 import renderError from './functions/errorhandler.js';
 import { genCSP, generateNonce, getDirectives } from './middleware/nonce.js';
 import { constants } from './models/constants.js'
-
-// const mongoose = require('mongoose');
-// const express = require('express');
-// const exphbs  = require('express-handlebars');
-// const path = require('path');
-// const config = require('config');
-// const session = require('express-session');
-// const MongoStore = require('connect-mongo');
-// const csp = require('helmet-csp');
-// const flash = require('connect-flash');
-// const cookieParser = require('cookie-parser');
-// const passport = require('passport');
-
-// const User = require('./models/user');
-// const auth = require('./middleware/auth');
-// const helpers = require('./functions/helpers');
-// const errorhandler = require('./functions/errorhandler');
-// const nonce_middleware = require('./middleware/nonce');
-// const constants = require('./models/constants');
 
 const app = express();
 const env = app.settings.env;
@@ -70,8 +41,7 @@ const hbs = exphbs.create({
 });
 
 // Connect to the database
-mongoose.connect('mongodb://localhost:27017/ryanmalacina', {
-})
+mongoose.connect('mongodb://localhost:27017/ryanmalacina', {})
     .then(() => console.log("Connected to the database."))
     .catch(err => console.error("Error connecting to database: ", err));
 
@@ -141,7 +111,6 @@ passport.deserializeUser(function(userId, done) {
 import LocalStrategy from 'passport-local';
 
 // Passport Stuff
-//const LocalStrategy = require("passport-local").Strategy;
 const local = new LocalStrategy((username, password, done) => {
     User.findOne({ username })
         .then(user => {
@@ -164,14 +133,6 @@ import { loginRoute } from './routes/login.js';
 import { logoutRoute } from './routes/logout.js';
 import { adminRoute } from './routes/admin.js';
 import { newsRoute } from './routes/news.js';
-
-// const home = require('./routes/home');
-// const about = require('./routes/about');
-// const keybase = require('./routes/keybase');
-// const projects = require('./routes/projects');
-// const login = require('./routes/login');
-// const logout = require('./routes/logout');
-// const administration = require('./routes/admin');
 
 // Default values; we can override this on a per-route basis if needed
 app.locals = {

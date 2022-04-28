@@ -24,9 +24,9 @@ router.get("/", async (req, res) => {
   };
   
   return res.render("news-index", {
-      title: "Ryan Malacina | News",
-      news: news_list,
-      searched: searched
+    title: "Ryan Malacina | News",
+    news: news_list,
+    searched: searched
   });
 });
 
@@ -52,12 +52,12 @@ router.post("/search", async (req, res) => {
 });
 
 async function listNews() {
-    return News.find({is_published: 1}).select({
-        news_title: 1,
-        published_date: 1,
-        news_description_html: 1,
-        _id: 0
-    }).limit(5).sort({_id: -1}).lean();
+  return News.find({is_published: 1}).select({
+    news_title: 1,
+    published_date: 1,
+    news_description_html: 1,
+    _id: 0
+  }).limit(5).sort({_id: -1}).lean();
 }
 
 async function newsSearch(strSearch) {
