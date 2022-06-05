@@ -101,6 +101,9 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
     let subject = req.body.subject;
     let message = req.body.message;
 
+    let subject_name = req.body.name;
+    let subject_combined = `Email received on behalf of ${subject_name}:\n ` + subject;
+
     //console.log(req.recaptcha.data);
     //console.log(req.recaptcha.error);
 
@@ -109,7 +112,7 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
             mg.messages.create(config.get('mailgunDomain'), {
                 from: fromEmail,
                 to: toEmail, // An array if you have multiple recipients.
-                subject: subject,
+                subject: subject_combined,
                 //html: message,
                 text: message,
             })
