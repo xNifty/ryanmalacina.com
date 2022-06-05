@@ -18,5 +18,6 @@
   "docsURL": "docsurl",
   "showBlog": false,
   "blogAPI": "ghostAPIKey",
-  "blogVersion": "GhostVersion"
+  "blogVersion": "GhostVersion",
+  "rootURL": "rootSiteURL"
 }

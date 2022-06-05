@@ -20,7 +20,7 @@
 {{/if}}
 {{#if update_project}}
     <div class="container">
-        <a class="back-button" href="/projects/{{project_name}}" data-toogle="tooltip" title="Return to Project"></a>
+        <a class="back-button" href="/projects/{{_id}}" data-toogle="tooltip" title="Return to Project"></a>
         <form action="/projects/edit" method="post" enctype="multipart/form-data">
 	        <div class="form-group">
                 Project Name<br> <input type="text" class="custom-text" name="project_name"

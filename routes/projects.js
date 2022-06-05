@@ -12,6 +12,7 @@ import sanitize from 'sanitize-html';
 import dateFormat from 'dateformat';
 import fileUpload from 'express-fileupload';
 import { constants } from '../models/constants.js'
+import config from 'config';
 
 // const {Project, validateProject} = require('../models/projects');
 // const mongoose = require('mongoose');
@@ -113,7 +114,6 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         }
         await project.save();
     } catch(ex) {
-        console.log(ex);
         return res.status(400).render('admin/projects/new-project', {
             layout: 'projects',
             new_project: true,
@@ -130,15 +130,18 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     res.redirect('/projects');
 });
 
-router.get('/:name/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
+router.get('/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     const project = await Project.findOne({
-        project_name: req.params.name
+        _id: req.params.id
     });
 
     req.session.project_id = project._id;
 
     // For if the edit fails, otherwise we want to return to the normal project information page
-    req.session.projectEditReturnTo = req.originalUrl;
+    // Instead of this, hard set the URL from configfile (set a base url) and from there we can load the 
+    // proper project since we know the ID
+    req.session.projectEditReturnTo = config.get("rootURL") + "/projects/" + project._id + "/edit";
+    req.session.projectEditSuccess = config.get("rootURL") + "/projects/" + project._id;
 
     // If not load from session, then load normally; else, load from session
     if (!req.session.loadProjectFromSession) {
@@ -149,7 +152,8 @@ router.get('/:name/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             project_title: project.project_title,
             project_source: project.project_source,
             project_description: project.project_description_markdown,
-            project_image: project.project_image
+            project_image: project.project_image,
+            id: project._id
         });
     } else {
         res.render('projects', {
@@ -159,7 +163,8 @@ router.get('/:name/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             project_title: req.session.project_title,
             project_source: req.session.project_source,
             project_description: req.session.project_description_markdown,
-            project_image: req.session.project_image
+            project_image: req.session.project_image,
+            id: project._id
         });
 
         // Finally, clear up the session variables -- can I move this to a function where we delete them if they exist?
@@ -241,16 +246,16 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
                 });
             }
         }
-
-        req.session.project_id = null;
-
-        if (req.session.projectReturnTo) {
-            let returnTo = req.session.projectReturnTo;
+        if (req.session.projectEditSuccess) {
+            let returnTo = req.session.projectEditSuccess;
             delete req.session.projectReturnTo;
             delete req.session.projectEditReturnTo; // Still need to delete even though we didn't use it
+            delete req.session.project_id;
+            delete req.session.projectEditSuccess;
             req.flash('success', constants.success.projectUpdated);
             return res.redirect(returnTo);
         } else {
+            delete req.session.project_id;
             req.flash('success', constants.success.projectUpdated);
             return res.redirect('/projects');
         }
@@ -288,12 +293,12 @@ router.put("/delete/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
 
 // TODO: this really should use ID to load; we can hide that on the page per row if we load initial
 // We can clearly get the ID like we do in other routes, so this really needs to be changed to ID loading
-router.get("/:name", async(req, res) => {
+router.get("/:id", async(req, res) => {
     const project = await Project.findOne({
-        project_name: req.params.name,
+        _id: req.params.id,
     });
 
-    req.session.projectReturnTo = req.originalUrl;
+    req.session.projectReturnTo = config.get("rootURL") + "/projects/" + project._id;
 
     // Intentionally leaving this different, as our "custom" error page doesn't display the text via alerts
     if (!project || !project.is_published) {
@@ -312,6 +317,7 @@ router.get("/:name", async(req, res) => {
         is_valid: true,
         last_save_date: dateformat(project.last_edited, "mmmm dd, yyyy @ h:MM TT"),
         title: 'Ryan Malacina | ' + project.project_name,
+        id: project._id
     });
 });
 
@@ -344,7 +350,7 @@ async function listProjects() {
         project_name: 1,
         project_image: 1,
         project_title: 1,
-        _id: 0
+        _id: 1
     }).lean();
 }
 
