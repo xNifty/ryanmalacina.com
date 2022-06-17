@@ -40,8 +40,10 @@ const hbs = exphbs.create({
     }
 });
 
+var mongoURL = config.get("mongoURL");
+
 // Connect to the database
-mongoose.connect('mongodb://localhost:27017/ryanmalacina', {})
+mongoose.connect(mongoURL, {})
     .then(() => console.log("Connected to the database."))
     .catch(err => console.error("Error connecting to database: ", err));
 
@@ -74,7 +76,7 @@ app.use(cookieParser());
 const secret_key = config.get('privateKeyName');
 
 const mongoStore = MongoStore.create({
-    mongoUrl: 'mongodb://localhost:27017/ryanmalacina',
+    mongoUrl: mongoURL,
     collectionName: "sessions",
     clear_interval: 3600
 });

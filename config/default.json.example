@@ -19,5 +19,6 @@
   "showBlog": false,
   "blogAPI": "ghostAPIKey",
   "blogVersion": "GhostVersion",
-  "rootURL": "rootSiteURL"
+  "rootURL": "rootSiteURL",
+  "mongoURL": "mongourlhere"
 }
