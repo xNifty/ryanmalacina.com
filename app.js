@@ -9,6 +9,7 @@ import csp from 'helmet-csp';
 import flash from 'connect-flash';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
+import LocalStrategy from 'passport-local';
 
 import { User } from './models/user.js';
 import { iff } from './functions/helpers.js';
@@ -109,8 +110,6 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(userId, done) {
     User.findById(userId, (err, user) => done(err, user));
 });
-
-import LocalStrategy from 'passport-local';
 
 // Passport Stuff
 const local = new LocalStrategy((username, password, done) => {
