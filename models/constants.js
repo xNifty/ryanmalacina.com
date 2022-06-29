@@ -3,8 +3,8 @@
 
 // file versioning
 var fileVersions = {
-    cssFileVersion: "1.0.4",
-    jsFileVersion: "1.0.9"
+    cssFileVersion: "1.0.5",
+    jsFileVersion: "1.0.10"
 }
 
 // Error string constants
