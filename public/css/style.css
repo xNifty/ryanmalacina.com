@@ -497,3 +497,20 @@ button.btn.btn-primary.right {
 #password-message {
     display: none;
 }
+
+@keyframes shake3 {
+    0% {left: -5px}
+    16% {left: 5px}
+    33% {left: -5px}
+    49% {left: 5px}
+    66% {left: -5px}
+    80% {left: 5px}
+    100% {left: 0}
+} /* And @keyframes with prefixes */
+
+.invalid {
+  border: 2px solid red;
+  animation-name: shake3;
+  animation-duration: .4s;
+  position: relative;
+}

@@ -317,23 +317,28 @@ function validateForm() {
     let errortext = "";
     if (name === "") {
         errortext += 'Name is a required field.<br />';
+        document.getElementById('name').classList.add('invalid');
     }
     let email =  document.getElementById('email').value;
     if (email === "") {
-        errortext += 'Email is a required field.<br />'
+        errortext += 'Email is a required field.<br />';
+        document.getElementById('email').classList.add('invalid');
     } else {
         let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if(!re.test(email)){
-            errortext += 'Please provide a valid email.<br />'
+            errortext += 'Please provide a valid email.<br />';
+            document.getElementById('email').classList.add('invalid');
         }
     }
     let subject =  document.getElementById('subject').value;
     if (subject === "") {
-        errortext += 'Subject is a required field.<br />'
+        errortext += 'Subject is a required field.<br />';
+        document.getElementById('subject').classList.add('invalid');
     }
     let message =  document.getElementById('message').value;
     if (message === "") {
-        errortext += 'Message is a required field.'
+        errortext += 'Message is a required field.';
+        document.getElementById('message').classList.add('invalid');
     }
 
     if (errortext !== '') {
