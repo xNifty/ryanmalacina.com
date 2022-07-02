@@ -85,15 +85,12 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     //let pDescription = converter.makeHtml(req.body.project_description);
     let pSanitized = sanitize(pDescription, { allowedTags: safeTags });
 
+    /*
+        Default the project image to blank and if it exists, we can then set the image to the image from the
+        body of the page.  If there is no image found, we will use the default image that we set.
+    */
     let pImage = '';
 
-    /*
-        So this ended up breaking things after the hapi update, so now we default it above
-        and if it exists, we set it, otherwise, we just move on and leave it as an empty string and use
-        our default image
-
-        @TODO: determine what exactly I meant by the above. Really need to leave better notes.
-    */
     if (req.body.project_image)
         pImage = req.files.project_image;
 
@@ -291,8 +288,6 @@ router.put("/delete/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     }
 });
 
-// TODO: this really should use ID to load; we can hide that on the page per row if we load initial
-// We can clearly get the ID like we do in other routes, so this really needs to be changed to ID loading
 router.get("/:id", async(req, res) => {
     const project = await Project.findOne({
         _id: req.params.id,
