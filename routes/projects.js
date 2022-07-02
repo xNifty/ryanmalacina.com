@@ -80,10 +80,8 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         'project_name', 'project_title', 'project_source'
     ]));
 
-    // @TODO : name these things better
-    let pDescription = md.render(req.body.project_description);
-    //let pDescription = converter.makeHtml(req.body.project_description);
-    let pSanitized = sanitize(pDescription, { allowedTags: safeTags });
+    let projectDescription = md.render(req.body.project_description);
+    let projectSanitized = sanitize(projectDescription, { allowedTags: safeTags });
 
     /*
         Default the project image to blank and if it exists, we can then set the image to the image from the
@@ -101,7 +99,7 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         project.project_image = pImage.name; // File name, nothing else
 
     project.project_description_markdown = req.body.project_description;
-    project.project_description_html = pSanitized;
+    project.project_description_html = projectSanitized;
     let saveDate = new Date(Date.now());
 
     try {
@@ -190,11 +188,11 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
             }
         }
 
-        let pDescription = md.render(req.body.project_description);
-        //let pDescription = converter.makeHtml(req.body.project_description);
+        let projectDescription = md.render(req.body.project_description);
+        //let projectDescription = converter.makeHtml(req.body.project_description);
 
         // We want to allow the h1 tag in our sanitizing
-        let pSanitized = sanitize(pDescription, { allowedTags: safeTags });
+        let projectSanitized = sanitize(projectDescription, { allowedTags: safeTags });
         let saveDate = new Date(Date.now());
         let pImage = '';
 
@@ -214,7 +212,7 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
                     project_title: req.body.project_title,
                     project_source: req.body.project_source,
                     project_description_markdown: req.body.project_description,
-                    project_description_html: pSanitized,
+                    project_description_html: projectSanitized,
                     project_image: pImage,
                     last_edited: saveDate
                 });
@@ -237,7 +235,7 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
                     project_title: req.body.project_title,
                     project_source: req.body.project_source,
                     project_description_markdown: req.body.project_description,
-                    project_description_html: pSanitized,
+                    project_description_html: projectSanitized,
                     project_image: pImage.name,
                     last_edited: saveDate
                 });
