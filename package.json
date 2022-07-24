@@ -45,12 +45,12 @@
     "mailgun.js": "^7.0.4",
     "markdown-it": "^13.0.1",
     "mem": "^9.0.2",
-    "mongoose": "^6.4.5",
+    "mongoose": "^6.4.6",
     "mongoose-unique-validator": "^3.1.0",
     "number-to-words-en": "^1.2.5",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "sanitize-html": "^2.7.0",
+    "sanitize-html": "^2.7.1",
     "uuid": "^8.3.2",
     "yargs": "^17.5.1"
   }
