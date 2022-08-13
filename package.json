@@ -22,7 +22,7 @@
   "dependencies": {
     "@hapi/joi": "^16.1.4",
     "@mapbox/node-pre-gyp": "^1.0.9",
-    "@tryghost/content-api": "^1.11.0",
+    "@tryghost/content-api": "^1.11.1",
     "@types/express": "^4.17.13",
     "@types/express-handlebars": "^5.3.1",
     "bcrypt": "^5.0.1",
@@ -45,7 +45,7 @@
     "mailgun.js": "^8.0.0",
     "markdown-it": "^13.0.1",
     "mem": "^9.0.2",
-    "mongoose": "^6.5.0",
+    "mongoose": "^6.5.2",
     "mongoose-unique-validator": "^3.1.0",
     "number-to-words-en": "^1.2.5",
     "passport": "^0.6.0",
