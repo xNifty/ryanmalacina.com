@@ -50,18 +50,25 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
     var project_count = await getProjectCount();
     var posts;
 
+    var showBlog = config.get("showBlog");
+
     // only bother querying the blog if we have this set to true
-    if (config.get("showBlog")) {
-        posts = await getBlogPosts();
-        for (var x in posts) {
-            let counter_number = x;
-            let date = posts[x].published_at;
-            //console.log(date);
-            counter_number++;
-            posts[x].counter = counter_number;
-            posts[x].formatted_date = dateFormat(date, "mmmm dS, yyyy") + ' @ ' + dateFormat(date, "h:MM TT")
-            //console.log(posts[x]);
-        };
+    if (showBlog) {
+        try {
+            posts = await getBlogPosts();
+            for (var x in posts) {
+                let counter_number = x;
+                let date = posts[x].published_at;
+                //console.log(date);
+                counter_number++;
+                posts[x].counter = counter_number;
+                posts[x].formatted_date = dateFormat(date, "mmmm dS, yyyy") + ' @ ' + dateFormat(date, "h:MM TT")
+                //console.log(posts[x]);
+            };
+        } catch {
+            showBlog = false
+        }
+        
     }
 
     for (var x in news_list) {
@@ -88,7 +95,7 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
         captcha: recaptcha,
         siteKey: config.get('siteKey'),
         news: news_list,
-        showBlog: config.get("showBlog"),
+        showBlog: showBlog,
         blogPosts: posts,
         blogURL: config.get("blogURL"),
         project_count: words.toWords(project_count),
