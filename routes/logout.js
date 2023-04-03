@@ -14,14 +14,18 @@ const router = express.Router();
 
 router.get("/", [auth.isLoggedIn], async (req, res, next) => {
     // Leaving this in place, on the off chance there isn't any JavaScript enabled
-    req.logout();
-    req.flash('success', constants.success.logoutSuccess);
-    return res.redirect('/');
+    req.logout(function(err) {
+        req.flash('success', constants.success.logoutSuccess);
+        return res.redirect('/');
+    });
 });
 
 router.post('/', async (req, res, next) => {
     if (req.isAuthenticated()) {
-        req.logout();
+        req.logout(function(err) {
+            req.flash('success', constants.success.logoutSuccess);
+            return res.send('{"success" : "Logged out success", "status" : 200}');
+        });
         req.flash('success', constants.success.logoutSuccess);
         return res.send('{"success" : "Logged out success", "status" : 200}');
     } else {

@@ -34,12 +34,18 @@ if (!config.get('privateKeyName')) {
 // We also load any helper functions we wrote within helpers.js inside the functions folder
 const hbs = exphbs.create({
     defaultLayout: 'main',
-    partialsDir: 'views/partials/',
+    partialsDir: 'views/partials',
     layoutsDir: 'views/layouts/',
     helpers: {
         iff: iff,
     }
 });
+
+// hbs.getPartials().then(function (partials) {
+//     console.log(partials);
+//     // => { 'foo/bar': [Function],
+//     // =>    title: [Function] }
+// });
 
 var mongoURL = config.get("mongoURL");
 
@@ -107,8 +113,11 @@ passport.serializeUser(function(user, done) {
     done(null, user._id);
 });
 
-passport.deserializeUser(function(userId, done) {
-    User.findById(userId, (err, user) => done(err, user));
+
+await passport.deserializeUser(function(userId, done) {
+    User.findById(userId).then((user) => {
+        done(null, user)
+    })
 });
 
 // Passport Stuff

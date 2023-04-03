@@ -9,7 +9,9 @@ export function loggedInOnly (req, res, next) {
         if (req.session.returnTo !== '/logout') {
             req.flash('error', constants.errors.loginRequired);
             res.status(401);
-            res.redirect("/login");
+            req.session.save(function (err) {
+                res.redirect("/login");
+            })
         } else {
             // Just redirect if trying to access /logout when not even logged in
             res.redirect('/');
