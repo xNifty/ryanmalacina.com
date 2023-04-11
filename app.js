@@ -34,7 +34,7 @@ if (!config.get('privateKeyName')) {
 // We also load any helper functions we wrote within helpers.js inside the functions folder
 const hbs = exphbs.create({
     defaultLayout: 'main',
-    partialsDir: 'views/partials',
+    partialsDir: 'views/partials/',
     layoutsDir: 'views/layouts/',
     helpers: {
         iff: iff,
