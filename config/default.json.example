@@ -21,4 +21,5 @@
   "blogVersion": "GhostVersionMajor.GhostVersionMinor",
   "rootURL": "rootSiteURL",
   "mongoURL": "mongourlhere"
+  "isWindows": false
 }

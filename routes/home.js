@@ -99,6 +99,8 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
         blogPosts: posts,
         blogURL: config.get("blogURL"),
         project_count: words.toWords(project_count),
+        isWindows: config.get("isWindows"),
+
     });
 });
 

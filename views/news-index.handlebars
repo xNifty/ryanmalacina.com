@@ -9,5 +9,9 @@
             </button>
         </span>
     </div>
-    <div id="news-results">{{> [news\news-display] }}</div>
+    {{#if isWindows}}
+        <div id="news-results">{{> [news\\news-display] }}</div>
+    {{else}}
+        <div id="news-results">{{> news/news-display }}</div>
+    {{/if}}
 </div>

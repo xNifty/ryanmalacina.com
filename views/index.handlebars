@@ -8,8 +8,13 @@
 </div>
 {{!-- {{> projects/projects-homepage }}
 {{> news/news-homepage }} --}}
-{{> [projects\projects-homepage] }}
-{{> [news\news-homepage] }}
+{{#if isWindows}}
+    {{> [projects\\projects-homepage] }}
+    {{> [news\\news-homepage] }}
+{{else}}
+    {{> projects/projects-homepage }}
+    {{> news/news-homepage }}
+{{/if}}
 {{#if showBlog}}
     {{> blog}}
 {{/if}}
