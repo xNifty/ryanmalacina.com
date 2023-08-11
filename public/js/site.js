@@ -36,21 +36,21 @@ $(document).ready(function() {
     const msg = document.getElementById('password-message');
 
     if (el !== null) {
-        el.addEventListener('keyup', e => {
-            msg.style = e.getModifierState('CapsLock') ? 'display: none' : 'display: block';
+        el.addEventListener('keydown', e => {
+            msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
         });
     }
 });
 
 $(document).ready(function() {
-    const el = document.getElementById('sp_uname');
-    const msg = document.getElementById('sp_pass_message');
+        const el = document.getElementById('sp_pass');
+        const msg = document.getElementById('sp_pass_message');
 
-    if (el !== null) {
-        el.addEventListener('keyup', e => {
-            msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
-        });
-    }
+        if (el !== null) {
+            el.addEventListener('keydown', e => {
+                msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
+            });
+        }
 });
 
 function searchNews(e) {
