@@ -26,8 +26,7 @@ router.get("/", async (req, res) => {
   return res.render("news-index", {
     title: "Ryan Malacina | News",
     news: news_list,
-    searched: searched,
-    isWindows: config.get("isWindows"),
+    searched: searched
   });
 });
 

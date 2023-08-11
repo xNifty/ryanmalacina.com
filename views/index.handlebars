@@ -6,15 +6,8 @@
     in the navigation bar.</p>
     <hr>
 </div>
-{{!-- {{> projects/projects-homepage }}
-{{> news/news-homepage }} --}}
-{{#if isWindows}}
-    {{> [projects\\projects-homepage] }}
-    {{> [news\\news-homepage] }}
-{{else}}
-    {{> projects/projects-homepage }}
-    {{> news/news-homepage }}
-{{/if}}
+{{> projects/projects-homepage }}
+{{> news/news-homepage }}
 {{#if showBlog}}
     {{> blog}}
 {{/if}}
