@@ -280,8 +280,10 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
 router.put("/delete/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     let id = req.params.id;
     if (await deleteProject(id)) {
+        req.flash('success', constants.success.deleteSuccess);
         return res.end('{"success" : "Project Deleted", "status" : 200}');
     } else {
+        req.flash('error', constants.errors.publishError);
         return res.end('{"fail" : "Server error", "status" : 500}');
     }
 });

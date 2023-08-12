@@ -49,8 +49,10 @@ router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 router.put("/projects/publish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     let id = req.params.id;
     if (await publishProject(id)) {
+        req.flash('success', constants.success.projectPublished);
         return res.end('{"success" : "Updated Successfully", "status" : 200}');
     } else {
+        req.flash('error', constants.errors.publishError);
         return res.end('{"success" : "Server error", "status" : 500}');
     }
 });
@@ -58,8 +60,10 @@ router.put("/projects/publish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, 
 router.put("/projects/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     let id = req.params.id;
     if (await unpublishProject(id)) {
+        req.flash('success', constants.success.projectUnpublished);
         return res.end('{"success" : "Updated Successfully", "status" : 200}');
     } else {
+        req.flash('error', constants.errors.publishError);
         return res.end('{"fail" : "Server error", "status" : 500}');
     }
 });
@@ -86,7 +90,7 @@ router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =>
 
     if (error) {
         console.log("Error 3: ", error);
-        return res.status(400).render('admin-news', {
+        return res.status(400).render('admin/news/news', {
             error: constants.errors.allFieldsRequired,
             news_title: req.body.news_title,
             news_description: req.body.news_description,
@@ -110,7 +114,7 @@ router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =>
         await news.save();
     } catch(ex) {
         console.log('Error 2: ', ex);
-        return res.status(400).render('admin-news', {
+        return res.status(400).render('admin/news/news', {
             error: constants.errors.allFieldsRequired,
             news_title: req.body.news_title,
             news_description: req.body.news_description,
@@ -125,8 +129,10 @@ router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =>
 router.put("/news/publish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     let id = req.params.id;
     if (await publishNews(id)) {
+        req.flash('success', constants.success.newsPublished);
         return res.end('{"success" : "Updated Successfully", "status" : 200}');
     } else {
+        req.flash('error', constants.errors.publishError);
         return res.end('{"success" : "Server error", "status" : 500}');
     }
 });
@@ -134,8 +140,10 @@ router.put("/news/publish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res)
 router.put("/news/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     let id = req.params.id;
     if (await unpublishNews(id)) {
+        req.flash('success', constants.success.newsUnpublished);
         return res.end('{"success" : "Updated Successfully", "status" : 200}');
     } else {
+        req.flash('error', constants.errors.publishError);
         return res.end('{"fail" : "Server error", "status" : 500}');
     }
 });
@@ -143,8 +151,10 @@ router.put("/news/unpublish/:id", [auth.isAdmin, auth.isLoggedIn], async(req, re
 router.put("/news/delete/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     let id = req.params.id;
     if (await deleteNews(id)) {
+        req.flash('success', constants.success.deleteSuccess);
         return res.end('{"success" : "News Entry Deleted", "status" : 200}');
     } else {
+        req.flash('error', constants.errors.publishError);
         return res.end('{"fail" : "Server error", "status" : 500}');
     }
 });

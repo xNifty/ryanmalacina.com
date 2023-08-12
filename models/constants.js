@@ -22,6 +22,7 @@ var errorStrings = {
     imageRequired: "You must upload an image.",
     uniqueImageName: "Please make sure file names are unique.  If you've already uploaded this image, you do not need to upload it again.",
     invalidProject: "It appears as though you are trying to access an invalid project. Perhaps try <a href=\"\\projects\">again</a>?",
+    publishError: "Something went wrong, please check the error logs or report this.",
 };
 
 // Status code constants
@@ -38,7 +39,13 @@ var successStrings = {
     projectAdded: "Project added successfully!",
     projectUpdated: "Project updated successfully!",
     newsAdded: "News entry successfully added!",
-    newsEdited: "News entry successfully edited!"
+    newsEdited: "News entry successfully edited!",
+    newsPublished: "News entry published!",
+    newsUnpublished: "News entry unpublished!",
+    projectPublished: "Project published!",
+    projectUnpublished: "Project unpublished!",
+    deleteSuccess: "Entry deleted!",
+
 }
 
 // String constants for what the tab show in the browser
