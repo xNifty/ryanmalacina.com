@@ -74,16 +74,16 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         Default the project image to blank and if it exists, we can then set the image to the image from the
         body of the page.  If there is no image found, we will use the default image that we set.
     */
-    let pImage = '';
+    let projectImage = '';
 
     if (req.body.project_image)
-        pImage = req.files.project_image;
+        projectImage = req.files.project_image;
 
     // If there is no image, use a default image
-    if (!pImage)
+    if (!projectImage)
         project.project_image = "default.png";
     else
-        project.project_image = pImage.name; // File name, nothing else
+        project.project_image = projectImage.name; // File name, nothing else
 
     project.project_description_markdown = req.body.project_description;
     project.project_description_html = projectSanitized;
@@ -91,8 +91,8 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
 
     try {
         // Try moving the image; if that fails, redirect back with error message
-	    if (pImage) {
-            await pImage.mv('./public/images/' + pImage.name);
+	    if (projectImage) {
+            await projectImage.mv('./public/images/' + projectImage.name);
         }
         await project.save();
     } catch(ex) {
@@ -161,7 +161,7 @@ router.get('/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 
 router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     let currentImage = await Project.find({_id: req.session.project_id}).select(
-        { project_image: 1, _id: 0 });
+        { project_image: 1, _id: 0, is_published: 1 });
 
     try {
         const { error } = validateProject(req.body);
@@ -181,26 +181,26 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         // We want to allow the h1 tag in our sanitizing
         let projectSanitized = sanitize(projectDescription, { allowedTags: safeTags });
         let saveDate = new Date(Date.now());
-        let pImage = '';
+        let projectImage = '';
 
         // @TODO : CLEAN ALL OF THIS UP; THIS IS UGLY
         try {
-            pImage = req.files.project_image;
+            projectImage = req.files.project_image;
         } catch (ex) {
-            pImage = '';
+            projectImage = '';
         }
 
         // If no image is selected, set it to the existing image; otherwise, error because we need an image
-        if (!pImage) {
+        if (!projectImage) {
             if (currentImage[0].project_image) {
-                pImage = currentImage[0].project_image;
+                projectImage = currentImage[0].project_image;
                 await Project.findByIdAndUpdate({_id: req.session.project_id}, {
                     project_name: req.body.project_name,
                     project_title: req.body.project_title,
                     project_source: req.body.project_source,
                     project_description_markdown: req.body.project_description,
                     project_description_html: projectSanitized,
-                    project_image: pImage,
+                    project_image: projectImage,
                     last_edited: saveDate
                 });
             }
@@ -210,26 +210,34 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         } else {
             // Only move if the image has a different name; unique names only, not that hard
             // @TODO : really should limit file sizes to the ideal image size of 263x263
-            if (pImage.name === currentImage[0].project_image) { // Boy, this is just dumb
+            if (projectImage.name === currentImage[0].project_image) { // Boy, this is just dumb
                 throw new Error(constants.errors.uniqueImageName);
             } else {
                 // Not the same, so move it!
                 // This condition is only ever going to be met if it's a new image, but maybe should add some security
                 // to this later on, just in case
-                await pImage.mv('./public/images/' + pImage.name);
+                await projectImage.mv('./public/images/' + projectImage.name);
                 await Project.findByIdAndUpdate({_id: req.session.project_id}, {
                     project_name: req.body.project_name,
                     project_title: req.body.project_title,
                     project_source: req.body.project_source,
                     project_description_markdown: req.body.project_description,
                     project_description_html: projectSanitized,
-                    project_image: pImage.name,
+                    project_image: projectImage.name,
                     last_edited: saveDate
                 });
             }
         }
-        if (req.session.projectEditSuccess) {
+        if (req.session.projectEditSuccess && currentImage[0].is_published) {
             let returnTo = req.session.projectEditSuccess;
+            delete req.session.projectReturnTo;
+            delete req.session.projectEditReturnTo; // Still need to delete even though we didn't use it
+            delete req.session.project_id;
+            delete req.session.projectEditSuccess;
+            req.flash('success', constants.success.projectUpdated);
+            return res.redirect(returnTo);
+        } else if (req.session.projectEditSuccess && !currentImage[0].is_published) {
+            let returnTo = req.session.projectEditReturnTo;
             delete req.session.projectReturnTo;
             delete req.session.projectEditReturnTo; // Still need to delete even though we didn't use it
             delete req.session.project_id;
