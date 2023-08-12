@@ -8,10 +8,6 @@ import { v4 } from 'uuid';
 import csp from 'helmet-csp';
 import express from 'express';
 
-// const uuid = require('uuid');
-// const csp = require('helmet-csp');
-// const express = require('express')
-
 const router = express.Router();
 
 /*

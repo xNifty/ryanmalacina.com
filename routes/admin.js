@@ -10,18 +10,6 @@ import dateFormat from 'dateformat';
 import MarkdownIt from 'markdown-it';
 import { constants } from '../models/constants.js';
 
-// const {Project, validateProject} = require('../models/projects');
-// const {News, validateNews} = require('../models/news');
-// const mongoose = require('mongoose');
-// const express = require('express');
-// const auth = require('../middleware/auth');
-// const _ = require('lodash');
-// const session = require('express-session');
-// const sanitize = require('sanitize-html');
-// const dateformat = require('dateformat');
-// const MarkdownIt = require('markdown-it');
-// const constants = require('../models/constants');
-
 const router = express.Router();
 
 //let converter = new showdown.Converter();

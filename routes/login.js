@@ -6,15 +6,6 @@ import passport from 'passport';
 import auth from '../middleware/auth.js';
 import { constants } from '../models/constants.js';
 
-// const _ = require('lodash');
-// const bcrypt = require('bcrypt');
-// const {User, validate} = require('../models/user');
-// const mongoose = require('mongoose');
-// const express = require('express');
-// const passport = require('passport');
-// const auth = require('../middleware/auth');
-// const constants = require('../models/constants');
-
 const router = express.Router();
 
 router.get("/", [auth.isLoggedOut], async (req, res) => {

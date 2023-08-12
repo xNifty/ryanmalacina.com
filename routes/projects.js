@@ -14,19 +14,6 @@ import fileUpload from 'express-fileupload';
 import { constants } from '../models/constants.js'
 import config from 'config';
 
-// const {Project, validateProject} = require('../models/projects');
-// const mongoose = require('mongoose');
-// const express = require('express');
-// const auth = require('../middleware/auth');
-// const _ = require('lodash');
-// const session = require('express-session');
-// const showdown = require('showdown');
-// const sanitize = require('sanitize-html');
-// const dateformat = require('dateformat');
-// const fileUpload = require('express-fileupload');
-// const constants = require('../models/constants');
-// const { isSet } = require('lodash');
-
 const router = express.Router();
 const isSet = _;
 const md = new MarkdownIt();

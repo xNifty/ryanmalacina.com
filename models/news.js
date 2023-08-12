@@ -1,9 +1,6 @@
 import mongoose from 'mongoose';
 import Joi from '@hapi/joi';
 
-// const mongoose = require('mongoose');
-// const Joi = require('@hapi/joi');
-
 const newsScheme = new mongoose.Schema({
     news_title: {
         type: String,

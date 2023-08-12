@@ -4,12 +4,6 @@ import config from 'config';
 import auth from '../middleware/auth.js';
 import { constants } from '../models/constants.js';
 
-// const express = require('express');
-// const session = require('express-session');
-// const config = require('config');
-// const auth = require('../middleware/auth');
-// const constants = require('../models/constants');
-
 const router = express.Router();
 
 router.get("/", [auth.isLoggedIn], async (req, res, next) => {
