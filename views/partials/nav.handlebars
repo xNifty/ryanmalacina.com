@@ -16,7 +16,9 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <!--<li><a href="/">Home</a></li>-->
-                <li><a class="nav-link" href="/#blog">Blog</a></li>
+                {{#if displayBlogNav}}
+                    <li><a class="nav-link" href="/#blog">Blog</a></li>
+                {{/if}}
                 <li><a class="nav-link" href="/about">About</a></li>
                 {{!-- <li><a class="nav-link" href="https://xnifty.github.io" target="_blank">Projects Documentation</a></li> --}}
                 {{#iff authenticated '&&' isAdmin}}

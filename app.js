@@ -164,6 +164,8 @@ app.use(function(req, res, next) {
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
 
+    res.locals.displayBlogNav = config.get("showBlog");
+
     if (req.user) {
         res.locals.realName = req.user.realName;
         res.locals.isAdmin = req.user.isAdmin;
