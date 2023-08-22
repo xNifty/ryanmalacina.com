@@ -17,6 +17,16 @@ import renderError from './functions/errorhandler.js';
 import { genCSP, generateNonce, getDirectives } from './middleware/nonce.js';
 import { constants } from './models/constants.js'
 
+// Routes
+import { homeRoute } from './routes/home.js';
+import { aboutRoute } from './routes/about.js';
+import { keybaseRoute } from './routes/keybase.js';
+import { projectsRoute } from './routes/projects.js';
+import { loginRoute } from './routes/login.js';
+import { logoutRoute } from './routes/logout.js';
+import { adminRoute } from './routes/admin.js';
+import { newsRoute } from './routes/news.js';
+
 const app = express();
 const env = app.settings.env;
 
@@ -133,16 +143,6 @@ const local = new LocalStrategy((username, password, done) => {
         .catch(e => done(e));
 });
 passport.use("local", local);
-
-// Routes
-import { homeRoute } from './routes/home.js';
-import { aboutRoute } from './routes/about.js';
-import { keybaseRoute } from './routes/keybase.js';
-import { projectsRoute } from './routes/projects.js';
-import { loginRoute } from './routes/login.js';
-import { logoutRoute } from './routes/logout.js';
-import { adminRoute } from './routes/admin.js';
-import { newsRoute } from './routes/news.js';
 
 // Default values; we can override this on a per-route basis if needed
 app.locals = {
