@@ -14,7 +14,7 @@ import LocalStrategy from 'passport-local';
 import { User } from './models/user.js';
 import { iff } from './functions/helpers.js';
 import renderError from './functions/errorhandler.js';
-import { genCSP, generateNonce, getDirectives } from './middleware/nonce.js';
+import { generateNonce, getDirectives } from './middleware/nonce.js';
 import { constants } from './models/constants.js'
 
 // Routes

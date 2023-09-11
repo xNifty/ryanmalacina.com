@@ -5,10 +5,6 @@
     The nonce is regenerated on every page load so that we don't reuse nonces across different pages
 */
 import { v4 } from 'uuid';
-import csp from 'helmet-csp';
-import express from 'express';
-
-const router = express.Router();
 
 /*
     Generate nonce
@@ -60,25 +56,8 @@ export function getDirectives(nonce) {
     };
 }
 
-/*
-    Function to generate the nonce and then setup the directives
-*/
-export function genCSP(req, res, next) {
-    try {
-        let nonce = generateNonce();
-        req.nonce = nonce;
-        router.use(csp({
-            directives: getDirectives(nonce)
-        }));
-        next();
-    } catch(err) {
-        console.log(err);
-    }
-}
-
 export default {
     generateNonce,
-    getDirectives,
-    genCSP
+    getDirectives
 };
 //module.exports.isLoggedIn = loggedInOnly;
