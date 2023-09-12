@@ -1,25 +1,10 @@
 // admin pages javascript
 $(document).ready(function() {
   $('.publish').on('click', publishProject);
-});
-
-$(document).ready(function() {
   $('.unpublish').on('click', unpublishProject);
-});
-
-$(document).ready(function() {
   $('.publishNews').on('click', publishNews);
-});
-
-$(document).ready(function() {
   $('.unpublishNews').on('click', unpublishNews);
-});
-
-$(document).ready(function() {
   $('.deleteNews').on('click', deleteNews);
-});
-
-$(document).ready(function() {
   $('.deleteProject').on('click', deleteProject);
 });
 
@@ -29,7 +14,7 @@ function publishProject() {
       url: '/admin/projects/publish/'+ $(this).data('id'),
       datatype: "json",
       success: function () {
-          window.location.reload();
+          window.location.reload(); 
       },
       fail: function () {
           alert("There was an issue publishing.  Check the error log.")
@@ -116,7 +101,6 @@ function deleteProject() {
           success: function() {
               window.location.reload();
               alert("Project deleted.");
-              return false;
           },
           fail: function() {
               alert("There was an issue deleting.  Check the error log.")
@@ -142,7 +126,6 @@ function updateCheckbox() {
       success: function() {
           $(this).removeAttr("disabled");
           window.location.reload();
-          return false;
       },
       fail: function() {
           alert("There was an issue updating.  Check the error log.")
@@ -165,7 +148,6 @@ $("input[type=checkbox]").on("click", function () {
       $("input[type=checkbox]:checked").removeAttr("disabled");
       // only enable the elements that are already checked.
   }
-  return false;
 });
 
 // limit 3 checkboxes on projects page
@@ -181,5 +163,4 @@ $(document).ready(function(){
       $("input[type=checkbox]:checked").removeAttr("disabled");
       // only enable the elements that are already checked.
   }
-  return false;
 });

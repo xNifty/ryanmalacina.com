@@ -514,3 +514,12 @@ button.btn.btn-primary.right {
   animation-duration: .4s;
   position: relative;
 }
+
+.parentpage {
+    display: flex;
+    justify-content: center;
+}
+
+.center {
+    margin: auto;
+}

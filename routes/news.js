@@ -14,11 +14,7 @@ router.get("/", async (req, res) => {
     page = 1;
   }
 
-  if (req.body.search) {
-    news_list = await newsSearch(req.body.search, 5, 1);
-  } else {
-    news_list = await listNews(5, page, term);
-  }
+  news_list = await listNews(5, page, term);
 
   for (var x in news_list['newsItems']) {
     let counter_number = x;
@@ -68,6 +64,8 @@ router.post("/", async (req, res) => {
 
 router.post("/search", async (req, res) => {
   var news_list;
+  var search = false;
+  var term;
 
   let page = req.query.page;
   if (page == undefined) {
@@ -80,6 +78,8 @@ router.post("/search", async (req, res) => {
       req.query.term      = req.body.search;
       next();
     }
+    search = true;
+    term = req.body.search;
   } else {
     news_list = await listNews(5, page);
   }
@@ -94,7 +94,10 @@ router.post("/search", async (req, res) => {
     layout: false,
     news: news_list['newsItems'],
     totalPages: news_list['totalPages'],
-    totalItems: news_list['totalDocs']
+    totalItems: news_list['totalDocs'],
+    currentPage: 1,
+    search: search,
+    searchTerm: term
   });
 });
 
