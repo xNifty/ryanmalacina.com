@@ -21,6 +21,7 @@ const dateformat = dateFormat;
 
 router.get("/", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     res.render("admin", {
+        layout: 'admin',
         title: constants.pageHeader.admin
     });
 });
@@ -29,6 +30,7 @@ router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     let project_list = await listProjects();
 
     res.render("admin/projects/projects", {
+        layout: 'admin',
         title: constants.pageHeader.adminProject,
         projects: project_list,
     });
@@ -190,6 +192,7 @@ router.get('/news/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) =>
         req.session.news_id = null;
 
         res.render("admin/news/news", {
+            layout: 'admin',
             title: constants.pageHeader.adminProject,
             news: news_list,
             loadJS: true

@@ -2,6 +2,38 @@
 
 $(document).ready(function() {
     $('#loginform').on('click', login);
+
+    /*Scroll to top when arrow up clicked BEGIN*/
+    $(window).scroll(function() {
+        var height = $(window).scrollTop();
+        if (height > 100) {
+            $('#scroll').fadeIn();
+        } else {
+            $('#scroll').fadeOut();
+        }
+    });
+    $(document).ready(function() {
+        $("#scroll").click(function(event) {
+            event.preventDefault();
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            return false;
+        });
+
+    });
+    /*Scroll to top when arrow up clicked END*/
+
+    $('#submitmail').click(function() {
+        validateForm();
+    });
+    $('.prjlist').slick({
+        infinite: true,
+        slidesToShow: 4,
+        slidesToScroll: 4,
+        arrows: true,
+        nextArrow: '<i class="fa fa-arrow-right nextArrowBtn"></i>',
+        prevArrow: '<i class="fa fa-arrow-left prevArrowBtn"></i>',
+        useTransform: false
+    });
 });
 
 $(document).ready(function() {
@@ -16,14 +48,14 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-        const el = document.getElementById('sp_pass');
-        const msg = document.getElementById('sp_pass_message');
+    const el = document.getElementById('sp_pass');
+    const msg = document.getElementById('sp_pass_message');
 
-        if (el !== null) {
-            el.addEventListener('keydown', e => {
-                msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
-            });
-        }
+    if (el !== null) {
+        el.addEventListener('keydown', e => {
+            msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
+        });
+    }
 });
 
 function login() {
@@ -79,37 +111,7 @@ function logout() {
 
 $(document).ready(function(){
 
-    /*Scroll to top when arrow up clicked BEGIN*/
-    $(window).scroll(function() {
-        var height = $(window).scrollTop();
-        if (height > 100) {
-            $('#scroll').fadeIn();
-        } else {
-            $('#scroll').fadeOut();
-        }
-    });
-    $(document).ready(function() {
-        $("#scroll").click(function(event) {
-            event.preventDefault();
-            $("html, body").animate({ scrollTop: 0 }, "slow");
-            return false;
-        });
-
-    });
-    /*Scroll to top when arrow up clicked END*/
-
-    $('#submitmail').click(function() {
-        validateForm();
-    });
-    $('.prjlist').slick({
-        infinite: true,
-        slidesToShow: 4,
-        slidesToScroll: 4,
-        arrows: true,
-        nextArrow: '<i class="fa fa-arrow-right nextArrowBtn"></i>',
-        prevArrow: '<i class="fa fa-arrow-left prevArrowBtn"></i>',
-        useTransform: false
-    });
+    
 });
 
 function resetToken() {
@@ -202,39 +204,39 @@ function validateForm() {
 // Select all links with hashes
 $('a[href*="#"]')
 // Remove links that don't actually link to anything
-    .not('[href="#"]')
-    .not('[href="#0"]')
-    .click(function(event) {
-        // On-page links
-        if (
-            location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '')
-            &&
-            location.hostname === this.hostname
-        ) {
-            // Figure out element to scroll to
-            let target = $(this.hash);
-            target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-            // Does a scroll target exist?
-            if (target.length) {
-                // Only prevent default if animation is actually gonna happen
-                event.preventDefault();
-                $('html, body').animate({
-                    scrollTop: target.offset().top
-                }, 1000, function() {
-                    // Callback after animation
-                    // Must change focus!
-                    let $target = $(target);
-                    //$target.focus();
-                    if ($target.is(":focus")) { // Checking if the target was focused
-                        return false;
-                    } else {
-                        $target.attr('tabindex', '-1'); // Adding tabindex for elements not focusable
-                        //$target.focus(); // Set focus again
-                    }
-                });
-            }
+.not('[href="#"]')
+.not('[href="#0"]')
+.click(function(event) {
+    // On-page links
+    if (
+        location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '')
+        &&
+        location.hostname === this.hostname
+    ) {
+        // Figure out element to scroll to
+        let target = $(this.hash);
+        target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+        // Does a scroll target exist?
+        if (target.length) {
+            // Only prevent default if animation is actually gonna happen
+            event.preventDefault();
+            $('html, body').animate({
+                scrollTop: target.offset().top
+            }, 1000, function() {
+                // Callback after animation
+                // Must change focus!
+                let $target = $(target);
+                //$target.focus();
+                if ($target.is(":focus")) { // Checking if the target was focused
+                    return false;
+                } else {
+                    $target.attr('tabindex', '-1'); // Adding tabindex for elements not focusable
+                    //$target.focus(); // Set focus again
+                }
+            });
         }
-    });
+    }
+});
 
 function cb(token) {
     //console.log('token:', token);
