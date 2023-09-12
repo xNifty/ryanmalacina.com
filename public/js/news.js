@@ -1,6 +1,25 @@
 // news javascript
 $(document).ready(function() {
   $('#news-search').on('click', searchNews);
+
+  $(function() {
+    if ($("#pageCount").length) {
+      // console.log("pagecount initial");
+      pages = document.getElementById("pageCount").value
+    } else {
+        pages = 1;
+    }
+
+    $("#compact-pagination").pagination({
+      pages: pages,
+      cssStyle: 'compact-theme',
+      hrefTextPrefix: '?page=',
+      currentPage: 1,
+      onPageClick: function(page, event) {
+        advancePage(page, event, "", pages);
+      }
+    });
+  });
 });
 
 function searchNews(e) {
@@ -39,10 +58,10 @@ var getUrlParameter = function getUrlParameter(sParam) {
           return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
       }
   }
-  return "";
+  return false;
 };
 
-function reloadPagination(search = "") {
+function reloadPagination(search = "", curpage=1) {
   var pages;
   var useTerm = false;
   if (search === "") {
@@ -52,11 +71,14 @@ function reloadPagination(search = "") {
     $('#news-search-box').val(search);
   }
   if ($("#pageCount").length) {
-    console.log("pagecount2");
+    // console.log("pagecount reload");
     pages = document.getElementById("pageCount").value
   } else {
       pages = 1;
   }
+
+  // console.log("useTerm:" + useTerm);
+  // console.log("pageCount within reload: " + pages);
 
   if (useTerm) {
     $("#compact-pagination").pagination({
@@ -64,56 +86,75 @@ function reloadPagination(search = "") {
       cssStyle: 'compact-theme',
       hrefTextPrefix: '?page=',
       hrefTextSuffix: '&term='+search,
-      currentPage: 1,
+      currentPage: curpage,
+      onPageClick: function(page, event) {
+        advancePage(page, event, search, pages);
+      }
     });
   } else {
     $("#compact-pagination").pagination({
       pages: pages,
       cssStyle: 'compact-theme',
       hrefTextPrefix: '?page=',
-      currentPage: 1,
+      currentPage: curpage,
+      onPageClick: function(page, event) {
+        advancePage(page, event, "", pages);
+      }
     });
   }
 };
 
-$(document).ready(function(){
-  $(function() {
-    var pages;
-    if ($("#pageCount").length) {
-      console.log("pagecount");
-        pages = document.getElementById("pageCount").value
-    } else {
-        pages = 1;
-    }
-
-    var useTerm = false;
-    var term = getUrlParameter('term');
-    if (term === "") {
-      useTerm = false;
-    } else {
-      $('#news-search-box').val(term);
-      useTerm = true;
-    }
-
-    if (useTerm) {
-      $("#compact-pagination").pagination({
-        pages: pages,
-        cssStyle: 'compact-theme',
-        hrefTextPrefix: '?page=',
-        hrefTextSuffix: '&term='+term,
-        currentPage: getUrlParameter('page'),
-      });
-    } else {
-      $("#compact-pagination").pagination({
-        pages: pages,
-        cssStyle: 'compact-theme',
-        hrefTextPrefix: '?page=',
-        currentPage: getUrlParameter('page'),
-      });
-    }
+function advancePage(currentpage, e, search="", totalPages=1) {
+  var url;
+  // console.log("search within advancePage: " + search);
+  // console.log("totalPages within advancePage: " + totalPages);
+  if (search != "") {
+    url = '/news?page='+currentpage+'&term=' + search;
+   } else {
+    url = '/news?page='+currentpage
+   }
+   e.preventDefault();
+  $.ajax({
+      type:'POST',
+      url: url,
+      data: {
+          page: currentpage,
+      },
+      datatype: "json",
+      success: function(data)  {
+          $("#news-results").html(data);
+          $('#news-search-box').val(search);
+          $('#currentPage').val(currentpage);
+          if (search != "") {
+            $("#compact-pagination").pagination({
+              pages: totalPages,
+              cssStyle: 'compact-theme',
+              hrefTextPrefix: '?page=',
+              hrefTextSuffix: '&term=' + search,
+              currentPage: currentpage,
+              onPageClick: function(page, event) {
+                advancePage(page, event, search, totalPages);
+              }
+            });
+          } else {
+            $("#compact-pagination").pagination({
+              pages: totalPages,
+              cssStyle: 'compact-theme',
+              hrefTextPrefix: '?page=',
+              currentPage: currentpage,
+              onPageClick: function(page, event) {
+                advancePage(page, event, "", totalPages);
+              }
+            });
+          }
+          
+      },
+      fail: function() {
+          alert("Error searching.");
+      }
   });
-});
 
-// it is probably not a good idea to keep your own history
+  return false;
+}
 
 //getUrlParameter('page')

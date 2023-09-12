@@ -1,19 +1,15 @@
 import express from 'express';
-import { Project } from '../models/projects.js';
 import { News } from '../models/news.js';
-import mongoose from 'mongoose';
-import config from 'config';
-import dateFormat from 'dateformat';
 import paginate from 'mongoose-paginate-v2';
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   var news_list;
-  var searched;
 
   let page = req.query.page;
   let term = req.query.term;
+
   if (page == undefined) {
     page = 1;
   }
@@ -23,23 +19,50 @@ router.get("/", async (req, res) => {
   } else {
     news_list = await listNews(5, page, term);
   }
-  
-  // console.log(news_list);
-  // console.log(news_list);
 
   for (var x in news_list['newsItems']) {
     let counter_number = x;
     counter_number++;
     news_list['newsItems'][x].counter = counter_number;
   };
-  
+
   return res.render("news-index", {
     layout: 'newsIndex',
     title: "Ryan Malacina | News",
     news: news_list['newsItems'],
-    searched: searched,
     totalPages: news_list['totalPages'],
-    totalItems: news_list['totalDocs']
+    totalItems: news_list['totalDocs'],
+    currentPage: page
+  });
+});
+
+router.post("/", async (req, res) => {
+  var news_list;
+
+  let page = req.query.page;
+  let term = req.query.term;
+
+  if (page == undefined) {
+    page = 1;
+  }
+
+  if (req.body.search) {
+    news_list = await newsSearch(req.body.search, 5, 1);
+  } else {
+    news_list = await listNews(5, page, term);
+  }
+
+  for (var x in news_list['newsItems']) {
+    let counter_number = x;
+    counter_number++;
+    news_list['newsItems'][x].counter = counter_number;
+  };
+  return res.render("partials/news/news-display", {
+    layout: false,
+    news: news_list['newsItems'],
+    totalPages: news_list['totalPages'],
+    totalItems: news_list['totalDocs'],
+    currentPage: page
   });
 });
 

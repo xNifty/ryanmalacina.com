@@ -1,4 +1,15 @@
 {{#iff news.length ">" 0}}
+    {{#if search }}
+        <input type="hidden" id="pageCount" value={{ totalPages }}>
+        <input type="hidden" id="itemCount" value={{ totalPages }}>
+        There are {{ totalPages }} pages in the search result, with a total entry count of {{ totalItems }}.<br />
+    {{else}}
+        <input type="hidden" id="pageCount" value={{ totalPages }}>
+        <input type="hidden" id="itemCount" value={{ totalPages }}>
+        <input type="hidden" id="currentPage" value={{ currentPage }}>
+        There are {{ totalPages }} pages in the current news index, with a total entry count of {{ totalItems }}.<br />
+        You are on page {{ currentPage }}.
+    {{/if}}
 <div class="panel-group">
     {{#each news as |news| }}
         <div class="panel panel-info">
@@ -13,9 +24,9 @@
             </div>
         </div>
     {{/each}}
-    <input type="hidden" id="pageCount" value={{ totalPages }}>
-    <input type="hidden" id="totalItems" value={{ totalItems }}>
-    <ul id="compact-pagination" class="compact-theme simple-pagination"></ul>
+    <div class="pagination-holder clearfix">
+			<div id="compact-pagination"></div>
+	</div>
 </div>
 {{else}}
   No results found, or news has no entries.
