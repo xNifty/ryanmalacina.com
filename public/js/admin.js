@@ -116,6 +116,7 @@ function deleteProject() {
           success: function() {
               window.location.reload();
               alert("Project deleted.");
+              return false;
           },
           fail: function() {
               alert("There was an issue deleting.  Check the error log.")
@@ -141,6 +142,7 @@ function updateCheckbox() {
       success: function() {
           $(this).removeAttr("disabled");
           window.location.reload();
+          return false;
       },
       fail: function() {
           alert("There was an issue updating.  Check the error log.")
@@ -163,6 +165,7 @@ $("input[type=checkbox]").on("click", function () {
       $("input[type=checkbox]:checked").removeAttr("disabled");
       // only enable the elements that are already checked.
   }
+  return false;
 });
 
 // limit 3 checkboxes on projects page
@@ -178,4 +181,5 @@ $(document).ready(function(){
       $("input[type=checkbox]:checked").removeAttr("disabled");
       // only enable the elements that are already checked.
   }
+  return false;
 });
