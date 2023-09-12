@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Joi from '@hapi/joi';
+import mongoosePaginate from 'mongoose-paginate-v2'
 
 const newsScheme = new mongoose.Schema({
     news_title: {
@@ -35,6 +36,8 @@ const newsScheme = new mongoose.Schema({
         maxlength: 2000
     }
 });
+
+newsScheme.plugin(mongoosePaginate);
 
 // const News = mongoose.model('News', newsScheme);
 

@@ -1,19 +1,22 @@
 {{#iff news.length ">" 0}}
-  <div class="panel-group">
-      {{#each news as |news| }}
-      <div class="panel panel-info">
-          <div class="panel-heading collapsed">
-              <i class="fa fa-fw fa-chevron-down" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>
-              <i class="fa fa-fw fa-chevron-right" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>{{ news.news_title }} | {{ news.published_date }}
-          </div>
-          <div class="panel-collapse collapse custom-text" id="coll{{ news.counter }}">
-              <div class="panel-body">
-                  {{{ news.news_description_html }}}
-              </div>
-          </div>
-      </div>
-      {{/each}}
-  </div>
+<div class="panel-group">
+    {{#each news as |news| }}
+        <div class="panel panel-info">
+            <div class="panel-heading collapsed">
+                <i class="fa fa-fw fa-chevron-down" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>
+                <i class="fa fa-fw fa-chevron-right" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>{{ news.news_title }} | {{ news.published_date }}
+            </div>
+            <div class="panel-collapse collapse custom-text" id="coll{{ news.counter }}">
+                <div class="panel-body">
+                    {{{ news.news_description_html }}}
+                </div>
+            </div>
+        </div>
+    {{/each}}
+    <input type="hidden" id="pageCount" value={{ totalPages }}>
+    <input type="hidden" id="totalItems" value={{ totalItems }}>
+    <ul id="compact-pagination" class="compact-theme simple-pagination"></ul>
+</div>
 {{else}}
   No results found, or news has no entries.
 {{/iff}}

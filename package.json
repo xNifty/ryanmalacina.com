@@ -46,6 +46,7 @@
     "markdown-it": "^13.0.1",
     "mem": "^9.0.2",
     "mongoose": "^7.5.0",
+    "mongoose-paginate-v2": "^1.7.31",
     "mongoose-unique-validator": "^4.0.0",
     "number-to-words-en": "^1.2.5",
     "passport": "^0.6.0",
