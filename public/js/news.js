@@ -45,22 +45,6 @@ function searchNews(e) {
   return false;
 }
 
-var getUrlParameter = function getUrlParameter(sParam) {
-  var sPageURL = window.location.search.substring(1),
-      sURLVariables = sPageURL.split('&'),
-      sParameterName,
-      i;
-
-  for (i = 0; i < sURLVariables.length; i++) {
-      sParameterName = sURLVariables[i].split('=');
-
-      if (sParameterName[0] === sParam) {
-          return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-      }
-  }
-  return false;
-};
-
 function reloadPagination(search = "", curpage=1) {
   var pages;
   var useTerm = false;
@@ -156,5 +140,3 @@ function advancePage(currentpage, e, search="", totalPages=1) {
 
   return false;
 }
-
-//getUrlParameter('page')

@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import express from 'express';
 import exphbs  from 'express-handlebars';
-import path from 'path'; // is this even used for anything?
 import config from 'config';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
