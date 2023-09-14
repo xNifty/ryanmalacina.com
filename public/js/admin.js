@@ -6,6 +6,22 @@ $(document).ready(function() {
     $('.unpublishNews').on('click', unpublishNews);
     $('.deleteNews').on('click', deleteNews);
     $('.deleteProject').on('click', deleteProject);
+    $('.projCheckbox').on('click', updateCheckbox);
+
+    // limit 3 checkboxes on projects page
+    $("input[type=checkbox]").on("click", function () {
+        var count = $("input[type=checkbox]:checked").length;
+        if (count < 3) {  // we only want to allow 3 to be checked here.
+            $("input[type=checkbox]").removeAttr("disabled");
+            $("input[type=checkbox]").change(updateCheckbox);
+            // re-enable all checkboxes
+        } else {
+            $("input[type=checkbox]").prop("disabled","disabled");
+            // disable all checkboxes
+            $("input[type=checkbox]:checked").removeAttr("disabled");
+            // only enable the elements that are already checked.
+        }
+    });
 });
 
 function publishProject() {
@@ -15,16 +31,14 @@ function publishProject() {
         datatype: "json",
         success: function () {
             window.location.reload();
-            return true;
         },
         fail: function () {
             alert("There was an issue publishing.  Check the error log.");
-            return true;
         }
     });
 
     return false;
-}
+};
 
 function unpublishProject() {
     $.ajax({
@@ -33,11 +47,9 @@ function unpublishProject() {
         datatype: "json",
         success: function() {
             window.location.reload();
-            return true;
         },
         fail: function() {
             alert("There was an issue unpublishing.");
-            return true;
         }
     });
 
@@ -51,16 +63,14 @@ function publishNews() {
       datatype: "json",
       success: function() {
           window.location.reload();
-          return true;
       },
       fail: function() {
           alert("There was an issue publishing.");
-          return true;
       }
   });
 
   return false;
-}
+};
 
 function unpublishNews() {
   $.ajax({
@@ -69,16 +79,14 @@ function unpublishNews() {
       datatype: "json",
       success: function() {
           window.location.reload();
-          return true;
       },
       fail: function() {
           alert("There was an issue unpublishing.  Check the error log.");
-          return true;
       }
   });
 
   return false;
-}
+};
 
 function deleteNews() {
   if (confirm("Are you sure you wish to delete this news entry?")) {
@@ -88,11 +96,9 @@ function deleteNews() {
           datatype: "json",
           success: function() {
               window.location.reload();
-              return true;
           },
           fail: function() {
               alert("There was an issue deleting.");
-              return true;
           }
       });
   
@@ -100,7 +106,7 @@ function deleteNews() {
   } else {
       return false;
   }
-}
+};
 
 function deleteProject() {
   if (confirm("Are you sure you wish to delete this project?")) {
@@ -111,11 +117,9 @@ function deleteProject() {
           success: function() {
               window.location.reload();
               alert("Project deleted.");
-              return true;
           },
           fail: function() {
               alert("There was an issue deleting.  Check the error log.");
-              return true;
           }
       });
   
@@ -123,11 +127,7 @@ function deleteProject() {
   } else {
       return false;
   }
-}
-
-$(document).ready(function(){
-  $('.projCheckbox').on('click', updateCheckbox);
-});
+};
 
 function updateCheckbox() {
   $(this).prop("disabled", "disabled");
@@ -138,31 +138,14 @@ function updateCheckbox() {
       success: function() {
           $(this).removeAttr("disabled");
           window.location.reload();
-          return true;
       },
       fail: function() {
           alert("There was an issue updating.  Check the error log.");
-          return true;
       }
   });
 
   return false;
 };
-
-// limit 3 checkboxes on projects page
-$("input[type=checkbox]").on("click", function () {
-  var count = $("input[type=checkbox]:checked").length;
-  if (count < 3) {  // we only want to allow 3 to be checked here.
-      $("input[type=checkbox]").removeAttr("disabled");
-      $("input[type=checkbox]").change(updateCheckbox);
-      // re-enable all checkboxes
-  } else {
-      $("input[type=checkbox]").prop("disabled","disabled");
-      // disable all checkboxes
-      $("input[type=checkbox]:checked").removeAttr("disabled");
-      // only enable the elements that are already checked.
-  }
-});
 
 // limit 3 checkboxes on projects page
 $(document).ready(function(){

@@ -32,6 +32,8 @@ const env = app.settings.env;
 // File versioning
 const jsFileVersion = constants.fileVersions.cssFileVersion;
 const cssFileVersion = constants.fileVersions.jsFileVersion;
+const adminJSFileVersion = constants.fileVersions.adminJSFileVersion;
+const newsJSFileVersion = constants.fileVersions.newsJSFileVersion;
 
 // Make sure our private token exists
 if (!config.get('privateKeyName')) {
@@ -152,7 +154,9 @@ app.locals = {
     environment: app.get('env'),
     notAuthorized: constants.errors.notAuthorized,
     jsFileVersion: jsFileVersion,
-    cssFileVersion: cssFileVersion
+    cssFileVersion: cssFileVersion,
+    adminJSFileVersion: adminJSFileVersion,
+    newsJSFileVersion: newsJSFileVersion,
 };
 
 app.use(function(req, res, next) {
