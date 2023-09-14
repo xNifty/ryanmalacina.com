@@ -1,41 +1,45 @@
 // admin pages javascript
 $(document).ready(function() {
-  $('.publish').on('click', publishProject);
-  $('.unpublish').on('click', unpublishProject);
-  $('.publishNews').on('click', publishNews);
-  $('.unpublishNews').on('click', unpublishNews);
-  $('.deleteNews').on('click', deleteNews);
-  $('.deleteProject').on('click', deleteProject);
+    $('.publish').on('click', publishProject);
+    $('.unpublish').on('click', unpublishProject);
+    $('.publishNews').on('click', publishNews);
+    $('.unpublishNews').on('click', unpublishNews);
+    $('.deleteNews').on('click', deleteNews);
+    $('.deleteProject').on('click', deleteProject);
 });
 
 function publishProject() {
-  $.ajax({
-      type:'PUT',
-      url: '/admin/projects/publish/'+ $(this).data('id'),
-      datatype: "json",
-      success: function () {
-          window.location.reload(); 
-      },
-      fail: function () {
-          alert("There was an issue publishing.  Check the error log.")
-      }
-  });
+    $.ajax({
+        type:'PUT',
+        url: '/admin/projects/publish/'+ $(this).data('id'),
+        datatype: "json",
+        success: function () {
+            window.location.reload();
+            return true;
+        },
+        fail: function () {
+            alert("There was an issue publishing.  Check the error log.");
+            return true;
+        }
+    });
 
-  return false;
+    return false;
 }
 
 function unpublishProject() {
-  $.ajax({
-      type:'PUT',
-      url: '/admin/projects/unpublish/'+ $(this).data('id'),
-      datatype: "json",
-      success: function() {
-          window.location.reload();
-      },
-      fail: function() {
-          alert("There was an issue unpublishing.");
-      }
-  });
+    $.ajax({
+        type:'PUT',
+        url: '/admin/projects/unpublish/'+ $(this).data('id'),
+        datatype: "json",
+        success: function() {
+            window.location.reload();
+            return true;
+        },
+        fail: function() {
+            alert("There was an issue unpublishing.");
+            return true;
+        }
+    });
 
   return false;
 }
@@ -47,9 +51,11 @@ function publishNews() {
       datatype: "json",
       success: function() {
           window.location.reload();
+          return true;
       },
       fail: function() {
           alert("There was an issue publishing.");
+          return true;
       }
   });
 
@@ -63,9 +69,11 @@ function unpublishNews() {
       datatype: "json",
       success: function() {
           window.location.reload();
+          return true;
       },
       fail: function() {
-          alert("There was an issue unpublishing.  Check the error log.")
+          alert("There was an issue unpublishing.  Check the error log.");
+          return true;
       }
   });
 
@@ -80,9 +88,11 @@ function deleteNews() {
           datatype: "json",
           success: function() {
               window.location.reload();
+              return true;
           },
           fail: function() {
               alert("There was an issue deleting.");
+              return true;
           }
       });
   
@@ -101,9 +111,11 @@ function deleteProject() {
           success: function() {
               window.location.reload();
               alert("Project deleted.");
+              return true;
           },
           fail: function() {
-              alert("There was an issue deleting.  Check the error log.")
+              alert("There was an issue deleting.  Check the error log.");
+              return true;
           }
       });
   
@@ -126,9 +138,11 @@ function updateCheckbox() {
       success: function() {
           $(this).removeAttr("disabled");
           window.location.reload();
+          return true;
       },
       fail: function() {
-          alert("There was an issue updating.  Check the error log.")
+          alert("There was an issue updating.  Check the error log.");
+          return true;
       }
   });
 
