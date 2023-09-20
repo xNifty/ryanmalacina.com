@@ -36,6 +36,7 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
     let news_list = await listNews();
     var project_count = await getProjectCount();
     var posts;
+    var showNews;
 
     var showBlog = config.get("showBlog");
 
@@ -65,6 +66,12 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
         //console.log(news_list[x]);
     };
 
+    if (news_list.length === 0) {
+        showNews = false;
+    } else {
+        showNews = true;
+    }
+
     // console.log(res.recaptcha);
 
     // This is really, really dumb - awesome!
@@ -85,7 +92,8 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
         showBlog: showBlog,
         blogPosts: posts,
         blogURL: config.get("blogURL"),
-        project_count: words.toWords(project_count)
+        project_count: words.toWords(project_count),
+        showNews: showNews,
 
     });
 });
