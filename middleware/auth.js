@@ -5,13 +5,15 @@ import { constants } from '../models/constants.js';
 export function loggedInOnly (req, res, next) {
     if (req.isAuthenticated()) next();
     else {
-        req.session.returnTo = req.originalUrl;
-        if (req.session.returnTo !== '/logout') {
+        var returnTo = '';
+        returnTo = req.originalUrl;
+        if (returnTo !== '/logout') {
             req.flash('error', constants.errors.loginRequired);
             res.status(401);
-            req.session.save(function (err) {
+            if (returnTo === '')
                 res.redirect("/login");
-            })
+            else
+                res.redirect("/login?returnTo=" + returnTo);
         } else {
             // Just redirect if trying to access /logout when not even logged in
             res.redirect('/');

@@ -16,8 +16,15 @@ router.get("/", [auth.isLoggedOut], async (req, res) => {
 
 router.post('/', passport.authenticate("local", { failWithError: true }),
     function(req, res) {
+        var returnTo = '';
         req.flash('success', constants.success.loginSuccess);
+        if (req.query.returnTo !== undefined)
+            var returnTo = req.query.returnTo;
+
+        if (returnTo === '')
             res.redirect('/');
+        else
+            res.redirect(returnTo);
     },
     function(err, req, res, next) {
         if (req.session.returnTo == null) {

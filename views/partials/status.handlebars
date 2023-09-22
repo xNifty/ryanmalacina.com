@@ -1,7 +1,7 @@
 {{#if success}}
     {{#iff success.length '>' 0}}
         <div class="text-center">
-            <div class="alert alert-success alert-dismissible center-block">
+            <div class="alert alert-success center-block">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 {{ success }}
             </div>
@@ -11,7 +11,7 @@
 {{#if error}}
     {{#iff error.length '>' 0}}
         <div class="text-center">
-            <div class="alert alert-danger alert-dismissible center-block">
+            <div class="alert alert-danger center-block">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 {{#if status_code}}
                     {{ status_code }}
