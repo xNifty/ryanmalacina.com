@@ -45,6 +45,7 @@ export function ValidateAdmin(req, res, next) {
     else {
         req.flash('error', constants.errors.accessDenied);
         res.status(401);
+        res.redirect('/');
     }
 }
 
