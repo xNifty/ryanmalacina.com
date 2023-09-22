@@ -4,7 +4,6 @@ This repository contains the code for my personal website, which is built on Nod
 
 ---
 
-I actively maintain this site, adding, updating, and removing features as needed.  I am actively learning more about NodeJS, MongoDB, and Express while beginning to dive into the MEAN stack that I hope
-to eventually make use of here (I would like to add Angular/React to this site where I can).
+This site undergoes updates from time to time, mostly in back-end functionality. I am not big on front-end development, and so I tend to stick to the stuff I find more fun to work on, which is back-end development. I am currently in the process of learning React and Angular, and am hoping to incorporate that into the site down the line.
 
 I encourage anyone to submit pull requests to fix issues, improve the code, etc.
