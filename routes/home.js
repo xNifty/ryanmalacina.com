@@ -106,6 +106,7 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
 
     let subject_name = req.body.name;
     let subject_combined = `Email received on behalf of ${subject_name}:\n ` + subject;
+    let messaged_combined = `Contact form email on behalf of: ${subject_name}\n\n----\n\n` + message;
 
     //console.log(req.recaptcha.data);
     //console.log(req.recaptcha.error);
@@ -117,7 +118,7 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
                 to: toEmail, // An array if you have multiple recipients.
                 subject: subject_combined,
                 //html: message,
-                text: message,
+                text: messaged_combined,
             })
             .then(msg => {
                 res.setHeader('Content-Type', 'application/json');
