@@ -37,9 +37,21 @@ router.get("/", async (req, res) => {
     });
 });
 
+// @TODO: Fix return updating when errors on page
 router.get('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
-    let returnTo = req.get('referrer');
-    if (!returnTo) returnTo = '/projects/';
+    var returnTo;
+
+    if (req.session.returnToSession) {
+        if (req.session.returnToSession === req.get('referrer') && req.get('referrer') !== config.get("rootURL") + "/projects")
+            returnTo = req.session.returnToSession;
+        else {
+            returnTo = req.get('referrer');
+            req.session.returnToSession = req.get('referrer');
+        }
+    } else {
+        returnTo = req.get('referrer');
+        req.session.returnToSession = req.get('referrer');
+    }
 
     res.render('admin/projects/new-project', {
         layout: 'projects',
@@ -50,6 +62,13 @@ router.get('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 
 router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     const { error } = validateProject(req.body);
+    var returnTo;
+
+    if (req.session.returnToSession) {
+        returnTo = req.session.returnToSession;
+    } else {
+        returnTo = '/projects/';
+    }
 
     if (error) {
         return res.status(400).render('admin/projects/new-project', {
@@ -59,7 +78,8 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
             project_name: req.body.project_name,
             project_title: req.body.project_title,
             project_source: req.body.project_source,
-            project_description: req.body.project_description
+            project_description: req.body.project_description,
+            return_to: returnTo
         });
     }
 
@@ -108,6 +128,7 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
 	        last_edited: saveDate
         });
     }
+    if (req.session.returnToSession) delete req.session.returnToSession;
     req.flash('success', constants.success.projectAdded);
     res.redirect('/projects');
 });
