@@ -2,11 +2,10 @@
 // Handles all of the different project routes
 
 import { Project, validateProject } from '../models/projects.js';
-import mongoose from 'mongoose';
+import {clearProjectSessionVariables, clearProjectEditSessionVariables} from '../functions/sessionHandler.js';
 import express from 'express';
 import auth from '../middleware/auth.js';
 import _ from 'lodash';
-import session from 'express-session';
 import MarkdownIt from 'markdown-it';
 import sanitize from 'sanitize-html';
 import dateFormat from 'dateformat';
@@ -171,12 +170,7 @@ router.get('/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
         });
 
         // Finally, clear up the session variables -- can I move this to a function where we delete them if they exist?
-        delete req.session.loadProjectFromSession;
-        delete req.session.project_name;
-        delete req.session.project_title;
-        delete req.session.project_source;
-        delete req.session.project_description_markdown;
-        delete req.session.project_image;
+        clearProjectEditSessionVariables(req);
     }
 });
 
@@ -251,18 +245,12 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         }
         if (req.session.projectEditSuccess && currentImage[0].is_published) {
             let returnTo = req.session.projectEditSuccess;
-            delete req.session.projectReturnTo;
-            delete req.session.projectEditReturnTo; // Still need to delete even though we didn't use it
-            delete req.session.project_id;
-            delete req.session.projectEditSuccess;
+            clearProjectSessionVariables(req);
             req.flash('success', constants.success.projectUpdated);
             return res.redirect(returnTo);
         } else if (req.session.projectEditSuccess && !currentImage[0].is_published) {
             let returnTo = req.session.projectEditReturnTo;
-            delete req.session.projectReturnTo;
-            delete req.session.projectEditReturnTo; // Still need to delete even though we didn't use it
-            delete req.session.project_id;
-            delete req.session.projectEditSuccess;
+            clearProjectSessionVariables(req);
             req.flash('success', constants.success.projectUpdated);
             return res.redirect(returnTo);
         } else {
