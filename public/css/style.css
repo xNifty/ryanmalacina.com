@@ -240,6 +240,10 @@ li.dropdown:hover > .dropdown-menu a {
     width: 100%;
 }
 
+.loginModalAlert {
+    width: 50%;
+}
+
 input[type="text"] {
     color: black;
 }

@@ -76,13 +76,13 @@ function login() {
             datatype: "json",
             success: function () {
                 $('#loginSubmit').hide();
-                $('#loginStatus').html('<div class="alert alert-success alert-dismissible center-block">You have been successfully logged in!</div>');
+                $('#loginStatus').html('<div class="loginModalAlert alert alert-success alert-dismissible center-block text-center">You have been successfully logged in!</div>');
                 $('#sp_uname').prop('disabled', true);
                 $('#sp_pass').prop('disabled', true);
                 setTimeout(location.reload.bind(location), 3000);
             },
             error: function () {
-                $('#loginStatus').html('<div class="alert alert-danger alert-dismissible center-block">Invalid username or password!</div>');
+                $('#loginStatus').html('<div class="loginModalAlert alert alert-danger alert-dismissible center-block text-center">Invalid username or password!</div>');
                 $('#loginModal').effect('shake');
             },
             always: function () {
