@@ -237,7 +237,7 @@ li.dropdown:hover > .dropdown-menu a {
 } */
 
 .alert {
-    width: 50%;
+    width: 100%;
 }
 
 input[type="text"] {
