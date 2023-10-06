@@ -137,7 +137,7 @@ function updateCheckbox() {
       data: "json",
       success: function() {
           $(this).removeAttr("disabled");
-          window.location.reload();
+          window.location.href = window.location.href;
       },
       fail: function() {
           alert("There was an issue updating.  Check the error log.");

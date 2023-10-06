@@ -322,6 +322,7 @@ router.get("/:id", async(req, res) => {
 
 router.put("/update/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     let id = req.params.id;
+    res.setHeader('content-type', 'text/plain');
     const project = await Project.findOne({
         _id: id,
     });
