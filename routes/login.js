@@ -29,7 +29,6 @@ router.post('/', passport.authenticate("local", { failWithError: true }),
     function(err, req, res, next) {
         if (req.query.returnTo !== null) {
             req.flash('error', constants.errors.invalidLogin);
-            //return res.send('{"error" : "Login failed", "status" : 400}');
             return res.redirect('/login?returnTo=' + req.query.returnTo);
         } else {
             req.flash('error', constants.errors.invalidLogin);

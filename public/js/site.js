@@ -3,7 +3,7 @@
 $(document).ready(function() {
     $('#loginform').on('click', login);
 
-    /*Scroll to top when arrow up clicked BEGIN*/
+    /* Scroll to top */
     $(window).scroll(function() {
         var height = $(window).scrollTop();
         if (height > 100) {
@@ -20,11 +20,13 @@ $(document).ready(function() {
         });
 
     });
-    /*Scroll to top when arrow up clicked END*/
 
+    /* Validate contact form is filled out properly */
     $('#submitmail').click(function() {
         validateForm();
     });
+
+    /* Project carosel */
     $('.prjlist').slick({
         infinite: true,
         slidesToShow: 4,
@@ -35,6 +37,7 @@ $(document).ready(function() {
         useTransform: false
     });
 
+    /* Login caps lock checks */
     loginModalCapsLock();
     loginPageCapsLock();
 });
@@ -64,7 +67,6 @@ function loginPageCapsLock() {
 function login() {
     var form = document.getElementById('loginform');
     var loginSubmit = document.getElementById('modal-footer');
-    /*var loginContent = loginSubmit.value();*/
     form.onsubmit = function (e) {
         e.preventDefault();
         var user = form.username.value;
@@ -92,7 +94,6 @@ function login() {
                 location.reload();
             },
         });
-        // form.reset();
     };
 }
 
