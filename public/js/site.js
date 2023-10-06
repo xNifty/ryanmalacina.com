@@ -109,11 +109,6 @@ function logout() {
     return false;
 }
 
-$(document).ready(function(){
-
-    
-});
-
 function resetToken() {
     grecaptcha.ready(function() {
         grecaptcha.execute('6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG', {
