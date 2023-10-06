@@ -34,20 +34,12 @@ $(document).ready(function() {
         prevArrow: '<i class="fa fa-arrow-left prevArrowBtn"></i>',
         useTransform: false
     });
+
+    loginModalCapsLock();
+    loginPageCapsLock();
 });
 
-$(document).ready(function() {
-    const el = document.getElementById('password');
-    const msg = document.getElementById('password-message');
-
-    if (el !== null) {
-        el.addEventListener('keydown', e => {
-            msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
-        });
-    }
-});
-
-$(document).ready(function() {
+function loginModalCapsLock() {
     const el = document.getElementById('sp_pass');
     const msg = document.getElementById('sp_pass_message');
 
@@ -56,7 +48,18 @@ $(document).ready(function() {
             msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
         });
     }
-});
+}
+
+function loginPageCapsLock() {
+    const el = document.getElementById('password');
+    const msg = document.getElementById('password-message');
+
+    if (el !== null) {
+        el.addEventListener('keydown', e => {
+            msg.style = e.getModifierState('CapsLock') ? 'display: block' : 'display: none';
+        });
+    }
+}
 
 function login() {
     var form = document.getElementById('loginform');
