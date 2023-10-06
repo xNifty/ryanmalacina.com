@@ -52,12 +52,6 @@ const hbs = exphbs.create({
     }
 });
 
-// hbs.getPartials().then(function (partials) {
-//     console.log(partials);
-//     // => { 'foo/bar': [Function],
-//     // =>    title: [Function] }
-// });
-
 var mongoURL = config.get("mongoURL");
 
 // Connect to the database
