@@ -527,3 +527,7 @@ button.btn.btn-primary.right {
 .center {
     margin: auto;
 }
+
+.loginformtext {
+    width: 100%;
+}

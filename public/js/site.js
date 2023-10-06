@@ -71,7 +71,7 @@ function login() {
         var pass = form.password.value;
         $.ajax({
             type: "POST",
-            url: "/login",
+            url: "/login/modal",
             data: {
                 username: user,
                 password: pass
