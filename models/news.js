@@ -37,6 +37,8 @@ const newsScheme = new mongoose.Schema({
     }
 });
 
+newsScheme.index({news_search: "text", news_title: "text"});
+
 newsScheme.plugin(mongoosePaginate);
 
 // const News = mongoose.model('News', newsScheme);
