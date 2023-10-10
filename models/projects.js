@@ -47,6 +47,8 @@ const projectScheme = new mongoose.Schema({
     }
 });
 
+
+projectScheme.index({project_name: 'text', project_title: "text"});
 // const Project = mongoose.model('Project', projectScheme);
 
 export function validateProject(user) {
