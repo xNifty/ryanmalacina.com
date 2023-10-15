@@ -3,7 +3,6 @@ import {News, validateNews} from '../models/news.js';
 import mongoose from 'mongoose';
 import express from 'express';
 import auth from '../middleware/auth.js';
-import _ from 'lodash';
 import session from 'express-session';
 import sanitize from 'sanitize-html';
 import dateFormat from 'dateformat';

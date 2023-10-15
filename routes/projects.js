@@ -5,7 +5,6 @@ import { Project, validateProject } from '../models/projects.js';
 import {clearProjectSessionVariables, clearProjectEditSessionVariables} from '../functions/sessionHandler.js';
 import express from 'express';
 import auth from '../middleware/auth.js';
-import _ from 'lodash';
 import MarkdownIt from 'markdown-it';
 import sanitize from 'sanitize-html';
 import dateFormat from 'dateformat';
@@ -14,7 +13,6 @@ import { constants } from '../models/constants.js'
 import config from 'config';
 
 const router = express.Router();
-const isSet = _;
 const md = new MarkdownIt();
 const dateformat = dateFormat;
 
