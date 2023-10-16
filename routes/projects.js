@@ -178,14 +178,16 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
 
     try {
         const { error } = validateProject(req.body);
-        // I should clean up this error messaging code to provide detailed feedback for all required fields
-        // that are either missing or not long enough
+        var errorMessage;
+        // Return error messages because this is getting old
+        console.log(error.details.length);
         if (error) {
             for (let i = 0; i < error.details.length; i++) {
-                //console.log(error.details[i].context.key);
                 if (error.details[i].context.key === 'project_description')
-                    throw new Error(constants.errors.projectDescriptionLength);
+                    errorMessage = constants.errors.projectDescriptionLength;
+                    //throw new Error(constants.errors.projectDescriptionLength);
             }
+            throw new Error("Fake error");
         }
 
         let projectDescription = md.render(req.body.project_description);
@@ -265,15 +267,28 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         req.session.project_description_markdown = req.body.project_description;
         req.session.project_image = currentImage[0].project_image;
 
-        if (req.session.projectReturnTo) {
-            let returnToEdit = req.session.projectEditReturnTo;
-            delete req.session.projectEditReturnTo;
-            req.flash('error', ex.message);
-            return res.redirect(returnToEdit);
-        } else {
-            req.flash('error', ex.message);
-            return res.redirect('/projects');
-        }
+        console.log(`catch caught, ${req.session.project_id}`);
+
+        return res.status(400).render('projects', {
+            layout: 'projects',
+            new_project: true,
+            error: errorMessage,
+            project_name: req.body.project_name,
+            project_title: req.body.project_title,
+            project_source: req.body.project_source,
+            project_description: req.body.project_description,
+            id: req.session.project_id
+        });
+
+        // if (req.session.projectReturnTo) {
+        //     let returnToEdit = req.session.projectEditReturnTo;
+        //     delete req.session.projectEditReturnTo;
+        //     req.flash('error', ex.message);
+        //     return res.redirect(returnToEdit);
+        // } else {
+        //     req.flash('error', ex.message);
+        //     return res.redirect('/projects');
+        // }
     }
 
 });
