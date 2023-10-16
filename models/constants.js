@@ -25,6 +25,9 @@ var errorStrings = {
     uniqueImageName: "Please make sure file names are unique.  If you've already uploaded this image, you do not need to upload it again.",
     invalidProject: "It appears as though you are trying to access an invalid project. Perhaps try <a href=\"\\projects\">again</a>?",
     publishError: "Something went wrong, please check the error logs or report this.",
+    projectName: "Project name is required.",
+    projectTitle: "Project title is required.",
+    projectSource: "Project source is required.",
 };
 
 // Status code constants

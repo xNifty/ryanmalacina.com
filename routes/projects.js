@@ -178,16 +178,25 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
 
     try {
         const { error } = validateProject(req.body);
-        var errorMessage;
+        var errorMessage = '';
         // Return error messages because this is getting old
-        console.log(error.details.length);
         if (error) {
             for (let i = 0; i < error.details.length; i++) {
-                if (error.details[i].context.key === 'project_description')
-                    errorMessage = constants.errors.projectDescriptionLength;
+                if (error.details[i].context.key === 'project_description') {
+                    errorMessage += constants.errors.projectDescriptionLength + '<br>';
+                }
+                if (error.details[i].context.key === 'project_name') {
+                    errorMessage += constants.errors.projectName + '<br>';
+                }
+                if (error.details[i].context.key === 'project_title') {
+                    errorMessage += constants.errors.projectTitle + '<br>';
+                }
+                if (error.details[i].context.key === 'project_source') {
+                    errorMessage += constants.errors.projectSource + '<br>';
+                }
                     //throw new Error(constants.errors.projectDescriptionLength);
             }
-            throw new Error("Fake error");
+            throw new Error(errorMessage);
         }
 
         let projectDescription = md.render(req.body.project_description);
@@ -245,16 +254,16 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         }
         if (req.session.projectEditSuccess && currentImage[0].is_published) {
             let returnTo = req.session.projectEditSuccess;
-            clearProjectSessionVariables(req);
+            clearProjectEditSessionVariables(req);
             req.flash('success', constants.success.projectUpdated);
             return res.redirect(returnTo);
         } else if (req.session.projectEditSuccess && !currentImage[0].is_published) {
             let returnTo = req.session.projectEditReturnTo;
-            clearProjectSessionVariables(req);
+            clearProjectEditSessionVariables(req);
             req.flash('success', constants.success.projectUpdated);
             return res.redirect(returnTo);
         } else {
-            delete req.session.project_id;
+            clearProjectEditSessionVariables(req);
             req.flash('success', constants.success.projectUpdated);
             return res.redirect('/projects');
         }
@@ -267,17 +276,16 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         req.session.project_description_markdown = req.body.project_description;
         req.session.project_image = currentImage[0].project_image;
 
-        console.log(`catch caught, ${req.session.project_id}`);
-
-        return res.status(400).render('projects', {
+        return res.render('admin/projects/new-project', {
             layout: 'projects',
-            new_project: true,
-            error: errorMessage,
-            project_name: req.body.project_name,
-            project_title: req.body.project_title,
-            project_source: req.body.project_source,
-            project_description: req.body.project_description,
-            id: req.session.project_id
+            update_project: true,
+            project_name: req.session.project_name,
+            project_title: req.session.project_title,
+            project_source: req.session.project_source,
+            project_description: req.session.project_description_markdown,
+            project_image: req.session.project_image,
+            id: req.session.project_Id,
+            error: errorMessage
         });
 
         // if (req.session.projectReturnTo) {

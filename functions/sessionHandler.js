@@ -12,4 +12,5 @@ export function clearProjectEditSessionVariables(req) {
     if (req.session.project_source) delete req.session.project_source;
     if (req.session.project_description_markdown) delete req.session.project_description_markdown;
     if (req.session.project_image) delete req.session.project_image;
+    if (req.session.project_id) delete req.session.project_id;
 }
