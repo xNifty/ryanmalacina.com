@@ -30,8 +30,8 @@ const app = express();
 const env = app.settings.env;
 
 // File versioning
-const jsFileVersion = constants.fileVersions.cssFileVersion;
-const cssFileVersion = constants.fileVersions.jsFileVersion;
+const jsFileVersion = constants.fileVersions.jsFileVersion;
+const cssFileVersion = constants.fileVersions.cssFileVersion;
 const adminJSFileVersion = constants.fileVersions.adminJSFileVersion;
 const newsJSFileVersion = constants.fileVersions.newsJSFileVersion;
 
