@@ -44,7 +44,7 @@
     "mailgun.js": "^9.3.0",
     "markdown-it": "^13.0.2",
     "mem": "^9.0.2",
-    "mongoose": "^7.6.2",
+    "mongoose": "^7.6.3",
     "mongoose-paginate-v2": "^1.7.31",
     "mongoose-unique-validator": "^4.0.0",
     "number-to-words-en": "^1.2.5",
