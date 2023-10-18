@@ -135,6 +135,7 @@ router.get('/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
         _id: req.params.id
     });
 
+    delete req.session.project_id;
     req.session.project_id = project._id;
 
     // For if the edit fails, otherwise we want to return to the normal project information page
@@ -156,7 +157,7 @@ router.get('/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             id: project._id
         });
     } else {
-        res.render('projects', {
+        res.render('admin/projects/new-project', {
             layout: 'projects',
             update_project: true,
             project_name: req.session.project_name,
@@ -164,7 +165,7 @@ router.get('/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
             project_source: req.session.project_source,
             project_description: req.session.project_description_markdown,
             project_image: req.session.project_image,
-            id: project._id
+            id: req.session.project_id,
         });
 
         // Finally, clear up the session variables -- can I move this to a function where we delete them if they exist?
@@ -276,7 +277,7 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         req.session.project_description_markdown = req.body.project_description;
         req.session.project_image = currentImage[0].project_image;
 
-        return res.render('admin/projects/new-project', {
+        res.render('admin/projects/new-project', {
             layout: 'projects',
             update_project: true,
             project_name: req.session.project_name,
@@ -287,6 +288,9 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
             id: req.session.project_Id,
             error: errorMessage
         });
+
+        clearProjectEditSessionVariables(req);
+        return;
 
         // if (req.session.projectReturnTo) {
         //     let returnToEdit = req.session.projectEditReturnTo;
