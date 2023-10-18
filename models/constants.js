@@ -3,7 +3,7 @@
 
 // file versioning
 var fileVersions = {
-    cssFileVersion: "1.0.5",
+    cssFileVersion: "1.0.6",
     jsFileVersion: "1.0.10",
     adminJSFileVersion: "1.0.2",
     newsJSFileVersion: "1.0.1"
