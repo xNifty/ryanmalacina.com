@@ -8,6 +8,7 @@ import sanitize from 'sanitize-html';
 import dateFormat from 'dateformat';
 import MarkdownIt from 'markdown-it';
 import { constants } from '../models/constants.js';
+import _ from 'lodash';
 
 const router = express.Router();
 
@@ -78,9 +79,10 @@ router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =>
     ]));
 
     if (error) {
-        console.log("Error 3: ", error);
+        // console.log("Error 3: ", error);
         return res.status(400).render('admin/news/news', {
             error: constants.errors.allFieldsRequired,
+            layout: 'news',
             news_title: req.body.news_title,
             news_description: req.body.news_description,
             loadJS: true,
@@ -102,9 +104,10 @@ router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =>
     try {
         await news.save();
     } catch(ex) {
-        console.log('Error 2: ', ex);
+        // console.log('Error 2: ', ex);
         return res.status(400).render('admin/news/news', {
             error: constants.errors.allFieldsRequired,
+            layout: 'news',
             news_title: req.body.news_title,
             news_description: req.body.news_description,
             loadJS: true,
