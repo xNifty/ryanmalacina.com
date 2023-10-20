@@ -21,7 +21,8 @@
                             {{else}}
                                 <input class="projCheckbox" data-id="{{ projects._id}} "type="checkbox" name="projectCheckbox{{projects._id}}" value="projectCheckbox{{projects._id}}">
                             {{/if}}
-                            <a class="deleteProject" href="/projects/delete" data-id="{{ projects._id}}"> <i class="fa fa-trash"></i></a>
+                            <a class="confirmModal deleteProject trigger-btn" data-id="{{ projects._id}}" data-toggle="modal" data-target="#confirmModal"> <i class="fa fa-trash"></i></a>
+                            {{!-- <a class="deleteProject trigger-btn" data-toggle="modal" data-id="{{ projects._id}}" data-target="#confirmModal"> <i class="fa fa-trash"></i></a> --}}
                         </div>
                     </div>
                 </div>

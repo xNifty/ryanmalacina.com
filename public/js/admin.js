@@ -2,25 +2,16 @@
 $(document).ready(function() {
     $('.publish').on('click', publishProject);
     $('.unpublish').on('click', unpublishProject);
-    $('.publishNews').on('click', publishNews);
-    $('.unpublishNews').on('click', unpublishNews);
-    $('.deleteNews').on('click', deleteNews);
-    $('.deleteProject').on('click', deleteProject);
+    // $('.deleteProject').on('click', deleteProject);
     $('.projCheckbox').on('click', updateCheckbox);
 
-    // limit 3 checkboxes on projects page
-    $("input[type=checkbox]").on("click", function () {
-        var count = $("input[type=checkbox]:checked").length;
-        if (count < 3) {  // we only want to allow 3 to be checked here.
-            $("input[type=checkbox]").removeAttr("disabled");
-            $("input[type=checkbox]").change(updateCheckbox);
-            // re-enable all checkboxes
-        } else {
-            $("input[type=checkbox]").prop("disabled","disabled");
-            // disable all checkboxes
-            $("input[type=checkbox]:checked").removeAttr("disabled");
-            // only enable the elements that are already checked.
-        }
+    $('.confirmModal').on('click', function(e) {
+        var id = $(this).data('id');
+        $('#confirm-id').val(id);
+    });
+    
+    $('#modalSubmit').on('click', function() {
+        deleteProject();
     });
 });
 
@@ -56,77 +47,21 @@ function unpublishProject() {
   return false;
 }
 
-function publishNews() {
-  $.ajax({
-      type:'PUT',
-      url: '/admin/news/publish/'+ $(this).data('id'),
-      datatype: "json",
-      success: function() {
-          window.location.reload();
-      },
-      fail: function() {
-          alert("There was an issue publishing.");
-      }
-  });
-
-  return false;
-};
-
-function unpublishNews() {
-  $.ajax({
-      type:'PUT',
-      url: '/admin/news/unpublish/'+ $(this).data('id'),
-      datatype: "json",
-      success: function() {
-          window.location.reload();
-      },
-      fail: function() {
-          alert("There was an issue unpublishing.  Check the error log.");
-      }
-  });
-
-  return false;
-};
-
-function deleteNews() {
-  if (confirm("Are you sure you wish to delete this news entry?")) {
-      $.ajax({
-          type:'PUT',
-          url: '/admin/news/delete/'+ $(this).data('id'),
-          datatype: "json",
-          success: function() {
-              window.location.reload();
-          },
-          fail: function() {
-              alert("There was an issue deleting.");
-          }
-      });
-  
-      return false;
-  } else {
-      return false;
-  }
-};
-
 function deleteProject() {
-  if (confirm("Are you sure you wish to delete this project?")) {
-      $.ajax({
-          type:'PUT',
-          url: '/projects/delete/'+ $(this).data('id'),
-          datatype: "json",
-          success: function() {
-              window.location.reload();
-              alert("Project deleted.");
-          },
-          fail: function() {
-              alert("There was an issue deleting.  Check the error log.");
-          }
-      });
-  
-      return false;
-  } else {
-      return false;
-  }
+    var deleteID = $('#confirm-id').val();
+    $.ajax({
+        type:'PUT',
+        url: '/projects/delete/'+ deleteID,
+        datatype: "json",
+        success: function() {
+            window.location.reload();
+        },
+        fail: function() {
+            alert("There was an issue deleting.  Check the error log.");
+        }
+    });
+
+    return false;
 };
 
 function updateCheckbox() {
@@ -147,7 +82,7 @@ function updateCheckbox() {
   return false;
 };
 
-// limit 3 checkboxes on projects page
+//limit 3 checkboxes on projects page
 $(document).ready(function(){
   var count = $("input[type=checkbox]:checked").length;
   if (count < 3) {  // we only want to allow 3 to be checked here.

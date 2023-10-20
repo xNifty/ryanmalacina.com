@@ -7,7 +7,7 @@
                     <div class="thumbnail">
                         <div class="caption center-block">
                             <a class="editNews" href="/admin/news/{{ news._id}}/edit" data-id="{{ news._id}}"> <i class="fa fa-pencil"></i></a>
-                            <a class="deleteNews" href="/news/delete" data-id="{{ news._id}}"> <i class="fa fa-trash"></i></a>
+                            <a class="confirmModal trigger-btn" data-id="{{ news._id}}" data-toggle="modal" data-target="#confirmModal"> <i class="fa fa-trash"></i></a>
                             {{ news.news_title }}<br />
                             {{#if news.is_published}}
                                 Published - <a class="unpublishNews" href="" data-id="{{ news._id}}">Unpublish</a>
