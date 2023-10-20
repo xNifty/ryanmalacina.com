@@ -3,17 +3,20 @@
 <div id="confirmModal" class="modal fade">
   <div class="modal-dialog modal-login">
     <div class="modal-content">
-    <div class="modal-header">
-        <h4 class="modal-title">Confirm Delete</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    </div>
-    <div class="modal-body">
-        Are you sure you wish to delete this entry?
-    </div>
-    <div class="modal-footer" id="modalFooter">
-        <input type="submit" class="modalConfirm btn btn-primary pull-right" id="modalSubmit" name="submit" value="Confirm" data-id="{{ news._id}}">
-        <div id="confirmStatus"></div>
-    </div>
-    </div>
-  </div>
+      <form action="#" method="post" accept-charset="UTF-8" id="confirmForm"></form>
+        <div class="modal-header">
+            <h4 class="modal-title">Confirm Delete</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <div class="modal-body">
+            Are you sure you wish to delete this entry?
+        </div>
+        <div class="modal-footer" id="modalFooter">
+            <input type="hidden" value="" name="news-id" id="news-id">
+            <input type="submit" class="btn btn-primary pull-right" id="modalSubmit" name="submit" value="Confirm">
+            <div id="confirmStatus"></div>
+        </div>
+        </div>
+      </div>
+    </form>
 </div>

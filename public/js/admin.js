@@ -4,9 +4,17 @@ $(document).ready(function() {
     $('.unpublish').on('click', unpublishProject);
     $('.publishNews').on('click', publishNews);
     $('.unpublishNews').on('click', unpublishNews);
-    $('.modalConfirm').on('click', deleteNews);
     $('.deleteProject').on('click', deleteProject);
     $('.projCheckbox').on('click', updateCheckbox);
+
+    $('.confirmModal').on('click', function(e) {
+        var id = $(this).data('id');
+        $('#news-id').val(id);
+    });
+    
+    $('#modalSubmit').on('click', function() {
+        deleteNews();
+    });
 
     // limit 3 checkboxes on projects page
     $("input[type=checkbox]").on("click", function () {
@@ -89,11 +97,10 @@ function unpublishNews() {
 };
 
 function deleteNews() {
-    console.log($(this).attr('data-id'));
-    alert('holding for pause');
+    var deleteID = $('#news-id').val();
     $.ajax({
         type:'PUT',
-        url: '/admin/news/delete/'+ $(this).data('id'),
+        url: '/admin/news/delete/'+ deleteID,
         datatype: "json",
         success: function() {
             window.location.reload();
@@ -103,7 +110,7 @@ function deleteNews() {
         }
     });
 
-    return false;
+    return true;
 };
 
 function deleteProject() {
@@ -146,16 +153,21 @@ function updateCheckbox() {
 };
 
 // limit 3 checkboxes on projects page
-$(document).ready(function(){
-  var count = $("input[type=checkbox]:checked").length;
-  if (count < 3) {  // we only want to allow 3 to be checked here.
-      $("input[type=checkbox]").removeAttr("disabled");
-      $("input[type=checkbox]").change(updateCheckbox);
-      // re-enable all checkboxes
-  } else {
-      $("input[type=checkbox]").prop("disabled","disabled");
-      // disable all checkboxes
-      $("input[type=checkbox]:checked").removeAttr("disabled");
-      // only enable the elements that are already checked.
-  }
-});
+// $(document).ready(function(){
+//   var count = $("input[type=checkbox]:checked").length;
+//   if (count < 3) {  // we only want to allow 3 to be checked here.
+//       $("input[type=checkbox]").removeAttr("disabled");
+//       $("input[type=checkbox]").change(updateCheckbox);
+//       // re-enable all checkboxes
+//   } else {
+//       $("input[type=checkbox]").prop("disabled","disabled");
+//       // disable all checkboxes
+//       $("input[type=checkbox]:checked").removeAttr("disabled");
+//       // only enable the elements that are already checked.
+//   }
+// });
+
+function openModal(e) {
+    e.preventDefault();
+    $('#modalSubmit').on('click', deleteNews($(this).data('id')));
+}
