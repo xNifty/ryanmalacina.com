@@ -4,7 +4,7 @@ $(document).ready(function() {
     $('.unpublish').on('click', unpublishProject);
     $('.publishNews').on('click', publishNews);
     $('.unpublishNews').on('click', unpublishNews);
-    $('.deleteNews').on('click', deleteNews);
+    $('.modalConfirm').on('click', deleteNews);
     $('.deleteProject').on('click', deleteProject);
     $('.projCheckbox').on('click', updateCheckbox);
 
@@ -89,23 +89,21 @@ function unpublishNews() {
 };
 
 function deleteNews() {
-  if (confirm("Are you sure you wish to delete this news entry?")) {
-      $.ajax({
-          type:'PUT',
-          url: '/admin/news/delete/'+ $(this).data('id'),
-          datatype: "json",
-          success: function() {
-              window.location.reload();
-          },
-          fail: function() {
-              alert("There was an issue deleting.");
-          }
-      });
-  
-      return false;
-  } else {
-      return false;
-  }
+    console.log($(this).attr('data-id'));
+    alert('holding for pause');
+    $.ajax({
+        type:'PUT',
+        url: '/admin/news/delete/'+ $(this).data('id'),
+        datatype: "json",
+        success: function() {
+            window.location.reload();
+        },
+        fail: function() {
+            alert("There was an issue deleting.");
+        }
+    });
+
+    return false;
 };
 
 function deleteProject() {
