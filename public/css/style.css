@@ -546,3 +546,11 @@ button.btn.btn-primary.right {
 .container .alert a:hover {
     color: red;
 }
+
+.container a.dropdown-item {
+    color: black;
+}
+
+#sort {
+    color: black;
+}

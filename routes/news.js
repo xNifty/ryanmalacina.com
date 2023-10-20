@@ -37,15 +37,16 @@ router.post("/", async (req, res) => {
 
   let page = req.query.page;
   let term = req.query.term;
+  let sort = req.query.sort;
 
   if (page == undefined) {
     page = 1;
   }
 
   if (req.body.search) {
-    news_list = await newsSearch(req.body.search, 5, 1);
+    news_list = await newsSearch(req.body.search, 5, 1, sort);
   } else {
-    news_list = await listNews(5, page, term);
+    news_list = await listNews(5, page, term, sort);
   }
 
   for (var x in news_list['newsItems']) {
@@ -67,21 +68,23 @@ router.post("/search", async (req, res) => {
   var search = false;
   var term;
 
+  var sort = req.query.sort;
+
   let page = req.query.page;
   if (page == undefined) {
     page = 1;
   }
 
   if (req.body.search) {
-    news_list = await newsSearch(req.body.search, 5, 1);
+    news_list = await newsSearch(req.body.search, 5, 1, sort);
     const addQuery = (req, res, next) => {
-      req.query.term      = req.body.search;
+      req.query.term = req.body.search;
       next();
     }
     search = true;
     term = req.body.search;
   } else {
-    news_list = await listNews(5, page);
+    news_list = await listNews(5, page, null, sort);
   }
 
   for (var x in news_list['newsItems']) {
@@ -101,8 +104,27 @@ router.post("/search", async (req, res) => {
   });
 });
 
-async function listNews(limit = 5, page = 1, term = null) {
+async function listNews(limit = 5, page = 1, term = null, sort = null) {
   var query = {$text: {$search: term}};
+
+  var sortMethod;
+
+  if (!sort) {
+    sortMethod = {_id: -1}
+  } else {
+    if (sort === 'dateAsc') {
+      sortMethod = {published_date_unclean: 1}
+    }
+    else if (sort === 'dateDesc') {
+      sortMethod = {published_date_unclean: -1}
+    }
+    else if (sort === 'titleAsc') {
+      sortMethod = {news_title: 1}
+    }
+    else if (sort === 'titleDesc') {
+      sortMethod = {news_title: -1}
+    }
+  };
 
   const labels = {
     docs: 'newsItems',
@@ -110,7 +132,7 @@ async function listNews(limit = 5, page = 1, term = null) {
   const options = {
     page: page,
     limit: limit,
-    sort: {_id: -1},
+    sort: sortMethod,
     find: {is_published: 1},
     select: {news_title: 1, published_date: 1, news_description_html: 1, _id: 0},
     lean: true,
@@ -125,8 +147,27 @@ async function listNews(limit = 5, page = 1, term = null) {
 
 }
 
-async function newsSearch(strSearch, limit = 5, page = 1, term = null) {
+async function newsSearch(strSearch, limit = 5, page = 1, sort = null) {
   var query = {$text: {$search: strSearch}};
+
+  var sortMethod;
+
+  if (!sort) {
+    sortMethod = {_id: -1}
+  } else {
+    if (sort === 'dateAsc') {
+      sortMethod = {published_date_unclean: 1}
+    }
+    else if (sort === 'dateDesc') {
+      sortMethod = {published_date_unclean: -1}
+    }
+    else if (sort === 'titleAsc') {
+      sortMethod = {news_title: 1}
+    }
+    else if (sort === 'titleDesc') {
+      sortMethod = {news_title: -1}
+    }
+  }
 
   const labels = {
     docs: 'newsItems',
@@ -134,7 +175,7 @@ async function newsSearch(strSearch, limit = 5, page = 1, term = null) {
   const options = {
     page: page,
     limit: limit,
-    sort: {_id: -1},
+    sort: sortMethod,
     find: {is_published: 1},
     select: {news_title: 1, published_date: 1, news_description_html: 1, _id: 0},
     lean: true,
