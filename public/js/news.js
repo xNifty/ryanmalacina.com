@@ -1,6 +1,16 @@
 // news javascript
 $(document).ready(function() {
-  $('#news-search').on('click', searchNews);
+  $('#news-search').on('click', function(event) {
+    var sortOrder;
+    sortOrder = $('#sort').val();
+    searchNews(event, sortOrder);
+  });
+
+  $('#sort').change(function(event) {
+    var sortOrder;
+    sortOrder = $('#sort').val();
+    searchNews(event, sortOrder);
+  });
 
   $(function() {
     if ($("#pageCount").length) {
@@ -21,13 +31,12 @@ $(document).ready(function() {
     });
   });
 });
-
-function searchNews(e) {
+function searchNews(e, sortOrder) {
   var search = $('#news-search-box').val();
   e.preventDefault();
   $.ajax({
       type:'POST',
-      url: '/news/search',
+      url: '/news/search?sort=' + sortOrder,
       data: {
           search: search,
       },

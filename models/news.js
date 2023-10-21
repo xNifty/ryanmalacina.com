@@ -34,6 +34,9 @@ const newsScheme = new mongoose.Schema({
         type: String,
         minlength: 10,
         maxlength: 2000
+    },
+    published_date_unclean: {
+        type: Date
     }
 });
 

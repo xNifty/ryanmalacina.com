@@ -100,6 +100,7 @@ router.post('/news/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =>
     let saveDate = new Date(Date.now());
 
     news.published_date = dateformat(saveDate, "mmmm dd, yyyy @ h:MM TT");
+    news.published_date_unclean = saveDate;
 
     try {
         await news.save();
@@ -233,6 +234,7 @@ router.post('/news/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) =
     let saveDate = new Date(Date.now());
 
     news.published_date = dateformat(saveDate, "mmmm dd, yyyy @ h:MM TT");
+    news.published_date_unclean = saveDate;
 
     try {
         await News.findByIdAndUpdate({_id: req.session.news_id}, {
@@ -282,8 +284,10 @@ async function unpublishProject(id) {
 
 async function publishNews(id) {
     try {
+        let saveDate = new Date(Date.now());
         await News.findByIdAndUpdate({_id: id}, {
-            is_published: true
+            is_published: true,
+            published_date_unclean: saveDate
         });
         return true;
     } catch(err) {

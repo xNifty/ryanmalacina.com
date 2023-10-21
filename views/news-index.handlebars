@@ -9,5 +9,12 @@
             </button>
         </span>
     </div>
+    <select id="sort" name="sort" class="btn btn-trigger">
+        <option value="none" selected disabled hidden>Sort</option>
+        <option name="dateAsc" value="dateAsc">Date (Asc)</option>
+        <option name="dateDesc" value="dateDesc">Date (Desc)</option>
+        <option name="titleAsc" value="titleAsc">Title (Asc)</option>
+        <option name="titleDesc" value="titleDesc">Title (Desc)</option>
+    </select>
     <div id="news-results">{{> news/news-display }}</div>
 </div>

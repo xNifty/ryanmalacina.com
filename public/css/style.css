@@ -490,7 +490,7 @@ button.btn.btn-primary.right {
 }
 
 .input-group.custom-search {
-    width: 40%;
+    width: 100%;
     padding-bottom: 0.5em;
 }
 
@@ -545,4 +545,12 @@ button.btn.btn-primary.right {
 
 .container .alert a:hover {
     color: red;
+}
+
+.container a.dropdown-item {
+    color: black;
+}
+
+#sort {
+    color: black;
 }
