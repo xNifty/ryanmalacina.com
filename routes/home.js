@@ -12,11 +12,11 @@ import Mailgun from 'mailgun.js';
 
 const mailgun = new Mailgun(formData);
 const router = express.Router();
-const mg = mailgun.client({username: 'api', key: config.get('mailgunAPI')})
+const mg = mailgun.client({username: 'api', key: process.env.mailgunAPI})
 
 const recaptcha = new Recaptcha(
-    config.get('siteKey'),
-    config.get('secretKey'),
+    process.env.siteKey,
+    process.env.secretKey,
     {
         callback: 'cb',
     }
@@ -25,8 +25,8 @@ const recaptcha = new Recaptcha(
 // This is your API key that you retrieve from www.mailgun.com/cp (free up to 10K monthly emails)
 const auth = {
     auth: {
-        api_key: config.get("mailgunAPI"),
-        domain: config.get("mailgunDomain")
+        api_key: process.env.mailgunAPI,
+        domain: process.env.mailgunDomain
     },
     proxy: false // optional proxy, default is false
 };
@@ -87,7 +87,7 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
         title: "Ryan Malacina | Home",
         projects: project_list,
         captcha: recaptcha,
-        siteKey: config.get('siteKey'),
+        siteKey: process.env.siteKey,
         news: news_list,
         showBlog: showBlog,
         blogPosts: posts,
@@ -100,7 +100,7 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
 
 router.post('/send', recaptcha.middleware.verify, async(req, res) => {
     let fromEmail = req.body.email;
-    let toEmail = config.get('mailgunToEmail');
+    let toEmail = process.env.mailgunToEmail;
     let subject = req.body.subject;
     let message = req.body.message;
 
@@ -113,7 +113,7 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
 
     if (!req.recaptcha.error) {
         try {
-            mg.messages.create(config.get('mailgunDomain'), {
+            mg.messages.create(process.env.mailgunDomain, {
                 from: fromEmail,
                 to: toEmail, // An array if you have multiple recipients.
                 subject: subject_combined,
@@ -168,7 +168,7 @@ async function listNews() {
 async function getBlogPosts() {
     const ghost = new ghostAPI({
         url: config.get("blogURL"),
-        key: config.get("blogAPI"),
+        key: process.env.blogAPI,
         version: config.get("blogVersion")
     });
 

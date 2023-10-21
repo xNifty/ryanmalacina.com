@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import mongoose from 'mongoose';
 import express from 'express';
 import exphbs  from 'express-handlebars';
@@ -36,7 +37,7 @@ const adminJSFileVersion = constants.fileVersions.adminJSFileVersion;
 const newsJSFileVersion = constants.fileVersions.newsJSFileVersion;
 
 // Make sure our private token exists
-if (!config.get('privateKeyName')) {
+if (!process.env.privateKey) {
     console.error(constants.errors.missingKey);
     process.exit(1);
 }
@@ -52,7 +53,7 @@ const hbs = exphbs.create({
     }
 });
 
-var mongoURL = config.get("mongoURL");
+var mongoURL = process.env.mongoURL;
 
 // Connect to the database
 mongoose.connect(mongoURL, {})
@@ -85,7 +86,7 @@ app.use(csp({
 app.use(cookieParser());
 
 // Now we don't have to hard-code this into app.js
-const secret_key = config.get('privateKeyName');
+const secret_key = process.env.privateKey;
 
 const mongoStore = MongoStore.create({
     mongoUrl: mongoURL,
@@ -94,7 +95,7 @@ const mongoStore = MongoStore.create({
 });
 
 let sess = {
-    secret: config.get(secret_key),
+    secret: secret_key,
     proxy: config.get('useProxy'),
     resave: config.get('resave'),
     saveUninitialized: config.get('saveUninitialized'),

@@ -9,3 +9,4 @@ server.key
 server.crt
 app-testing.js
 /config/custom-environment-variables.json
+.env

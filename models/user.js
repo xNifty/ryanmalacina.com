@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.methods.generateAuthToken = function() {
-    return jwt.sign({_id: this._id}, config.get('privateKeyName'));
+    return jwt.sign({_id: this._id}, process.env.privateKey);
 };
 
 userSchema.plugin(uniqueValidator);
