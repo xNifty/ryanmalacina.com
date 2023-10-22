@@ -2,7 +2,7 @@
 // Handles all of the different project routes
 
 import { Project, validateProject } from '../models/projects.js';
-import {clearProjectSessionVariables, clearProjectEditSessionVariables} from '../functions/sessionHandler.js';
+import {clearProjectEditSessionVariables} from '../functions/sessionHandler.js';
 import express from 'express';
 import auth from '../middleware/auth.js';
 import MarkdownIt from 'markdown-it';
@@ -97,11 +97,12 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     if (req.body.project_image)
         projectImage = req.files.project_image;
 
-    // If there is no image, use a default image
-    if (!projectImage)
-        project.project_image = "default.png";
-    else
-        project.project_image = projectImage.name; // File name, nothing else
+    // Add timestamp to filename
+    var adjustedFileName;
+    if (projectImage) {
+        adjustedFileName = projectImage.name.split('.').join('-' + Date.now() + '.');
+        project.project_image = adjustedFileName;
+    };
 
     project.project_description_markdown = req.body.project_description;
     project.project_description_html = projectSanitized;
@@ -110,7 +111,7 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     try {
         // Try moving the image; if that fails, redirect back with error message
 	    if (projectImage) {
-            await projectImage.mv('./public/images/' + projectImage.name);
+            await projectImage.mv('./public/images/' + adjustedFileName);
         }
         await project.save();
     } catch(ex) {
