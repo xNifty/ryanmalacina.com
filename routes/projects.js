@@ -9,7 +9,7 @@ import MarkdownIt from 'markdown-it';
 import sanitize from 'sanitize-html';
 import dateFormat from 'dateformat';
 import fileUpload from 'express-fileupload';
-import { constants } from '../models/constants.js'
+import { constants } from '../config/constants.js'
 import config from 'config';
 import _ from 'lodash';
 
@@ -61,6 +61,7 @@ router.get('/new', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     const { error } = validateProject(req.body);
     var returnTo;
+    var errorMessage = '';
 
     if (req.session.returnToSession) {
         returnTo = req.session.returnToSession;
@@ -95,7 +96,7 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
     let projectImage = '';
     let adjustedFileName = '';
 
-    if (req.files.project_image) {
+    if (req.files) {
         projectImage = req.files.project_image;
         adjustedFileName = projectImage.name.split('.').join('-' + Date.now() + '.');
         project.project_image = adjustedFileName;
@@ -116,15 +117,18 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         }
         await project.save();
     } catch(ex) {
+        if (ex.code === 11000) {
+            errorMessage = constants.errors.projectTitleUnique;
+        }
         return res.status(400).render('admin/projects/new-project', {
             layout: 'projects',
             new_project: true,
-            error: constants.errors.allFieldsRequired,
+            error: errorMessage ? errorMessage : constants.errors.allFieldsRequired,
             project_name: req.body.project_name,
             project_title: req.body.project_title,
             project_source: req.body.project_source,
             project_description: req.body.project_description,
-            project_image: req.files.project_image ? req.files.project_image : '',
+            project_image: req.files ? req.files.project_image : '',
 	        last_edited: saveDate
         });
     }

@@ -15,7 +15,7 @@ import { User } from './models/user.js';
 import { iff } from './functions/helpers.js';
 import renderError from './functions/errorhandler.js';
 import { generateNonce, getDirectives } from './middleware/nonce.js';
-import { constants } from './models/constants.js'
+import { constants } from './config/constants.js'
 
 // Routes
 import { homeRoute } from './routes/home.js';

@@ -28,6 +28,7 @@ var errorStrings = {
     projectName: "Project name is required.",
     projectTitle: "Project title is required.",
     projectSource: "Project source is required.",
+    projectTitleUnique: "This project title already exists and each project title must be unique.",
 };
 
 // Status code constants

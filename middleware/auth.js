@@ -1,5 +1,5 @@
 // Authentication Middleware
-import { constants } from '../models/constants.js';
+import { constants } from '../config/constants.js';
 
 // Make sure the user is logged in, and if not, redirect to login with a message
 export function loggedInOnly (req, res, next) {

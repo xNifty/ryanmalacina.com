@@ -6,8 +6,7 @@
     we show the error message right on the screen so that we can fix it, while on production we just render
     the error page with the generic error message relevant to that error message.
 */
-import { constants } from '../models/constants.js';
-//var constants = require('../models/constants');
+import { constants } from '../config/constants.js';
 
 export default function renderErrorPage(env, status, err, req, res) {
     if (status === 404) {

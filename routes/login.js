@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import auth from '../middleware/auth.js';
-import { constants } from '../models/constants.js';
+import { constants } from '../config/constants.js';
 
 const router = express.Router();
 

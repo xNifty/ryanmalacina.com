@@ -7,7 +7,7 @@ import session from 'express-session';
 import sanitize from 'sanitize-html';
 import dateFormat from 'dateformat';
 import MarkdownIt from 'markdown-it';
-import { constants } from '../models/constants.js';
+import { constants } from '../config/constants.js';
 import _ from 'lodash';
 
 const router = express.Router();

@@ -1,5 +1,5 @@
 import express from 'express';
-import { constants } from '../models/constants.js'
+import { constants } from '../config/constants.js'
 
 const router = express.Router();
 
