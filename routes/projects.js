@@ -93,16 +93,17 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         body of the page.  If there is no image found, we will use the default image that we set.
     */
     let projectImage = '';
+    let adjustedFileName = '';
 
-    if (req.body.project_image)
+    if (req.files.project_image) {
         projectImage = req.files.project_image;
-
-    // Add timestamp to filename
-    var adjustedFileName;
-    if (projectImage) {
         adjustedFileName = projectImage.name.split('.').join('-' + Date.now() + '.');
         project.project_image = adjustedFileName;
-    };
+    } else {
+        if (!project.project_image) {
+            project.project_image = 'default.png';
+        }
+    }
 
     project.project_description_markdown = req.body.project_description;
     project.project_description_html = projectSanitized;
@@ -123,7 +124,7 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
             project_title: req.body.project_title,
             project_source: req.body.project_source,
             project_description: req.body.project_description,
-            project_image: req.body.project_image ? req.body.project_image : '',
+            project_image: req.files.project_image ? req.files.project_image : '',
 	        last_edited: saveDate
         });
     }
@@ -176,8 +177,10 @@ router.get('/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
 });
 
 router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
-    let currentImage = await Project.find({_id: req.session.project_id}).select(
+    let project = await Project.find({_id: req.session.project_id}).select(
         { project_image: 1, _id: 0, is_published: 1 });
+
+        req.session.project_image = project[0].project_image;
 
     try {
         const { error } = validateProject(req.body);
@@ -208,59 +211,38 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         // We want to allow the h1 tag in our sanitizing
         let projectSanitized = sanitize(projectDescription, { allowedTags: safeTags });
         let saveDate = new Date(Date.now());
+
+        /*
+        Default the project image to blank and if it exists, we can then set the image to the image from the
+        body of the page.  If there is no image found, we will use the default image that we set.
+        */
         let projectImage = '';
+        let adjustedFileName = '';
 
-        // @TODO : CLEAN ALL OF THIS UP; THIS IS UGLY
-        try {
+        if (req.files) {
             projectImage = req.files.project_image;
-        } catch (ex) {
-            projectImage = '';
+            adjustedFileName = projectImage.name.split('.').join('-' + Date.now() + '.');
+
+            req.session.project_image = projectImage;
+
+            await projectImage.mv('./public/images/' + adjustedFileName);
+            await Project.findByIdAndUpdate({_id: req.session.project_id}, {
+                project_name: req.body.project_name,
+                project_title: req.body.project_title,
+                project_source: req.body.project_source,
+                project_description_markdown: req.body.project_description,
+                project_description_html: projectSanitized,
+                project_image: projectImage.name,
+                last_edited: saveDate
+            });
         }
 
-        // If no image is selected, set it to the existing image; otherwise, error because we need an image
-        if (!projectImage) {
-            if (currentImage[0].project_image) {
-                projectImage = currentImage[0].project_image;
-                await Project.findByIdAndUpdate({_id: req.session.project_id}, {
-                    project_name: req.body.project_name,
-                    project_title: req.body.project_title,
-                    project_source: req.body.project_source,
-                    project_description_markdown: req.body.project_description,
-                    project_description_html: projectSanitized,
-                    project_image: projectImage,
-                    last_edited: saveDate
-                });
-            }
-            else {
-                throw new Error(constants.errors.imageRequired);
-            }
-        } else {
-            // Only move if the image has a different name; unique names only, not that hard
-            // @TODO : really should limit file sizes to the ideal image size of 263x263
-            if (projectImage.name === currentImage[0].project_image) { // Boy, this is just dumb
-                throw new Error(constants.errors.uniqueImageName);
-            } else {
-                // Not the same, so move it!
-                // This condition is only ever going to be met if it's a new image, but maybe should add some security
-                // to this later on, just in case
-                await projectImage.mv('./public/images/' + projectImage.name);
-                await Project.findByIdAndUpdate({_id: req.session.project_id}, {
-                    project_name: req.body.project_name,
-                    project_title: req.body.project_title,
-                    project_source: req.body.project_source,
-                    project_description_markdown: req.body.project_description,
-                    project_description_html: projectSanitized,
-                    project_image: projectImage.name,
-                    last_edited: saveDate
-                });
-            }
-        }
-        if (req.session.projectEditSuccess && currentImage[0].is_published) {
+        if (req.session.projectEditSuccess && project[0].is_published) {
             let returnTo = req.session.projectEditSuccess;
             clearProjectEditSessionVariables(req);
             req.flash('success', constants.success.projectUpdated);
             return res.redirect(returnTo);
-        } else if (req.session.projectEditSuccess && !currentImage[0].is_published) {
+        } else if (req.session.projectEditSuccess && !project[0].is_published) {
             let returnTo = req.session.projectEditReturnTo;
             clearProjectEditSessionVariables(req);
             req.flash('success', constants.success.projectUpdated);
@@ -277,7 +259,6 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         req.session.project_title = req.body.project_title;
         req.session.project_source = req.body.project_source;
         req.session.project_description_markdown = req.body.project_description;
-        req.session.project_image = currentImage[0].project_image;
 
         res.render('admin/projects/new-project', {
             layout: 'projects',
