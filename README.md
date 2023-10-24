@@ -21,7 +21,7 @@ If you wish to use this for your own personal site, there are a few things to no
    d. secretKey
 
 3. The other keys are optional and not required unless you wish to make use of that functionality
-4. siteKey and secretKey are from Recaptcha, and therefore you will need to generate them there
+4. siteKey and secretKey are from Recaptcha, and therefore you will need to generate them there  
    a. They are required at this time as there is no setting for enabling or disabling Recaptcha support
 
 ## Config File
@@ -39,7 +39,8 @@ If you wish to use this for your own personal site, there are a few things to no
 
 ## Installing
 
-There should be nothing else special that you need to do other than installing all dependencies via  
- ```
+There should be nothing else special that you need to do other than installing all dependencies via
+
+```
 npm install
 ```
