@@ -40,5 +40,6 @@ If you wish to use this for your own personal site, there are a few things to no
 ## Installing
 
 There should be nothing else special that you need to do other than installing all dependencies via  
- `    npm install
-   `
+ ```
+npm install
+```
