@@ -63,6 +63,7 @@ var pageHeaderStrings = {
     admin: "Ryan Malacina | Admin Backend",
     adminProject: "Ryan Malacina | Admin Backend - Projects",
     keybase: "Ryan Malacina | Keybase Identity",
+    error: "Ryan Malacina | Error"
 }
 
 // Finally, allow everything to be accessed when using constants in file

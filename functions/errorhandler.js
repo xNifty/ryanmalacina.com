@@ -12,22 +12,26 @@ export default function renderErrorPage(env, status, err, req, res) {
     if (status === 404) {
         res.render('error', {
             error: env === 'development' ? err.stack.replace("\n", "<br />") : constants.errors.pageNotFound,
-            status_code: constants.statusCodes[404]
+            status_code: constants.statusCodes[404],
+            title: constants.pageHeader.error,
         });
     } else if (status === 500) {
         res.render('error', {
             error: env ==='development' ? err.stack.replace("\n", "<br />") : constants.errors.serverError,
-            status_code: constants.statusCodes[500]
+            status_code: constants.statusCodes[500],
+            title: constants.pageHeader.error,
         });
     } else if (status === 401) {
         res.render('error', {
             error: constants.errors.notAuthorized,
-            status_code: constants.statusCodes[401]
+            status_code: constants.statusCodes[401],
+            title: constants.pageHeader.error,
         })
     } else {
         res.render('error', {
             error: env ==='development' ? err.stack.replace("\n", "<br />") : constants.errors.serverError,
-            status_code: constants.statusCodes[500]
+            status_code: constants.statusCodes[500],
+            title: constants.pageHeader.error,
         })
     }
 };
