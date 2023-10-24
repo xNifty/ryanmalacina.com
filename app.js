@@ -207,5 +207,5 @@ app.use(function (err, req, res, next) {
 });
 
 // Start everything and enjoy. :heart:
-app.listen(config.get("port"));
+app.listen(process.env.PORT);
 console.log("Server is now running in " + env + " mode.");

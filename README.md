@@ -18,7 +18,8 @@ If you wish to use this for your own personal site, there are a few things to no
    a. privateKey  
    b. mongoURL  
    c. siteKey  
-   d. secretKey
+   d. secretKey  
+   e. PORT
 
 3. The other keys are optional and not required unless you wish to make use of that functionality
 4. siteKey and secretKey are from Recaptcha, and therefore you will need to generate them there  
