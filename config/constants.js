@@ -29,6 +29,7 @@ var errorStrings = {
     projectTitle: "Project title is required.",
     projectSource: "Project source is required.",
     projectTitleUnique: "This project title already exists and each project title must be unique.",
+    newsDescriptionLength: "The news content must be at least 10 characters long.",
 };
 
 // Status code constants
