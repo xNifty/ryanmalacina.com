@@ -443,9 +443,9 @@ i.fa {
 
 .thumbnail .deleteProject .fa.fa-trash {
     color: black;
-    position: absolute;
-    top: 300px;
-    right: 15px;
+    position: sticky;
+    /* top: 300px; */
+    /* right: 15px; */
     /* margin: 5px 5px 0 0; */
 }
 
@@ -460,9 +460,9 @@ i.fa {
 
 .thumbnail input[type=checkbox] {
     color: black;
-    position: absolute;
-    top: 295px;
-    right: 35px;
+    position: sticky;
+    /* top: 295px; */
+    /* right: 35px; */
     /* margin: 5px 5px 0 0; */
 }
 
@@ -584,9 +584,3 @@ button.btn.btn-primary.right {
 .container a.adminButton {
     color: white;
 }
-
-
-.super-button{
-    background: #44C767; color: #FFFFFF; font-size: 42px; padding: 0.3em 0.6em; text-shadow: 0em 0em 0px #000000; box-shadow: 0em 0em 0px #000000; border-radius: 0.7em; border: solid 0em #000000; font-weight: 530; }
-    .super-button:hover{
-    background: #FF0000; }
