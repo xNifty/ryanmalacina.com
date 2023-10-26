@@ -67,16 +67,16 @@ function deleteProject() {
 function updateCheckbox() {
   $(this).prop("disabled", "disabled");
   $.ajax({
-      type:'put',
-      url: '/projects/update/'+$(this).data('id'),
-      data: "json",
-      success: function() {
-          $(this).removeAttr("disabled");
-          window.location.href = window.location.href;
-      },
-      fail: function() {
-          alert("There was an issue updating.  Check the error log.");
-      }
+        type:'put',
+        url: '/projects/update/'+$(this).data('id'),
+        data: "json",
+        success: function() {
+            $(this).removeAttr("disabled");
+            window.location.href = window.location.href;
+        },
+        fail: function() {
+            window.location.href = window.location.href;
+        }
   });
 
   return false;

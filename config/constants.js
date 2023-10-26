@@ -30,6 +30,7 @@ var errorStrings = {
     projectSource: "Project source is required.",
     projectTitleUnique: "This project title already exists and each project title must be unique.",
     newsDescriptionLength: "The news content must be at least 10 characters long.",
+    indexLimitReached: "There are already three projects selected for the index.",
 };
 
 // Status code constants

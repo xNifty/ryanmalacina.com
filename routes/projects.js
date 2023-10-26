@@ -340,6 +340,12 @@ router.put("/update/:id", [auth.isAdmin, auth.isLoggedIn], async(req, res) => {
     });
 
     let status = project.show_index;
+    const totalIndex = await Project.countDocuments({show_index: true}).count().exec();
+
+    if (!status && totalIndex === 3) {
+        req.flash('error', constants.errors.indexLimitReached);
+        return res.end('{"fail" : "Too Many Index Projects", "status" : 500}');
+    }
 
     try {
         if (status) {
