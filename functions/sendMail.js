@@ -15,7 +15,7 @@ const auth = {
     proxy: false // optional proxy, default is false
 };
 
-function sendMail(fromEmail, toEmail, subject, text, req, res) {
+export function sendMail(fromEmail, toEmail, subject, text, req, res) {
     try {
         mg.messages.create(domain, {
             from: fromEmail,
@@ -36,8 +36,32 @@ function sendMail(fromEmail, toEmail, subject, text, req, res) {
     } catch (ex) {
         console.log(ex);
         res.setHeader('Content-Type', 'application/json');
-            return res.end(JSON.stringify({fail: "Server error", status: 500}));
+        return res.end(JSON.stringify({fail: "Server error", status: 500}));
     }
 };
 
-export default sendMail;
+export function sendMailNoRedirect(fromEmail, toEmail, subject, text) {
+    try {
+        mg.messages.create(domain, {
+            from: fromEmail,
+            to: toEmail,
+            subject: subject,
+            text: text
+        })
+        .then(msg => {
+            return true;
+        })
+        .catch(err => {
+                console.log(`Error: ${err.message}`);
+                return false;
+        });
+    } catch (ex) {
+        console.log(ex);
+        return false;
+    }
+};
+
+export default {
+    sendMail,
+    sendMailNoRedirect
+}

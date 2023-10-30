@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import config from 'config';
 import jwt from 'jsonwebtoken';
 import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcrypt';
@@ -27,11 +26,25 @@ const userSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
+    email: {
+        type: String,
+        required: true
+    }
 });
 
 userSchema.methods.generateAuthToken = function() {
     return jwt.sign({_id: this._id}, process.env.privateKey);
 };
+
+userSchema.pre("save", async function(next) {
+    if (!this.isModified("password")) {
+        return next();
+    }
+
+    const hash = await bcrypt.hash(this.password, Number(process.env.BCRYPT_SALT));
+    this.password = hash;
+    next();
+})
 
 userSchema.plugin(uniqueValidator);
 
