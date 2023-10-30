@@ -1,18 +1,14 @@
 import express from 'express';
 import { Project } from '../models/projects.js';
 import { News } from '../models/news.js';
-import mongoose from 'mongoose';
 import config from 'config';
 import { RecaptchaV3 as Recaptcha } from 'express-recaptcha';
 import ghostAPI from '@tryghost/content-api';
 import dateFormat from 'dateformat';
 import words from 'number-to-words-en';
-import formData from 'form-data';
-import Mailgun from 'mailgun.js';
+import sendMail from '../functions/sendMail.js';
 
-const mailgun = new Mailgun(formData);
 const router = express.Router();
-const mg = mailgun.client({username: 'api', key: process.env.mailgunAPI})
 
 const recaptcha = new Recaptcha(
     process.env.siteKey,
@@ -21,15 +17,6 @@ const recaptcha = new Recaptcha(
         callback: 'cb',
     }
 );
-
-// This is your API key that you retrieve from www.mailgun.com/cp (free up to 10K monthly emails)
-const auth = {
-    auth: {
-        api_key: process.env.mailgunAPI,
-        domain: process.env.mailgunDomain
-    },
-    proxy: false // optional proxy, default is false
-};
 
 router.get("/", recaptcha.middleware.render, async (req, res) => {
     let project_list = await listProjects();
@@ -112,33 +99,8 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
     //console.log(req.recaptcha.error);
 
     if (!req.recaptcha.error) {
-        try {
-            mg.messages.create(process.env.mailgunDomain, {
-                from: fromEmail,
-                to: toEmail, // An array if you have multiple recipients.
-                subject: subject_combined,
-                //html: message,
-                text: messaged_combined,
-            })
-            .then(msg => {
-                res.setHeader('Content-Type', 'application/json');
-                return res.end(JSON.stringify({success: "Updated Successfully", status: 200}));
-            })
-            .catch(err => {
-                    console.log(`Error: ${err.message}`);
-                    res.setHeader('Content-Type', 'application/json');
-                    req.recaptcha.re
-                    return res.end(JSON.stringify({fail: "Error", status: 400}));
-            });
-        } catch (ex) {
-            console.log(ex);
-            res.setHeader('Content-Type', 'application/json');
-            return res.end(JSON.stringify({fail: "Server error", status: 500}));
-        }
-    } else {
-        res.setHeader('Content-Type', 'application/json');
-        return res.end(JSON.stringify({fail: "Server error", status: 500}));
-   }
+        sendMail(fromEmail, toEmail, subject_combined, messaged_combined, req, res);
+    }
 });
 
 async function listProjects() {
