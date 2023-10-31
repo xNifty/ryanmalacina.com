@@ -27,6 +27,7 @@ import { logoutRoute } from './routes/logout.js';
 import { adminRoute } from './routes/admin.js';
 import { newsRoute } from './routes/news.js';
 import { resetRoute } from './routes/reset.js';
+import { passwordReset } from './routes/passwordReset.js';
 
 const app = express();
 const env = app.settings.env;
@@ -183,6 +184,7 @@ app.use('/logout', logoutRoute);
 app.use('/admin', adminRoute);
 app.use('/news', newsRoute);
 app.use('/reset', resetRoute);
+app.use('/updatePassword', passwordReset);
 
 // Send user to my blog via a 301 redirect
 app.get("/blog", function(req, res) {
