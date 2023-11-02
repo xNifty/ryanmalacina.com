@@ -2,6 +2,8 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import { constants } from '../config/constants.js';
 import { User } from '../models/user.js';
+import { resetNoToken } from './passwordReset.js';
+import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
@@ -15,8 +17,66 @@ router.get("/", [auth.isLoggedIn], async (req, res) => {
 
 router.post("/", [auth.isLoggedIn], async (req, res) => {
   var userName = req.body.user_name;
-  console.log(req.body);
-  console.log(userName);
+  var email = req.body.user_email;
+  var passwordOne = req.body.pass_change_one;
+  var passwordTwo = req.body.pass_change_two;
+  var currentPassword = req.body.pass_current;
+
+  console.log(`${userName}, ${email}, ${passwordOne}, ${passwordTwo}, ${currentPassword}`);
+
+  if (passwordOne || passwordTwo) {
+    if (passwordOne !== passwordTwo) {
+      req.flash("error", "The new password must match the confirm password. No profile changes have been made.");
+      return res.redirect('/profile');
+    } else {
+      var user = await User.findOne({_id: req.user.id});
+      var originalPassword = user.password;
+      console.log(`${originalPassword}, ${user}`);
+      // originalPassword = await bcrypt.hash(originalPassword, Number(process.env.BCRYPT_SALT))
+      //currentPassword = await bcrypt.hash(currentPassword, Number(process.env.BCRYPT_SALT))
+
+      const isValid = await bcrypt.compare(currentPassword, originalPassword);
+      if (!isValid) {
+        req.flash('error', 'Your information was not changed; current password wrong.');
+        return res.redirect('/profile');
+      }
+        
+      var reset = await resetNoToken(req.user.id, passwordOne);
+
+      var success = reset[0];
+      var hash = reset[1];
+
+      console.log(`${success}, ${hash}, ${reset}`);
+
+      if (success) {
+        try {
+          await User.updateOne(
+            {_id: req.user.id},
+            {$set: {password: hash, email: email, real_name: userName}},
+            {new: true}
+          );
+          req.flash("success", "Your information has been updated.");
+        } catch (ex) {
+          console.log(ex.message);
+          req.flash('error', 'Your information was not changed.');
+        }
+      } else {
+        req.flash('error', 'Your password was not changed.');
+      }
+    }
+  } else {
+    try {
+      await User.updateOne(
+        {_id: req.user.id},
+        {$set: {email: email, realName: userName}},
+        {new: true}
+      );
+      req.flash("success", "Your information has been updated.");
+    } catch (ex) {
+      console.log(ex.message);
+      req.flash('error', 'Your information was not changed.');
+    }
+  }
 
   return res.redirect('/profile');
 });

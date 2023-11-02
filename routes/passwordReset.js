@@ -65,4 +65,21 @@ async function resetPassword (userId, token, password) {
   return true;
 }
 
-export { router as passwordReset }
+async function resetPasswordNoToken (userId, password) {
+  if (!password)
+    return false;
+
+  const hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT))
+
+  console.log(`${password}, ${hash}`);
+
+  // await User.updateOne(
+  //   {_id: userId},
+  //   {$set: {password: hash}},
+  //   {new: true}
+  // );
+
+  return [true, hash];
+}
+
+export { router as passwordReset, resetPasswordNoToken as resetNoToken }
