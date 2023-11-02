@@ -22,22 +22,22 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
   var passwordTwo = req.body.pass_change_two;
   var currentPassword = req.body.pass_current;
 
-  console.log(`${userName}, ${email}, ${passwordOne}, ${passwordTwo}, ${currentPassword}`);
+  // console.log(`${userName}, ${email}, ${passwordOne}, ${passwordTwo}, ${currentPassword}`);
 
   if (passwordOne || passwordTwo) {
     if (passwordOne !== passwordTwo) {
-      req.flash("error", "The new password must match the confirm password. No profile changes have been made.");
+      req.flash("error", constants.profile.passwordsNotMatch);
       return res.redirect('/profile');
     } else {
       var user = await User.findOne({_id: req.user.id});
       var originalPassword = user.password;
-      console.log(`${originalPassword}, ${user}`);
+      // console.log(`${originalPassword}, ${user}`);
       // originalPassword = await bcrypt.hash(originalPassword, Number(process.env.BCRYPT_SALT))
       //currentPassword = await bcrypt.hash(currentPassword, Number(process.env.BCRYPT_SALT))
 
       const isValid = await bcrypt.compare(currentPassword, originalPassword);
       if (!isValid) {
-        req.flash('error', 'Your information was not changed; current password wrong.');
+        req.flash('error', constants.profile.currentPasswordWrong);
         return res.redirect('/profile');
       }
         
@@ -46,7 +46,7 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
       var success = reset[0];
       var hash = reset[1];
 
-      console.log(`${success}, ${hash}, ${reset}`);
+      // console.log(`${success}, ${hash}, ${reset}`);
 
       if (success) {
         try {
@@ -55,13 +55,13 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
             {$set: {password: hash, email: email, real_name: userName}},
             {new: true}
           );
-          req.flash("success", "Your information has been updated.");
+          req.flash('success', constants.profile.profileUpdateSuccess);
         } catch (ex) {
           console.log(ex.message);
-          req.flash('error', 'Your information was not changed.');
+          req.flash('error', constants.profile.profileUpdateError);
         }
       } else {
-        req.flash('error', 'Your password was not changed.');
+        req.flash('error', constants.profile.profileUpdateError);
       }
     }
   } else {
@@ -71,10 +71,10 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
         {$set: {email: email, realName: userName}},
         {new: true}
       );
-      req.flash("success", "Your information has been updated.");
+      req.flash('success', constants.profile.profileUpdateSuccess);
     } catch (ex) {
       console.log(ex.message);
-      req.flash('error', 'Your information was not changed.');
+      req.flash('error', constants.profile.profileUpdateError);
     }
   }
 

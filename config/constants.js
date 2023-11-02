@@ -33,6 +33,13 @@ var errorStrings = {
     indexLimitReached: "There are already three projects selected for the index.",
 };
 
+var profileStrings = {
+    passwordsNotMatch: "The entered passwords do not match. No profile changes have been made.",
+    currentPasswordWrong: "No profile information has been changed; the current password was incorrect.",
+    profileUpdateSuccess: "Your information has been updated.",
+    profileUpdateError: "Your information was not changed."
+};
+
 // Status code constants
 var statusCodeStrings = {
     401: "401 - Unauthorized",
@@ -75,11 +82,13 @@ var statusCodes = Object.freeze(statusCodeStrings);
 var success = Object.freeze(successStrings);
 var pageHeader = Object.freeze(pageHeaderStrings);
 var fileVersions = Object.freeze(fileVersions);
+var profile = Object.freeze(profileStrings);
 
 export const constants = {
     errors,
     statusCodes,
     success,
     pageHeader,
-    fileVersions
+    fileVersions,
+    profile
 };

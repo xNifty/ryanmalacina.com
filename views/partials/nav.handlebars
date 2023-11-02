@@ -50,6 +50,9 @@
 		            <li class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">Hello, {{ realName }}</a>
 			            <ul class="dropdown-menu">
+                            {{#if authenticated}}
+                            <li><a class="nav-link" href="/profile">Profile <span class="fa fa-user"></span></a></li>
+                            {{/if}}
                             {{#if isAdmin}}
                                 <li><a class="nav-link" href="/admin">Admin <span class="fa fa-unlock"></span></a></li>
                             {{/if}}
