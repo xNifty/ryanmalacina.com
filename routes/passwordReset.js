@@ -71,14 +71,6 @@ async function resetPasswordNoToken (userId, password) {
 
   const hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT))
 
-  // console.log(`${password}, ${hash}`);
-
-  // await User.updateOne(
-  //   {_id: userId},
-  //   {$set: {password: hash}},
-  //   {new: true}
-  // );
-
   return [true, hash];
 }
 
