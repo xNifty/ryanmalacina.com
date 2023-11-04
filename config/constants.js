@@ -60,6 +60,8 @@ var successStrings = {
     projectPublished: "Project published!",
     projectUnpublished: "Project unpublished!",
     deleteSuccess: "Entry deleted!",
+    passwordResetSent: "If a matching email was found a reset link has been sent.",
+    passwordChanged: "Your password has been changed successfully.",
 
 }
 

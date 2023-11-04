@@ -4,9 +4,11 @@ import { constants } from '../config/constants.js';
 import { User } from '../models/user.js';
 import { Token } from "../models/token.js";
 import bcrypt from 'bcrypt';
-import sendMail, { sendMailNoRedirect } from '../functions/sendMail.js';
+import { sendMailNoRedirect } from '../functions/sendMail.js';
 import crypto from 'crypto';
 import config from "config";
+import fs from 'fs';
+import path from 'path';
 
 const router = express.Router();
 
@@ -24,22 +26,27 @@ router.post('/', function(req, res) {
   emailOne = req.body.email_one;
   emailTwo = req.body.email_two;
 
-  console.log(`${emailOne}, ${emailTwo}`);
+  // console.log(`${emailOne}, ${emailTwo}`);
 
   if (emailOne !== emailTwo) {
     console.log("email fail");
-    req.flash('success', 'If a matching email was found a reset link has been sent.');
+    req.flash('success', constants.success.passwordResetSent);
     return res.redirect('/');
   }
 
   resetPassword(emailOne, req, res);
-  req.flash('success', 'If a matching email was found a reset link has been sent.');
+  req.flash('success', constants.success.passwordResetSent);
   return res.redirect('/');
 
 });
 
 const resetPassword = async(email, req, res) => {
   const user = await User.findOne({ email });
+
+  const __dirname = path.resolve();
+  const filePath = path.join(__dirname, '/views/layouts/passwordReset.handlebars');
+  const source = fs.readFileSync(filePath, 'utf-8').toString();
+  var template = (source);
 
   if (!user) {
     return false;
@@ -53,45 +60,21 @@ const resetPassword = async(email, req, res) => {
 
   const fromEmail = process.env.mailgunToEmail;
 
-  console.log(fromEmail);
-  console.log(user.email);
-
   await new Token ({
     userId: user._id,
     token: hash,
     createdAt: Date.now(),
   }).save();
 
-  const link = `${config.get('rootURL')}/passwordReset?token=${resetToken}&id=${user._id}`;
-  var subject = `Hello, ${user.realName},
-  
-You requested a new password. You can do so by clicking the following: 
+  const link = `${config.get('rootURL')}/resetPassword?token=${resetToken}&id=${user._id}`;
 
-${link}`
-  sendMailNoRedirect(fromEmail, user.email, 'Password Reset Email', subject);
+  template = template.replace('{{user}}', user.realName);
+  template = template.replace('{{link}}', link);
+
+  // console.log(template);
+
+  sendMailNoRedirect(fromEmail, user.email, 'Password Reset Email', template, true);
   return true;
 };
-
-// router.post('/modal', passport.authenticate("local", { failWithError: true }),
-//     function(req, res) {
-//         var returnTo = '';
-//         req.flash('success', constants.success.loginSuccess);
-//         if (req.query.returnTo !== undefined)
-//             var returnTo = req.query.returnTo;
-
-//         if (returnTo === '')
-//             res.redirect('/');
-//         else
-//             res.redirect(returnTo);
-//     },
-//     function(err, req, res, next) {
-//         if (req.session.returnTo == null) {
-//             return res.send('{"error" : "Login failed", "status" : 400}');
-//         } else {
-//             req.flash('error', constants.errors.invalidLogin);
-//             return res.redirect('/login');
-//         }
-//     }
-// );
 
 export { router as resetRoute }

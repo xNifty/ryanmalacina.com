@@ -2,8 +2,8 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import { constants } from '../config/constants.js';
 import { User } from '../models/user.js';
-import { resetNoToken } from './passwordReset.js';
 import bcrypt from 'bcrypt';
+import { resetPasswordNoToken } from '../functions/password.js';
 
 const router = express.Router();
 
@@ -41,7 +41,7 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
         return res.redirect('/profile');
       }
         
-      var reset = await resetNoToken(req.user.id, passwordOne);
+      var reset = await resetPasswordNoToken(req.user.id, passwordOne);
 
       var success = reset[0];
       var hash = reset[1];

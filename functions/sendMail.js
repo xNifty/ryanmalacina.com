@@ -40,21 +40,39 @@ export function sendMail(fromEmail, toEmail, subject, text, req, res) {
     }
 };
 
-export function sendMailNoRedirect(fromEmail, toEmail, subject, text) {
+export function sendMailNoRedirect(fromEmail, toEmail, subject, text, ishtml) {
     try {
-        mg.messages.create(domain, {
-            from: fromEmail,
-            to: toEmail,
-            subject: subject,
-            text: text
-        })
-        .then(msg => {
-            return true;
-        })
-        .catch(err => {
-                console.log(`Error: ${err.message}`);
-                return false;
-        });
+        if (ishtml) {
+            mg.messages.create(domain, {
+                from: fromEmail,
+                to: toEmail,
+                subject: subject,
+                text: subject,
+                html: text
+            })
+            .then(msg => {
+                return true;
+            })
+            .catch(err => {
+                    console.log(`Error: ${err.message}`);
+                    return false;
+            });
+        } else {
+            mg.messages.create(domain, {
+                from: fromEmail,
+                to: toEmail,
+                subject: subject,
+                text: text
+            })
+            .then(msg => {
+                return true;
+            })
+            .catch(err => {
+                    console.log(`Error: ${err.message}`);
+                    return false;
+            });
+        }
+        
     } catch (ex) {
         console.log(ex);
         return false;
