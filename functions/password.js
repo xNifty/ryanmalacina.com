@@ -3,6 +3,8 @@ import { Token } from "../models/token.js";
 import bcrypt from 'bcrypt';
 import { sendMailNoRedirect } from '../functions/sendMail.js';
 import { constants } from '../config/constants.js';
+import fs from 'fs';
+import path from 'path';
 
 export async function resetPassword (userId, token, password) {
   let passwordToken = await Token.findOne({userId});
@@ -21,8 +23,16 @@ export async function resetPassword (userId, token, password) {
     {new: true}
   );
 
+  const __dirname = path.resolve();
+  const filePath = path.join(__dirname, '/views/layouts/templates/passwordResetSuccess.handlebars');
+  const source = fs.readFileSync(filePath, 'utf-8').toString();
+  var template = (source);
+
   const user = await User.findById({_id: userId});
-  sendMailNoRedirect(process.env.mailgunToEmail, user.email, "Password Changed", constants.success.passwordChanged);
+
+  template = template.replace('{{user}}', user.realName);
+
+  sendMailNoRedirect(process.env.mailgunFromEmail, user.email, "Password Changed", template, true);
   await passwordToken.deleteOne();
 
   return true;

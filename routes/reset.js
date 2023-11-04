@@ -44,7 +44,7 @@ const resetPassword = async(email, req, res) => {
   const user = await User.findOne({ email });
 
   const __dirname = path.resolve();
-  const filePath = path.join(__dirname, '/views/layouts/passwordReset.handlebars');
+  const filePath = path.join(__dirname, '/views/layouts/templates/passwordReset.handlebars');
   const source = fs.readFileSync(filePath, 'utf-8').toString();
   var template = (source);
 
@@ -58,7 +58,7 @@ const resetPassword = async(email, req, res) => {
   let resetToken = crypto.randomBytes(32).toString("hex");
   const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
 
-  const fromEmail = process.env.mailgunToEmail;
+  const fromEmail = process.env.mailgunFromEmail;
 
   await new Token ({
     userId: user._id,

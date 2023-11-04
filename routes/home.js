@@ -87,7 +87,7 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
 
 router.post('/send', recaptcha.middleware.verify, async(req, res) => {
     let fromEmail = req.body.email;
-    let toEmail = process.env.mailgunToEmail;
+    let toEmail = process.env.mailgunFromEmail;
     let subject = req.body.subject;
     let message = req.body.message;
 
