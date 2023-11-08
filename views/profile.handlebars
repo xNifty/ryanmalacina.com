@@ -5,13 +5,12 @@
     </div>
     <form action="/profile" method="post" id="profile_content">
       <div class="form-group">
-            Your Name<br> <input type="text" class="custom-text" id="user_name" name="user_name"
-                                    {{#if user_name}}value="{{user_name}}"{{/if}}><br><br>
-            Your Email<br> <input type="text" class="custom-text" name="user_email"
-                                      {{#if user_email}}value="{{user_email}}"{{/if}}><br><br>
-            New Password<br> <input class="form-control" placeholder="New Password" name="pass_change_one" type="password" value="" id="pass_change_one"><br>
-            Confirm Password<br> <input class="form-control" placeholder="Confirm Password" name="pass_change_two" type="password" value="" id="pass_change_two"><br>
-            Current Password<br> <input class="form-control" type="password" placeholder="Current Password" value="" id="pass_current" name="pass_current"><br>
+            Your Name<br> <input type="text" class="form-control custom-text" id="user_name" name="user_name" {{#if user_name}}value="{{user_name}}"{{/if}}>
+            Your Email<br> <input type="text" class="form-control custom-text" name="user_email" {{#if user_email}}value="{{user_email}}"{{/if}}>
+            <hr>
+            New Password<br> <input class="form-control" placeholder="New Password" name="pass_change_one" type="password" value="" id="pass_change_one">
+            Confirm Password<br> <input class="form-control" placeholder="Confirm Password" name="pass_change_two" type="password" value="" id="pass_change_two">
+            Current Password<br> <input class="form-control" type="password" placeholder="Current Password" value="" id="pass_current" name="pass_current">
         </div>
       <button type="submit" class="btn btn-primary">
         <span class="glyphicon glyphicon-pencil"></span> Update Profile</button>
