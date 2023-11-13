@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
@@ -8,7 +7,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 5,
-        maxlength: 50
+        maxlength: 50,
+        unique: true
     },
     password: {
         type: String,
@@ -28,7 +28,8 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     }
 });
 
@@ -45,8 +46,6 @@ userSchema.pre("save", async function(next) {
     this.password = hash;
     next();
 })
-
-userSchema.plugin(uniqueValidator);
 
 userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.password);
