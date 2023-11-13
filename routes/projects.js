@@ -118,7 +118,15 @@ router.post('/new', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         await project.save();
     } catch(ex) {
         if (ex.code === 11000) {
-            errorMessage = constants.errors.projectTitleUnique;
+            if (ex.keyPattern.project_name) {
+                errorMessage = constants.errors.projectNameUnique;
+            }
+            else if (ex.keyPattern.project_title) {
+                errorMessage = constants.errors.projectTitleUnique;
+
+            } else {
+                errorMessage = constants.errors.genericError;
+            }
         }
         return res.status(400).render('admin/projects/new-project', {
             layout: 'projects',
@@ -180,15 +188,15 @@ router.get('/:id/edit', [auth.isLoggedIn, auth.isAdmin], async(req, res) => {
     }
 });
 
-router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
-    let project = await Project.find({_id: req.session.project_id}).select(
+router.post('/:id/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
+    let project = await Project.find({_id: req.params.id}).select(
         { project_image: 1, _id: 0, is_published: 1 });
 
         req.session.project_image = project[0].project_image;
 
     try {
         const { error } = validateProject(req.body);
-        var errorMessage = '';
+        var errorMessage = ''; 
         // Return error messages because this is getting old
         if (error) {
             for (let i = 0; i < error.details.length; i++) {
@@ -220,7 +228,7 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
         Default the project image to blank and if it exists, we can then set the image to the image from the
         body of the page.  If there is no image found, we will use the default image that we set.
         */
-        let projectImage = '';
+        let projectImage = req.session.project_image;
         let adjustedFileName = '';
 
         if (req.files) {
@@ -228,68 +236,73 @@ router.post('/edit', [auth.isLoggedInJson, auth.isAdmin], async(req, res) => {
             adjustedFileName = projectImage.name.split('.').join('-' + Date.now() + '.');
 
             req.session.project_image = projectImage;
-
-            await projectImage.mv('./public/images/' + adjustedFileName);
-            await Project.findByIdAndUpdate({_id: req.session.project_id}, {
-                project_name: req.body.project_name,
-                project_title: req.body.project_title,
-                project_source: req.body.project_source,
-                project_description_markdown: req.body.project_description,
-                project_description_html: projectSanitized,
-                project_image: projectImage.name,
-                last_edited: saveDate
-            });
+            
+            try {
+                await projectImage.mv('./public/images/' + adjustedFileName);
+                projectImage = adjustedFileName;
+            } catch (ex) {
+                console.log(ex);
+            }
         }
 
-        if (req.session.projectEditSuccess && project[0].is_published) {
+        // let [updateStatus, message] = await updateProject(req.session.project_id, req.body.project_name, 
+        //     req.body.project_tite, req.body.project_source, req.body.project_description, 
+        //     projectSanitized, projectImage, saveDate);
+
+        let projectUpdate = await Project.findById(req.params.id);
+        projectUpdate.project_name = req.body.project_name;
+        projectUpdate.project_title = req.body.project_title;
+        projectUpdate.project_source = req.body.project_source;
+        projectUpdate.project_description_markdown = req.body.project_description;
+        projectUpdate.project_description_html = projectSanitized;
+        projectUpdate.project_image = projectImage;
+        projectUpdate.last_edited = saveDate;
+        projectUpdate.save()
+        .then(() => {
+            if (req.session.projectEditSuccess && project[0].is_published) {
             let returnTo = req.session.projectEditSuccess;
             clearProjectEditSessionVariables(req);
             req.flash('success', constants.success.projectUpdated);
             return res.redirect(returnTo);
-        } else if (req.session.projectEditSuccess && !project[0].is_published) {
-            let returnTo = req.session.projectEditReturnTo;
-            clearProjectEditSessionVariables(req);
-            req.flash('success', constants.success.projectUpdated);
-            return res.redirect(returnTo);
-        } else {
-            clearProjectEditSessionVariables(req);
-            req.flash('success', constants.success.projectUpdated);
-            return res.redirect('/projects');
-        }
-    } catch(ex) {
-        // @TODO: So this is hacky and should be redone later
-        req.session.loadProjectFromSession = true;
-        req.session.project_name = req.body.project_name;
-        req.session.project_title = req.body.project_title;
-        req.session.project_source = req.body.project_source;
-        req.session.project_description_markdown = req.body.project_description;
+            } else if (req.session.projectEditSuccess && !project[0].is_published) {
+                let returnTo = req.session.projectEditReturnTo;
+                clearProjectEditSessionVariables(req);
+                req.flash('success', constants.success.projectUpdated);
+                return res.redirect(returnTo);
+            } else {
+                clearProjectEditSessionVariables(req);
+                req.flash('success', constants.success.projectUpdated);
+                return res.redirect('/projects');
+            }
+        })
+        .catch((ex) => {
+            if (ex.code === 11000) {
+                if (ex.keyPattern.project_name) {
+                    errorMessage += constants.errors.projectNameUnique;
+                }
+                else if (ex.keyPattern.project_title) {
+                    errorMessage += constants.errors.projectTitleUnique;
 
-        res.render('admin/projects/new-project', {
-            layout: 'projects',
-            update_project: true,
-            project_name: req.session.project_name,
-            project_title: req.session.project_title,
-            project_source: req.session.project_source,
-            project_description: req.session.project_description_markdown,
-            project_image: req.session.project_image,
-            id: req.session.project_Id,
-            error: errorMessage
+                } else {
+                    errorMessage += constants.errors.genericError;
+                }
+            } else {
+                errorMessage += constants.errors.genericError;
+            };
+
+            req.session.loadProjectFromSession = true;
+            req.session.project_name = req.body.project_name;
+            req.session.project_title = req.body.project_title;
+            req.session.project_source = req.body.project_source;
+            req.session.project_description_markdown = req.body.project_description;
+            req.session.project_id = projectUpdate._id;
+    
+            req.flash('error', errorMessage);
+            return res.redirect('/projects/' + req.session.project_id + '/edit');
         });
-
-        clearProjectEditSessionVariables(req);
-        return;
-
-        // if (req.session.projectReturnTo) {
-        //     let returnToEdit = req.session.projectEditReturnTo;
-        //     delete req.session.projectEditReturnTo;
-        //     req.flash('error', ex.message);
-        //     return res.redirect(returnToEdit);
-        // } else {
-        //     req.flash('error', ex.message);
-        //     return res.redirect('/projects');
-        // }
+    } catch(ex) {
+        console.log(ex);
     }
-
 });
 
 // Delete project

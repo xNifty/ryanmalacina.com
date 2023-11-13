@@ -21,7 +21,7 @@
 {{#if update_project}}
     <div class="container">
         <a class="back-button" href="/projects/{{_id}}" data-toogle="tooltip" title="Return to Project"></a>
-        <form action="/projects/edit" method="post" enctype="multipart/form-data">
+        <form action="/projects/{{id}}/edit" method="post" enctype="multipart/form-data">
 	        <div class="form-group">
                 Project Name<br> <input type="text" class="custom-text" name="project_name"
                                         {{#if project_name}}value="{{project_name}}"{{/if}}><br><br>

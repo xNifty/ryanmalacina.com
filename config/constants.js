@@ -11,6 +11,7 @@ var fileVersions = {
 
 // Error string constants
 var errorStrings = {
+    genericError: "Something went wrong, please try again.",
     accessDenied: "You do not have permission to access this content.",
     loginRequired: "Please login to access this content.",
     invalidLogin: "Invalid username or password!",
@@ -28,6 +29,7 @@ var errorStrings = {
     projectName: "Project name is required.",
     projectTitle: "Project title is required.",
     projectSource: "Project source is required.",
+    projectNameUnique: "This project name already exists and each project name must be unique.",
     projectTitleUnique: "This project title already exists and each project title must be unique.",
     newsDescriptionLength: "The news content must be at least 10 characters long.",
     indexLimitReached: "There are already three projects selected for the index.",
