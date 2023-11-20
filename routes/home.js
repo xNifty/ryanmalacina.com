@@ -6,7 +6,7 @@ import { RecaptchaV3 as Recaptcha } from 'express-recaptcha';
 import ghostAPI from '@tryghost/content-api';
 import dateFormat from 'dateformat';
 import words from 'number-to-words-en';
-import sendMail from '../functions/sendMail.js';
+import { sendMail } from '../functions/sendMail.js';
 
 const router = express.Router();
 
@@ -94,9 +94,6 @@ router.post('/send', recaptcha.middleware.verify, async(req, res) => {
     let subject_name = req.body.name;
     let subject_combined = `Email received on behalf of ${subject_name}:\n ` + subject;
     let messaged_combined = `Contact form email on behalf of: ${subject_name}\n\n----\n\n` + message;
-
-    //console.log(req.recaptcha.data);
-    //console.log(req.recaptcha.error);
 
     if (!req.recaptcha.error) {
         sendMail(fromEmail, toEmail, subject_combined, messaged_combined, req, res);
