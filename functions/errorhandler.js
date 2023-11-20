@@ -6,32 +6,41 @@
     we show the error message right on the screen so that we can fix it, while on production we just render
     the error page with the generic error message relevant to that error message.
 */
-import { constants } from '../config/constants.js';
+import { constants } from "../config/constants.js";
 
 export default function renderErrorPage(env, status, err, req, res) {
-    if (status === 404) {
-        res.render('error', {
-            error: env === 'development' ? err.stack.replace("\n", "<br />") : constants.errors.pageNotFound,
-            status_code: constants.statusCodes[404],
-            title: constants.pageHeader.error,
-        });
-    } else if (status === 500) {
-        res.render('error', {
-            error: env ==='development' ? err.stack.replace("\n", "<br />") : constants.errors.serverError,
-            status_code: constants.statusCodes[500],
-            title: constants.pageHeader.error,
-        });
-    } else if (status === 401) {
-        res.render('error', {
-            error: constants.errors.notAuthorized,
-            status_code: constants.statusCodes[401],
-            title: constants.pageHeader.error,
-        })
-    } else {
-        res.render('error', {
-            error: env ==='development' ? err.stack.replace("\n", "<br />") : constants.errors.serverError,
-            status_code: constants.statusCodes[500],
-            title: constants.pageHeader.error,
-        })
-    }
-};
+  if (status === 404) {
+    res.render("error", {
+      error:
+        env === "development"
+          ? err.stack.replace("\n", "<br />")
+          : constants.errors.pageNotFound,
+      status_code: constants.statusCodes[404],
+      title: constants.pageHeader.error,
+    });
+  } else if (status === 500) {
+    res.render("error", {
+      error:
+        env === "development"
+          ? err.stack.replace("\n", "<br />")
+          : constants.errors.serverError,
+      status_code: constants.statusCodes[500],
+      title: constants.pageHeader.error,
+    });
+  } else if (status === 401) {
+    res.render("error", {
+      error: constants.errors.notAuthorized,
+      status_code: constants.statusCodes[401],
+      title: constants.pageHeader.error,
+    });
+  } else {
+    res.render("error", {
+      error:
+        env === "development"
+          ? err.stack.replace("\n", "<br />")
+          : constants.errors.serverError,
+      status_code: constants.statusCodes[500],
+      title: constants.pageHeader.error,
+    });
+  }
+}

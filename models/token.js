@@ -1,10 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const tokenSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Types.ObjectId,
     required: true,
-    ref: 'User'
+    ref: "User",
   },
   token: {
     type: String,
@@ -17,4 +17,4 @@ const tokenSchema = new mongoose.Schema({
   },
 });
 
-export const Token = mongoose.model('Token', tokenSchema);
+export const Token = mongoose.model("Token", tokenSchema);

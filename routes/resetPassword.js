@@ -1,18 +1,18 @@
-import express from 'express';
-import auth from '../middleware/auth.js';
-import { constants } from '../config/constants.js';
-import { resetPassword } from '../functions/password.js';
+import express from "express";
+import auth from "../middleware/auth.js";
+import { constants } from "../config/constants.js";
+import { resetPassword } from "../functions/password.js";
 
 const router = express.Router();
 
 router.get("/", [auth.isLoggedOut], async (req, res) => {
-    return res.render("resetPassword", {
-        layout: 'reset',
-        title: constants.pageHeader.login
-    });
+  return res.render("resetPassword", {
+    layout: "reset",
+    title: constants.pageHeader.login,
+  });
 });
 
-router.post('/', function(req, res) {
+router.post("/", function (req, res) {
   var password_one;
   var password_two;
 
@@ -23,19 +23,19 @@ router.post('/', function(req, res) {
   var token = req.query.token;
 
   if (password_one !== password_two) {
-    req.flash('error', 'The entered passwords do not match.');
-    return res.redirect('/updatePassword?token=' + token + '&id=' + userId);
-  };
+    req.flash("error", "The entered passwords do not match.");
+    return res.redirect("/updatePassword?token=" + token + "&id=" + userId);
+  }
 
   var success = resetPassword(userId, token, password_one);
 
   if (success) {
-    req.flash('success', 'Your password has been changed successfully.');
-    return res.redirect('/');
+    req.flash("success", "Your password has been changed successfully.");
+    return res.redirect("/");
   } else {
-    req.flash('error', 'There was an issue updating your password.');
-    return res.redirect('/');
+    req.flash("error", "There was an issue updating your password.");
+    return res.redirect("/");
   }
 });
 
-export { router as passwordReset }
+export { router as passwordReset };
