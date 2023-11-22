@@ -37,7 +37,6 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
           dateFormat(date, "mmmm dS, yyyy") +
           " @ " +
           dateFormat(date, "h:MM TT");
-        //console.log(posts[x]);
       }
     } catch {
       showBlog = false;
@@ -48,7 +47,6 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
     let counter_number = x;
     counter_number++;
     news_list[x].counter = counter_number;
-    //console.log(news_list[x]);
   }
 
   if (news_list.length === 0) {
@@ -57,18 +55,15 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
     showNews = true;
   }
 
-  // console.log(res.recaptcha);
-
-  // This is really, really dumb - awesome!
+  // I really dislike this, but to get our nonce in there, this is what we have to do...
   let recaptcha = res.recaptcha;
   let recaptchaNonce = res.locals.nonce;
-  // recaptcha = recaptcha.replace('defer></script>', `" defer nonce="${recaptchaNonce}"></script>`); //<script>grecaptcha
-  // recaptcha = recaptcha.replace('<script>grecaptcha', `<script nonce="${recaptchaNonce}">grecaptcha`);
 
   recaptcha = recaptcha.replace(
     'BG"></script>',
     `BG" nonce="${recaptchaNonce}"></script>`
-  ); //<script>grecaptcha
+  );
+
   recaptcha = recaptcha.replace(
     "<script>grecaptcha",
     `<script nonce="${recaptchaNonce}">grecaptcha`
@@ -150,4 +145,3 @@ async function getBlogPosts() {
 }
 
 export { router as homeRoute };
-// module.exports = router;
