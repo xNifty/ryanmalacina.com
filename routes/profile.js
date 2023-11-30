@@ -9,6 +9,7 @@ const router = express.Router();
 
 router.get("/", [auth.isLoggedIn], async (req, res) => {
   return res.render("profile", {
+    layout: "profile",
     title: constants.pageHeader.profile,
     user_name: req.user.realName,
     user_email: req.user.email,

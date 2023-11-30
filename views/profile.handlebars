@@ -1,18 +1,46 @@
 <div class="container" id="profile">
     <div class="container">
-        <h1>Welcome to Your Profile</h1>
-    <p>On this page you can change your email, name, and password. Your username is locked to what it was created as.</p>
+      <h1>Welcome to Your Profile</h1>
+      <p>On this page you can change your email, name, and password. Your username is locked to what it was created as.</p>
     </div>
     <form action="/profile" method="post" id="profile_content">
       <div class="form-group">
-            Your Name<br> <input type="text" class="form-control custom-text" id="user_name" name="user_name" {{#if user_name}}value="{{user_name}}"{{/if}}>
-            Your Email<br> <input type="text" class="form-control custom-text" name="user_email" {{#if user_email}}value="{{user_email}}"{{/if}}>
-            <hr>
-            New Password<br> <input class="form-control" placeholder="New Password" name="pass_change_one" type="password" value="" id="pass_change_one">
-            Confirm Password<br> <input class="form-control" placeholder="Confirm Password" name="pass_change_two" type="password" value="" id="pass_change_two">
-            Current Password<br> <input class="form-control" type="password" placeholder="Current Password" value="" id="pass_current" name="pass_current">
+        <div class="form-group">
+          <label for="user_name">Your Name</label>
+          <input type="text" class="form-control custom-text" id="user_name" name="user_name" {{#if user_name}}value="{{user_name}}"{{/if}}>
         </div>
-      <button type="submit" class="btn btn-primary">
+        <div class="form-group">
+          <label for="user_email">Email</label>
+          <input type="text" class="form-control custom-text" name="user_email" {{#if user_email}}value="{{user_email}}"{{/if}}>
+        </div>
+        <div class="accordion" id="passwordAccordion">
+          <div class="card">
+            <div class="card-header" id="passwordHeading">
+                <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#passwordCollapse" aria-expanded="true" aria-controls="passwordCollapse">
+                        Change Password <span class="fa fa-lock"></span>
+                    </button>
+                </h2>
+            </div>
+            <div id="passwordCollapse" class="collapse" aria-labelledby="passwordHeading" data-parent="#passwordAccordion">
+              <div class="card-body">
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" class="form-control" id="pass_change_one" placeholder="New Password" name="pass_change_one">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Confirm New Password</label>
+                    <input type="password" class="form-control" id="pass_change_two" placeholder="New Password" name="pass_change_two">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Current Password</label>
+                    <input type="password" class="form-control" id="pass_current" placeholder="Current Password" name="pass_current">
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" id="profileUpdate">
         <span class="glyphicon glyphicon-pencil"></span> Update Profile</button>
     </form>
 </div>

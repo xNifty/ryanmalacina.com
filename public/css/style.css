@@ -584,3 +584,15 @@ button.btn.btn-primary.right {
 .container a.adminButton {
     color: white;
 }
+
+/* Password Accordion Styling */
+#passwordCollapse {
+    border: 1px solid;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+#passwordHeading button {
+    background: green;
+    color: black;
+}
