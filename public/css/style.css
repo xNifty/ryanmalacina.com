@@ -593,6 +593,11 @@ button.btn.btn-primary.right {
 }
 
 #passwordHeading button {
-    background: green;
+    background: darkgoldenrod;
     color: black;
+}
+
+#passwordMatchError {
+    font-weight: bold;
+    color: red;
 }
