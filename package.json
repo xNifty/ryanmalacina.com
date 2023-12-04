@@ -48,6 +48,7 @@
     "mem": "^9.0.2",
     "mongoose": "^8.0.2",
     "mongoose-paginate-v2": "^1.7.31",
+    "nonce-simple": "^1.0.0",
     "number-to-words-en": "^1.2.5",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
