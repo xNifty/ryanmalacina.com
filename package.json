@@ -48,11 +48,11 @@
     "mem": "^9.0.2",
     "mongoose": "^8.0.2",
     "mongoose-paginate-v2": "^1.7.31",
-    "nonce-simple": "^1.0.1",
+    "nonce-simple": "^1.0.2",
     "number-to-words-en": "^1.2.5",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "postcss": "^8.4.31",
+    "postcss": "^8.4.32",
     "sanitize-html": "^2.11.0",
     "uuid": "^9.0.1",
     "yargs": "^17.7.2"
