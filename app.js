@@ -68,7 +68,6 @@ const nonceOptions = {
   connect: [`https://cdn.jsdelivr.net`],
   frame: [`https://www.google.com/recaptcha/`],
   reportTo: "https://ryanmalacina.report-uri.com/r/d/csp/enforce",
-  useUnsafeInline: true,
 };
 
 // Set default layout, can be overridden per-route as needed
