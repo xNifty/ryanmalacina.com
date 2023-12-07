@@ -53,6 +53,8 @@ const nonceOptions = {
     `https://cdn.jsdelivr.net`,
     `https://www.google.com/recaptcha/`,
     `https://www.gstatic.com/recaptcha/`,
+    `'strict-dynamic'`,
+    `unsafe-inline`,
   ],
   styles: [
     `https://cdnjs.cloudflare.com`,
