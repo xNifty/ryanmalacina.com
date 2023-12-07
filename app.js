@@ -54,7 +54,7 @@ const nonceOptions = {
     `https://www.google.com/recaptcha/`,
     `https://www.gstatic.com/recaptcha/`,
     `'strict-dynamic'`,
-    `unsafe-inline`,
+    `'unsafe-inline'`,
   ],
   styles: [
     `https://cdnjs.cloudflare.com`,
