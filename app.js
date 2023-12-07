@@ -14,7 +14,7 @@ import LocalStrategy from "passport-local";
 import { User } from "./models/user.js";
 import { iff } from "./functions/helpers.js";
 import renderError from "./functions/errorhandler.js";
-import { generateNonce, getDirectives } from "./middleware/nonce.js";
+import { generateNonce, getDirectives } from "nonce-simple";
 import { constants } from "./config/constants.js";
 
 // Routes
@@ -44,6 +44,33 @@ if (!process.env.privateKey) {
   console.error(constants.errors.missingKey);
   process.exit(1);
 }
+
+const nonceOptions = {
+  scripts: [
+    `https://cdnjs.cloudflare.com`,
+    `https://code.jquery.com`,
+    `https://maxcdn.bootstrapcdn.com`,
+    `https://cdn.jsdelivr.net`,
+    `https://www.google.com/recaptcha/`,
+    `https://www.gstatic.com/recaptcha/`,
+    `'strict-dynamic'`,
+    `unsafe-inline`,
+  ],
+  styles: [
+    `https://cdnjs.cloudflare.com`,
+    `https://fonts.googleapis.com`,
+    `https://maxcdn.bootstrapcdn.com`,
+    `https://cdn.jsdelivr.net`,
+  ],
+  fonts: [
+    `https://cdnjs.cloudflare.com`,
+    `https://fonts.gstatic.com`,
+    `https://maxcdn.bootstrapcdn.com`,
+  ],
+  connect: [`https://cdn.jsdelivr.net`],
+  frame: [`https://www.google.com/recaptcha/`],
+  reportTo: "https://ryanmalacina.report-uri.com/r/d/csp/enforce",
+};
 
 // Set default layout, can be overridden per-route as needed
 // We also load any helper functions we wrote within helpers.js inside the functions folder
@@ -86,7 +113,10 @@ app.use(function (req, res, next) {
 // Setup to use the nonce middlewear that we created
 app.use(
   csp({
-    directives: getDirectives((req, res) => `'${res.locals.cspNonce}'`),
+    directives: getDirectives(
+      (req, res) => `'${res.locals.cspNonce}'`,
+      nonceOptions
+    ),
   })
 );
 

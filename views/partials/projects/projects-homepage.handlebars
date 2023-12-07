@@ -4,13 +4,14 @@
     simply basic ideas that I started but may not have finished.  While I only show three projects here on the home page, there are currently
     {{ project_count }} projects that I have listed. To view a list of all projects I have worked on you can click <a href="projects">here</a>.</p>
     {{#iff projects.length ">" 0}}
-        <div class="row text-center prjlist">
+        <div class="row text-center">
             {{#each projects as |projects| }}
-                <div class="col-md-4 col-sm-12 col-xs-12">
-                    <div class="thumbnail">
+            <div class="prjlist"></div>
+                <div class="col-xs-6 col-sm-4">
+                    <div class="thumbnail prjThumb">
                         <a href="/projects/{{ projects._id }}">
                             <img class="img-responsive greyimg" src="/images/{{ projects.project_image }}"
-                                 alt="Logo">
+                                 alt="{{ projects.project_name }} Logo">
                         </a>
                         <div class="caption center-block">
                             {{ projects.project_title }}

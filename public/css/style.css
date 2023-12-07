@@ -601,3 +601,15 @@ button.btn.btn-primary.right {
     font-weight: bold;
     color: red;
 }
+
+.prjlist img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Media query for smaller screens */
+@media only screen and (max-width: 600px) {
+    .prjThumb {
+        display: none;
+    }
+}
