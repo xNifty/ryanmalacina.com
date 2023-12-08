@@ -1,0 +1,1 @@
+{{!-- I intentionally built this page with partials, because it's made of two parts. By splitting it, it allows me to easily update either portion of the page with ease without risking breaking something in the other portion. is_valid gets passed if the project is valid; otherwise, render project index --}} {{#if is_valid}} {{> project-info}} {{else}} {{> project-index}} {{/if}}
