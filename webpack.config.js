@@ -36,10 +36,8 @@ function getAllFiles(dir) {
   dirContents.forEach((content) => {
     const contentPath = path.join(dir, content);
     if (statSync(contentPath).isDirectory()) {
-      // If it's a directory, recursively get files
       files.push(...getAllFiles(contentPath));
     } else {
-      // If it's a file, add it to the list
       files.push(contentPath);
     }
   });
@@ -53,6 +51,7 @@ const config = {
       "@js": path.resolve(__dirname, "public/js"),
       "@css": path.resolve(__dirname, "public/css"),
     },
+    extensions: [".js", ".handlebars"], // Add this line
   },
   entry: {
     file1: "@js/admin-news.js",

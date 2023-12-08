@@ -1,14 +1,16 @@
 <div class="container">
-    <a class="back-button" href="/admin/news" data-toggle="tooltip" title="Return to news"></a>
+    <a class="back-button" href="/admin/news" data-toogle="tooltip" title="Return to news"></a>
     <form action="/admin/news/edit" method="post" data="{{news._id}}">
         <div class="form-group">
-            News Title<br>
-            <input type="text" class="custom-text" name="news_title" placeholder="News Title" {{#if news_title}}value="{{news_title}}"{{/if}}><br><br>
-            News Content - Max 2000 characters<br>
-            <textarea class="input-block-level" id="editor" name="news_description">{{#if news_description}}{{news_description}}{{/if}}</textarea>
+            <label for="news_title">News Title</label><br>
+            <input type="text" class="custom-text" name="news_title" placeholder="News Title" value="{{#if news_title}}{{news_title}}{{/if}}"><br><br>
+            <div class="form-group">
+                <label for="news_description">News Content - Max 2000 characters</label><br>
+                <textarea class="input-block-level" id="editor" name="news_description">{{#if news_description}}{{news_description}}{{/if}}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-pencil"></span> Submit Edited News
+            </button>
         </div>
-        <button type="submit" class="btn btn-primary">
-            <span class="glyphicon glyphicon-pencil"></span> Submit Edited News
-        </button>
     </form>
 </div>
