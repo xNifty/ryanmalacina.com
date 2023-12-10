@@ -54,14 +54,14 @@ const config = {
     extensions: [".js", ".handlebars"], // Add this line
   },
   entry: {
-    file1: "@js/admin-news.js",
-    file2: "@js/admin.js",
-    file3: "@js/jquery.simplePagination.js",
-    file4: "@js/news.js",
-    file5: "@js/profile.js",
-    file6: "@js/site.js",
-    style1: "@css/simplePagination.css",
-    style2: "@css/style.css",
+    "admin-news": "@js/admin-news.js",
+    admin: "@js/admin.js",
+    "jquery.simplePagination": "@js/jquery.simplePagination.js",
+    news: "@js/news.js",
+    profile: "@js/profile.js",
+    site: "@js/site.js",
+    simplePagination: "@css/simplePagination.css",
+    style: "@css/style.css",
   },
   output: {
     filename: "js/[name].[contenthash].js",
