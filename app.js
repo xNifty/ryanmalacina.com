@@ -12,7 +12,7 @@ import passport from "passport";
 import LocalStrategy from "passport-local";
 
 import { User } from "./models/user.js";
-import { iff } from "./functions/helpers.js";
+import { iff, versionedFile } from "./functions/helpers.js";
 import renderError from "./functions/errorhandler.js";
 import { generateNonce, getDirectives } from "nonce-simple";
 import { constants } from "./config/constants.js";
@@ -80,6 +80,7 @@ const hbs = exphbs.create({
   layoutsDir: "views/layouts/",
   helpers: {
     iff: iff,
+    versionedFile: versionedFile,
   },
 });
 

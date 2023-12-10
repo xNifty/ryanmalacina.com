@@ -5,6 +5,7 @@ import { fileURLToPath, URL } from "url";
 import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import { WebpackManifestPlugin } from "webpack-manifest-plugin";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -72,6 +73,7 @@ const config = {
     new MiniCssExtractPlugin({
       filename: "css/[name].[contenthash].css",
     }),
+    new WebpackManifestPlugin(),
   ],
   module: {
     rules: [
