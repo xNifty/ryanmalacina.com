@@ -11,6 +11,14 @@ At this time, the front end is fairly generic, and this is because I am admitted
 
 If you wish to use this for your own personal site, there are a few things to note:
 
+## Webpack
+
+This project now makes use of Webpack for building everything. I added this to make it so that I could increment JS and CSS versions automatically instead of having to remember to update constant keys when I made changes. Building is fairly straight forward:
+
+```
+npm run build
+```
+
 ## .env File
 
 1. You must rename .example.env to .env and fill this out
@@ -36,7 +44,7 @@ If you wish to use this for your own personal site, there are a few things to no
    c. blogURL (if making use of Ghost Blog to integrate posts into homepage)  
    d. blogVersion (if making use of Ghost Blog to integrate posts into homepage (at this time it should be set to v5.0 if using latest Ghost))
 
-1. Required keys that you must change:
+1. Required keys that you must change:  
    a. rootURL
 
 ## Installing
