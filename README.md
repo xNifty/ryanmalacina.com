@@ -13,10 +13,10 @@ If you wish to use this for your own personal site, there are a few things to no
 
 ## Webpack
 
-This project now makes use of Webpack for building everything. I added this to make it so that I could increment JS and CSS versions automatically instead of having to remember to update constant keys when I made changes. Building is fairly straight forward:
+This project now makes use of Webpack for building the CSS and JS files. This removes the requirement for me to increment constant values when I make changes and instead simple requires me to run webpack to generate the new CSS and JS files so that any new versions are grabbed and cached versions are not loaded. The handlebars template files are set up to use the generated files.
 
 ```
-npm run build
+npx webpack
 ```
 
 ## .env File
