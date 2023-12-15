@@ -89,7 +89,6 @@ var errors = Object.freeze(errorStrings);
 var statusCodes = Object.freeze(statusCodeStrings);
 var success = Object.freeze(successStrings);
 var pageHeader = Object.freeze(pageHeaderStrings);
-var fileVersions = Object.freeze(fileVersions);
 var profile = Object.freeze(profileStrings);
 
 export const constants = {
@@ -97,6 +96,5 @@ export const constants = {
   statusCodes,
   success,
   pageHeader,
-  fileVersions,
   profile,
 };
