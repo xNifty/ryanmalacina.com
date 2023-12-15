@@ -1,14 +1,6 @@
 // Declare a lot of constants, organized in a somewhat useful manner
 // Mostly, this is just strings for use throughout the system so I can stop writing the same thing over and over
 
-// file versioning
-var fileVersions = {
-  cssFileVersion: "1.0.7",
-  jsFileVersion: "1.0.10",
-  adminJSFileVersion: "1.0.2",
-  newsJSFileVersion: "1.0.1",
-};
-
 // Error string constants
 var errorStrings = {
   genericError: "Something went wrong, please try again.",
@@ -97,7 +89,6 @@ var errors = Object.freeze(errorStrings);
 var statusCodes = Object.freeze(statusCodeStrings);
 var success = Object.freeze(successStrings);
 var pageHeader = Object.freeze(pageHeaderStrings);
-var fileVersions = Object.freeze(fileVersions);
 var profile = Object.freeze(profileStrings);
 
 export const constants = {
@@ -105,6 +96,5 @@ export const constants = {
   statusCodes,
   success,
   pageHeader,
-  fileVersions,
   profile,
 };

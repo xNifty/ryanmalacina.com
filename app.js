@@ -12,7 +12,7 @@ import passport from "passport";
 import LocalStrategy from "passport-local";
 
 import { User } from "./models/user.js";
-import { iff } from "./functions/helpers.js";
+import { iff, versionedFile } from "./functions/helpers.js";
 import renderError from "./functions/errorhandler.js";
 import { generateNonce, getDirectives } from "nonce-simple";
 import { constants } from "./config/constants.js";
@@ -32,12 +32,6 @@ import { profileRoute } from "./routes/profile.js";
 
 const app = express();
 const env = app.settings.env;
-
-// File versioning
-const jsFileVersion = constants.fileVersions.jsFileVersion;
-const cssFileVersion = constants.fileVersions.cssFileVersion;
-const adminJSFileVersion = constants.fileVersions.adminJSFileVersion;
-const newsJSFileVersion = constants.fileVersions.newsJSFileVersion;
 
 // Make sure our private token exists
 if (!process.env.privateKey) {
@@ -80,6 +74,7 @@ const hbs = exphbs.create({
   layoutsDir: "views/layouts/",
   helpers: {
     iff: iff,
+    versionedFile: versionedFile,
   },
 });
 
@@ -184,10 +179,6 @@ app.locals = {
   serverError: constants.errors.serverError,
   environment: app.get("env"),
   notAuthorized: constants.errors.notAuthorized,
-  jsFileVersion: jsFileVersion,
-  cssFileVersion: cssFileVersion,
-  adminJSFileVersion: adminJSFileVersion,
-  newsJSFileVersion: newsJSFileVersion,
 };
 
 app.use(function (req, res, next) {
