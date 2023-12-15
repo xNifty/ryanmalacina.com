@@ -33,12 +33,6 @@ import { profileRoute } from "./routes/profile.js";
 const app = express();
 const env = app.settings.env;
 
-// File versioning
-const jsFileVersion = constants.fileVersions.jsFileVersion;
-const cssFileVersion = constants.fileVersions.cssFileVersion;
-const adminJSFileVersion = constants.fileVersions.adminJSFileVersion;
-const newsJSFileVersion = constants.fileVersions.newsJSFileVersion;
-
 // Make sure our private token exists
 if (!process.env.privateKey) {
   console.error(constants.errors.missingKey);
@@ -185,10 +179,6 @@ app.locals = {
   serverError: constants.errors.serverError,
   environment: app.get("env"),
   notAuthorized: constants.errors.notAuthorized,
-  jsFileVersion: jsFileVersion,
-  cssFileVersion: cssFileVersion,
-  adminJSFileVersion: adminJSFileVersion,
-  newsJSFileVersion: newsJSFileVersion,
 };
 
 app.use(function (req, res, next) {
