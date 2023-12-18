@@ -15,7 +15,7 @@ import { User } from "./models/user.js";
 import { iff, versionedFile } from "./functions/helpers.js";
 import renderError from "./functions/errorhandler.js";
 import { generateNonce, getDirectives } from "nonce-simple";
-import { constants } from "./config/constants.js";
+import { errors, pageHeader } from "./config/constants.js";
 
 // Routes
 import { homeRoute } from "./routes/home.js";
@@ -35,7 +35,7 @@ const env = app.settings.env;
 
 // Make sure our private token exists
 if (!process.env.privateKey) {
-  console.error(constants.errors.missingKey);
+  console.error(errors.missingKey);
   process.exit(1);
 }
 
@@ -162,7 +162,7 @@ const local = new LocalStrategy((username, password, done) => {
   User.findOne({ username })
     .then((user) => {
       if (!user || !user.validPassword(password)) {
-        done(null, false, { message: constants.errors.invalidLogin });
+        done(null, false, { message: errors.invalidLogin });
       } else {
         done(null, user);
       }
@@ -174,11 +174,11 @@ passport.use("local", local);
 // Default values; we can override this on a per-route basis if needed
 app.locals = {
   currentyear: new Date().getFullYear(),
-  title: constants.pageHeader.index,
-  pageNotFound: constants.errors.pageNotFound,
-  serverError: constants.errors.serverError,
+  title: pageHeader.index,
+  pageNotFound: errors.pageNotFound,
+  serverError: errors.serverError,
   environment: app.get("env"),
-  notAuthorized: constants.errors.notAuthorized,
+  notAuthorized: errors.notAuthorized,
 };
 
 app.use(function (req, res, next) {

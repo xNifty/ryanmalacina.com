@@ -9,7 +9,12 @@ import MarkdownIt from "markdown-it";
 import sanitize from "sanitize-html";
 import dateFormat from "dateformat";
 import fileUpload from "express-fileupload";
-import { constants } from "../config/constants.js";
+import {
+  errors,
+  success,
+  pageHeader,
+  statusCodes,
+} from "../config/constants.js";
 import config from "config";
 import _ from "lodash";
 
@@ -103,7 +108,7 @@ router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
     return res.status(400).render("admin/projects/new-project", {
       layout: "projects",
       new_project: true,
-      error: constants.errors.allFieldsRequiredUploadImage,
+      error: errors.allFieldsRequiredUploadImage,
       project_name: req.body.project_name,
       project_title: req.body.project_title,
       project_source: req.body.project_source,
@@ -153,17 +158,17 @@ router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
   } catch (ex) {
     if (ex.code === 11000) {
       if (ex.keyPattern.project_name) {
-        errorMessage = constants.errors.projectNameUnique;
+        errorMessage = errors.projectNameUnique;
       } else if (ex.keyPattern.project_title) {
-        errorMessage = constants.errors.projectTitleUnique;
+        errorMessage = errors.projectTitleUnique;
       } else {
-        errorMessage = constants.errors.genericError;
+        errorMessage = errors.genericError;
       }
     }
     return res.status(400).render("admin/projects/new-project", {
       layout: "projects",
       new_project: true,
-      error: errorMessage ? errorMessage : constants.errors.allFieldsRequired,
+      error: errorMessage ? errorMessage : errors.allFieldsRequired,
       project_name: req.body.project_name,
       project_title: req.body.project_title,
       project_source: req.body.project_source,
@@ -173,7 +178,7 @@ router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
     });
   }
   if (req.session.returnToSession) delete req.session.returnToSession;
-  req.flash("success", constants.success.projectAdded);
+  req.flash("success", success.projectAdded);
   res.redirect("/projects");
 });
 
@@ -241,18 +246,18 @@ router.post(
       if (error) {
         for (let i = 0; i < error.details.length; i++) {
           if (error.details[i].context.key === "project_description") {
-            errorMessage += constants.errors.projectDescriptionLength + "<br>";
+            errorMessage += errors.projectDescriptionLength + "<br>";
           }
           if (error.details[i].context.key === "project_name") {
-            errorMessage += constants.errors.projectName + "<br>";
+            errorMessage += errors.projectName + "<br>";
           }
           if (error.details[i].context.key === "project_title") {
-            errorMessage += constants.errors.projectTitle + "<br>";
+            errorMessage += errors.projectTitle + "<br>";
           }
           if (error.details[i].context.key === "project_source") {
-            errorMessage += constants.errors.projectSource + "<br>";
+            errorMessage += errors.projectSource + "<br>";
           }
-          //throw new Error(constants.errors.projectDescriptionLength);
+          //throw new Error(errors.projectDescriptionLength);
         }
         throw new Error(errorMessage);
       }
@@ -307,7 +312,7 @@ router.post(
           if (req.session.projectEditSuccess && project[0].is_published) {
             let returnTo = req.session.projectEditSuccess;
             clearProjectEditSessionVariables(req);
-            req.flash("success", constants.success.projectUpdated);
+            req.flash("success", success.projectUpdated);
             return res.redirect(returnTo);
           } else if (
             req.session.projectEditSuccess &&
@@ -315,25 +320,25 @@ router.post(
           ) {
             let returnTo = req.session.projectEditReturnTo;
             clearProjectEditSessionVariables(req);
-            req.flash("success", constants.success.projectUpdated);
+            req.flash("success", success.projectUpdated);
             return res.redirect(returnTo);
           } else {
             clearProjectEditSessionVariables(req);
-            req.flash("success", constants.success.projectUpdated);
+            req.flash("success", success.projectUpdated);
             return res.redirect("/projects");
           }
         })
         .catch((ex) => {
           if (ex.code === 11000) {
             if (ex.keyPattern.project_name) {
-              errorMessage += constants.errors.projectNameUnique;
+              errorMessage += errors.projectNameUnique;
             } else if (ex.keyPattern.project_title) {
-              errorMessage += constants.errors.projectTitleUnique;
+              errorMessage += errors.projectTitleUnique;
             } else {
-              errorMessage += constants.errors.genericError;
+              errorMessage += errors.genericError;
             }
           } else {
-            errorMessage += constants.errors.genericError;
+            errorMessage += errors.genericError;
           }
 
           req.session.loadProjectFromSession = true;
@@ -357,10 +362,10 @@ router.post(
 router.put("/delete/:id", [auth.isAdmin, auth.isLoggedIn], async (req, res) => {
   let id = req.params.id;
   if (await deleteProject(id)) {
-    req.flash("success", constants.success.deleteSuccess);
+    req.flash("success", success.deleteSuccess);
     return res.end('{"success" : "Project Deleted", "status" : 200}');
   } else {
-    req.flash("error", constants.errors.publishError);
+    req.flash("error", errors.publishError);
     return res.end('{"fail" : "Server error", "status" : 500}');
   }
 });
@@ -376,9 +381,9 @@ router.get("/:id", async (req, res) => {
   // Intentionally leaving this different, as our "custom" error page doesn't display the text via alerts
   if (!project || !project.is_published) {
     return res.render("error", {
-      error: constants.errors.invalidProject,
-      title: constants.pageHeader.notFound,
-      status_code: constants.statusCodes[404],
+      error: errors.invalidProject,
+      title: pageHeader.notFound,
+      status_code: statusCodes[404],
     });
   }
 
@@ -407,7 +412,7 @@ router.put("/update/:id", [auth.isAdmin, auth.isLoggedIn], async (req, res) => {
     .exec();
 
   if (!status && totalIndex === 3) {
-    req.flash("error", constants.errors.indexLimitReached);
+    req.flash("error", errors.indexLimitReached);
     return res.end('{"fail" : "Too Many Index Projects", "status" : 500}');
   }
 

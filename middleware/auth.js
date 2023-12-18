@@ -1,5 +1,5 @@
 // Authentication Middleware
-import { constants } from "../config/constants.js";
+import { errors } from "../config/constants.js";
 
 // Make sure the user is logged in, and if not, redirect to login with a message
 export function loggedInOnly(req, res, next) {
@@ -8,7 +8,7 @@ export function loggedInOnly(req, res, next) {
     var returnTo = "";
     returnTo = req.originalUrl;
     if (returnTo !== "/logout") {
-      req.flash("error", constants.errors.loginRequired);
+      req.flash("error", errors.loginRequired);
       res.status(401);
       if (returnTo === "") res.redirect("/login");
       else res.redirect("/login?returnTo=" + returnTo);
@@ -24,7 +24,7 @@ export function loggedInOnlyJson(req, res, next) {
   if (req.isAuthenticated()) next();
   else {
     //req.session.returnTo = req.originalUrl;
-    req.flash("error", constants.errors.loginRequired);
+    req.flash("error", errors.loginRequired);
     res.status(401);
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify({ fail: "Unauthorized", status: 401 }));
@@ -41,7 +41,7 @@ export function loggedOutOnly(req, res, next) {
 export function ValidateAdmin(req, res, next) {
   if (req.user.isAdmin) next();
   else {
-    req.flash("error", constants.errors.accessDenied);
+    req.flash("error", errors.accessDenied);
     res.status(401);
     res.redirect("/");
   }

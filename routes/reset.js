@@ -1,6 +1,6 @@
 import express from "express";
 import auth from "../middleware/auth.js";
-import { constants } from "../config/constants.js";
+import { pageHeader, success } from "../config/constants.js";
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import bcrypt from "bcrypt";
@@ -15,7 +15,7 @@ const router = express.Router();
 router.get("/", [auth.isLoggedOut], async (req, res) => {
   return res.render("reset", {
     layout: "reset",
-    title: constants.pageHeader.forgotPassword,
+    title: pageHeader.forgotPassword,
   });
 });
 
@@ -30,12 +30,12 @@ router.post("/", function (req, res) {
 
   if (emailOne !== emailTwo) {
     console.log("email fail");
-    req.flash("success", constants.success.passwordResetSent);
+    req.flash("success", success.passwordResetSent);
     return res.redirect("/");
   }
 
   resetPassword(emailOne, req, res);
-  req.flash("success", constants.success.passwordResetSent);
+  req.flash("success", success.passwordResetSent);
   return res.redirect("/");
 });
 
