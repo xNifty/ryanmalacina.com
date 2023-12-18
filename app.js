@@ -151,7 +151,7 @@ passport.serializeUser(function (user, done) {
   done(null, user._id);
 });
 
-await passport.deserializeUser(function (userId, done) {
+passport.deserializeUser(function (userId, done) {
   User.findById(userId).then((user) => {
     done(null, user);
   });
