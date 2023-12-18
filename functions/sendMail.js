@@ -6,15 +6,6 @@ const mg = mailgun.client({ username: "api", key: process.env.mailgunAPI });
 
 const domain = process.env.mailgunDomain;
 
-// This is your API key that you retrieve from www.mailgun.com/cp (free up to 10K monthly emails)
-const auth = {
-  auth: {
-    api_key: process.env.mailgunAPI,
-    domain: process.env.mailgunDomain,
-  },
-  proxy: false, // optional proxy, default is false
-};
-
 export function sendMail(fromEmail, toEmail, subject, text, req, res) {
   try {
     mg.messages
