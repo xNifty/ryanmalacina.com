@@ -32,7 +32,7 @@ export async function resetPassword(userId, token, password) {
 
   template = template.replace("{{user}}", user.realName);
 
-  sendMailNoRedirect(
+  await sendMailNoRedirect(
     process.env.mailgunFromEmail,
     user.email,
     "Password Changed",

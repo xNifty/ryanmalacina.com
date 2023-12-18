@@ -96,7 +96,14 @@ router.post("/send", recaptcha.middleware.verify, async (req, res) => {
     `Contact form email on behalf of: ${subject_name}\n\n----\n\n` + message;
 
   if (!req.recaptcha.error) {
-    sendMail(fromEmail, toEmail, subject_combined, messaged_combined, req, res);
+    await sendMail(
+      fromEmail,
+      toEmail,
+      subject_combined,
+      messaged_combined,
+      req,
+      res
+    );
   }
 });
 

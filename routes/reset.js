@@ -77,7 +77,7 @@ const resetPassword = async (email, req, res) => {
 
   // console.log(template);
 
-  sendMailNoRedirect(
+  await sendMailNoRedirect(
     fromEmail,
     user.email,
     "Password Reset Email",
