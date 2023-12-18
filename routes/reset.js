@@ -15,7 +15,7 @@ const router = express.Router();
 router.get("/", [auth.isLoggedOut], async (req, res) => {
   return res.render("reset", {
     layout: "reset",
-    title: constants.pageHeader.login,
+    title: constants.pageHeader.forgotPassword,
   });
 });
 

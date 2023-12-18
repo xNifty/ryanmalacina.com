@@ -82,6 +82,7 @@ var pageHeaderStrings = {
   keybase: "Ryan Malacina | Keybase Identity",
   error: "Ryan Malacina | Error",
   profile: "Ryan Malacina | Profile",
+  forgotPassword: "Ryan Malacina | Forgot Password",
 };
 
 // Finally, allow everything to be accessed when using constants in file

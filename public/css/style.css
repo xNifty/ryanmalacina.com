@@ -496,10 +496,16 @@ button.btn.btn-primary.right {
 
 #sp_pass_message {
     display: none;
+    color: red;
 }
 
 #password-message {
     display: none;
+    color: red;
+}
+
+#forgot_password a {
+    color: #337ab7;
 }
 
 @keyframes shake3 {
