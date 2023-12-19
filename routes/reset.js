@@ -57,8 +57,13 @@ const resetPassword = async (email, req, res) => {
     await saveTokenToDatabase(user._id, hash);
 
     const link = generateResetLink(user._id, resetToken);
+    const invalidateLink = generateInvalidateLink(user._id, resetToken);
 
-    const template = await generateEmailTemplate(user.realName, link);
+    const template = await generateEmailTemplate(
+      user.realName,
+      link,
+      invalidateLink
+    );
 
     await sendPasswordResetEmail(fromEmail, user.email, template);
 
@@ -92,7 +97,13 @@ const generateResetLink = (userId, resetToken) => {
   )}/resetPassword?token=${resetToken}&id=${userId}`;
 };
 
-const generateEmailTemplate = async (userName, link) => {
+const generateInvalidateLink = (userId, resetToken) => {
+  return `${config.get(
+    "rootURL"
+  )}/resetPassword/invalidate?token=${resetToken}&id=${userId}`;
+};
+
+const generateEmailTemplate = async (userName, link, invalidateLink) => {
   try {
     const __dirname = path.resolve();
     const templatePath = path.join(
@@ -100,7 +111,10 @@ const generateEmailTemplate = async (userName, link) => {
       "/views/layouts/templates/passwordReset.handlebars"
     );
     const source = await fs.promises.readFile(templatePath, "utf-8");
-    return source.replace("{{user}}", userName).replace("{{link}}", link);
+    return source
+      .replace("{{user}}", userName)
+      .replace("{{link}}", link)
+      .replace("{{invalidateLink}}", invalidateLink);
   } catch (error) {
     console.error("Error generating email template:", error);
     throw error; // You may choose to handle or propagate the error as needed

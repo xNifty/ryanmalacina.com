@@ -1,7 +1,9 @@
 import express from "express";
 import auth from "../middleware/auth.js";
-import { pageHeader } from "../config/constants.js";
+import { pageHeader, success, errors } from "../config/constants.js";
 import { resetPassword } from "../functions/password.js";
+import { Token } from "../models/token.js";
+import bcrypt from "bcrypt";
 
 const router = express.Router();
 
@@ -12,7 +14,7 @@ router.get("/", [auth.isLoggedOut], async (req, res) => {
   });
 });
 
-router.post("/", function (req, res) {
+router.post("/", async function (req, res) {
   var password_one;
   var password_two;
 
@@ -23,19 +25,40 @@ router.post("/", function (req, res) {
   var token = req.query.token;
 
   if (password_one !== password_two) {
-    req.flash("error", "The entered passwords do not match.");
+    req.flash("error", errors.passwordsDontMatch);
     return res.redirect("/resetPassword?token=" + token + "&id=" + userId);
   }
 
-  var success = resetPassword(userId, token, password_one);
+  var resetSuccess = await resetPassword(userId, token, password_one);
 
-  if (success) {
-    req.flash("success", "Your password has been changed successfully.");
+  if (resetSuccess) {
+    req.flash("success", success.passwordChanged);
     return res.redirect("/");
   } else {
-    req.flash("error", "There was an issue updating your password.");
+    req.flash("error", errors.passwordChangeFail);
     return res.redirect("/");
   }
+});
+
+router.get("/invalidate", async function (req, res) {
+  var userId = req.query.id;
+  var token = req.query.token;
+
+  let passwordToken = await Token.findOne({ userId });
+  if (!passwordToken) {
+    req.flash("error", errors.invalidToken);
+    return res.redirect("/");
+  }
+
+  const isValid = await bcrypt.compare(token, passwordToken.token);
+  if (!isValid) {
+    req.flash("error", errors.invalidToken);
+    return res.redirect("/");
+  }
+
+  await passwordToken.deleteOne();
+  req.flash("success", success.resetInvalidated);
+  return res.redirect("/");
 });
 
 export { router as passwordReset };
