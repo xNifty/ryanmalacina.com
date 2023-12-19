@@ -24,7 +24,7 @@ router.post("/", function (req, res) {
 
   if (password_one !== password_two) {
     req.flash("error", "The entered passwords do not match.");
-    return res.redirect("/updatePassword?token=" + token + "&id=" + userId);
+    return res.redirect("/resetPassword?token=" + token + "&id=" + userId);
   }
 
   var success = resetPassword(userId, token, password_one);
