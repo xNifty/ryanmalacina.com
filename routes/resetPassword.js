@@ -50,7 +50,7 @@ router.get("/invalidate", async function (req, res) {
     return res.redirect("/");
   }
 
-  const isValid = await bcrypt.compare(token, passwordToken.token);
+  const isValid = bcrypt.compare(token, passwordToken.token);
   if (!isValid) {
     req.flash("error", errors.invalidToken);
     return res.redirect("/");
