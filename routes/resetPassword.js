@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", [auth.isLoggedOut], async (req, res) => {
   return res.render("resetPassword", {
     layout: "reset",
-    title: pageHeader.login,
+    title: pageHeader.resetPassword,
   });
 });
 
