@@ -35,6 +35,9 @@ var errorStrings = {
   newsDescriptionLength:
     "The news content must be at least 10 characters long.",
   indexLimitReached: "There are already three projects selected for the index.",
+  invalidToken: "Invalid token.",
+  passwordChangeFail: "There was an issue updating your password.",
+  passwordsDontMatch: "The entered passwords do not match.",
 };
 
 var profileStrings = {
@@ -69,6 +72,7 @@ var successStrings = {
   passwordResetSent:
     "If a matching email was found a reset link has been sent.",
   passwordChanged: "Your password has been changed successfully.",
+  resetInvalidated: "Password reset request invalidated.",
 };
 
 // String constants for what the tab show in the browser
