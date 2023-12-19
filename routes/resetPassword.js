@@ -1,6 +1,6 @@
 import express from "express";
 import auth from "../middleware/auth.js";
-import { constants } from "../config/constants.js";
+import { pageHeader } from "../config/constants.js";
 import { resetPassword } from "../functions/password.js";
 
 const router = express.Router();
@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", [auth.isLoggedOut], async (req, res) => {
   return res.render("resetPassword", {
     layout: "reset",
-    title: constants.pageHeader.login,
+    title: pageHeader.resetPassword,
   });
 });
 
@@ -24,7 +24,7 @@ router.post("/", function (req, res) {
 
   if (password_one !== password_two) {
     req.flash("error", "The entered passwords do not match.");
-    return res.redirect("/updatePassword?token=" + token + "&id=" + userId);
+    return res.redirect("/resetPassword?token=" + token + "&id=" + userId);
   }
 
   var success = resetPassword(userId, token, password_one);

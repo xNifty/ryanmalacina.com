@@ -82,19 +82,20 @@ var pageHeaderStrings = {
   keybase: "Ryan Malacina | Keybase Identity",
   error: "Ryan Malacina | Error",
   profile: "Ryan Malacina | Profile",
+  forgotPassword: "Ryan Malacina | Forgot Password",
 };
 
 // Finally, allow everything to be accessed when using constants in file
-var errors = Object.freeze(errorStrings);
-var statusCodes = Object.freeze(statusCodeStrings);
-var success = Object.freeze(successStrings);
-var pageHeader = Object.freeze(pageHeaderStrings);
-var profile = Object.freeze(profileStrings);
+export const errors = Object.freeze(errorStrings);
+export const statusCodes = Object.freeze(statusCodeStrings);
+export const success = Object.freeze(successStrings);
+export const pageHeader = Object.freeze(pageHeaderStrings);
+export const profile = Object.freeze(profileStrings);
 
-export const constants = {
-  errors,
-  statusCodes,
-  success,
-  pageHeader,
-  profile,
-};
+// export const constants = {
+//   errors,
+//   statusCodes,
+//   success,
+//   pageHeader,
+//   profile,
+// };

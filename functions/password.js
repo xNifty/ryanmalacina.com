@@ -2,7 +2,6 @@ import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import bcrypt from "bcrypt";
 import { sendMailNoRedirect } from "../functions/sendMail.js";
-import { constants } from "../config/constants.js";
 import fs from "fs";
 import path from "path";
 
@@ -33,7 +32,7 @@ export async function resetPassword(userId, token, password) {
 
   template = template.replace("{{user}}", user.realName);
 
-  sendMailNoRedirect(
+  await sendMailNoRedirect(
     process.env.mailgunFromEmail,
     user.email,
     "Password Changed",

@@ -1,6 +1,6 @@
 import express from "express";
 import auth from "../middleware/auth.js";
-import { constants } from "../config/constants.js";
+import { pageHeader, profile } from "../config/constants.js";
 import { User } from "../models/user.js";
 import bcrypt from "bcrypt";
 import { resetPasswordNoToken } from "../functions/password.js";
@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/", [auth.isLoggedIn], async (req, res) => {
   return res.render("profile", {
     layout: "profile",
-    title: constants.pageHeader.profile,
+    title: pageHeader.profile,
     user_name: req.user.realName,
     user_email: req.user.email,
   });
@@ -27,7 +27,7 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
 
   if (passwordOne || passwordTwo) {
     if (passwordOne !== passwordTwo) {
-      req.flash("error", constants.profile.passwordsNotMatch);
+      req.flash("error", profile.passwordsNotMatch);
       return res.redirect("/profile");
     } else {
       var user = await User.findOne({ _id: req.user.id });
@@ -38,7 +38,7 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
 
       const isValid = await bcrypt.compare(currentPassword, originalPassword);
       if (!isValid) {
-        req.flash("error", constants.profile.currentPasswordWrong);
+        req.flash("error", profile.currentPasswordWrong);
         return res.redirect("/profile");
       }
 
@@ -56,13 +56,13 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
             { $set: { password: hash, email: email, real_name: userName } },
             { new: true }
           );
-          req.flash("success", constants.profile.profileUpdateSuccess);
+          req.flash("success", profile.profileUpdateSuccess);
         } catch (ex) {
           console.log(ex.message);
-          req.flash("error", constants.profile.profileUpdateError);
+          req.flash("error", profile.profileUpdateError);
         }
       } else {
-        req.flash("error", constants.profile.profileUpdateError);
+        req.flash("error", profile.profileUpdateError);
       }
     }
   } else {
@@ -72,10 +72,10 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
         { $set: { email: email, realName: userName } },
         { new: true }
       );
-      req.flash("success", constants.profile.profileUpdateSuccess);
+      req.flash("success", profile.profileUpdateSuccess);
     } catch (ex) {
       console.log(ex.message);
-      req.flash("error", constants.profile.profileUpdateError);
+      req.flash("error", profile.profileUpdateError);
     }
   }
 

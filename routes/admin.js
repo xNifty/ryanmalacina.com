@@ -5,7 +5,7 @@ import auth from "../middleware/auth.js";
 import sanitize from "sanitize-html";
 import dateFormat from "dateformat";
 import MarkdownIt from "markdown-it";
-import { constants } from "../config/constants.js";
+import { pageHeader, success, errors } from "../config/constants.js";
 import _ from "lodash";
 
 const router = express.Router();
@@ -20,7 +20,7 @@ const dateformat = dateFormat;
 router.get("/", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
   res.render("admin", {
     layout: "admin",
-    title: constants.pageHeader.admin,
+    title: pageHeader.admin,
   });
 });
 
@@ -29,7 +29,7 @@ router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
 
   res.render("admin/projects/projects", {
     layout: "admin",
-    title: constants.pageHeader.adminProject,
+    title: pageHeader.adminProject,
     projects: project_list,
   });
 });
@@ -40,10 +40,10 @@ router.put(
   async (req, res) => {
     let id = req.params.id;
     if (await publishProject(id)) {
-      req.flash("success", constants.success.projectPublished);
+      req.flash("success", success.projectPublished);
       return res.end('{"success" : "Updated Successfully", "status" : 200}');
     } else {
-      req.flash("error", constants.errors.publishError);
+      req.flash("error", errors.publishError);
       return res.end('{"success" : "Server error", "status" : 500}');
     }
   }
@@ -55,10 +55,10 @@ router.put(
   async (req, res) => {
     let id = req.params.id;
     if (await unpublishProject(id)) {
-      req.flash("success", constants.success.projectUnpublished);
+      req.flash("success", success.projectUnpublished);
       return res.end('{"success" : "Updated Successfully", "status" : 200}');
     } else {
-      req.flash("error", constants.errors.publishError);
+      req.flash("error", errors.publishError);
       return res.end('{"fail" : "Server error", "status" : 500}');
     }
   }
@@ -69,7 +69,7 @@ router.get("/news", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
 
   res.render("admin/news/news", {
     layout: "news",
-    title: constants.pageHeader.adminProject,
+    title: pageHeader.adminProject,
     news: news_list,
   });
 });
@@ -91,9 +91,9 @@ router.post(
 
       for (let i = 0; i < error.details.length; i++) {
         if (error.details[i].context.key === "news_description") {
-          errorMessage = constants.errors.newsDescriptionLength;
+          errorMessage = errors.newsDescriptionLength;
         } else {
-          errorMessage = constants.errors.allFieldsRequired;
+          errorMessage = errors.allFieldsRequired;
         }
       }
 
@@ -126,7 +126,7 @@ router.post(
     } catch (ex) {
       // console.log('Error 2: ', ex);
       return res.status(400).render("admin/news/news", {
-        error: constants.errors.allFieldsRequired,
+        error: errors.allFieldsRequired,
         layout: "news",
         news_title: req.body.news_title,
         news_description: req.body.news_description,
@@ -134,7 +134,7 @@ router.post(
         news: news_list,
       });
     }
-    req.flash("success", constants.success.newsAdded);
+    req.flash("success", success.newsAdded);
     res.redirect("/admin/news");
   }
 );
@@ -145,10 +145,10 @@ router.put(
   async (req, res) => {
     let id = req.params.id;
     if (await publishNews(id)) {
-      req.flash("success", constants.success.newsPublished);
+      req.flash("success", success.newsPublished);
       return res.end('{"success" : "Updated Successfully", "status" : 200}');
     } else {
-      req.flash("error", constants.errors.publishError);
+      req.flash("error", errors.publishError);
       return res.end('{"success" : "Server error", "status" : 500}');
     }
   }
@@ -160,10 +160,10 @@ router.put(
   async (req, res) => {
     let id = req.params.id;
     if (await unpublishNews(id)) {
-      req.flash("success", constants.success.newsUnpublished);
+      req.flash("success", success.newsUnpublished);
       return res.end('{"success" : "Updated Successfully", "status" : 200}');
     } else {
-      req.flash("error", constants.errors.publishError);
+      req.flash("error", errors.publishError);
       return res.end('{"fail" : "Server error", "status" : 500}');
     }
   }
@@ -175,10 +175,10 @@ router.put(
   async (req, res) => {
     let id = req.params.id;
     if (await deleteNews(id)) {
-      req.flash("success", constants.success.deleteSuccess);
+      req.flash("success", success.deleteSuccess);
       return res.end('{"success" : "News Entry Deleted", "status" : 200}');
     } else {
-      req.flash("error", constants.errors.publishError);
+      req.flash("error", errors.publishError);
       return res.end('{"fail" : "Server error", "status" : 500}');
     }
   }
@@ -208,7 +208,7 @@ router.get(
       req.session.news_id = null;
 
       res.render("admin/news/admin-news", {
-        title: constants.pageHeader.adminProject,
+        title: pageHeader.adminProject,
         news: news_list,
       });
     }
@@ -230,7 +230,7 @@ router.get(
 
       res.render("admin/news/news", {
         layout: "admin",
-        title: constants.pageHeader.adminProject,
+        title: pageHeader.adminProject,
         news: news_list,
         loadJS: true,
       });
@@ -253,7 +253,7 @@ router.post(
       //console.log("Error 3: ", error);
       return res.status(400).render("admin/news/edit", {
         layout: "news",
-        error: constants.errors.allFieldsRequired,
+        error: errors.allFieldsRequired,
         title: req.body.news_title,
         news_title: req.body.news_title,
         news_description: req.body.news_description,
@@ -288,14 +288,14 @@ router.post(
       //console.log('Error 2: ', ex);
       return res.status(400).render("admin/news/edit", {
         layout: "news",
-        error: constants.errors.allFieldsRequired,
+        error: errors.allFieldsRequired,
         title: req.body.news_title,
         news_title: req.body.news_title,
         news_description: req.body.news_description,
       });
     }
     req.session.news_id = null;
-    req.flash("success", constants.success.newsEdited);
+    req.flash("success", success.newsEdited);
     res.redirect("/admin/news");
   }
 );
