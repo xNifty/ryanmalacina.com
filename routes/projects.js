@@ -2,7 +2,7 @@
 // Handles all of the different project routes
 
 import { Project, validateProject } from "../models/projects.js";
-import { clearProjectEditSessionVariables } from "../utils/sessionHandler.js";
+import { clearProjectEditSession } from "../utils/sessionHandler.js";
 import express from "express";
 import auth from "../middleware/auth.js";
 import MarkdownIt from "markdown-it";
@@ -224,7 +224,7 @@ router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
     });
 
     // Finally, clear up the session variables -- can I move this to a function where we delete them if they exist?
-    clearProjectEditSessionVariables(req);
+    clearProjectEditSession(req);
   }
 });
 
@@ -308,7 +308,7 @@ router.post(
         .then(() => {
           if (req.session.projectEditSuccess && project[0].is_published) {
             let returnTo = req.session.projectEditSuccess;
-            clearProjectEditSessionVariables(req);
+            clearProjectEditSession(req);
             req.flash("success", success.projectUpdated);
             return res.redirect(returnTo);
           } else if (
@@ -316,11 +316,11 @@ router.post(
             !project[0].is_published
           ) {
             let returnTo = req.session.projectEditReturnTo;
-            clearProjectEditSessionVariables(req);
+            clearProjectEditSession(req);
             req.flash("success", success.projectUpdated);
             return res.redirect(returnTo);
           } else {
-            clearProjectEditSessionVariables(req);
+            clearProjectEditSession(req);
             req.flash("success", success.projectUpdated);
             return res.redirect("/projects");
           }
