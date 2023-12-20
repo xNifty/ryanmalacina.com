@@ -1,6 +1,6 @@
 import fs from "fs";
 
-const logErrorToFile = (errorMessage) => {
+const logErrorToFile = (error) => {
   const errorDirectory = "errors";
   const errorFilePath = `${errorDirectory}/error_${Date.now()}.log`;
 
@@ -11,9 +11,11 @@ const logErrorToFile = (errorMessage) => {
       fs.mkdirSync(errorDirectory);
     }
 
+    const errorMessage = `${error.message}\n\n${error.stack}`;
+
     fs.writeFileSync(errorFilePath, errorMessage);
   } else {
-    console.log("Error: ", errorMessage);
+    console.log(`${error.message}\n\n${error.stack}`);
   }
 };
 
