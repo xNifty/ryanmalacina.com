@@ -10,9 +10,13 @@ import { sendMailAndRespond } from "../utils/sendMail.js";
 
 const router = express.Router();
 
-const recaptcha = new Recaptcha(process.env.siteKey, process.env.secretKey, {
-  callback: "cb",
-});
+const recaptcha = new Recaptcha(
+  config.get("recaptchaSiteKey"),
+  process.env.secretKey,
+  {
+    callback: "cb",
+  }
+);
 
 router.get("/", recaptcha.middleware.render, async (req, res) => {
   let project_list = await listProjects();
@@ -27,7 +31,7 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
   if (showBlog) {
     try {
       posts = await getBlogPosts();
-      for (var x in posts) {
+      for (var count in posts) {
         let counter_number = x;
         let date = posts[x].published_at;
         //console.log(date);
@@ -57,23 +61,12 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
 
   // I really dislike this, but to get our nonce in there, this is what we have to do...
   let recaptcha = res.recaptcha;
-  let recaptchaNonce = res.locals.nonce;
-
-  recaptcha = recaptcha.replace(
-    'BG"></script>',
-    `BG" nonce="${recaptchaNonce}"></script>`
-  );
-
-  recaptcha = recaptcha.replace(
-    "<script>grecaptcha",
-    `<script nonce="${recaptchaNonce}">grecaptcha`
-  );
 
   return res.render("index", {
     title: "Ryan Malacina | Home",
     projects: project_list,
     captcha: recaptcha,
-    siteKey: process.env.siteKey,
+    siteKey: config.get("recaptchaSiteKey"),
     news: news_list,
     showBlog: showBlog,
     blogPosts: posts,

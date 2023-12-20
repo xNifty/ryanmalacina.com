@@ -12,4 +12,5 @@
   "showBlog": false,
   "blogVersion": "GhostVersionMajor.GhostVersionMinor",
   "rootURL": "rootSiteURL",
+  "recaptchaSiteKey": recaptchaSiteKey
 }

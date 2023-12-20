@@ -26,9 +26,8 @@ npx webpack
 
    a. privateKey  
    b. mongoURL  
-   c. siteKey  
-   d. secretKey  
-   e. PORT
+   c. secretKey (this is the recaptcha secret key)  
+   d. PORT
 
 3. The other keys are optional and not required unless you wish to make use of that functionality
 4. siteKey and secretKey are from Recaptcha, and therefore you will need to generate them there  
@@ -37,14 +36,15 @@ npx webpack
 ## Config File
 
 1. Rename default.json.example to default.json (for development environment) or production.json (for production environment)
-1. Required keys that you should change are:
+2. Required keys that you should change are:
 
    a. cookieName  
    b. port  
    c. blogURL (if making use of Ghost Blog to integrate posts into homepage)  
    d. blogVersion (if making use of Ghost Blog to integrate posts into homepage (at this time it should be set to v5.0 if using latest Ghost))
+   e. recaptchaSiteKey (publicly available key that is used to generate the recaptcha)
 
-1. Required keys that you must change:  
+3. Required keys that you must change:  
    a. rootURL
 
 ## Installing

@@ -1,5 +1,5 @@
-import mailgunConfig from "../config/mailgunConfig";
-import handleResponse from "./responseHandler";
+import mailgunConfig from "../config/mailgunConfig.js";
+import handleResponse from "./responseHandler.js";
 
 const { mg, domain } = mailgunConfig;
 
