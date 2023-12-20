@@ -19,24 +19,26 @@ router.get("/", [auth.isLoggedOut], async (req, res) => {
   });
 });
 
-router.post("/", function (req, res) {
-  var emailOne;
-  var emailTwo;
-
-  emailOne = req.body.email_one;
-  emailTwo = req.body.email_two;
+router.post("/", async function (req, res) {
+  let emailOne = req.body.email_one;
+  let emailTwo = req.body.email_two;
 
   // console.log(`${emailOne}, ${emailTwo}`);
 
   if (emailOne !== emailTwo) {
-    console.log("email fail");
-    req.flash("success", success.passwordResetSent);
+    req.flash("errors", errors.emailMismatch);
     return res.redirect("/");
   }
 
-  resetPassword(emailOne, req, res);
-  req.flash("success", success.passwordResetSent);
-  return res.redirect("/");
+  let resetStatus = await resetPassword(emailOne, req, res);
+
+  if (resetStatus) {
+    req.flash("success", success.passwordResetSent);
+    return res.redirect("/");
+  } else {
+    req.flash("error", errors.passwordChangeFail);
+    return res.redirect("/");
+  }
 });
 
 const resetPassword = async (email, req, res) => {
@@ -56,12 +58,12 @@ const resetPassword = async (email, req, res) => {
 
     await saveTokenToDatabase(user._id, hash);
 
-    const link = generateResetLink(user._id, resetToken);
+    const resetLink = generateResetLink(user._id, resetToken);
     const invalidateLink = generateInvalidateLink(user._id, resetToken);
 
     const template = await generateEmailTemplate(
       user.realName,
-      link,
+      resetLink,
       invalidateLink
     );
 
@@ -117,7 +119,7 @@ const generateEmailTemplate = async (userName, link, invalidateLink) => {
       .replace("{{invalidateLink}}", invalidateLink);
   } catch (error) {
     console.error("Error generating email template:", error);
-    throw error; // You may choose to handle or propagate the error as needed
+    throw error;
   }
 };
 

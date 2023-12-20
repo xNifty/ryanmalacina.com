@@ -38,6 +38,7 @@ var errorStrings = {
   invalidToken: "Invalid token.",
   passwordChangeFail: "There was an issue updating your password.",
   passwordsDontMatch: "The entered passwords do not match.",
+  emailMismatch: "The provided emails do not match.",
 };
 
 var profileStrings = {
