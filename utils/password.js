@@ -1,7 +1,7 @@
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import bcrypt from "bcrypt";
-import { sendMailNoRedirect } from "../functions/sendMail.js";
+import { sendMailNoRedirect } from "./sendMail.js";
 import fs from "fs";
 import path from "path";
 

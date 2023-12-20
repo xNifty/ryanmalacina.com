@@ -4,7 +4,7 @@ import { pageHeader, success } from "../config/constants.js";
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import bcrypt from "bcrypt";
-import { sendMailNoRedirect } from "../functions/sendMail.js";
+import { sendMailNoRedirect } from "../utils/sendMail.js";
 import crypto from "crypto";
 import config from "config";
 import fs from "fs";
@@ -28,7 +28,7 @@ router.post("/", async function (req, res) {
     return res.redirect("/");
   }
 
-  let resetStatus = await resetPassword(emailOne, req, res);
+  let resetStatus = await resetPassword(emailOne);
 
   if (resetStatus) {
     req.flash("success", success.passwordResetSent);
@@ -39,7 +39,7 @@ router.post("/", async function (req, res) {
   }
 });
 
-const resetPassword = async (email, req, res) => {
+const resetPassword = async (email) => {
   try {
     const user = await User.findOne({ email });
 

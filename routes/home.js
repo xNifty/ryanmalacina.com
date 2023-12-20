@@ -6,7 +6,7 @@ import { RecaptchaV3 as Recaptcha } from "express-recaptcha";
 import ghostAPI from "@tryghost/content-api";
 import dateFormat from "dateformat";
 import words from "number-to-words-en";
-import { sendMail } from "../functions/sendMail.js";
+import { sendMailAndRespond } from "../utils/sendMail.js";
 
 const router = express.Router();
 
@@ -43,10 +43,10 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
     }
   }
 
-  for (var x in news_list) {
-    let counter_number = x;
+  for (var count in news_list) {
+    let counter_number = count;
     counter_number++;
-    news_list[x].counter = counter_number;
+    news_list[count].counter = counter_number;
   }
 
   if (news_list.length === 0) {
@@ -96,12 +96,11 @@ router.post("/send", recaptcha.middleware.verify, async (req, res) => {
     `Contact form email on behalf of: ${subject_name}\n\n----\n\n` + message;
 
   if (!req.recaptcha.error) {
-    await sendMail(
+    await sendMailAndRespond(
       fromEmail,
       toEmail,
       subject_combined,
       messaged_combined,
-      req,
       res
     );
   }

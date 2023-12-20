@@ -1,5 +1,6 @@
 // Authentication Middleware
 import { errors } from "../config/constants.js";
+import handleResponse from "../utils/responseHandler.js";
 
 // Make sure the user is logged in, and if not, redirect to login with a message
 export function loggedInOnly(req, res, next) {
@@ -26,8 +27,7 @@ export function loggedInOnlyJson(req, res, next) {
     //req.session.returnTo = req.originalUrl;
     req.flash("error", errors.loginRequired);
     res.status(401);
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ fail: "Unauthorized", status: 401 }));
+    return handleResponse(res, "Unauthorized", 401);
   }
 }
 

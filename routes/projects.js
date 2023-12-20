@@ -2,7 +2,7 @@
 // Handles all of the different project routes
 
 import { Project, validateProject } from "../models/projects.js";
-import { clearProjectEditSessionVariables } from "../functions/sessionHandler.js";
+import { clearProjectEditSessionVariables } from "../utils/sessionHandler.js";
 import express from "express";
 import auth from "../middleware/auth.js";
 import MarkdownIt from "markdown-it";
