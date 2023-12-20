@@ -69,7 +69,7 @@ const resetPassword = async (email) => {
 
     return true;
   } catch (error) {
-    console.log(("Error resetting password: ", error));
+    logErrorToFile(error);
     return false;
   }
 };

@@ -1,4 +1,5 @@
 import mailgunConfig from "../config/mailgunConfig.js";
+import logErrorToFile from "./errorLogging.js";
 import handleResponse from "./responseHandler.js";
 
 const { mg, domain } = mailgunConfig;
@@ -22,7 +23,7 @@ export async function sendMailAndRespond(
 
     return handleResponse(res, "Updated Successfully", 200);
   } catch (err) {
-    console.log(`Error: ${err.message}`);
+    logErrorToFile(err);
 
     return handleResponse(res, "Error", 400);
   }
@@ -47,7 +48,7 @@ export async function sendMailNoRedirect(
     await mg.messages.create(domain, messageOptions);
     return true;
   } catch (err) {
-    console.log(`Error: ${err.message}`);
+    logErrorToFile(err);
     return false;
   }
 }

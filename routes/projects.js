@@ -17,6 +17,7 @@ import {
 } from "../config/constants.js";
 import config from "config";
 import _ from "lodash";
+import logErrorToFile from "../utils/errorLogging.js";
 
 const router = express.Router();
 const md = new MarkdownIt();
@@ -289,14 +290,10 @@ router.post(
         try {
           await projectImage.mv("./public/images/" + adjustedFileName);
           projectImage = adjustedFileName;
-        } catch (ex) {
-          console.log(ex);
+        } catch (error) {
+          logErrorToFile(error);
         }
       }
-
-      // let [updateStatus, message] = await updateProject(req.session.project_id, req.body.project_name,
-      //     req.body.project_tite, req.body.project_source, req.body.project_description,
-      //     projectSanitized, projectImage, saveDate);
 
       let projectUpdate = await Project.findById(req.params.id);
       projectUpdate.project_name = req.body.project_name;
@@ -353,7 +350,7 @@ router.post(
           return res.redirect("/projects/" + req.session.project_id + "/edit");
         });
     } catch (ex) {
-      console.log(ex);
+      logErrorToFile(err);
     }
   }
 );
@@ -454,7 +451,7 @@ async function deleteProject(id) {
     await Project.deleteOne({ _id: id });
     return true;
   } catch (err) {
-    console.log(err);
+    logErrorToFile(err);
     return false;
   }
 }
