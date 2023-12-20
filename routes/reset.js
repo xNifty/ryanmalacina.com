@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 import { sendMailNoRedirect } from "../functions/sendMail.js";
 import crypto from "crypto";
 import config from "config";
-import fs, { link } from "fs";
+import fs from "fs";
 import path from "path";
 
 const router = express.Router();
@@ -22,8 +22,6 @@ router.get("/", [auth.isLoggedOut], async (req, res) => {
 router.post("/", async function (req, res) {
   let emailOne = req.body.email_one;
   let emailTwo = req.body.email_two;
-
-  // console.log(`${emailOne}, ${emailTwo}`);
 
   if (emailOne !== emailTwo) {
     req.flash("errors", errors.emailMismatch);
