@@ -97,7 +97,6 @@ app.use(
   })
 );
 
-// Add nonce to res.locals
 app.use(function (req, res, next) {
   var nonce = generateNonce();
   res.locals.nonce = nonce;
@@ -105,7 +104,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-// Setup to use the nonce middlewear that we created
 app.use(
   csp({
     directives: getDirectives(
@@ -117,7 +115,6 @@ app.use(
 
 app.use(cookieParser());
 
-// Now we don't have to hard-code this into app.js
 const secret_key = process.env.privateKey;
 
 const mongoStore = MongoStore.create({
