@@ -13,7 +13,7 @@ import LocalStrategy from "passport-local";
 
 import { User } from "./models/user.js";
 import { iff, versionedFile } from "./utils/helpers.js";
-import renderError from "./utils/errorhandler.js";
+import renderError from "./utils/renderErrorPage.js";
 import { generateNonce, getDirectives } from "nonce-simple";
 import { errors, pageHeader } from "./config/constants.js";
 
