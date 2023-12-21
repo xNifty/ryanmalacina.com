@@ -90,17 +90,15 @@ var pageHeaderStrings = {
   forgotPassword: "Ryan Malacina | Forgot Password",
 };
 
+var databaseStrings = {
+  success: "Connected to the database.",
+  error: "Error connecting to the database",
+};
+
 // Finally, allow everything to be accessed when using constants in file
 export const errors = Object.freeze(errorStrings);
 export const statusCodes = Object.freeze(statusCodeStrings);
 export const success = Object.freeze(successStrings);
 export const pageHeader = Object.freeze(pageHeaderStrings);
 export const profile = Object.freeze(profileStrings);
-
-// export const constants = {
-//   errors,
-//   statusCodes,
-//   success,
-//   pageHeader,
-//   profile,
-// };
+export const databaseStatus = Object.freeze(databaseStrings);
