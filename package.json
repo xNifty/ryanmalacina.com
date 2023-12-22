@@ -4,7 +4,8 @@
   "description": "Files for my personal website (ryanmalacina.com)",
   "main": "app.js",
   "scripts": {
-    "build": "webpack --stats verbose"
+    "build": "webpack --stats verbose",
+    "test": "jest"
   },
   "repository": "git+https://github.com/xNifty/ryanmalacina.com.git",
   "keywords": [
@@ -58,9 +59,15 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.23.6",
+    "@babel/preset-env": "^7.23.6",
+    "@babel/preset-react": "^7.23.3",
+    "@babel/preset-typescript": "^7.23.3",
+    "babel-jest": "^29.7.0",
     "css-loader": "^6.8.1",
     "handlebars-loader": "^1.7.3",
     "html-webpack-plugin": "^5.6.0",
+    "jest": "^29.7.0",
     "mini-css-extract-plugin": "^2.7.6",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
