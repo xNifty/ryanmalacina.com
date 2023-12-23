@@ -13,7 +13,7 @@ export default function renderErrorPage(env, status, err, req, res) {
     res.render("error", {
       error:
         env === "development"
-          ? err.stack.replace("\n", "<br />")
+          ? err.stack.replace(/\n/g, "<br />")
           : errors.pageNotFound,
       status_code: statusCodes[404],
       title: pageHeader.error,
@@ -22,7 +22,7 @@ export default function renderErrorPage(env, status, err, req, res) {
     res.render("error", {
       error:
         env === "development"
-          ? err.stack.replace("\n", "<br />")
+          ? err.stack.replace(/\n/g, "<br />")
           : errors.serverError,
       status_code: statusCodes[500],
       title: pageHeader.error,
@@ -37,7 +37,7 @@ export default function renderErrorPage(env, status, err, req, res) {
     res.render("error", {
       error:
         env === "development"
-          ? err.stack.replace("\n", "<br />")
+          ? err.stack.replace(/\n/g, "<br />")
           : errors.serverError,
       status_code: statusCodes[500],
       title: pageHeader.error,
