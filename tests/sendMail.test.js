@@ -95,4 +95,72 @@ describe("Mail Service", () => {
       });
     });
   });
+
+  describe("sendMailNoRedirect", () => {
+    it("should send mail successfully without redirect", async () => {
+      mailgunConfig.mg.messages.create.mockResolvedValueOnce();
+
+      const fromEmail = "from@example.com";
+      const toEmail = "to@example.com";
+      const subject = "Test Subject";
+      const text = "Test Text";
+      const isHtml = false;
+
+      const result = await sendMailNoRedirect(
+        fromEmail,
+        toEmail,
+        subject,
+        text,
+        isHtml
+      );
+
+      expect(mailgunConfig.mg.messages.create).toHaveBeenCalledWith(
+        "mockDomain",
+        {
+          from: fromEmail,
+          to: toEmail,
+          subject: subject,
+          text: text,
+        }
+      );
+
+      expect(result).toBe(true);
+    });
+
+    it("should log error and return false in case of an error", async () => {
+      const mockError = new Error("Error sending mail");
+
+      mailgunConfig.mg.messages.create.mockRejectedValueOnce(mockError);
+
+      logErrorToFile.mockImplementationOnce(() => {});
+
+      const fromEmail = "from@example.com";
+      const toEmail = "to@example.com";
+      const subject = "Test Subject";
+      const text = "Test Text";
+      const isHtml = false;
+
+      const result = await sendMailNoRedirect(
+        fromEmail,
+        toEmail,
+        subject,
+        text,
+        isHtml
+      );
+
+      expect(mailgunConfig.mg.messages.create).toHaveBeenCalledWith(
+        "mockDomain",
+        {
+          from: fromEmail,
+          to: toEmail,
+          subject: subject,
+          text: text,
+        }
+      );
+
+      expect(logErrorToFile).toHaveBeenCalledWith(mockError);
+
+      expect(result).toBe(false);
+    });
+  });
 });
