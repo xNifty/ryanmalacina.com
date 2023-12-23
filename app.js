@@ -8,6 +8,7 @@ import flash from "connect-flash";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import LocalStrategy from "passport-local";
+import lusca, { csrf } from "lusca";
 
 import { User } from "./models/user.js";
 import { iff, versionedFile } from "./utils/helpers.js";
@@ -113,6 +114,7 @@ app.use(
 
 app.use(cookieParser());
 let sess = createSession(secret_key, config, mongoStore);
+app.use(csrf());
 
 app.use(flash());
 app.use(session(sess));
