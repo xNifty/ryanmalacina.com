@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import LocalStrategy from "passport-local";
 import csrf from "lusca";
+import rateLimit from "express-rate-limit";
 
 import { User } from "./models/user.js";
 import { iff, versionedFile } from "./utils/helpers.js";
@@ -124,6 +125,12 @@ app.use(session(sess));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+var limiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 100,
+});
+app.use(limiter);
 
 passport.serializeUser(function (user, done) {
   done(null, user._id);
