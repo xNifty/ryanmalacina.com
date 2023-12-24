@@ -8,7 +8,7 @@ import flash from "connect-flash";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import LocalStrategy from "passport-local";
-import lusca, { csrf } from "lusca";
+import csrf from "lusca";
 
 import { User } from "./models/user.js";
 import { iff, versionedFile } from "./utils/helpers.js";
@@ -76,6 +76,9 @@ const hbs = exphbs.create({
   defaultLayout: "main",
   partialsDir: "views/partials/",
   layoutsDir: "views/layouts/",
+  compilerOptions: {
+    preventIndent: true,
+  },
   helpers: {
     iff: iff,
     versionedFile: versionedFile,
