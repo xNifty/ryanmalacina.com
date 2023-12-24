@@ -3,7 +3,8 @@ import auth from "../middleware/auth.js";
 import { pageHeader, profile } from "../config/constants.js";
 import { User } from "../models/user.js";
 import bcrypt from "bcrypt";
-import { resetPasswordNoToken } from "../functions/password.js";
+import { resetPasswordNoToken } from "../utils/password.js";
+import logErrorToFile from "../utils/errorLogging.js";
 
 const router = express.Router();
 
@@ -23,8 +24,6 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
   var passwordTwo = req.body.pass_change_two;
   var currentPassword = req.body.pass_current;
 
-  // console.log(`${userName}, ${email}, ${passwordOne}, ${passwordTwo}, ${currentPassword}`);
-
   if (passwordOne || passwordTwo) {
     if (passwordOne !== passwordTwo) {
       req.flash("error", profile.passwordsNotMatch);
@@ -32,9 +31,6 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
     } else {
       var user = await User.findOne({ _id: req.user.id });
       var originalPassword = user.password;
-      // console.log(`${originalPassword}, ${user}`);
-      // originalPassword = await bcrypt.hash(originalPassword, Number(process.env.BCRYPT_SALT))
-      //currentPassword = await bcrypt.hash(currentPassword, Number(process.env.BCRYPT_SALT))
 
       const isValid = await bcrypt.compare(currentPassword, originalPassword);
       if (!isValid) {
@@ -47,8 +43,6 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
       var success = reset[0];
       var hash = reset[1];
 
-      // console.log(`${success}, ${hash}, ${reset}`);
-
       if (success) {
         try {
           await User.updateOne(
@@ -57,8 +51,8 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
             { new: true }
           );
           req.flash("success", profile.profileUpdateSuccess);
-        } catch (ex) {
-          console.log(ex.message);
+        } catch (error) {
+          logErrorToFile(error);
           req.flash("error", profile.profileUpdateError);
         }
       } else {
@@ -73,8 +67,8 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
         { new: true }
       );
       req.flash("success", profile.profileUpdateSuccess);
-    } catch (ex) {
-      console.log(ex.message);
+    } catch (error) {
+      logErrorToFile(error);
       req.flash("error", profile.profileUpdateError);
     }
   }

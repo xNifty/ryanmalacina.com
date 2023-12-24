@@ -7,6 +7,7 @@ import dateFormat from "dateformat";
 import MarkdownIt from "markdown-it";
 import { pageHeader, success, errors } from "../config/constants.js";
 import _ from "lodash";
+import logErrorToFile from "../utils/errorLogging.js";
 
 const router = express.Router();
 
@@ -203,7 +204,7 @@ router.get(
         _id: id,
       });
     } catch (err) {
-      console.log("Edit err: ", err);
+      logErrorToFile(err);
       let news_list = await getNewsListing();
       req.session.news_id = null;
 
@@ -310,7 +311,7 @@ async function publishProject(id) {
     );
     return true;
   } catch (err) {
-    console.log(err);
+    logErrorToFile(err);
     return false;
   }
 }
@@ -325,7 +326,7 @@ async function unpublishProject(id) {
     );
     return true;
   } catch (err) {
-    console.log(err);
+    logErrorToFile(err);
     return false;
   }
 }
@@ -342,7 +343,7 @@ async function publishNews(id) {
     );
     return true;
   } catch (err) {
-    console.log(err);
+    logErrorToFile(err);
     return false;
   }
 }
@@ -357,7 +358,7 @@ async function unpublishNews(id) {
     );
     return true;
   } catch (err) {
-    console.log(err);
+    logErrorToFile(err);
     return false;
   }
 }
@@ -367,7 +368,7 @@ async function deleteNews(id) {
     await News.deleteOne({ _id: id });
     return true;
   } catch (err) {
-    console.log(err);
+    logErrorToFile(err);
     return false;
   }
 }

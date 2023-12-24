@@ -2,10 +2,10 @@
 // Handles all of the different project routes
 
 import { Project, validateProject } from "../models/projects.js";
-import { clearProjectEditSessionVariables } from "../functions/sessionHandler.js";
+import { clearProjectEditSession } from "../utils/sessionHandler.js";
 import express from "express";
 import auth from "../middleware/auth.js";
-import MarkdownIt from "markdown-it";
+import markdownit from "markdown-it";
 import sanitize from "sanitize-html";
 import dateFormat from "dateformat";
 import fileUpload from "express-fileupload";
@@ -17,9 +17,23 @@ import {
 } from "../config/constants.js";
 import config from "config";
 import _ from "lodash";
+import logErrorToFile from "../utils/errorLogging.js";
+import hljs from "highlight.js";
 
 const router = express.Router();
-const md = new MarkdownIt();
+// Actual default values
+const md = markdownit({
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(str, { language: lang }).value;
+      } catch (__) {}
+    }
+
+    return ""; // use external default escaping
+  },
+});
+
 const dateformat = dateFormat;
 
 const safeTags = [
@@ -223,7 +237,7 @@ router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
     });
 
     // Finally, clear up the session variables -- can I move this to a function where we delete them if they exist?
-    clearProjectEditSessionVariables(req);
+    clearProjectEditSession(req);
   }
 });
 
@@ -261,9 +275,8 @@ router.post(
         }
         throw new Error(errorMessage);
       }
-
+      //let projectDescription = md.render(req.body.project_description);
       let projectDescription = md.render(req.body.project_description);
-      //let projectDescription = converter.makeHtml(req.body.project_description);
 
       // We want to allow the h1 tag in our sanitizing
       let projectSanitized = sanitize(projectDescription, {
@@ -289,14 +302,10 @@ router.post(
         try {
           await projectImage.mv("./public/images/" + adjustedFileName);
           projectImage = adjustedFileName;
-        } catch (ex) {
-          console.log(ex);
+        } catch (error) {
+          logErrorToFile(error);
         }
       }
-
-      // let [updateStatus, message] = await updateProject(req.session.project_id, req.body.project_name,
-      //     req.body.project_tite, req.body.project_source, req.body.project_description,
-      //     projectSanitized, projectImage, saveDate);
 
       let projectUpdate = await Project.findById(req.params.id);
       projectUpdate.project_name = req.body.project_name;
@@ -311,7 +320,7 @@ router.post(
         .then(() => {
           if (req.session.projectEditSuccess && project[0].is_published) {
             let returnTo = req.session.projectEditSuccess;
-            clearProjectEditSessionVariables(req);
+            clearProjectEditSession(req);
             req.flash("success", success.projectUpdated);
             return res.redirect(returnTo);
           } else if (
@@ -319,11 +328,11 @@ router.post(
             !project[0].is_published
           ) {
             let returnTo = req.session.projectEditReturnTo;
-            clearProjectEditSessionVariables(req);
+            clearProjectEditSession(req);
             req.flash("success", success.projectUpdated);
             return res.redirect(returnTo);
           } else {
-            clearProjectEditSessionVariables(req);
+            clearProjectEditSession(req);
             req.flash("success", success.projectUpdated);
             return res.redirect("/projects");
           }
@@ -353,7 +362,7 @@ router.post(
           return res.redirect("/projects/" + req.session.project_id + "/edit");
         });
     } catch (ex) {
-      console.log(ex);
+      logErrorToFile(ex);
     }
   }
 );
@@ -387,10 +396,12 @@ router.get("/:id", async (req, res) => {
     });
   }
 
+  // console.log(`desc 3: ${project.project_description_html}`);
+
   res.render("projects", {
     project_title: project.project_title,
     project_source: project.project_source,
-    project_description: project.project_description_html,
+    project_description: md.render(project.project_description_markdown),
     project_name: project.project_name,
     is_valid: true,
     last_save_date: dateformat(project.last_edited, "mmmm dd, yyyy @ h:MM TT"),
@@ -454,7 +465,7 @@ async function deleteProject(id) {
     await Project.deleteOne({ _id: id });
     return true;
   } catch (err) {
-    console.log(err);
+    logErrorToFile(err);
     return false;
   }
 }

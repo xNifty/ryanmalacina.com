@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import auth from "../middleware/auth.js";
 import { pageHeader, success, errors } from "../config/constants.js";
+import isLocalUrl from "../utils/validTarget.js";
 
 const router = express.Router();
 
@@ -20,7 +21,10 @@ router.post(
     if (req.query.returnTo !== undefined) var returnTo = req.query.returnTo;
 
     if (returnTo === "") res.redirect("/");
-    else res.redirect(returnTo);
+    else {
+      if (isLocalUrl(returnTo)) res.redirect(returnTo);
+      else res.redirect("/");
+    }
   },
   function (err, req, res, next) {
     if (req.query.returnTo !== null) {

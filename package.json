@@ -4,7 +4,8 @@
   "description": "Files for my personal website (ryanmalacina.com)",
   "main": "app.js",
   "scripts": {
-    "build": "webpack --stats verbose"
+    "build": "webpack --stats verbose",
+    "test": "jest"
   },
   "repository": "git+https://github.com/xNifty/ryanmalacina.com.git",
   "keywords": [
@@ -40,15 +41,17 @@
     "express-session": "^1.17.3",
     "form-data": "^4.0.0",
     "helmet-csp": "^3.4.0",
+    "highlight.js": "^11.9.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "lodash.mergewith": "^4.6.2",
+    "lusca": "^1.7.0",
     "mailgun.js": "^9.4.0",
     "markdown-it": "^14.0.0",
     "mem": "^9.0.2",
     "mongoose": "^8.0.3",
     "mongoose-paginate-v2": "^1.7.31",
-    "nonce-simple": "^1.0.2",
+    "nonce-simple": "^1.0.3",
     "number-to-words-en": "^1.2.5",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
@@ -58,9 +61,15 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.23.6",
+    "@babel/preset-env": "^7.23.6",
+    "@babel/preset-react": "^7.23.3",
+    "@babel/preset-typescript": "^7.23.3",
+    "babel-jest": "^29.7.0",
     "css-loader": "^6.8.1",
     "handlebars-loader": "^1.7.3",
     "html-webpack-plugin": "^5.6.0",
+    "jest": "^29.7.0",
     "mini-css-extract-plugin": "^2.7.6",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",

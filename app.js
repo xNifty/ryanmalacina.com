@@ -1,21 +1,21 @@
 import "dotenv/config";
-import mongoose from "mongoose";
 import express from "express";
 import exphbs from "express-handlebars";
 import config from "config";
 import session from "express-session";
-import MongoStore from "connect-mongo";
 import csp from "helmet-csp";
 import flash from "connect-flash";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import LocalStrategy from "passport-local";
+import csrf from "lusca";
 
 import { User } from "./models/user.js";
-import { iff, versionedFile } from "./functions/helpers.js";
-import renderError from "./functions/errorhandler.js";
+import { iff, versionedFile } from "./utils/helpers.js";
+import renderError from "./utils/renderErrorPage.js";
 import { generateNonce, getDirectives } from "nonce-simple";
 import { errors, pageHeader } from "./config/constants.js";
+import connectToDatabase from "./utils/database.js";
 
 // Routes
 import { homeRoute } from "./routes/home.js";
@@ -29,15 +29,19 @@ import { newsRoute } from "./routes/news.js";
 import { resetRoute } from "./routes/reset.js";
 import { passwordReset } from "./routes/resetPassword.js";
 import { profileRoute } from "./routes/profile.js";
-
-const app = express();
-const env = app.settings.env;
+import { createMongoStore, createSession } from "./utils/sessionHandler.js";
 
 // Make sure our private token exists
 if (!process.env.privateKey) {
   console.error(errors.missingKey);
   process.exit(1);
 }
+
+const app = express();
+const env = app.settings.env;
+const mongoURL = process.env.mongoURL;
+const secret_key = process.env.privateKey;
+const mongoStore = createMongoStore(mongoURL);
 
 const nonceOptions = {
   scripts: [
@@ -72,19 +76,17 @@ const hbs = exphbs.create({
   defaultLayout: "main",
   partialsDir: "views/partials/",
   layoutsDir: "views/layouts/",
+  compilerOptions: {
+    preventIndent: true,
+  },
   helpers: {
     iff: iff,
     versionedFile: versionedFile,
   },
 });
 
-var mongoURL = process.env.mongoURL;
-
 // Connect to the database
-mongoose
-  .connect(mongoURL, {})
-  .then(() => console.log("Connected to the database."))
-  .catch((err) => console.error("Error connecting to database: ", err));
+connectToDatabase(mongoURL);
 
 app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
@@ -97,7 +99,6 @@ app.use(
   })
 );
 
-// Add nonce to res.locals
 app.use(function (req, res, next) {
   var nonce = generateNonce();
   res.locals.nonce = nonce;
@@ -105,7 +106,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-// Setup to use the nonce middlewear that we created
 app.use(
   csp({
     directives: getDirectives(
@@ -116,30 +116,8 @@ app.use(
 );
 
 app.use(cookieParser());
-
-// Now we don't have to hard-code this into app.js
-const secret_key = process.env.privateKey;
-
-const mongoStore = MongoStore.create({
-  mongoUrl: mongoURL,
-  collectionName: "sessions",
-  clear_interval: 3600,
-});
-
-let sess = {
-  secret: secret_key,
-  proxy: config.get("useProxy"),
-  resave: config.get("resave"),
-  saveUninitialized: config.get("saveUninitialized"),
-  name: config.get("cookieName"),
-  cookie: {
-    httpOnly: config.get("httpOnly"),
-    maxAge: config.get("maxAge"),
-    secure: config.get("secureCookie"),
-    sameSite: config.get("sameSite"),
-  },
-  store: mongoStore,
-};
+let sess = createSession(secret_key, config, mongoStore);
+app.use(csrf());
 
 app.use(flash());
 app.use(session(sess));

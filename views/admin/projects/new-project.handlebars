@@ -3,15 +3,26 @@
         <a class="back-button" href="{{return_to}}" data-toogle="tooltip" title="Go Back"></a>
         <form action="/projects/new" method="post" enctype="multipart/form-data">
 	        <div class="form-group">
-                Project Name<br> <input type="text" class="custom-text" name="project_name" placeholder="Project Name"
-                                        value="{{#if project_name}}{{project_name}}{{/if}}"><br><br>
-                Project Title<br> <input type="text" class="custom-text" name="project_title" placeholder="Project Title"
-                                         value="{{#if project_title}}{{project_title}}{{/if}}"><br><br>
-                Source<br> <input type="text" class="custom-text" name="project_source" placeholder="https://github.com/account/project"
-                                  value="{{#if project_source}}{{project_source}}{{/if}}"><br><br>
-                Project Description<br>
-                <textarea class="input-block-level" id="editor" name="project_description">{{#if project_description}}{{ project_description }}{{/if}}</textarea>
-                Image<br> <input type="file" class="custom-text" name="project_image"><br><br>
+                <div class="form-group">
+                    <label for="project_name">Project Name</label>
+                    <input type="text" class="custom-text" name="project_name" placeholder="Project Name" value="{{#if project_name}}{{project_name}}{{/if}}">
+                </div>
+                <div class="form-group">
+                    <label for="project_title">Project Title</label>
+                    <input type="text" class="custom-text" name="project_title" placeholder="Project Title" value="{{#if project_title}}{{project_title}}{{/if}}">
+                </div>
+                <div class="form-group">
+                    <label for="project_source">Source</label>
+                    <input type="text" class="custom-text" name="project_source" placeholder="https://github.com/account/project" value="{{#if project_source}}{{project_source}}{{/if}}">
+                </div>
+                <div class="form-group">
+                    <label for="project_description">Project Description</label>
+                    <textarea class="input-block-level" id="project_description" name="project_description">{{#if project_description}}{{ project_description }}{{/if}}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="project_image">Project Image</label>
+                    <input type="file" class="custom-text" name="project_image">
+                </div>
 	        </div>
 	        <button type="submit" class="btn btn-primary">
             <span class="glyphicon glyphicon-pencil"></span> Submit New Project</button>
@@ -23,14 +34,22 @@
         <a class="back-button" href="/projects/{{_id}}" data-toogle="tooltip" title="Return to Project"></a>
         <form action="/projects/{{id}}/edit" method="post" enctype="multipart/form-data">
 	        <div class="form-group">
-                Project Name<br> <input type="text" class="custom-text" name="project_name"
-                                        value="{{#if project_name}}{{project_name}}{{/if}}"><br><br>
-                Project Title<br> <input type="text" class="custom-text" name="project_title"
-                                         value="{{#if project_title}}{{project_title}}{{/if}}"><br><br>
-                Source<br> <input type="text" class="custom-text" name="project_source"
-                                  value="{{#if project_source}}{{project_source}}{{/if}}"><br><br>
-                Project Description<br>
-                <textarea class="form-control" id="editor" name="project_description">{{#if project_description}}{{ project_description }}{{/if}}</textarea>
+                <div class="form-group">
+                    <label for="project_name">Project Name</label>
+                    <input type="text" class="custom-text" name="project_name" value="{{#if project_name}}{{project_name}}{{/if}}">
+                </div>
+                <div class="form-group">
+                    <label for ="project_title">Project Title</label>
+                    <input type="text" class="custom-text" name="project_title" value="{{#if project_title}}{{project_title}}{{/if}}">
+                </div>
+                <div class="form-group">
+                    <label for="project_source">Source</label>
+                    <input type="text" class="custom-text" name="project_source" value="{{#if project_source}}{{project_source}}{{/if}}">
+                </div>
+                <div class="form-group">
+                    <label for="project_description">Project Description</label>
+                    <textarea class="form-control" id="project_description" name="project_description">{{#if project_description}}{{{ project_description }}}{{/if}}</textarea>
+                </div>
                 <div class="col-md-3 col-xs-6">
                     <div class="thumbnail">
                         <img class="img-responsive" src="/images/{{ project_image}}"
@@ -38,7 +57,7 @@
                         <div class="caption center-block">Current Image</div>
                     </div>
                 </div>
-                <input type="file" class="custom-text" name="project_image"><br><br>
+                <input type="file" class="custom-text" name="project_image">
             </div>
 	        <button type="submit" class="btn btn-primary">
             <span class="glyphicon glyphicon-pencil"></span> Update Project</button>

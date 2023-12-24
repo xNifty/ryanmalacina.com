@@ -4,10 +4,10 @@ import { pageHeader, success } from "../config/constants.js";
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import bcrypt from "bcrypt";
-import { sendMailNoRedirect } from "../functions/sendMail.js";
+import { sendMailNoRedirect } from "../utils/sendMail.js";
 import crypto from "crypto";
 import config from "config";
-import fs, { link } from "fs";
+import fs from "fs";
 import path from "path";
 
 const router = express.Router();
@@ -19,27 +19,27 @@ router.get("/", [auth.isLoggedOut], async (req, res) => {
   });
 });
 
-router.post("/", function (req, res) {
-  var emailOne;
-  var emailTwo;
-
-  emailOne = req.body.email_one;
-  emailTwo = req.body.email_two;
-
-  // console.log(`${emailOne}, ${emailTwo}`);
+router.post("/", async function (req, res) {
+  let emailOne = req.body.email_one;
+  let emailTwo = req.body.email_two;
 
   if (emailOne !== emailTwo) {
-    console.log("email fail");
-    req.flash("success", success.passwordResetSent);
+    req.flash("errors", errors.emailMismatch);
     return res.redirect("/");
   }
 
-  resetPassword(emailOne, req, res);
-  req.flash("success", success.passwordResetSent);
-  return res.redirect("/");
+  let resetStatus = await resetPassword(emailOne);
+
+  if (resetStatus) {
+    req.flash("success", success.passwordResetSent);
+    return res.redirect("/");
+  } else {
+    req.flash("error", errors.passwordChangeFail);
+    return res.redirect("/");
+  }
 });
 
-const resetPassword = async (email, req, res) => {
+const resetPassword = async (email) => {
   try {
     const user = await User.findOne({ email });
 
@@ -56,12 +56,12 @@ const resetPassword = async (email, req, res) => {
 
     await saveTokenToDatabase(user._id, hash);
 
-    const link = generateResetLink(user._id, resetToken);
+    const resetLink = generateResetLink(user._id, resetToken);
     const invalidateLink = generateInvalidateLink(user._id, resetToken);
 
     const template = await generateEmailTemplate(
       user.realName,
-      link,
+      resetLink,
       invalidateLink
     );
 
@@ -69,7 +69,7 @@ const resetPassword = async (email, req, res) => {
 
     return true;
   } catch (error) {
-    console.log(("Error resetting password: ", error));
+    logErrorToFile(error);
     return false;
   }
 };
@@ -117,7 +117,7 @@ const generateEmailTemplate = async (userName, link, invalidateLink) => {
       .replace("{{invalidateLink}}", invalidateLink);
   } catch (error) {
     console.error("Error generating email template:", error);
-    throw error; // You may choose to handle or propagate the error as needed
+    throw error;
   }
 };
 

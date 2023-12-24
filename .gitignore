@@ -13,3 +13,4 @@ app-testing.js
 .DS_Store
 /public/.DS_Store
 /dist
+/errors

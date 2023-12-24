@@ -6,13 +6,17 @@ import { RecaptchaV3 as Recaptcha } from "express-recaptcha";
 import ghostAPI from "@tryghost/content-api";
 import dateFormat from "dateformat";
 import words from "number-to-words-en";
-import { sendMail } from "../functions/sendMail.js";
+import { sendMailAndRespond } from "../utils/sendMail.js";
 
 const router = express.Router();
 
-const recaptcha = new Recaptcha(process.env.siteKey, process.env.secretKey, {
-  callback: "cb",
-});
+const recaptcha = new Recaptcha(
+  config.get("recaptchaSiteKey"),
+  process.env.secretKey,
+  {
+    callback: "cb",
+  }
+);
 
 router.get("/", recaptcha.middleware.render, async (req, res) => {
   let project_list = await listProjects();
@@ -27,7 +31,7 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
   if (showBlog) {
     try {
       posts = await getBlogPosts();
-      for (var x in posts) {
+      for (var count in posts) {
         let counter_number = x;
         let date = posts[x].published_at;
         //console.log(date);
@@ -43,10 +47,10 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
     }
   }
 
-  for (var x in news_list) {
-    let counter_number = x;
+  for (var count in news_list) {
+    let counter_number = count;
     counter_number++;
-    news_list[x].counter = counter_number;
+    news_list[count].counter = counter_number;
   }
 
   if (news_list.length === 0) {
@@ -57,23 +61,12 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
 
   // I really dislike this, but to get our nonce in there, this is what we have to do...
   let recaptcha = res.recaptcha;
-  let recaptchaNonce = res.locals.nonce;
-
-  recaptcha = recaptcha.replace(
-    'BG"></script>',
-    `BG" nonce="${recaptchaNonce}"></script>`
-  );
-
-  recaptcha = recaptcha.replace(
-    "<script>grecaptcha",
-    `<script nonce="${recaptchaNonce}">grecaptcha`
-  );
 
   return res.render("index", {
     title: "Ryan Malacina | Home",
     projects: project_list,
     captcha: recaptcha,
-    siteKey: process.env.siteKey,
+    siteKey: config.get("recaptchaSiteKey"),
     news: news_list,
     showBlog: showBlog,
     blogPosts: posts,
@@ -96,12 +89,11 @@ router.post("/send", recaptcha.middleware.verify, async (req, res) => {
     `Contact form email on behalf of: ${subject_name}\n\n----\n\n` + message;
 
   if (!req.recaptcha.error) {
-    await sendMail(
+    await sendMailAndRespond(
       fromEmail,
       toEmail,
       subject_combined,
       messaged_combined,
-      req,
       res
     );
   }
