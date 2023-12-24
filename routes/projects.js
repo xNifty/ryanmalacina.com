@@ -19,6 +19,7 @@ import config from "config";
 import _ from "lodash";
 import logErrorToFile from "../utils/errorLogging.js";
 import hljs from "highlight.js";
+import lusca from "lusca";
 
 const router = express.Router();
 // Actual default values
@@ -107,139 +108,147 @@ router.get("/new", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
   });
 });
 
-router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
-  const { error } = validateProject(req.body);
-  var returnTo;
-  var errorMessage = "";
+router.post(
+  "/new",
+  [auth.isLoggedInJson, auth.isAdmin, lusca.csrf()],
+  async (req, res) => {
+    const { error } = validateProject(req.body);
+    var returnTo;
+    var errorMessage = "";
 
-  if (req.session.returnToSession) {
-    returnTo = req.session.returnToSession;
-  } else {
-    returnTo = "/projects/";
-  }
+    if (req.session.returnToSession) {
+      returnTo = req.session.returnToSession;
+    } else {
+      returnTo = "/projects/";
+    }
 
-  if (error) {
-    return res.status(400).render("admin/projects/new-project", {
-      layout: "projects",
-      new_project: true,
-      error: errors.allFieldsRequiredUploadImage,
-      project_name: req.body.project_name,
-      project_title: req.body.project_title,
-      project_source: req.body.project_source,
-      project_description: req.body.project_description,
-      return_to: returnTo,
+    if (error) {
+      return res.status(400).render("admin/projects/new-project", {
+        layout: "projects",
+        new_project: true,
+        error: errors.allFieldsRequiredUploadImage,
+        project_name: req.body.project_name,
+        project_title: req.body.project_title,
+        project_source: req.body.project_source,
+        project_description: req.body.project_description,
+        return_to: returnTo,
+      });
+    }
+
+    let project = new Project(
+      _.pick(req.body, ["project_name", "project_title", "project_source"])
+    );
+
+    let projectDescription = md.render(req.body.project_description);
+    let projectSanitized = sanitize(projectDescription, {
+      allowedTags: safeTags,
     });
-  }
 
-  let project = new Project(
-    _.pick(req.body, ["project_name", "project_title", "project_source"])
-  );
-
-  let projectDescription = md.render(req.body.project_description);
-  let projectSanitized = sanitize(projectDescription, {
-    allowedTags: safeTags,
-  });
-
-  /*
+    /*
         Default the project image to blank and if it exists, we can then set the image to the image from the
         body of the page.  If there is no image found, we will use the default image that we set.
     */
-  let projectImage = "";
-  let adjustedFileName = "";
+    let projectImage = "";
+    let adjustedFileName = "";
 
-  if (req.files) {
-    projectImage = req.files.project_image;
-    adjustedFileName = projectImage.name
-      .split(".")
-      .join("-" + Date.now() + ".");
-    project.project_image = adjustedFileName;
-  } else {
-    if (!project.project_image) {
-      project.project_image = "default.png";
-    }
-  }
-
-  project.project_description_markdown = req.body.project_description;
-  project.project_description_html = projectSanitized;
-  let saveDate = new Date(Date.now());
-
-  try {
-    // Try moving the image; if that fails, redirect back with error message
-    if (projectImage) {
-      await projectImage.mv("./public/images/" + adjustedFileName);
-    }
-    await project.save();
-  } catch (ex) {
-    if (ex.code === 11000) {
-      if (ex.keyPattern.project_name) {
-        errorMessage = errors.projectNameUnique;
-      } else if (ex.keyPattern.project_title) {
-        errorMessage = errors.projectTitleUnique;
-      } else {
-        errorMessage = errors.genericError;
+    if (req.files) {
+      projectImage = req.files.project_image;
+      adjustedFileName = projectImage.name
+        .split(".")
+        .join("-" + Date.now() + ".");
+      project.project_image = adjustedFileName;
+    } else {
+      if (!project.project_image) {
+        project.project_image = "default.png";
       }
     }
-    return res.status(400).render("admin/projects/new-project", {
-      layout: "projects",
-      new_project: true,
-      error: errorMessage ? errorMessage : errors.allFieldsRequired,
-      project_name: req.body.project_name,
-      project_title: req.body.project_title,
-      project_source: req.body.project_source,
-      project_description: req.body.project_description,
-      project_image: req.files ? req.files.project_image : "",
-      last_edited: saveDate,
-    });
+
+    project.project_description_markdown = req.body.project_description;
+    project.project_description_html = projectSanitized;
+    let saveDate = new Date(Date.now());
+
+    try {
+      // Try moving the image; if that fails, redirect back with error message
+      if (projectImage) {
+        await projectImage.mv("./public/images/" + adjustedFileName);
+      }
+      await project.save();
+    } catch (ex) {
+      if (ex.code === 11000) {
+        if (ex.keyPattern.project_name) {
+          errorMessage = errors.projectNameUnique;
+        } else if (ex.keyPattern.project_title) {
+          errorMessage = errors.projectTitleUnique;
+        } else {
+          errorMessage = errors.genericError;
+        }
+      }
+      return res.status(400).render("admin/projects/new-project", {
+        layout: "projects",
+        new_project: true,
+        error: errorMessage ? errorMessage : errors.allFieldsRequired,
+        project_name: req.body.project_name,
+        project_title: req.body.project_title,
+        project_source: req.body.project_source,
+        project_description: req.body.project_description,
+        project_image: req.files ? req.files.project_image : "",
+        last_edited: saveDate,
+      });
+    }
+    if (req.session.returnToSession) delete req.session.returnToSession;
+    req.flash("success", success.projectAdded);
+    res.redirect("/projects");
   }
-  if (req.session.returnToSession) delete req.session.returnToSession;
-  req.flash("success", success.projectAdded);
-  res.redirect("/projects");
-});
+);
 
-router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
-  const project = await Project.findOne({
-    _id: { $eq: req.params.id },
-  });
-
-  delete req.session.project_id;
-  req.session.project_id = project._id;
-
-  // For if the edit fails, otherwise we want to return to the normal project information page
-  // Instead of this, hard set the URL from configfile (set a base url) and from there we can load the
-  // proper project since we know the ID
-  req.session.projectEditReturnTo =
-    config.get("rootURL") + "/projects/" + project._id + "/edit";
-  req.session.projectEditSuccess =
-    config.get("rootURL") + "/projects/" + project._id;
-
-  // If not load from session, then load normally; else, load from session
-  if (!req.session.loadProjectFromSession) {
-    res.render("admin/projects/new-project", {
-      layout: "projects",
-      update_project: true,
-      project_name: project.project_name,
-      project_title: project.project_title,
-      project_source: project.project_source,
-      project_description: project.project_description_markdown,
-      project_image: project.project_image,
-      id: project._id,
-    });
-  } else {
-    res.render("admin/projects/new-project", {
-      layout: "projects",
-      update_project: true,
-      project_name: req.session.project_name,
-      project_title: req.session.project_title,
-      project_source: req.session.project_source,
-      project_description: req.session.project_description_markdown,
-      project_image: req.session.project_image,
-      id: req.session.project_id,
+router.get(
+  "/:id/edit",
+  [auth.isLoggedIn, auth.isAdmin, lusca.csrf()],
+  async (req, res) => {
+    const project = await Project.findOne({
+      _id: { $eq: req.params.id },
     });
 
-    // Finally, clear up the session variables -- can I move this to a function where we delete them if they exist?
-    clearProjectEditSession(req);
+    delete req.session.project_id;
+    req.session.project_id = project._id;
+
+    // For if the edit fails, otherwise we want to return to the normal project information page
+    // Instead of this, hard set the URL from configfile (set a base url) and from there we can load the
+    // proper project since we know the ID
+    req.session.projectEditReturnTo =
+      config.get("rootURL") + "/projects/" + project._id + "/edit";
+    req.session.projectEditSuccess =
+      config.get("rootURL") + "/projects/" + project._id;
+
+    // If not load from session, then load normally; else, load from session
+    if (!req.session.loadProjectFromSession) {
+      res.render("admin/projects/new-project", {
+        layout: "projects",
+        update_project: true,
+        project_name: project.project_name,
+        project_title: project.project_title,
+        project_source: project.project_source,
+        project_description: project.project_description_markdown,
+        project_image: project.project_image,
+        id: project._id,
+      });
+    } else {
+      res.render("admin/projects/new-project", {
+        layout: "projects",
+        update_project: true,
+        project_name: req.session.project_name,
+        project_title: req.session.project_title,
+        project_source: req.session.project_source,
+        project_description: req.session.project_description_markdown,
+        project_image: req.session.project_image,
+        id: req.session.project_id,
+      });
+
+      // Finally, clear up the session variables -- can I move this to a function where we delete them if they exist?
+      clearProjectEditSession(req);
+    }
   }
-});
+);
 
 router.post(
   "/:id/edit",
@@ -253,8 +262,10 @@ router.post(
 
     req.session.project_image = project[0].project_image;
 
+    const { _csrf, ...FormData } = req.body;
+
     try {
-      const { error } = validateProject(req.body);
+      const { error } = validateProject(FormData);
       var errorMessage = "";
       // Return error messages because this is getting old
       if (error) {

@@ -3,7 +3,8 @@
 <div id="confirmModal" class="modal fade">
   <div class="modal-dialog modal-login">
     <div class="modal-content">
-      <form action="#" method="post" accept-charset="UTF-8" id="confirmForm"></form>
+      <form action="#" method="post" accept-charset="UTF-8" id="confirmForm">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <div class="modal-header">
             <h4 class="modal-title">Confirm Delete</h4>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

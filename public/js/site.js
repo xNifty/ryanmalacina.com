@@ -70,12 +70,16 @@ function loginPageCapsLock() {
 function login() {
   var form = document.getElementById("loginform");
   var loginSubmit = document.getElementById("modal-footer");
+  var csrfToken = form.querySelector('[name="_csrf"]').value;
   form.onsubmit = function (e) {
     e.preventDefault();
     var user = form.username.value;
     var pass = form.password.value;
     $.ajax({
       type: "POST",
+      headers: {
+        "X-CSRF-TOKEN": csrfToken,
+      },
       url: "/login/modal",
       data: {
         username: user,
