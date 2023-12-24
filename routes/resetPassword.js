@@ -44,7 +44,7 @@ router.get("/invalidate", async function (req, res) {
   var userId = req.query.id;
   var token = req.query.token;
 
-  let passwordToken = await Token.findOne({ userId });
+  let passwordToken = await Token.findOne({ _id: { $eq: userId } });
   if (!passwordToken) {
     req.flash("error", errors.invalidToken);
     return res.redirect("/");

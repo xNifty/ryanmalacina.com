@@ -198,7 +198,7 @@ router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
 
 router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
   const project = await Project.findOne({
-    _id: req.params.id,
+    _id: { $eq: req.params.id },
   });
 
   delete req.session.project_id;
@@ -381,7 +381,7 @@ router.put("/delete/:id", [auth.isAdmin, auth.isLoggedIn], async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const project = await Project.findOne({
-    _id: req.params.id,
+    _id: { $eq: req.params.id },
   });
 
   req.session.projectReturnTo =

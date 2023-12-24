@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 
 export async function resetPassword(userId, token, password) {
-  let passwordToken = await Token.findOne({ userId });
+  let passwordToken = await Token.findOne({ _id: { $eq: userId } });
   if (!passwordToken) return false;
 
   const isValid = await bcrypt.compare(token, passwordToken.token);
@@ -28,7 +28,7 @@ export async function resetPassword(userId, token, password) {
   const source = fs.readFileSync(filePath, "utf-8").toString();
   var template = source;
 
-  const user = await User.findById({ _id: userId });
+  const user = await User.findById({ _id: { $eq: userId } });
 
   template = template.replace("{{user}}", user.realName);
 

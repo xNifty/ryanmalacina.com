@@ -146,7 +146,7 @@ passport.deserializeUser(function (userId, done) {
 
 // Passport Stuff
 const local = new LocalStrategy((username, password, done) => {
-  User.findOne({ username })
+  User.findOne({ username: { $eq: username } })
     .then((user) => {
       if (!user || !user.validPassword(password)) {
         done(null, false, { message: errors.invalidLogin });

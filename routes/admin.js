@@ -201,7 +201,7 @@ router.get(
 
     try {
       news = await News.findOne({
-        _id: id,
+        _id: { $eq: id },
       });
     } catch (err) {
       logErrorToFile(err);
@@ -277,7 +277,7 @@ router.post(
 
     try {
       await News.findByIdAndUpdate(
-        { _id: req.session.news_id },
+        { _id: { $eq: req.session.news_id } },
         {
           news_title: req.body.news_title,
           news_description_markdown: req.body.news_description,
@@ -304,7 +304,7 @@ router.post(
 async function publishProject(id) {
   try {
     await Project.findByIdAndUpdate(
-      { _id: id },
+      { _id: { $eq: id } },
       {
         is_published: true,
       }
@@ -319,7 +319,7 @@ async function publishProject(id) {
 async function unpublishProject(id) {
   try {
     await Project.findByIdAndUpdate(
-      { _id: id },
+      { _id: { $eq: id } },
       {
         is_published: false,
       }
@@ -335,7 +335,7 @@ async function publishNews(id) {
   try {
     let saveDate = new Date(Date.now());
     await News.findByIdAndUpdate(
-      { _id: id },
+      { _id: { $eq: id } },
       {
         is_published: true,
         published_date_unclean: saveDate,
@@ -351,7 +351,7 @@ async function publishNews(id) {
 async function unpublishNews(id) {
   try {
     await News.findByIdAndUpdate(
-      { _id: id },
+      { _id: { $eq: id } },
       {
         is_published: false,
       }
@@ -365,7 +365,7 @@ async function unpublishNews(id) {
 
 async function deleteNews(id) {
   try {
-    await News.deleteOne({ _id: id });
+    await News.deleteOne({ _id: { $eq: id } });
     return true;
   } catch (err) {
     logErrorToFile(err);
