@@ -46,7 +46,10 @@ router.post(
     if (req.query.returnTo !== undefined) var returnTo = req.query.returnTo;
 
     if (returnTo === "") res.redirect("/");
-    else res.redirect(returnTo);
+    else {
+      if (isLocalUrl(returnTo)) res.redirect(returnTo);
+      else res.redirect("/");
+    }
   },
   function (err, req, res, next) {
     if (req.session.returnTo == null) {
