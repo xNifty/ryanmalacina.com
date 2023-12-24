@@ -8,7 +8,7 @@ import flash from "connect-flash";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import LocalStrategy from "passport-local";
-import csrf from "lusca";
+import lusca from "lusca";
 import rateLimit from "express-rate-limit";
 
 import { User } from "./models/user.js";
@@ -118,10 +118,12 @@ app.use(
 
 app.use(cookieParser());
 let sess = createSession(secret_key, config, mongoStore);
-app.use(csrf());
 
 app.use(flash());
 app.use(session(sess));
+
+const csrf = lusca.csrf();
+app.use(csrf);
 
 app.use(passport.initialize());
 app.use(passport.session());
