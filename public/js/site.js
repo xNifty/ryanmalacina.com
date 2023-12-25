@@ -137,10 +137,15 @@ function resetToken() {
 }
 
 function SubmitMail() {
+  var form = document.getElementById("contact-form");
+  var csrfToken = form.querySelector('[name="_csrf"]').value;
   $.ajax({
     url: "/send",
     type: "post",
     data: $("#contact-form").serialize(),
+    headers: {
+      "X-CSRF-TOKEN": csrfToken,
+    },
     datatype: "jsonp",
     success: function (json) {
       if (json.status === 200) {
