@@ -8,6 +8,7 @@ import MarkdownIt from "markdown-it";
 import { pageHeader, success, errors } from "../config/constants.js";
 import _ from "lodash";
 import logErrorToFile from "../utils/errorLogging.js";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
@@ -279,6 +280,11 @@ router.post(
     news.published_date_unclean = saveDate;
 
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.session.news_id)) {
+        // Handle the case where req.session.news_id is not a valid ObjectId
+        return res.status(400).redirect("/");
+      }
+
       await News.findByIdAndUpdate(
         { _id: req.session.news_id },
         {

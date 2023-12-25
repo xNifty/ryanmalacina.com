@@ -15,7 +15,7 @@ export async function resetPassword(userId, token, password) {
   const hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
 
   await User.updateOne(
-    { _id: userId },
+    { _id: { $eq: userId } },
     { $set: { password: hash } },
     { new: true }
   );
