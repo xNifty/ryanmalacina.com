@@ -80,7 +80,9 @@ router.post(
   "/news/new",
   [auth.isLoggedInJson, auth.isAdmin],
   async (req, res) => {
-    const { error } = validateNews(req.body);
+    const { _csrf, ...FormData } = req.body;
+
+    const { error } = validateNews(FormData);
 
     let news_list = await getNewsListing();
 
@@ -244,7 +246,8 @@ router.post(
   "/news/edit",
   [auth.isLoggedInJson, auth.isAdmin],
   async (req, res) => {
-    const { error } = validateNews(req.body);
+    const { _csrf, ...FormData } = req.body;
+    const { error } = validateNews(FormData);
 
     let news_list = await getNewsListing();
 
@@ -277,7 +280,7 @@ router.post(
 
     try {
       await News.findByIdAndUpdate(
-        { _id: { $eq: req.session.news_id } },
+        { _id: req.session.news_id },
         {
           news_title: req.body.news_title,
           news_description_markdown: req.body.news_description,
@@ -286,7 +289,7 @@ router.post(
         }
       );
     } catch (ex) {
-      //console.log('Error 2: ', ex);
+      //console.log("Error 2: ", ex);
       return res.status(400).render("admin/news/edit", {
         layout: "news",
         error: errors.allFieldsRequired,
@@ -304,7 +307,7 @@ router.post(
 async function publishProject(id) {
   try {
     await Project.findByIdAndUpdate(
-      { _id: { $eq: id } },
+      { _id: id },
       {
         is_published: true,
       }
@@ -319,7 +322,7 @@ async function publishProject(id) {
 async function unpublishProject(id) {
   try {
     await Project.findByIdAndUpdate(
-      { _id: { $eq: id } },
+      { _id: id },
       {
         is_published: false,
       }
@@ -335,7 +338,7 @@ async function publishNews(id) {
   try {
     let saveDate = new Date(Date.now());
     await News.findByIdAndUpdate(
-      { _id: { $eq: id } },
+      { _id: id },
       {
         is_published: true,
         published_date_unclean: saveDate,
@@ -351,7 +354,7 @@ async function publishNews(id) {
 async function unpublishNews(id) {
   try {
     await News.findByIdAndUpdate(
-      { _id: { $eq: id } },
+      { _id: id },
       {
         is_published: false,
       }
@@ -365,7 +368,7 @@ async function unpublishNews(id) {
 
 async function deleteNews(id) {
   try {
-    await News.deleteOne({ _id: { $eq: id } });
+    await News.deleteOne({ _id: id });
     return true;
   } catch (err) {
     logErrorToFile(err);

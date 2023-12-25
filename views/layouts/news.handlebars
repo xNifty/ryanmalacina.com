@@ -28,10 +28,7 @@
     <script src="https://www.google.com/recaptcha/api.js?render=6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG" nonce="{{nonce}}" async defer></script>
     <script nonce="{{nonce}}" src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
     <script nonce="{{nonce}}">
-        var simplemde = new SimpleMDE({ element: document.getElementById("project_description"), toolbar: ["preview"], placeholder: "News Description Here - Write in Markdown", });
-    </script>
-    <script nonce="{{nonce}}">
-        var csrfToken = "{{csrfToken}}";
+        var simplemde = new SimpleMDE({ element: document.getElementById("editor"), toolbar: ["preview"], placeholder: "News Description Here - Write in Markdown", });
     </script>
 </body>
 </html>
