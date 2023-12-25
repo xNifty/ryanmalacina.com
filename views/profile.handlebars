@@ -4,6 +4,7 @@
       <p>On this page you can change your email, name, and password. Your username is locked to what it was created as.</p>
     </div>
     <form action="/profile" method="post" id="profile_content">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
       <div class="form-group">
         <div class="form-group">
           <label for="user_name">Your Name</label>

@@ -1,6 +1,7 @@
 <div class="container">
     <a class="back-button" href="/admin/news" data-toogle="tooltip" title="Return to news"></a>
     <form action="/admin/news/edit" method="post" data="{{news._id}}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <div class="form-group">
             <label for="news_title">News Title</label><br>
             <input type="text" class="custom-text" name="news_title" placeholder="News Title" value="{{#if news_title}}{{news_title}}{{/if}}"><br><br>

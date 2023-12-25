@@ -2,6 +2,7 @@
     <div class="container">
         <a class="back-button" href="{{return_to}}" data-toogle="tooltip" title="Go Back"></a>
         <form action="/projects/new" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
 	        <div class="form-group">
                 <div class="form-group">
                     <label for="project_name">Project Name</label>
@@ -34,6 +35,7 @@
         <a class="back-button" href="/projects/{{_id}}" data-toogle="tooltip" title="Return to Project"></a>
         <form action="/projects/{{id}}/edit" method="post" enctype="multipart/form-data">
 	        <div class="form-group">
+                <input type="hidden" name="_csrf" value="{{csrfToken}}">
                 <div class="form-group">
                     <label for="project_name">Project Name</label>
                     <input type="text" class="custom-text" name="project_name" value="{{#if project_name}}{{project_name}}{{/if}}">

@@ -80,7 +80,9 @@ router.post(
   "/news/new",
   [auth.isLoggedInJson, auth.isAdmin],
   async (req, res) => {
-    const { error } = validateNews(req.body);
+    const { _csrf, ...FormData } = req.body;
+
+    const { error } = validateNews(FormData);
 
     let news_list = await getNewsListing();
 
@@ -201,7 +203,7 @@ router.get(
 
     try {
       news = await News.findOne({
-        _id: id,
+        _id: { $eq: id },
       });
     } catch (err) {
       logErrorToFile(err);
@@ -244,7 +246,8 @@ router.post(
   "/news/edit",
   [auth.isLoggedInJson, auth.isAdmin],
   async (req, res) => {
-    const { error } = validateNews(req.body);
+    const { _csrf, ...FormData } = req.body;
+    const { error } = validateNews(FormData);
 
     let news_list = await getNewsListing();
 
@@ -286,7 +289,7 @@ router.post(
         }
       );
     } catch (ex) {
-      //console.log('Error 2: ', ex);
+      //console.log("Error 2: ", ex);
       return res.status(400).render("admin/news/edit", {
         layout: "news",
         error: errors.allFieldsRequired,

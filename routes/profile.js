@@ -29,7 +29,7 @@ router.post("/", [auth.isLoggedIn], async (req, res) => {
       req.flash("error", profile.passwordsNotMatch);
       return res.redirect("/profile");
     } else {
-      var user = await User.findOne({ _id: req.user.id });
+      var user = await User.findOne({ _id: { $eq: req.user.id } });
       var originalPassword = user.password;
 
       const isValid = await bcrypt.compare(currentPassword, originalPassword);

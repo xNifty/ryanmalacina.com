@@ -122,9 +122,6 @@ let sess = createSession(secret_key, config, mongoStore);
 app.use(flash());
 app.use(session(sess));
 
-const csrf = lusca.csrf();
-app.use(csrf);
-
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -146,7 +143,7 @@ passport.deserializeUser(function (userId, done) {
 
 // Passport Stuff
 const local = new LocalStrategy((username, password, done) => {
-  User.findOne({ username })
+  User.findOne({ username: { $eq: username } })
     .then((user) => {
       if (!user || !user.validPassword(password)) {
         done(null, false, { message: errors.invalidLogin });
@@ -182,6 +179,12 @@ app.use(function (req, res, next) {
     res.locals.realName = req.user.realName;
     res.locals.isAdmin = req.user.isAdmin;
   }
+
+  if (!req.session.csrfToken) {
+    req.session.csrfToken = req.csrfToken();
+  }
+  res.locals.csrfToken = req.session.csrfToken;
+
   next();
 });
 
@@ -198,6 +201,9 @@ app.use("/news", newsRoute);
 app.use("/reset", resetRoute);
 app.use("/resetPassword", passwordReset);
 app.use("/profile", profileRoute);
+
+// enable csrf
+app.use(lusca.csrf());
 
 // Send user to my blog via a 301 redirect
 app.get("/blog", function (req, res) {

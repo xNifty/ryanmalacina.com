@@ -41,7 +41,7 @@ router.post("/", async function (req, res) {
 
 const resetPassword = async (email) => {
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: { $eq: email } });
 
     if (!user) {
       return false;
@@ -75,7 +75,7 @@ const resetPassword = async (email) => {
 };
 
 const deleteExistingToken = async (userId) => {
-  const token = await Token.findOne({ userId });
+  const token = await Token.findOne({ _id: { $eq: userId } });
   if (token) await token.deleteOne();
 };
 
