@@ -180,11 +180,6 @@ app.use(function (req, res, next) {
     res.locals.isAdmin = req.user.isAdmin;
   }
 
-  if (!req.session.csrfToken) {
-    req.session.csrfToken = req.csrfToken();
-  }
-  res.locals.csrfToken = req.session.csrfToken;
-
   next();
 });
 
@@ -204,6 +199,16 @@ app.use("/profile", profileRoute);
 
 // enable csrf
 app.use(lusca.csrf());
+
+app.use(function (req, res, next) {
+  if (!req.session.csrfToken) {
+    req.session.csrfToken = req.csrfToken();
+  }
+  res.locals.csrfToken = req.session.csrfToken;
+  console.log(res.locals.csrfToken);
+
+  next();
+});
 
 // Send user to my blog via a 301 redirect
 app.get("/blog", function (req, res) {
