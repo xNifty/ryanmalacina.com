@@ -199,54 +199,50 @@ router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
   res.redirect("/projects");
 });
 
-router.get(
-  "/:id/edit",
-  [auth.isLoggedIn, auth.isAdmin, lusca.csrf()],
-  async (req, res) => {
-    const project = await Project.findOne({
-      _id: { $eq: req.params.id },
+router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
+  const project = await Project.findOne({
+    _id: { $eq: req.params.id },
+  });
+
+  delete req.session.project_id;
+  req.session.project_id = project._id;
+
+  // For if the edit fails, otherwise we want to return to the normal project information page
+  // Instead of this, hard set the URL from configfile (set a base url) and from there we can load the
+  // proper project since we know the ID
+  req.session.projectEditReturnTo =
+    config.get("rootURL") + "/projects/" + project._id + "/edit";
+  req.session.projectEditSuccess =
+    config.get("rootURL") + "/projects/" + project._id;
+
+  // If not load from session, then load normally; else, load from session
+  if (!req.session.loadProjectFromSession) {
+    res.render("admin/projects/new-project", {
+      layout: "projects",
+      update_project: true,
+      project_name: project.project_name,
+      project_title: project.project_title,
+      project_source: project.project_source,
+      project_description: project.project_description_markdown,
+      project_image: project.project_image,
+      id: project._id,
+    });
+  } else {
+    res.render("admin/projects/new-project", {
+      layout: "projects",
+      update_project: true,
+      project_name: req.session.project_name,
+      project_title: req.session.project_title,
+      project_source: req.session.project_source,
+      project_description: req.session.project_description_markdown,
+      project_image: req.session.project_image,
+      id: req.session.project_id,
     });
 
-    delete req.session.project_id;
-    req.session.project_id = project._id;
-
-    // For if the edit fails, otherwise we want to return to the normal project information page
-    // Instead of this, hard set the URL from configfile (set a base url) and from there we can load the
-    // proper project since we know the ID
-    req.session.projectEditReturnTo =
-      config.get("rootURL") + "/projects/" + project._id + "/edit";
-    req.session.projectEditSuccess =
-      config.get("rootURL") + "/projects/" + project._id;
-
-    // If not load from session, then load normally; else, load from session
-    if (!req.session.loadProjectFromSession) {
-      res.render("admin/projects/new-project", {
-        layout: "projects",
-        update_project: true,
-        project_name: project.project_name,
-        project_title: project.project_title,
-        project_source: project.project_source,
-        project_description: project.project_description_markdown,
-        project_image: project.project_image,
-        id: project._id,
-      });
-    } else {
-      res.render("admin/projects/new-project", {
-        layout: "projects",
-        update_project: true,
-        project_name: req.session.project_name,
-        project_title: req.session.project_title,
-        project_source: req.session.project_source,
-        project_description: req.session.project_description_markdown,
-        project_image: req.session.project_image,
-        id: req.session.project_id,
-      });
-
-      // Finally, clear up the session variables -- can I move this to a function where we delete them if they exist?
-      clearProjectEditSession(req);
-    }
+    // Finally, clear up the session variables -- can I move this to a function where we delete them if they exist?
+    clearProjectEditSession(req);
   }
-);
+});
 
 router.post(
   "/:id/edit",

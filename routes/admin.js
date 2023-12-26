@@ -250,12 +250,10 @@ router.post(
     const { _csrf, ...FormData } = req.body;
     const { error } = validateNews(FormData);
 
-    let news_list = await getNewsListing();
-
     let news = new News(_.pick(req.body, ["news_title"]));
 
     if (error) {
-      //console.log("Error 3: ", error);
+      console.log("Error 3: ", error);
       return res.status(400).render("admin/news/edit", {
         layout: "news",
         error: errors.allFieldsRequired,
@@ -265,7 +263,6 @@ router.post(
       });
     }
     let newsDescription = md.render(req.body.news_description);
-    // let newsDescription = converter.makeHtml(req.body.news_description);
     let newsSanitized = sanitize(newsDescription, {
       allowedTags: sanitize.defaults.allowedTags.concat(["h1"]),
     });
@@ -281,21 +278,20 @@ router.post(
 
     try {
       if (!mongoose.Types.ObjectId.isValid(req.session.news_id)) {
-        // Handle the case where req.session.news_id is not a valid ObjectId
+        // console.log("Invalid objectId type");
         return res.status(400).redirect("/");
       }
 
-      await News.findByIdAndUpdate(
-        { _id: req.session.news_id },
-        {
-          news_title: req.body.news_title,
-          news_description_markdown: req.body.news_description,
-          news_description_html: newsSanitized,
-          news_clean_output: newsCleaned,
-        }
-      );
+      let news_id = req.session.news_id;
+
+      await News.findByIdAndUpdate(news_id, {
+        news_title: req.body.news_title,
+        news_description_markdown: req.body.news_description,
+        news_description_html: newsSanitized,
+        news_clean_output: newsCleaned,
+      });
     } catch (ex) {
-      //console.log("Error 2: ", ex);
+      // console.log("Error 2: ", ex);
       return res.status(400).render("admin/news/edit", {
         layout: "news",
         error: errors.allFieldsRequired,
