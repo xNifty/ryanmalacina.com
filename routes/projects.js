@@ -2,7 +2,10 @@
 // Handles all of the different project routes
 
 import { Project, validateProject } from "../models/projects.js";
-import { clearProjectEditSession } from "../utils/sessionHandler.js";
+import {
+  clearProjectEditSession,
+  clearProjectSession,
+} from "../utils/sessionHandler.js";
 import express from "express";
 import auth from "../middleware/auth.js";
 import markdownit from "markdown-it";
@@ -101,87 +104,125 @@ router.get("/new", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
     req.session.returnToSession = req.get("referrer");
   }
 
-  res.render("admin/projects/new-project", {
-    layout: "projects",
-    new_project: true,
-    return_to: returnTo,
-  });
+  if (!req.session.loadProjectFromSession) {
+    res.render("admin/projects/new-project", {
+      layout: "projects",
+      new_project: true,
+      return_to: returnTo,
+      csrfToken: res.locals._csrf,
+    });
+  } else {
+    res.render("admin/projects/new-project", {
+      layout: "projects",
+      new_project: true,
+      project_name: req.session.project_name,
+      project_title: req.session.project_title,
+      project_source: req.session.project_source,
+      project_description: req.session.project_description_markdown,
+      csrfToken: res.locals._csrf,
+    });
+
+    clearProjectSession(req);
+    clearProjectEditSession(req);
+  }
 });
 
 router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
   const { _csrf, ...FormData } = req.body;
 
-  const { error } = validateProject(FormData);
-  var returnTo;
-  var errorMessage = "";
-
-  if (req.session.returnToSession) {
-    returnTo = req.session.returnToSession;
-  } else {
-    returnTo = "/projects/";
-  }
-
-  if (error) {
-    return res.status(400).render("admin/projects/new-project", {
-      layout: "projects",
-      new_project: true,
-      error: errors.allFieldsRequiredUploadImage,
-      project_name: req.body.project_name,
-      project_title: req.body.project_title,
-      project_source: req.body.project_source,
-      project_description: req.body.project_description,
-      return_to: returnTo,
-    });
-  }
-
-  let project = new Project(
-    _.pick(req.body, ["project_name", "project_title", "project_source"])
-  );
-
-  let projectDescription = md.render(req.body.project_description);
-  let projectSanitized = sanitize(projectDescription, {
-    allowedTags: safeTags,
-  });
-
-  /*
-        Default the project image to blank and if it exists, we can then set the image to the image from the
-        body of the page.  If there is no image found, we will use the default image that we set.
-    */
-  let projectImage = "";
-  let adjustedFileName = "";
-
-  if (req.files) {
-    projectImage = req.files.project_image;
-    adjustedFileName = projectImage.name
-      .split(".")
-      .join("-" + Date.now() + ".");
-    project.project_image = adjustedFileName;
-  } else {
-    if (!project.project_image) {
-      project.project_image = "default.png";
-    }
-  }
-
-  project.project_description_markdown = req.body.project_description;
-  project.project_description_html = projectSanitized;
-  let saveDate = new Date(Date.now());
-
   try {
-    // Try moving the image; if that fails, redirect back with error message
+    const { error } = validateProject(FormData);
+    var errorMessage = "";
+
+    if (error) {
+      // Handle validation error
+      for (let i = 0; i < error.details.length; i++) {
+        if (error.details[i].context.key === "project_description") {
+          errorMessage += errors.projectDescriptionLength + "<br>";
+        }
+        if (error.details[i].context.key === "project_name") {
+          errorMessage += errors.projectName + "<br>";
+        }
+        if (error.details[i].context.key === "project_title") {
+          errorMessage += errors.projectTitle + "<br>";
+        }
+        if (error.details[i].context.key === "project_source") {
+          errorMessage += errors.projectSource + "<br>";
+        }
+      }
+      throw new Error(errorMessage);
+    }
+
+    let project = new Project(
+      _.pick(req.body, ["project_name", "project_title", "project_source"])
+    );
+
+    let projectDescription = md.render(req.body.project_description);
+    let projectSanitized = sanitize(projectDescription, {
+      allowedTags: safeTags,
+    });
+
+    /*
+          Default the project image to blank and if it exists, we can then set the image to the image from the
+          body of the page.  If there is no image found, we will use the default image that we set.
+      */
+    let projectImage = "";
+    let adjustedFileName = "";
+
+    if (req.files) {
+      projectImage = req.files.project_image;
+      adjustedFileName = projectImage.name
+        .split(".")
+        .join("-" + Date.now() + ".");
+      project.project_image = adjustedFileName;
+    } else {
+      if (!project.project_image) {
+        project.project_image = "default.png";
+      }
+    }
+
+    project.project_description_markdown = req.body.project_description;
+    project.project_description_html = projectSanitized;
+
     if (projectImage) {
       await projectImage.mv("./public/images/" + adjustedFileName);
     }
     await project.save();
+
+    clearProjectEditSession(req);
+
+    req.flash("success", success.projectAdded);
+    res.status(200).json({
+      status: 200,
+      message: success.projectAdded,
+    });
   } catch (ex) {
+    logErrorToFile(ex);
+
+    req.session.loadProjectFromSession = true;
+    req.session.project_name = req.body.project_name;
+    req.session.project_title = req.body.project_title;
+    req.session.project_source = req.body.project_source;
+    req.session.project_description_markdown = req.body.project_description;
+
     if (ex.code === 11000) {
-      if (ex.keyPattern.project_name) {
+      const indexNameMatch = ex.message.match(/index: (\w+)/);
+      const indexName = indexNameMatch ? indexNameMatch[1] : null;
+
+      if (indexName === "project_name_1") {
         errorMessage = errors.projectNameUnique;
-      } else if (ex.keyPattern.project_title) {
+      } else if (indexName === "project_title_1") {
         errorMessage = errors.projectTitleUnique;
       } else {
         errorMessage = errors.genericError;
       }
+    } else {
+      errorMessage = errors.genericError;
     }
+
+    let saveDate = new Date(Date.now());
+
+    req.flash("error", errorMessage ? errorMessage : errors.allFieldsRequired);
     return res.status(400).render("admin/projects/new-project", {
       layout: "projects",
       new_project: true,
@@ -194,9 +235,6 @@ router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
       last_edited: saveDate,
     });
   }
-  if (req.session.returnToSession) delete req.session.returnToSession;
-  req.flash("success", success.projectAdded);
-  res.redirect("/projects");
 });
 
 router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
