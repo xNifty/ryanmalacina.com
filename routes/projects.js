@@ -106,14 +106,14 @@ router.get("/new", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
 
   if (!req.session.loadProjectFromSession) {
     res.render("admin/projects/new-project", {
-      layout: "projects",
+      layout: "new-project",
       new_project: true,
       return_to: returnTo,
       csrfToken: res.locals._csrf,
     });
   } else {
     res.render("admin/projects/new-project", {
-      layout: "projects",
+      layout: "new-project",
       new_project: true,
       project_name: req.session.project_name,
       project_title: req.session.project_title,
@@ -197,8 +197,6 @@ router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
       message: success.projectAdded,
     });
   } catch (ex) {
-    logErrorToFile(ex);
-
     req.session.loadProjectFromSession = true;
     req.session.project_name = req.body.project_name;
     req.session.project_title = req.body.project_title;
@@ -218,13 +216,14 @@ router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
       }
     } else {
       errorMessage = errors.genericError;
+      logErrorToFile(ex);
     }
 
     let saveDate = new Date(Date.now());
 
     req.flash("error", errorMessage ? errorMessage : errors.allFieldsRequired);
     return res.status(400).render("admin/projects/new-project", {
-      layout: "projects",
+      layout: "new-project",
       new_project: true,
       error: errorMessage ? errorMessage : errors.allFieldsRequired,
       project_name: req.body.project_name,
@@ -255,8 +254,8 @@ router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
 
   // If not load from session, then load normally; else, load from session
   if (!req.session.loadProjectFromSession) {
-    res.render("admin/projects/new-project", {
-      layout: "projects",
+    res.render("admin/projects/update-project", {
+      layout: "update-project",
       update_project: true,
       project_name: project.project_name,
       project_title: project.project_title,
@@ -267,8 +266,8 @@ router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
       csrfToken: res.locals._csrf,
     });
   } else {
-    res.render("admin/projects/new-project", {
-      layout: "projects",
+    res.render("admin/projects/update-project", {
+      layout: "update-project",
       update_project: true,
       project_name: req.session.project_name,
       project_title: req.session.project_title,
@@ -362,7 +361,21 @@ router.post("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
       message: success.projectUpdated,
     });
   } catch (ex) {
-    logErrorToFile(ex);
+    if (ex.code === 11000) {
+      const indexNameMatch = ex.message.match(/index: (\w+)/);
+      const indexName = indexNameMatch ? indexNameMatch[1] : null;
+
+      if (indexName === "project_name_1") {
+        errorMessage = errors.projectNameUnique;
+      } else if (indexName === "project_title_1") {
+        errorMessage = errors.projectTitleUnique;
+      } else {
+        errorMessage = errors.genericError;
+      }
+    } else {
+      errorMessage = errors.genericError;
+      logErrorToFile(ex);
+    }
 
     req.session.loadProjectFromSession = true;
     req.session.project_name = req.body.project_name;
@@ -371,8 +384,8 @@ router.post("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
     req.session.project_description_markdown = req.body.project_description;
 
     req.flash("error", errorMessage);
-    return res.status(400).render("admin/projects/new-project", {
-      layout: "projects",
+    return res.status(400).render("admin/projects/update-project", {
+      layout: "update-project",
       update_project: true,
       project_name: req.session.project_name,
       project_title: req.session.project_title,

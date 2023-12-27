@@ -16,7 +16,6 @@ router.post(
   "/",
   [passport.authenticate("local", { failWithError: true })],
   function (req, res) {
-    console.log(res.locals._csrf);
     var returnTo = "";
     req.flash("success", success.loginSuccess);
     if (req.query.returnTo !== undefined) var returnTo = req.query.returnTo;

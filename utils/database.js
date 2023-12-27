@@ -5,9 +5,9 @@ import { databaseStatus } from "../config/constants.js";
 const connectToDatabase = async (mongoURL) => {
   try {
     await mongoose.connect(mongoURL, {});
-    console.log(databaseStatus.success);
+    // console.log(databaseStatus.success);
   } catch (err) {
-    console.log(databaseStatus.error);
+    // console.log(databaseStatus.error);
     logErrorToFile(err);
     process.exit(1);
   }

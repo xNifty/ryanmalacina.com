@@ -259,7 +259,7 @@ router.post(
     let news = new News(_.pick(req.body, ["news_title"]));
 
     if (error) {
-      console.log("Error 3: ", error);
+      // console.log("Error 3: ", error);
       return res.status(400).render("admin/news/edit", {
         layout: "news",
         error: errors.allFieldsRequired,
