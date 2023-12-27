@@ -283,12 +283,12 @@ router.post(
     news.published_date_unclean = saveDate;
 
     try {
-      if (!mongoose.Types.ObjectId.isValid(req.session.news_id)) {
-        // console.log("Invalid objectId type");
-        return res.status(400).redirect("/");
-      }
-
       let news_id = req.session.news_id;
+
+      if (typeof news_id !== "string") {
+        res.status(400).json({ status: "error" });
+        return;
+      }
 
       await News.findByIdAndUpdate(news_id, {
         news_title: req.body.news_title,

@@ -121,7 +121,7 @@ let sess = createSession(secret_key, config, mongoStore);
 app.use(flash());
 app.use(
   cookieParser(),
-  session(sess),
+  session(sess), // cookie security is set via config key, keeps getting flagged
   passport.initialize(),
   passport.session()
 );
