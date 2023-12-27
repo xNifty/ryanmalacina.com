@@ -21,6 +21,7 @@ const config = {
     news: "@js/news.js",
     profile: "@js/profile.js",
     site: "@js/site.js",
+    projects: "@js/projects.js",
     simplePagination: "@css/simplePagination.css",
     style: "@css/style.css",
   },
