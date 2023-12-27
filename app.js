@@ -116,14 +116,15 @@ app.use(
   })
 );
 
-app.use(cookieParser());
 let sess = createSession(secret_key, config, mongoStore);
 
 app.use(flash());
-app.use(session(sess));
-
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(
+  cookieParser(),
+  session(sess),
+  passport.initialize(),
+  passport.session()
+);
 
 var limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
@@ -154,6 +155,12 @@ const local = new LocalStrategy((username, password, done) => {
     .catch((e) => done(e));
 });
 passport.use("local", local);
+
+app.use(
+  lusca.csrf({
+    cookie: true,
+  })
+);
 
 // Default values; we can override this on a per-route basis if needed
 app.locals = {
@@ -196,19 +203,6 @@ app.use("/news", newsRoute);
 app.use("/reset", resetRoute);
 app.use("/resetPassword", passwordReset);
 app.use("/profile", profileRoute);
-
-// enable csrf
-app.use(lusca.csrf());
-
-app.use(function (req, res, next) {
-  if (!req.session.csrfToken) {
-    req.session.csrfToken = req.csrfToken();
-  }
-  res.locals.csrfToken = req.session.csrfToken;
-  console.log(res.locals.csrfToken);
-
-  next();
-});
 
 // Send user to my blog via a 301 redirect
 app.get("/blog", function (req, res) {

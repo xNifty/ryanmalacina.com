@@ -14,6 +14,7 @@ router.get("/", [auth.isLoggedIn], async (req, res) => {
     title: pageHeader.profile,
     user_name: req.user.realName,
     user_email: req.user.email,
+    csrfToken: res.locals._csrf,
   });
 });
 

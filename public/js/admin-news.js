@@ -14,8 +14,12 @@ $(document).ready(function () {
 });
 
 function publishNews() {
+  var csrfToken = document.getElementById("_csrf").value;
   $.ajax({
     type: "PUT",
+    headers: {
+      "X-CSRF-TOKEN": csrfToken,
+    },
     url: "/admin/news/publish/" + $(this).data("id"),
     datatype: "json",
     success: function () {
@@ -30,8 +34,13 @@ function publishNews() {
 }
 
 function unpublishNews() {
+  var csrfToken = document.getElementById("_csrf").value;
+  alert(csrfToken);
   $.ajax({
     type: "PUT",
+    headers: {
+      "X-CSRF-TOKEN": csrfToken,
+    },
     url: "/admin/news/unpublish/" + $(this).data("id"),
     datatype: "json",
     success: function () {
@@ -47,8 +56,12 @@ function unpublishNews() {
 
 function deleteNews() {
   var deleteID = $("#confirm-id").val();
+  var csrfToken = $("#confirm-csrf").val();
   $.ajax({
     type: "PUT",
+    headers: {
+      "X-CSRF-TOKEN": csrfToken,
+    },
     url: "/admin/news/delete/" + deleteID,
     datatype: "json",
     success: function () {

@@ -1,0 +1,31 @@
+{{!-- Main Layout Template --}}
+<!doctype HTML>
+<html>
+{{> header}}
+<body>
+    {{> nav}}
+    {{> status}}
+    {{> confirmation}}
+    {{{ body }}}
+
+    {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
+    {{> footer currentyear=currentyear }}
+    <script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"
+        nonce="{{nonce}}">
+    </script>
+    <script
+        src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+        crossorigin="anonymous" nonce="{{nonce}}">
+    </script>
+    <script rel="text/javascript" nonce="{{nonce}}" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script nonce="{{nonce}}" src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script rel="text/javascript" src="{{ versionedFile 'new-project.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
+    <script nonce="{{nonce}}">
+        var simplemde = new SimpleMDE({ element: document.getElementById("project_description"), toolbar: ["preview"], placeholder: "Project Description Here - Write in Markdown", });
+    </script>
+</body>
+</html>

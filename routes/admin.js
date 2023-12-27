@@ -23,6 +23,7 @@ router.get("/", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
   res.render("admin", {
     layout: "admin",
     title: pageHeader.admin,
+    csrfToken: res.locals._csrf,
   });
 });
 
@@ -33,6 +34,7 @@ router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
     layout: "admin",
     title: pageHeader.adminProject,
     projects: project_list,
+    csrfToken: res.locals._csrf,
   });
 });
 
@@ -73,6 +75,7 @@ router.get("/news", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
     layout: "news",
     title: pageHeader.adminProject,
     news: news_list,
+    csrfToken: res.locals._csrf,
   });
 });
 
@@ -214,6 +217,7 @@ router.get(
       res.render("admin/news/admin-news", {
         title: pageHeader.adminProject,
         news: news_list,
+        csrfToken: res.locals._csrf,
       });
     }
 
@@ -227,6 +231,7 @@ router.get(
         news_title: news.news_title,
         news_description: news.news_description_markdown,
         loadJS: true,
+        csrfToken: res.locals._csrf,
       });
     } else {
       let news_list = await getNewsListing();
@@ -237,6 +242,7 @@ router.get(
         title: pageHeader.adminProject,
         news: news_list,
         loadJS: true,
+        csrfToken: res.locals._csrf,
       });
     }
   }
@@ -253,7 +259,7 @@ router.post(
     let news = new News(_.pick(req.body, ["news_title"]));
 
     if (error) {
-      console.log("Error 3: ", error);
+      // console.log("Error 3: ", error);
       return res.status(400).render("admin/news/edit", {
         layout: "news",
         error: errors.allFieldsRequired,

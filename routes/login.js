@@ -3,18 +3,18 @@ import passport from "passport";
 import auth from "../middleware/auth.js";
 import { pageHeader, success, errors } from "../config/constants.js";
 import isLocalUrl from "../utils/validTarget.js";
-
 const router = express.Router();
 
 router.get("/", [auth.isLoggedOut], async (req, res) => {
   return res.render("login", {
     title: pageHeader.login,
+    csrfToken: res.locals._csrf,
   });
 });
 
 router.post(
   "/",
-  passport.authenticate("local", { failWithError: true }),
+  [passport.authenticate("local", { failWithError: true })],
   function (req, res) {
     var returnTo = "";
     req.flash("success", success.loginSuccess);

@@ -14,6 +14,7 @@
         </div>
         <div class="modal-footer" id="modalFooter">
             <input type="hidden" value="" name="confirm-id" id="confirm-id">
+            <input type="hidden" name="_csrf" id="confirm-csrf" value="{{csrfToken}}">
             <input type="submit" class="btn btn-primary pull-right" id="modalSubmit" name="submit" value="Confirm">
             <div id="confirmStatus"></div>
         </div>
