@@ -1,5 +1,6 @@
 <div class="container">
     <div class="text-center"><h1>Admin Backend - Projects</h1></div>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" id="_csrf">
     {{#iff projects.length ">" 0}}
         <div class="row text-center">
             {{#each projects as |projects| }}

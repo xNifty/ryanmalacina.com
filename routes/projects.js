@@ -19,7 +19,7 @@ import config from "config";
 import _ from "lodash";
 import logErrorToFile from "../utils/errorLogging.js";
 import hljs from "highlight.js";
-import lusca from "lusca";
+import multer from "multer";
 
 const router = express.Router();
 // Actual default values
@@ -34,6 +34,21 @@ const md = markdownit({
     return ""; // use external default escaping
   },
 });
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "../public/images"); // Change the destination path as needed
+  },
+  filename: function (req, file, cb) {
+    const originalName = file.originalname;
+    const extension = originalName.split(".").pop();
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const newFileName = `${uniqueSuffix}.${extension}`;
+    cb(null, newFileName);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 const dateformat = dateFormat;
 
@@ -108,98 +123,106 @@ router.get("/new", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
   });
 });
 
-router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
-  const { _csrf, ...FormData } = req.body;
+router.post(
+  "/new",
+  [auth.isLoggedInJson, auth.isAdmin, upload.single("project_image")],
+  async (req, res) => {
+    const { _csrf, ...FormData } = req.body;
 
-  const { error } = validateProject(FormData);
-  var returnTo;
-  var errorMessage = "";
+    const { error } = validateProject(FormData);
+    var returnTo;
+    var errorMessage = "";
 
-  if (req.session.returnToSession) {
-    returnTo = req.session.returnToSession;
-  } else {
-    returnTo = "/projects/";
-  }
+    if (req.session.returnToSession) {
+      returnTo = req.session.returnToSession;
+    } else {
+      returnTo = "/projects/";
+    }
 
-  if (error) {
-    return res.status(400).render("admin/projects/new-project", {
-      layout: "projects",
-      new_project: true,
-      error: errors.allFieldsRequiredUploadImage,
-      project_name: req.body.project_name,
-      project_title: req.body.project_title,
-      project_source: req.body.project_source,
-      project_description: req.body.project_description,
-      return_to: returnTo,
+    if (error) {
+      return res.status(400).render("admin/projects/new-project", {
+        layout: "projects",
+        new_project: true,
+        error: errors.allFieldsRequiredUploadImage,
+        project_name: req.body.project_name,
+        project_title: req.body.project_title,
+        project_source: req.body.project_source,
+        project_description: req.body.project_description,
+        return_to: returnTo,
+      });
+    }
+
+    let project = new Project(
+      _.pick(req.body, ["project_name", "project_title", "project_source"])
+    );
+
+    let projectDescription = md.render(req.body.project_description);
+    let projectSanitized = sanitize(projectDescription, {
+      allowedTags: safeTags,
     });
-  }
 
-  let project = new Project(
-    _.pick(req.body, ["project_name", "project_title", "project_source"])
-  );
-
-  let projectDescription = md.render(req.body.project_description);
-  let projectSanitized = sanitize(projectDescription, {
-    allowedTags: safeTags,
-  });
-
-  /*
+    /*
         Default the project image to blank and if it exists, we can then set the image to the image from the
         body of the page.  If there is no image found, we will use the default image that we set.
     */
-  let projectImage = "";
-  let adjustedFileName = "";
+    let projectImage = "";
+    let adjustedFileName = "";
 
-  if (req.files) {
-    projectImage = req.files.project_image;
-    adjustedFileName = projectImage.name
-      .split(".")
-      .join("-" + Date.now() + ".");
-    project.project_image = adjustedFileName;
-  } else {
-    if (!project.project_image) {
-      project.project_image = "default.png";
-    }
-  }
+    if (req.file) {
+      // Use req.file.filename directly, no need for projectImage.name
+      adjustedFileName = req.file.filename;
 
-  project.project_description_markdown = req.body.project_description;
-  project.project_description_html = projectSanitized;
-  let saveDate = new Date(Date.now());
+      // Update the session variable
+      req.session.project_image = adjustedFileName;
 
-  try {
-    // Try moving the image; if that fails, redirect back with error message
-    if (projectImage) {
-      await projectImage.mv("./public/images/" + adjustedFileName);
-    }
-    await project.save();
-  } catch (ex) {
-    if (ex.code === 11000) {
-      if (ex.keyPattern.project_name) {
-        errorMessage = errors.projectNameUnique;
-      } else if (ex.keyPattern.project_title) {
-        errorMessage = errors.projectTitleUnique;
-      } else {
-        errorMessage = errors.genericError;
+      try {
+        // Move the file to the desired location
+        (await req.file.destination) + "/" + adjustedFileName;
+      } catch (error) {
+        logErrorToFile(error);
       }
     }
-    return res.status(400).render("admin/projects/new-project", {
-      layout: "projects",
-      new_project: true,
-      error: errorMessage ? errorMessage : errors.allFieldsRequired,
-      project_name: req.body.project_name,
-      project_title: req.body.project_title,
-      project_source: req.body.project_source,
-      project_description: req.body.project_description,
-      project_image: req.files ? req.files.project_image : "",
-      last_edited: saveDate,
-    });
+
+    project.project_description_markdown = req.body.project_description;
+    project.project_description_html = projectSanitized;
+    let saveDate = new Date(Date.now());
+
+    try {
+      // Try moving the image; if that fails, redirect back with error message
+      if (projectImage) {
+        await projectImage.mv("./public/images/" + adjustedFileName);
+      }
+      await project.save();
+    } catch (ex) {
+      if (ex.code === 11000) {
+        if (ex.keyPattern.project_name) {
+          errorMessage = errors.projectNameUnique;
+        } else if (ex.keyPattern.project_title) {
+          errorMessage = errors.projectTitleUnique;
+        } else {
+          errorMessage = errors.genericError;
+        }
+      }
+      return res.status(400).render("admin/projects/new-project", {
+        layout: "projects",
+        new_project: true,
+        error: errorMessage ? errorMessage : errors.allFieldsRequired,
+        project_name: req.body.project_name,
+        project_title: req.body.project_title,
+        project_source: req.body.project_source,
+        project_description: req.body.project_description,
+        project_image: req.files ? req.files.project_image : "",
+        last_edited: saveDate,
+      });
+    }
+    if (req.session.returnToSession) delete req.session.returnToSession;
+    req.flash("success", success.projectAdded);
+    res.redirect("/projects");
   }
-  if (req.session.returnToSession) delete req.session.returnToSession;
-  req.flash("success", success.projectAdded);
-  res.redirect("/projects");
-});
+);
 
 router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
+  console.log(`CSRF Token in GET: ${res.locals._csrf}`);
   const project = await Project.findOne({
     _id: { $eq: req.params.id },
   });
@@ -226,6 +249,7 @@ router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
       project_description: project.project_description_markdown,
       project_image: project.project_image,
       id: project._id,
+      csrfToken: res.locals._csrf,
     });
   } else {
     res.render("admin/projects/new-project", {
@@ -237,6 +261,7 @@ router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
       project_description: req.session.project_description_markdown,
       project_image: req.session.project_image,
       id: req.session.project_id,
+      csrfToken: res.locals._csrf,
     });
 
     // Finally, clear up the session variables -- can I move this to a function where we delete them if they exist?
@@ -246,8 +271,9 @@ router.get("/:id/edit", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
 
 router.post(
   "/:id/edit",
-  [auth.isLoggedInJson, auth.isAdmin],
+  [auth.isLoggedIn, auth.isAdmin, upload.single("project_image")],
   async (req, res) => {
+    console.log(`CSRF Token in Edit: ${req.body._csrf}`);
     let project = await Project.find({ _id: req.params.id }).select({
       project_image: 1,
       _id: 0,
@@ -296,17 +322,19 @@ router.post(
       let projectImage = req.session.project_image;
       let adjustedFileName = "";
 
-      if (req.files) {
-        projectImage = req.files.project_image;
-        adjustedFileName = projectImage.name
-          .split(".")
-          .join("-" + Date.now() + ".");
+      console.log(req.file);
 
-        req.session.project_image = projectImage;
+      if (req.file) {
+        adjustedFileName = req.file.filename;
+
+        // Update the session variable
+        req.session.project_image = adjustedFileName;
 
         try {
-          await projectImage.mv("./public/images/" + adjustedFileName);
-          projectImage = adjustedFileName;
+          // Move the file to the desired location
+          await req.file.mv(
+            (await req.file.destination) + "/" + adjustedFileName
+          );
         } catch (error) {
           logErrorToFile(error);
         }

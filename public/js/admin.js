@@ -16,8 +16,12 @@ $(document).ready(function () {
 });
 
 function publishProject() {
+  var csrfToken = document.getElementById("_csrf").value;
   $.ajax({
     type: "PUT",
+    headers: {
+      "X-CSRF-TOKEN": csrfToken,
+    },
     url: "/admin/projects/publish/" + $(this).data("id"),
     datatype: "json",
     success: function () {
@@ -32,8 +36,12 @@ function publishProject() {
 }
 
 function unpublishProject() {
+  var csrfToken = document.getElementById("_csrf").value;
   $.ajax({
     type: "PUT",
+    headers: {
+      "X-CSRF-TOKEN": csrfToken,
+    },
     url: "/admin/projects/unpublish/" + $(this).data("id"),
     datatype: "json",
     success: function () {
@@ -49,8 +57,12 @@ function unpublishProject() {
 
 function deleteProject() {
   var deleteID = $("#confirm-id").val();
+  var csrfToken = $("#confirm-csrf").val();
   $.ajax({
     type: "PUT",
+    headers: {
+      "X-CSRF-TOKEN": csrfToken,
+    },
     url: "/projects/delete/" + deleteID,
     datatype: "json",
     success: function () {
@@ -66,8 +78,12 @@ function deleteProject() {
 
 function updateCheckbox() {
   $(this).prop("disabled", "disabled");
+  var csrfToken = document.getElementById("_csrf").value;
   $.ajax({
     type: "put",
+    headers: {
+      "X-CSRF-TOKEN": csrfToken,
+    },
     url: "/projects/update/" + $(this).data("id"),
     data: "json",
     success: function () {

@@ -71,6 +71,7 @@ function login() {
   var form = document.getElementById("loginform");
   var loginSubmit = document.getElementById("modal-footer");
   var csrfToken = form.querySelector('[name="_csrf"]').value;
+  console.log("token: " + csrfToken);
   form.onsubmit = function (e) {
     e.preventDefault();
     var user = form.username.value;
