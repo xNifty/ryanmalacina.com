@@ -208,14 +208,13 @@ router.post("/new", [auth.isLoggedInJson, auth.isAdmin], async (req, res) => {
       const indexName = indexNameMatch ? indexNameMatch[1] : null;
 
       if (indexName === "project_name_1") {
-        errorMessage = errors.projectNameUnique;
+        errorMessage += errors.projectNameUnique;
       } else if (indexName === "project_title_1") {
-        errorMessage = errors.projectTitleUnique;
+        errorMessage += errors.projectTitleUnique;
       } else {
-        errorMessage = errors.genericError;
+        errorMessage += errors.genericError;
       }
-    } else {
-      errorMessage = errors.genericError;
+    } else if (errorMessage === "") {
       logErrorToFile(ex);
     }
 
