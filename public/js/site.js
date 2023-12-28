@@ -46,11 +46,15 @@ function loginModalCapsLock() {
   const msg = document.getElementById("sp_pass_message");
 
   if (el !== null) {
-    el.addEventListener("keydown", (e) => {
-      msg.style = e.getModifierState("CapsLock")
-        ? "display: block"
-        : "display: none";
-    });
+    el.addEventListener(
+      "keydown",
+      (e) => {
+        msg.style = e.getModifierState("CapsLock")
+          ? "display: block"
+          : "display: none";
+      },
+      { passive: true }
+    );
   }
 }
 
@@ -59,11 +63,15 @@ function loginPageCapsLock() {
   const msg = document.getElementById("password-message");
 
   if (el !== null) {
-    el.addEventListener("keydown", (e) => {
-      msg.style = e.getModifierState("CapsLock")
-        ? "display: block"
-        : "display: none";
-    });
+    el.addEventListener(
+      "keydown",
+      (e) => {
+        msg.style = e.getModifierState("CapsLock")
+          ? "display: block"
+          : "display: none";
+      },
+      { passive: true }
+    );
   }
 }
 

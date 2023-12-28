@@ -1,6 +1,6 @@
-document
-  .getElementById("newProjectForm")
-  .addEventListener("submit", async function (event) {
+document.getElementById("newProjectForm").addEventListener(
+  "submit",
+  async function (event) {
     // Extract the project ID from the URL using a regular expression
     event.preventDefault();
 
@@ -39,4 +39,6 @@ document
       },
       complete: function (xhr, status) {},
     });
-  });
+  },
+  { passive: true }
+);
