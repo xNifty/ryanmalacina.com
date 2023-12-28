@@ -91,6 +91,7 @@ connectToDatabase(mongoURL);
 
 app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
+app.set("trust proxy", config.get("trustProxy"));
 
 app.use(express.json());
 app.use(express.static("public"));
