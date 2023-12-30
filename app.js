@@ -11,11 +11,11 @@ import LocalStrategy from "passport-local";
 import lusca from "lusca";
 import rateLimit from "express-rate-limit";
 import createHttpError from "http-errors";
+import { generateNonce, getDirectives } from "nonce-simple";
 
 import { User } from "./models/user.js";
 import { iff, versionedFile } from "./utils/helpers.js";
 import renderError from "./utils/renderErrorPage.js";
-import { generateNonce, getDirectives } from "nonce-simple";
 import { errors, pageHeader } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
 
@@ -211,14 +211,12 @@ app.use("/reset", resetRoute);
 app.use("/resetPassword", passwordReset);
 app.use("/profile", profileRoute);
 
-// Send user to my blog via a 301 redirect
 if (showBlog) {
   app.get("/blog/", function (req, res) {
     res.redirect(301, blogURL);
   });
 }
 
-// Send user to my documentation site via a 301 redirect
 if (showDocs) {
   app.get("/docs/", function (req, res) {
     res.redirect(301, docsURL);
