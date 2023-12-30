@@ -1,9 +1,6 @@
 <div class="container" id="contact">
-    <!--Section: Contact v.2-->
     <section class="mb-4">
-        <!--Section heading-->
         <h2 class="h1-responsive font-weight-bold my-4">Contact Me</h2>
-        <!--Section description-->
         <div id="contactformdiv">
             Shoot me a message and I'll get back to you as soon as I can.
             If you are reporting an issue that is not a security vulnerability, please do so <a href="https://github.com/xNifty/ryanmalacina.com/issues">here</a>.<br>
@@ -13,52 +10,41 @@
                 </div>
             </div>
             <div class="row">
-                <!--Grid column-->
                 <div class="col-md-12 mb-md-0 mb-5">
                     <form id="contact-form" name="contact-form" action="post" method="POST">
                         <input type="hidden" name="_csrf" value="{{csrfToken}}">
-                        <!--Grid row-->
                         <div class="row">
-                            <!--Grid column-->
                             <div class="col-md-6">
                                 <div class="md-form mb-0">
-                                    <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" autocomplete="off">
                                     <label for="name" class="">Your Name</label>
+                                    <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" autocomplete="off">
                                 </div>
                             </div>
-                            <!--Grid column-->
-                            <!--Grid column-->
                             <div class="col-md-6">
                                 <div class="md-form mb-0">
-                                    <input type="text" id="email" name="email" class="form-control" placeholder="you@your.email" autocomplete="on">
                                     <label for="email" class="">Your Email</label>
+                                    <input type="text" id="email" name="email" class="form-control" placeholder="you@your.email" autocomplete="on">
                                 </div>
                             </div>
-                            <!--Grid column-->
                         </div>
-                        <!--Grid row-->
-                        <!--Grid row-->
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="md-form mb-0">
-                                    <input type="text" id="subject" name="subject" class="form-control" placeholder="Hello!" autocomplete="off">
                                     <label for="subject" class="">Subject</label>
+                                    <input type="text" id="subject" name="subject" class="form-control" placeholder="Hello!" autocomplete="off">
                                 </div>
                             </div>
                         </div>
-                        <!--Grid row-->
-                        <!--Grid row-->
                         <div class="row">
-                            <!--Grid column-->
                             <div class="col-md-12">
                                 <div class="md-form">
+                                    <label for="message">Message</label>
                                     <textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" placeholder="This is your email content."></textarea>
-                                    <label for="message">Message</label><div class="recaptcha-font">This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.</div>
+                                    <div class="recaptcha-font">This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.</div>
                                 </div>
 
                             </div>
                         </div>
-                        <!--Grid row-->
                         <div class="text-center">
                             <input type="text" id="g-recaptcha-response" name="g-recaptcha-response" value="" hidden>
                             <script src="//www.google.com/recaptcha/api.js?render={{6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG}}" nonce="{{nonce}}"></script><script nonce="{{nonce}}">grecaptcha.ready(function(){grecaptcha.execute('6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG', {action: 'homepage'}).then(cb);});</script>
@@ -72,5 +58,4 @@
             </div>
         </div>
     </section>
-    <!--Section: Contact v.2-->
 </div>
