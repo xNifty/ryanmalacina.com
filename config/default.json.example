@@ -13,5 +13,6 @@
   "blogVersion": "GhostVersionMajor.GhostVersionMinor",
   "rootURL": "rootSiteURL",
   "recaptchaSiteKey": recaptchaSiteKey,
-  "trustProxy": false
+  "trustProxy": false,
+  "showDocs": false
 }

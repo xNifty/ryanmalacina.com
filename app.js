@@ -10,6 +10,7 @@ import passport from "passport";
 import LocalStrategy from "passport-local";
 import lusca from "lusca";
 import rateLimit from "express-rate-limit";
+import createHttpError from "http-errors";
 
 import { User } from "./models/user.js";
 import { iff, versionedFile } from "./utils/helpers.js";
@@ -43,6 +44,11 @@ const env = app.settings.env;
 const mongoURL = process.env.mongoURL;
 const secret_key = process.env.privateKey;
 const mongoStore = createMongoStore(mongoURL);
+
+const blogURL = config.get("blogURL");
+const showBlog = config.get("showBlog");
+const docsURL = config.get("docsURL");
+const showDocs = config.get("showDocs");
 
 const nonceOptions = {
   scripts: [
@@ -181,7 +187,7 @@ app.use(function (req, res, next) {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
 
-  res.locals.displayBlogNav = config.get("showBlog");
+  res.locals.displayBlogNav = showBlog;
 
   if (req.user) {
     res.locals.realName = req.user.realName;
@@ -206,26 +212,27 @@ app.use("/resetPassword", passwordReset);
 app.use("/profile", profileRoute);
 
 // Send user to my blog via a 301 redirect
-app.get("/blog", function (req, res) {
-  res.redirect(301, config.get("blogURL"));
-});
+if (showBlog) {
+  app.get("/blog/", function (req, res) {
+    res.redirect(301, blogURL);
+  });
+}
 
 // Send user to my documentation site via a 301 redirect
-app.get("/docs", function (req, res) {
-  res.redirect(301, config.get("docsURL"));
-});
-
+if (showDocs) {
+  app.get("/docs/", function (req, res) {
+    res.redirect(301, docsURL);
+  });
+}
 /*
     Catch errors and pass information to our error handler to render the proper page.
 */
 app.use(function (req, res, next) {
-  let err = new Error("Not Found");
-  err.status = 404;
-  next(err);
+  next(createHttpError(404, "Page Not Found"));
 });
 
 app.use(function (err, req, res, next) {
-  let status = err.status ? err.status : 500;
+  const status = err.status ? err.status : 500;
   renderError(env, status, err, req, res);
 });
 
