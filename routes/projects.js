@@ -13,7 +13,7 @@ import {
   clearProjectEditSession,
   clearProjectSession,
 } from "../utils/sessionHandler.js";
-import auth from "../middleware/auth.js";
+import auth from "../utils/auth.js";
 import {
   errors,
   success,

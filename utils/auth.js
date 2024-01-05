@@ -1,6 +1,6 @@
 // Authentication Middleware
 import { errors } from "../config/constants.js";
-import handleResponse from "../utils/responseHandler.js";
+import handleResponse from "./responseHandler.js";
 
 // Make sure the user is logged in, and if not, redirect to login with a message
 export function loggedInOnly(req, res, next) {

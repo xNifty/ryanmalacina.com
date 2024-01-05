@@ -4,7 +4,7 @@ import dateFormat from "dateformat";
 import MarkdownIt from "markdown-it";
 import _ from "lodash";
 
-import auth from "../middleware/auth.js";
+import auth from "../utils/auth.js";
 import { Project } from "../models/projects.js";
 import { News, validateNews } from "../models/news.js";
 import logErrorToFile from "../utils/errorLogging.js";

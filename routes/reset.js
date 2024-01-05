@@ -5,7 +5,7 @@ import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
 
-import auth from "../middleware/auth.js";
+import auth from "../utils/auth.js";
 import { pageHeader, success } from "../config/constants.js";
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";

@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 
-import auth from "../middleware/auth.js";
+import auth from "../utils/auth.js";
 import { pageHeader, success, errors } from "../config/constants.js";
 import { resetPassword } from "../utils/password.js";
 import { Token } from "../models/token.js";
