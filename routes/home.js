@@ -59,13 +59,10 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
     showNews = true;
   }
 
-  // I really dislike this, but to get our nonce in there, this is what we have to do...
-  let recaptcha = res.recaptcha;
-
   return res.render("index", {
     title: "Ryan Malacina | Home",
     projects: project_list,
-    captcha: recaptcha,
+    captcha: res.recaptcha,
     siteKey: config.get("recaptchaSiteKey"),
     news: news_list,
     showBlog: showBlog,

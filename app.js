@@ -32,6 +32,7 @@ import { resetRoute } from "./routes/reset.js";
 import { passwordReset } from "./routes/resetPassword.js";
 import { profileRoute } from "./routes/profile.js";
 import { createMongoStore, createSession } from "./utils/sessionHandler.js";
+import urls from "./config/urls.js";
 
 // Make sure our private token exists
 if (!process.env.privateKey) {
@@ -51,30 +52,12 @@ const docsURL = config.get("docsURL");
 const showDocs = config.get("showDocs");
 
 const nonceOptions = {
-  scripts: [
-    `https://cdnjs.cloudflare.com`,
-    `https://code.jquery.com`,
-    `https://maxcdn.bootstrapcdn.com`,
-    `https://cdn.jsdelivr.net`,
-    `https://www.google.com/recaptcha/`,
-    `https://www.gstatic.com/recaptcha/`,
-    `'strict-dynamic'`,
-    `'unsafe-inline'`,
-  ],
-  styles: [
-    `https://cdnjs.cloudflare.com`,
-    `https://fonts.googleapis.com`,
-    `https://maxcdn.bootstrapcdn.com`,
-    `https://cdn.jsdelivr.net`,
-  ],
-  fonts: [
-    `https://cdnjs.cloudflare.com`,
-    `https://fonts.gstatic.com`,
-    `https://maxcdn.bootstrapcdn.com`,
-  ],
-  connect: [`https://cdn.jsdelivr.net`],
-  frame: [`https://www.google.com/recaptcha/`],
-  reportTo: "https://ryanmalacina.report-uri.com/r/d/csp/enforce",
+  scripts: urls.scriptSrc,
+  styles: urls.styleSrc,
+  fonts: urls.fontSrc,
+  connect: urls.connectSrc,
+  frame: urls.frameSrc,
+  reportTo: urls.reportUri,
 };
 
 // Set default layout, can be overridden per-route as needed
