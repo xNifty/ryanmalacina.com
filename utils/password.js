@@ -1,9 +1,10 @@
-import { User } from "../models/user.js";
-import { Token } from "../models/token.js";
 import bcrypt from "bcrypt";
-import { sendMailNoRedirect } from "./sendMail.js";
 import fs from "fs";
 import path from "path";
+
+import { User } from "../models/user.js";
+import { Token } from "../models/token.js";
+import { sendMailNoRedirect } from "./sendMail.js";
 
 export async function resetPassword(userId, token, password) {
   let passwordToken = await Token.findOne({ _id: { $eq: userId } });

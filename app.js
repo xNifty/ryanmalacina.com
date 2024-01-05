@@ -18,6 +18,7 @@ import { iff, versionedFile } from "./utils/helpers.js";
 import renderError from "./utils/renderErrorPage.js";
 import { errors, pageHeader } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
+import urls from "./config/urls.js";
 
 // Routes
 import { homeRoute } from "./routes/home.js";
@@ -32,7 +33,6 @@ import { resetRoute } from "./routes/reset.js";
 import { passwordReset } from "./routes/resetPassword.js";
 import { profileRoute } from "./routes/profile.js";
 import { createMongoStore, createSession } from "./utils/sessionHandler.js";
-import urls from "./config/urls.js";
 
 // Make sure our private token exists
 if (!process.env.privateKey) {
