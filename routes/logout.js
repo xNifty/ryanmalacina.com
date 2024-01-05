@@ -1,6 +1,5 @@
 import express from "express";
-import session from "express-session";
-import config from "config";
+
 import auth from "../middleware/auth.js";
 import { success } from "../config/constants.js";
 

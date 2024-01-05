@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 import logErrorToFile from "./errorLogging.js";
 import { databaseStatus } from "../config/constants.js";
 

@@ -1,28 +1,26 @@
-// projects.js
-// Handles all of the different project routes
+import express from "express";
+import markdownit from "markdown-it";
+import sanitize from "sanitize-html";
+import dateFormat from "dateformat";
+import fileUpload from "express-fileupload";
+import hljs from "highlight.js";
+import util from "util";
+import config from "config";
+import _ from "lodash";
 
 import { Project, validateProject } from "../models/projects.js";
 import {
   clearProjectEditSession,
   clearProjectSession,
 } from "../utils/sessionHandler.js";
-import express from "express";
 import auth from "../middleware/auth.js";
-import markdownit from "markdown-it";
-import sanitize from "sanitize-html";
-import dateFormat from "dateformat";
-import fileUpload from "express-fileupload";
 import {
   errors,
   success,
   pageHeader,
   statusCodes,
 } from "../config/constants.js";
-import config from "config";
-import _ from "lodash";
 import logErrorToFile from "../utils/errorLogging.js";
-import hljs from "highlight.js";
-import util from "util";
 
 const router = express.Router();
 // Actual default values

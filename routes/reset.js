@@ -1,14 +1,15 @@
 import express from "express";
-import auth from "../middleware/auth.js";
-import { pageHeader, success } from "../config/constants.js";
-import { User } from "../models/user.js";
-import { Token } from "../models/token.js";
-import bcrypt from "bcrypt";
-import { sendMailNoRedirect } from "../utils/sendMail.js";
 import crypto from "crypto";
 import config from "config";
 import fs from "fs";
 import path from "path";
+import bcrypt from "bcrypt";
+
+import auth from "../middleware/auth.js";
+import { pageHeader, success } from "../config/constants.js";
+import { User } from "../models/user.js";
+import { Token } from "../models/token.js";
+import { sendMailNoRedirect } from "../utils/sendMail.js";
 
 const router = express.Router();
 
