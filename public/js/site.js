@@ -1,7 +1,7 @@
 // sitewide javascript
 
 $(document).ready(function () {
-  $("#loginform").on("click", login);
+  $("#loginFormModal").on("click", login);
 
   /* Scroll to top */
   $(window).scroll(function () {
@@ -46,11 +46,15 @@ function loginModalCapsLock() {
   const msg = document.getElementById("sp_pass_message");
 
   if (el !== null) {
-    el.addEventListener("keydown", (e) => {
-      msg.style = e.getModifierState("CapsLock")
-        ? "display: block"
-        : "display: none";
-    });
+    el.addEventListener(
+      "keydown",
+      (e) => {
+        msg.style = e.getModifierState("CapsLock")
+          ? "display: block"
+          : "display: none";
+      },
+      { passive: true }
+    );
   }
 }
 
@@ -59,18 +63,21 @@ function loginPageCapsLock() {
   const msg = document.getElementById("password-message");
 
   if (el !== null) {
-    el.addEventListener("keydown", (e) => {
-      msg.style = e.getModifierState("CapsLock")
-        ? "display: block"
-        : "display: none";
-    });
+    el.addEventListener(
+      "keydown",
+      (e) => {
+        msg.style = e.getModifierState("CapsLock")
+          ? "display: block"
+          : "display: none";
+      },
+      { passive: true }
+    );
   }
 }
 
 function login() {
-  var form = document.getElementById("loginform");
-  var loginSubmit = document.getElementById("modal-footer");
-  var csrfToken = form.querySelector('[name="_csrf"]').value;
+  var form = document.getElementById("loginFormModal");
+  var csrfToken = form.querySelector('[name="modal_csrf"]').value;
   form.onsubmit = function (e) {
     e.preventDefault();
     var user = form.username.value;

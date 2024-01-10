@@ -1,8 +1,9 @@
 import express from "express";
-import auth from "../middleware/auth.js";
+import bcrypt from "bcrypt";
+
+import auth from "../utils/auth.js";
 import { pageHeader, profile } from "../config/constants.js";
 import { User } from "../models/user.js";
-import bcrypt from "bcrypt";
 import { resetPasswordNoToken } from "../utils/password.js";
 import logErrorToFile from "../utils/errorLogging.js";
 

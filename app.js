@@ -10,13 +10,15 @@ import passport from "passport";
 import LocalStrategy from "passport-local";
 import lusca from "lusca";
 import rateLimit from "express-rate-limit";
+import createHttpError from "http-errors";
+import { generateNonce, getDirectives } from "nonce-simple";
 
 import { User } from "./models/user.js";
 import { iff, versionedFile } from "./utils/helpers.js";
 import renderError from "./utils/renderErrorPage.js";
-import { generateNonce, getDirectives } from "nonce-simple";
 import { errors, pageHeader } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
+import urls from "./config/urls.js";
 
 // Routes
 import { homeRoute } from "./routes/home.js";
@@ -44,31 +46,18 @@ const mongoURL = process.env.mongoURL;
 const secret_key = process.env.privateKey;
 const mongoStore = createMongoStore(mongoURL);
 
+const blogURL = config.get("blogURL");
+const showBlog = config.get("showBlog");
+const docsURL = config.get("docsURL");
+const showDocs = config.get("showDocs");
+
 const nonceOptions = {
-  scripts: [
-    `https://cdnjs.cloudflare.com`,
-    `https://code.jquery.com`,
-    `https://maxcdn.bootstrapcdn.com`,
-    `https://cdn.jsdelivr.net`,
-    `https://www.google.com/recaptcha/`,
-    `https://www.gstatic.com/recaptcha/`,
-    `'strict-dynamic'`,
-    `'unsafe-inline'`,
-  ],
-  styles: [
-    `https://cdnjs.cloudflare.com`,
-    `https://fonts.googleapis.com`,
-    `https://maxcdn.bootstrapcdn.com`,
-    `https://cdn.jsdelivr.net`,
-  ],
-  fonts: [
-    `https://cdnjs.cloudflare.com`,
-    `https://fonts.gstatic.com`,
-    `https://maxcdn.bootstrapcdn.com`,
-  ],
-  connect: [`https://cdn.jsdelivr.net`],
-  frame: [`https://www.google.com/recaptcha/`],
-  reportTo: "https://ryanmalacina.report-uri.com/r/d/csp/enforce",
+  scripts: urls.scriptSrc,
+  styles: urls.styleSrc,
+  fonts: urls.fontSrc,
+  connect: urls.connectSrc,
+  frame: urls.frameSrc,
+  reportTo: urls.reportUri,
 };
 
 // Set default layout, can be overridden per-route as needed
@@ -91,6 +80,7 @@ connectToDatabase(mongoURL);
 
 app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
+app.set("trust proxy", config.get("trustProxy"));
 
 app.use(express.json());
 app.use(express.static("public"));
@@ -180,7 +170,7 @@ app.use(function (req, res, next) {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
 
-  res.locals.displayBlogNav = config.get("showBlog");
+  res.locals.displayBlogNav = showBlog;
 
   if (req.user) {
     res.locals.realName = req.user.realName;
@@ -204,27 +194,26 @@ app.use("/reset", resetRoute);
 app.use("/resetPassword", passwordReset);
 app.use("/profile", profileRoute);
 
-// Send user to my blog via a 301 redirect
-app.get("/blog", function (req, res) {
-  res.redirect(301, config.get("blogURL"));
-});
+if (showBlog) {
+  app.get("/blog/", function (req, res) {
+    res.redirect(301, blogURL);
+  });
+}
 
-// Send user to my documentation site via a 301 redirect
-app.get("/docs", function (req, res) {
-  res.redirect(301, config.get("docsURL"));
-});
-
+if (showDocs) {
+  app.get("/docs/", function (req, res) {
+    res.redirect(301, docsURL);
+  });
+}
 /*
     Catch errors and pass information to our error handler to render the proper page.
 */
 app.use(function (req, res, next) {
-  let err = new Error("Not Found");
-  err.status = 404;
-  next(err);
+  next(createHttpError(404, "Page Not Found"));
 });
 
 app.use(function (err, req, res, next) {
-  let status = err.status ? err.status : 500;
+  const status = err.status ? err.status : 500;
   renderError(env, status, err, req, res);
 });
 

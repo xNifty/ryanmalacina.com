@@ -13,7 +13,7 @@ If you wish to use this for your own personal site, there are a few things to no
 
 ## Webpack
 
-This project now makes use of Webpack for building the CSS and JS files. This removes the requirement for me to increment constant values when I make changes and instead simple requires me to run webpack to generate the new CSS and JS files so that any new versions are grabbed and cached versions are not loaded. The handlebars template files are set up to use the generated files.
+This project now makes use of Webpack for building the CSS and JS files. This removes the requirement for me to increment constant values when I make changes and instead simple requires me to run webpack to generate the new CSS and JS files so that any new versions are grabbed and cached versions are not loaded. The handlebars template files are set up to use the generated files. Webpack is not used for anything else.
 
 ```
 npx webpack
@@ -42,7 +42,9 @@ npx webpack
    b. port  
    c. blogURL (if making use of Ghost Blog to integrate posts into homepage)  
    d. blogVersion (if making use of Ghost Blog to integrate posts into homepage (at this time it should be set to v5.0 if using latest Ghost))
-   e. recaptchaSiteKey (publicly available key that is used to generate the recaptcha)
+   e. showBlog (set to true if you are integrating with Ghost for displaying posts)
+   f. recaptchaSiteKey (publicly available key that is used to generate the recaptcha)
+   g. trustProxy (set to true if behind a reverse proxy)
 
 3. Required keys that you must change:  
    a. rootURL

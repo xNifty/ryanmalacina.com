@@ -1,8 +1,10 @@
 import express from "express";
 import passport from "passport";
-import auth from "../middleware/auth.js";
+
+import auth from "../utils/auth.js";
 import { pageHeader, success, errors } from "../config/constants.js";
 import isLocalUrl from "../utils/validTarget.js";
+
 const router = express.Router();
 
 router.get("/", [auth.isLoggedOut], async (req, res) => {

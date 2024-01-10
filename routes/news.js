@@ -1,6 +1,6 @@
 import express from "express";
+
 import { News } from "../models/news.js";
-import paginate from "mongoose-paginate-v2";
 
 const router = express.Router();
 
