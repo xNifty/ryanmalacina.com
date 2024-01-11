@@ -9,7 +9,7 @@ import logErrorToFile from "../utils/errorLogging.js";
 
 const router = express.Router();
 
-router.get("/", [auth.isLoggedIn], async (req, res) => {
+router.get("/", [auth.ValidateLoggedIn], async (req, res) => {
   return res.render("profile", {
     layout: "profile",
     title: pageHeader.profile,
@@ -19,7 +19,7 @@ router.get("/", [auth.isLoggedIn], async (req, res) => {
   });
 });
 
-router.post("/", [auth.isLoggedIn], async (req, res) => {
+router.post("/", [auth.ValidateLoggedIn], async (req, res) => {
   var userName = req.body.user_name;
   var email = req.body.user_email;
   var passwordOne = req.body.pass_change_one;

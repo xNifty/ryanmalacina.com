@@ -5,7 +5,7 @@ import { success } from "../config/constants.js";
 
 const router = express.Router();
 
-router.get("/", [auth.isLoggedIn], async (req, res, next) => {
+router.get("/", [auth.ValidateLoggedIn], async (req, res, next) => {
   // Leaving this in place, on the off chance there isn't any JavaScript enabled
   req.logout(function (err) {
     req.flash("success", success.logoutSuccess);

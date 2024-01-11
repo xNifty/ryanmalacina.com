@@ -16,28 +16,36 @@ const dateformat = dateFormat;
 //let converter = new showdown.Converter();
 let md = new MarkdownIt();
 
-router.get("/", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
-  res.render("admin", {
-    layout: "admin",
-    title: pageHeader.admin,
-    csrfToken: res.locals._csrf,
-  });
-});
+router.get(
+  "/",
+  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  async (req, res) => {
+    res.render("admin", {
+      layout: "admin",
+      title: pageHeader.admin,
+      csrfToken: res.locals._csrf,
+    });
+  }
+);
 
-router.get("/projects", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
-  let project_list = await listProjects();
+router.get(
+  "/projects",
+  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  async (req, res) => {
+    let project_list = await listProjects();
 
-  res.render("admin/projects/projects", {
-    layout: "admin",
-    title: pageHeader.adminProject,
-    projects: project_list,
-    csrfToken: res.locals._csrf,
-  });
-});
+    res.render("admin/projects/projects", {
+      layout: "admin",
+      title: pageHeader.adminProject,
+      projects: project_list,
+      csrfToken: res.locals._csrf,
+    });
+  }
+);
 
 router.put(
   "/projects/publish/:id",
-  [auth.isAdmin, auth.isLoggedIn],
+  [auth.ValidateLoggedIn, auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     if (await publishProject(id)) {
@@ -52,7 +60,7 @@ router.put(
 
 router.put(
   "/projects/unpublish/:id",
-  [auth.isAdmin, auth.isLoggedIn],
+  [auth.ValidateLoggedIn, auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     if (await unpublishProject(id)) {
@@ -65,21 +73,25 @@ router.put(
   }
 );
 
-router.get("/news", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
-  let news_list = await getNewsListing();
+router.get(
+  "/news",
+  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  async (req, res) => {
+    let news_list = await getNewsListing();
 
-  res.render("admin/news/news", {
-    layout: "news",
-    title: pageHeader.adminProject,
-    news: news_list,
-    csrfToken: res.locals._csrf,
-  });
-});
+    res.render("admin/news/news", {
+      layout: "news",
+      title: pageHeader.adminProject,
+      news: news_list,
+      csrfToken: res.locals._csrf,
+    });
+  }
+);
 
 // Publish the news entry
 router.post(
   "/news/new",
-  [auth.isLoggedInJson, auth.isAdmin],
+  [auth.ValidateLoggedInJson, auth.ValidateAdmin],
   async (req, res) => {
     const { _csrf, ...FormData } = req.body;
 
@@ -145,7 +157,7 @@ router.post(
 
 router.put(
   "/news/publish/:id",
-  [auth.isAdmin, auth.isLoggedIn],
+  [auth.ValidateLoggedIn, auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     if (await publishNews(id)) {
@@ -160,7 +172,7 @@ router.put(
 
 router.put(
   "/news/unpublish/:id",
-  [auth.isAdmin, auth.isLoggedIn],
+  [auth.ValidateLoggedIn, auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     if (await unpublishNews(id)) {
@@ -175,7 +187,7 @@ router.put(
 
 router.put(
   "/news/delete/:id",
-  [auth.isAdmin, auth.isLoggedIn],
+  [auth.ValidateLoggedIn, auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     if (await deleteNews(id)) {
@@ -191,7 +203,7 @@ router.put(
 // Edit News
 router.get(
   "/news/:id/edit",
-  [auth.isLoggedIn, auth.isAdmin],
+  [auth.ValidateLoggedIn, auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
 
@@ -248,7 +260,7 @@ router.get(
 // Publish the news entry
 router.post(
   "/news/edit",
-  [auth.isLoggedInJson, auth.isAdmin],
+  [auth.ValidateLoggedInJson, auth.ValidateAdmin],
   async (req, res) => {
     const { _csrf, ...FormData } = req.body;
     const { error } = validateNews(FormData);
