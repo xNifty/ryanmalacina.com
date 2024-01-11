@@ -20,17 +20,6 @@ export function loggedInOnly(req, res, next) {
   }
 }
 
-// Make sure the user is logged in, and if not, redirect to login with a message
-export function loggedInOnlyJson(req, res, next) {
-  if (req.isAuthenticated()) next();
-  else {
-    //req.session.returnTo = req.originalUrl;
-    req.flash("error", errors.loginRequired);
-    res.status(401);
-    return handleResponse(res, "Unauthorized", 401);
-  }
-}
-
 // Only allow unauthenticated users access (e.g. for /login)
 export function loggedOutOnly(req, res, next) {
   if (req.isUnauthenticated()) next();
@@ -48,13 +37,11 @@ export function ValidateAdmin(req, res, next) {
 }
 
 var isLoggedIn = loggedInOnly;
-var isLoggedInJson = loggedInOnlyJson;
 var isLoggedOut = loggedOutOnly;
 var isAdmin = ValidateAdmin;
 
 export default {
   isLoggedIn,
-  isLoggedInJson,
   isLoggedOut,
   isAdmin,
 };

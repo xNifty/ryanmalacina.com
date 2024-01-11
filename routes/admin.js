@@ -11,13 +11,10 @@ import logErrorToFile from "../utils/errorLogging.js";
 import { pageHeader, success, errors } from "../config/constants.js";
 
 const router = express.Router();
+const dateformat = dateFormat;
 
 //let converter = new showdown.Converter();
 let md = new MarkdownIt();
-let md_no_html = new MarkdownIt({
-  html: false,
-});
-const dateformat = dateFormat;
 
 router.get("/", [auth.isLoggedIn, auth.isAdmin], async (req, res) => {
   res.render("admin", {
