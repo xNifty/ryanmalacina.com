@@ -14,12 +14,7 @@ import {
   clearProjectSession,
 } from "../utils/sessionHandler.js";
 import auth from "../utils/auth.js";
-import {
-  errors,
-  success,
-  pageHeader,
-  statusCodes,
-} from "../config/constants.js";
+import { strings } from "../config/constants.js";
 import logErrorToFile from "../utils/errorLogging.js";
 
 const router = express.Router();
@@ -143,16 +138,16 @@ router.post(
         // Handle validation error
         for (let i = 0; i < error.details.length; i++) {
           if (error.details[i].context.key === "project_description") {
-            errorMessage += errors.projectDescriptionLength + "<br>";
+            errorMessage += strings.errors.projectDescriptionLength + "<br>";
           }
           if (error.details[i].context.key === "project_name") {
-            errorMessage += errors.projectName + "<br>";
+            errorMessage += strings.errors.projectName + "<br>";
           }
           if (error.details[i].context.key === "project_title") {
-            errorMessage += errors.projectTitle + "<br>";
+            errorMessage += strings.errors.projectTitle + "<br>";
           }
           if (error.details[i].context.key === "project_source") {
-            errorMessage += errors.projectSource + "<br>";
+            errorMessage += strings.errors.projectSource + "<br>";
           }
         }
         throw new Error(errorMessage);
@@ -196,10 +191,10 @@ router.post(
 
       clearProjectEditSession(req);
 
-      req.flash("success", success.projectAdded);
+      req.flash("success", strings.success.projectAdded);
       res.status(200).json({
         status: 200,
-        message: success.projectAdded,
+        message: strings.success.projectAdded,
       });
     } catch (ex) {
       req.session.loadProjectFromSession = true;
@@ -213,11 +208,11 @@ router.post(
         const indexName = indexNameMatch ? indexNameMatch[1] : null;
 
         if (indexName === "project_name_1") {
-          errorMessage += errors.projectNameUnique;
+          errorMessage += strings.errors.projectNameUnique;
         } else if (indexName === "project_title_1") {
-          errorMessage += errors.projectTitleUnique;
+          errorMessage += strings.errors.projectTitleUnique;
         } else {
-          errorMessage += errors.genericError;
+          errorMessage += strings.errors.genericError;
         }
       } else if (errorMessage === "") {
         logErrorToFile(ex);
@@ -227,12 +222,12 @@ router.post(
 
       req.flash(
         "error",
-        errorMessage ? errorMessage : errors.allFieldsRequired
+        errorMessage ? errorMessage : strings.errors.allFieldsRequired
       );
       return res.status(400).render("admin/projects/new-project", {
         layout: "new-project",
         new_project: true,
-        error: errorMessage ? errorMessage : errors.allFieldsRequired,
+        error: errorMessage ? errorMessage : strings.errors.allFieldsRequired,
         project_name: req.body.project_name,
         project_title: req.body.project_title,
         project_source: req.body.project_source,
@@ -317,16 +312,16 @@ router.post(
         // Handle validation error
         for (let i = 0; i < error.details.length; i++) {
           if (error.details[i].context.key === "project_description") {
-            errorMessage += errors.projectDescriptionLength + "<br>";
+            errorMessage += strings.errors.projectDescriptionLength + "<br>";
           }
           if (error.details[i].context.key === "project_name") {
-            errorMessage += errors.projectName + "<br>";
+            errorMessage += strings.errors.projectName + "<br>";
           }
           if (error.details[i].context.key === "project_title") {
-            errorMessage += errors.projectTitle + "<br>";
+            errorMessage += strings.errors.projectTitle + "<br>";
           }
           if (error.details[i].context.key === "project_source") {
-            errorMessage += errors.projectSource + "<br>";
+            errorMessage += strings.errors.projectSource + "<br>";
           }
         }
         throw new Error(errorMessage);
@@ -370,10 +365,10 @@ router.post(
 
       await projectUpdate.save();
       clearProjectEditSession(req);
-      req.flash("success", success.projectUpdated);
+      req.flash("success", strings.success.projectUpdated);
       res.status(200).json({
         status: 200,
-        message: success.projectUpdated,
+        message: strings.success.projectUpdated,
       });
     } catch (ex) {
       if (ex.code === 11000) {
@@ -381,14 +376,14 @@ router.post(
         const indexName = indexNameMatch ? indexNameMatch[1] : null;
 
         if (indexName === "project_name_1") {
-          errorMessage = errors.projectNameUnique;
+          errorMessage = strings.errors.projectNameUnique;
         } else if (indexName === "project_title_1") {
-          errorMessage = errors.projectTitleUnique;
+          errorMessage = strings.errors.projectTitleUnique;
         } else {
-          errorMessage = errors.genericError;
+          errorMessage = strings.errors.genericError;
         }
       } else {
-        errorMessage = errors.genericError;
+        errorMessage = strings.errors.genericError;
         logErrorToFile(ex);
       }
 
@@ -420,10 +415,10 @@ router.put(
   async (req, res) => {
     let id = req.params.id;
     if (await deleteProject(id)) {
-      req.flash("success", success.deleteSuccess);
+      req.flash("success", strings.success.deleteSuccess);
       return res.end('{"success" : "Project Deleted", "status" : 200}');
     } else {
-      req.flash("error", errors.publishError);
+      req.flash("error", strings.errors.publishError);
       return res.end('{"fail" : "Server error", "status" : 500}');
     }
   }
@@ -440,9 +435,9 @@ router.get("/:id", async (req, res) => {
   // Intentionally leaving this different, as our "custom" error page doesn't display the text via alerts
   if (!project || !project.is_published) {
     return res.render("error", {
-      error: errors.invalidProject,
-      title: pageHeader.notFound,
-      status_code: statusCodes[404],
+      error: strings.errors.invalidProject,
+      title: strings.pageHeader.notFound,
+      status_code: strings.status[404],
     });
   }
 
@@ -474,7 +469,7 @@ router.put(
       .exec();
 
     if (!status && totalIndex === 3) {
-      req.flash("error", errors.indexLimitReached);
+      req.flash("error", strings.errors.indexLimitReached);
       return res.end('{"fail" : "Too Many Index Projects", "status" : 500}');
     }
 

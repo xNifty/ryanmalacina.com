@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 
 import logErrorToFile from "./errorLogging.js";
-import { databaseStatus } from "../config/constants.js";
+import { strings } from "../config/constants.js";
 
 const connectToDatabase = async (mongoURL) => {
   try {
     await mongoose.connect(mongoURL, {});
-    console.log(databaseStatus.success);
+    console.log(strings.database.success);
   } catch (err) {
-    console.log(databaseStatus.error);
+    console.log(strings.database.error);
     logErrorToFile(err);
     process.exit(1);
   }

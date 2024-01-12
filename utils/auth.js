@@ -1,15 +1,15 @@
 // Authentication Middleware
-import { errors } from "../config/constants.js";
+import { strings } from "../config/constants.js";
 import handleResponse from "./responseHandler.js";
 
 // Make sure the user is logged in, and if not, redirect to login with a message
-export function ValidateLoggedIn(req, res, next) {
+function ValidateLoggedIn(req, res, next) {
   if (req.isAuthenticated()) next();
   else {
     var returnTo = "";
     returnTo = req.originalUrl;
     if (returnTo !== "/logout") {
-      req.flash("error", errors.loginRequired);
+      req.flash("error", strings.errors.loginRequired);
       res.status(401);
       if (returnTo === "") res.redirect("/login");
       else res.redirect("/login?returnTo=" + returnTo);
@@ -20,27 +20,27 @@ export function ValidateLoggedIn(req, res, next) {
   }
 }
 
-export function ValidateLoggedInJson(req, res, next) {
+function ValidateLoggedInJson(req, res, next) {
   if (req.isAuthenticated()) next();
   else {
     //req.session.returnTo = req.originalUrl;
-    req.flash("error", errors.loginRequired);
+    req.flash("error", strings.errors.loginRequired);
     res.status(401);
     return handleResponse(res, "Unauthorized", 401);
   }
 }
 
 // Only allow unauthenticated users access (e.g. for /login)
-export function ValidateLoggedOut(req, res, next) {
+function ValidateLoggedOut(req, res, next) {
   if (req.isUnauthenticated()) next();
   else res.redirect("/");
 }
 
 // Make sure the user is an admin
-export function ValidateAdmin(req, res, next) {
+function ValidateAdmin(req, res, next) {
   if (req.user.isAdmin) next();
   else {
-    req.flash("error", errors.accessDenied);
+    req.flash("error", strings.errors.accessDenied);
     res.status(401);
     res.redirect("/");
   }

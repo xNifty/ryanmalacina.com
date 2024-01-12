@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import connectToDatabase from "../utils/database.js";
-import { databaseStatus } from "../config/constants.js";
+import { strings } from "../config/constants.js";
 
 jest.mock("mongoose");
 
@@ -25,7 +25,7 @@ describe("connectToDatabase", () => {
 
     expect(mongoose.connect).toHaveBeenCalledWith("mockMongoURL", {});
 
-    expect(console.log).toHaveBeenCalledWith(databaseStatus.success);
+    expect(console.log).toHaveBeenCalledWith(strings.database.success);
 
     expect(require("../utils/errorLogging").default).not.toHaveBeenCalled();
     expect(process.exit).not.toHaveBeenCalled();
@@ -39,7 +39,7 @@ describe("connectToDatabase", () => {
 
     expect(mongoose.connect).toHaveBeenCalledWith("mockMongoURL", {});
 
-    expect(console.log).toHaveBeenCalledWith(databaseStatus.error);
+    expect(console.log).toHaveBeenCalledWith(strings.database.error);
 
     expect(require("../utils/errorLogging").default).toHaveBeenCalledWith(
       mockError

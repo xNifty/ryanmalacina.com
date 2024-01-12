@@ -16,7 +16,7 @@ import { generateNonce, getDirectives } from "nonce-simple";
 import { User } from "./models/user.js";
 import { iff, versionedFile } from "./utils/helpers.js";
 import renderError from "./utils/renderErrorPage.js";
-import { errors, pageHeader } from "./config/constants.js";
+import { strings } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
 import urls from "./config/urls.js";
 
@@ -36,7 +36,7 @@ import { createMongoStore, createSession } from "./utils/sessionHandler.js";
 
 // Make sure our private token exists
 if (!process.env.privateKey) {
-  console.error(errors.missingKey);
+  console.error(strings.errors.missingKey);
   process.exit(1);
 }
 
@@ -137,7 +137,7 @@ const local = new LocalStrategy((username, password, done) => {
   User.findOne({ username: { $eq: username } })
     .then((user) => {
       if (!user || !user.validPassword(password)) {
-        done(null, false, { message: errors.invalidLogin });
+        done(null, false, { message: strings.errors.invalidLogin });
       } else {
         done(null, user);
       }
@@ -155,11 +155,11 @@ app.use(
 // Default values; we can override this on a per-route basis if needed
 app.locals = {
   currentyear: new Date().getFullYear(),
-  title: pageHeader.index,
-  pageNotFound: errors.pageNotFound,
-  serverError: errors.serverError,
+  title: strings.pageHeader.index,
+  pageNotFound: strings.errors.pageNotFound,
+  serverError: strings.errors.serverError,
   environment: app.get("env"),
-  notAuthorized: errors.notAuthorized,
+  notAuthorized: strings.errors.notAuthorized,
 };
 
 app.use(function (req, res, next) {

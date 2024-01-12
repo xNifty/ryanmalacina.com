@@ -2,14 +2,14 @@ import express from "express";
 import passport from "passport";
 
 import auth from "../utils/auth.js";
-import { pageHeader, success, errors } from "../config/constants.js";
+import { strings } from "../config/constants.js";
 import isLocalUrl from "../utils/validTarget.js";
 
 const router = express.Router();
 
-router.get("/", [auth.isLoggedOut], async (req, res) => {
+router.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("login", {
-    title: pageHeader.login,
+    title: strings.pageHeader.login,
     csrfToken: res.locals._csrf,
   });
 });
@@ -19,7 +19,7 @@ router.post(
   [passport.authenticate("local", { failWithError: true })],
   function (req, res) {
     var returnTo = "";
-    req.flash("success", success.loginSuccess);
+    req.flash("success", strings.success.loginSuccess);
     if (req.query.returnTo !== undefined) var returnTo = req.query.returnTo;
 
     if (returnTo === "") res.redirect("/");
@@ -30,10 +30,10 @@ router.post(
   },
   function (err, req, res, next) {
     if (req.query.returnTo !== null) {
-      req.flash("error", errors.invalidLogin);
+      req.flash("error", strings.errors.invalidLogin);
       return res.redirect("/login?returnTo=" + req.query.returnTo);
     } else {
-      req.flash("error", errors.invalidLogin);
+      req.flash("error", strings.errors.invalidLogin);
       return res.redirect("/login");
     }
   }
@@ -44,7 +44,7 @@ router.post(
   passport.authenticate("local", { failWithError: true }),
   function (req, res) {
     var returnTo = "";
-    req.flash("success", success.loginSuccess);
+    req.flash("success", strings.success.loginSuccess);
     if (req.query.returnTo !== undefined) var returnTo = req.query.returnTo;
 
     if (returnTo === "") res.redirect("/");
@@ -57,7 +57,7 @@ router.post(
     if (req.session.returnTo == null) {
       return res.send('{"error" : "Login failed", "status" : 400}');
     } else {
-      req.flash("error", errors.invalidLogin);
+      req.flash("error", strings.errors.invalidLogin);
       return res.redirect("/login");
     }
   }

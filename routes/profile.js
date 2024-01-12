@@ -2,7 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 
 import auth from "../utils/auth.js";
-import { pageHeader, profile } from "../config/constants.js";
+import { strings } from "../config/constants.js";
 import { User } from "../models/user.js";
 import { resetPasswordNoToken } from "../utils/password.js";
 import logErrorToFile from "../utils/errorLogging.js";
@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/", [auth.ValidateLoggedIn], async (req, res) => {
   return res.render("profile", {
     layout: "profile",
-    title: pageHeader.profile,
+    title: strings.pageHeader.profile,
     user_name: req.user.realName,
     user_email: req.user.email,
     csrfToken: res.locals._csrf,
@@ -28,7 +28,7 @@ router.post("/", [auth.ValidateLoggedIn], async (req, res) => {
 
   if (passwordOne || passwordTwo) {
     if (passwordOne !== passwordTwo) {
-      req.flash("error", profile.passwordsNotMatch);
+      req.flash("error", strings.profile.passwordsNotMatch);
       return res.redirect("/profile");
     } else {
       var user = await User.findOne({ _id: { $eq: req.user.id } });
@@ -36,7 +36,7 @@ router.post("/", [auth.ValidateLoggedIn], async (req, res) => {
 
       const isValid = await bcrypt.compare(currentPassword, originalPassword);
       if (!isValid) {
-        req.flash("error", profile.currentPasswordWrong);
+        req.flash("error", strings.profile.currentPasswordWrong);
         return res.redirect("/profile");
       }
 
@@ -52,13 +52,13 @@ router.post("/", [auth.ValidateLoggedIn], async (req, res) => {
             { $set: { password: hash, email: email, real_name: userName } },
             { new: true }
           );
-          req.flash("success", profile.profileUpdateSuccess);
+          req.flash("success", strings.profile.profileUpdateSuccess);
         } catch (error) {
           logErrorToFile(error);
-          req.flash("error", profile.profileUpdateError);
+          req.flash("error", strings.profile.profileUpdateError);
         }
       } else {
-        req.flash("error", profile.profileUpdateError);
+        req.flash("error", strings.profile.profileUpdateError);
       }
     }
   } else {
@@ -68,10 +68,10 @@ router.post("/", [auth.ValidateLoggedIn], async (req, res) => {
         { $set: { email: email, realName: userName } },
         { new: true }
       );
-      req.flash("success", profile.profileUpdateSuccess);
+      req.flash("success", strings.profile.profileUpdateSuccess);
     } catch (error) {
       logErrorToFile(error);
-      req.flash("error", profile.profileUpdateError);
+      req.flash("error", strings.profile.profileUpdateError);
     }
   }
 

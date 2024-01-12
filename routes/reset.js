@@ -6,17 +6,17 @@ import path from "path";
 import bcrypt from "bcrypt";
 
 import auth from "../utils/auth.js";
-import { pageHeader, success } from "../config/constants.js";
+import { strings } from "../config/constants.js";
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import { sendMailNoRedirect } from "../utils/sendMail.js";
 
 const router = express.Router();
 
-router.get("/", [auth.isLoggedOut], async (req, res) => {
+router.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("reset", {
     layout: "reset",
-    title: pageHeader.forgotPassword,
+    title: strings.pageHeader.forgotPassword,
   });
 });
 
@@ -32,7 +32,7 @@ router.post("/", async function (req, res) {
   let resetStatus = await resetPassword(emailOne);
 
   if (resetStatus) {
-    req.flash("success", success.passwordResetSent);
+    req.flash("success", strings.success.passwordResetSent);
     return res.redirect("/");
   } else {
     req.flash("error", errors.passwordChangeFail);
