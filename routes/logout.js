@@ -5,7 +5,7 @@ import { strings } from "../config/constants.js";
 
 const router = express.Router();
 
-router.get("/", [auth.ValidateLoggedIn], async (req, res, next) => {
+router.get("/", [auth.ValidateLoggedIn()], async (req, res, next) => {
   // Leaving this in place, on the off chance there isn't any JavaScript enabled
   req.logout(function (err) {
     req.flash("success", strings.success.logoutSuccess);
@@ -22,6 +22,7 @@ router.post("/", async (req, res, next) => {
     req.flash("success", strings.success.logoutSuccess);
     return res.send('{"success" : "Logged out success", "status" : 200}');
   } else {
+    console.log("Not logged in, so can't log out");
     return res.send("/");
   }
 });

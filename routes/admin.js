@@ -18,7 +18,7 @@ let md = new MarkdownIt();
 
 router.get(
   "/",
-  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     res.render("admin", {
       layout: "admin",
@@ -30,7 +30,7 @@ router.get(
 
 router.get(
   "/projects",
-  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let project_list = await listProjects();
 
@@ -45,7 +45,7 @@ router.get(
 
 router.put(
   "/projects/publish/:id",
-  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     if (await publishProject(id)) {
@@ -60,7 +60,7 @@ router.put(
 
 router.put(
   "/projects/unpublish/:id",
-  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     if (await unpublishProject(id)) {
@@ -75,7 +75,7 @@ router.put(
 
 router.get(
   "/news",
-  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let news_list = await getNewsListing();
 
@@ -91,7 +91,7 @@ router.get(
 // Publish the news entry
 router.post(
   "/news/new",
-  [auth.ValidateLoggedInJson, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
   async (req, res) => {
     const { _csrf, ...FormData } = req.body;
 
@@ -157,7 +157,7 @@ router.post(
 
 router.put(
   "/news/publish/:id",
-  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     if (await publishNews(id)) {
@@ -172,7 +172,7 @@ router.put(
 
 router.put(
   "/news/unpublish/:id",
-  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     if (await unpublishNews(id)) {
@@ -187,7 +187,7 @@ router.put(
 
 router.put(
   "/news/delete/:id",
-  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     if (await deleteNews(id)) {
@@ -203,7 +203,7 @@ router.put(
 // Edit News
 router.get(
   "/news/:id/edit",
-  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
 
@@ -260,7 +260,7 @@ router.get(
 // Publish the news entry
 router.post(
   "/news/edit",
-  [auth.ValidateLoggedInJson, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
   async (req, res) => {
     const { _csrf, ...FormData } = req.body;
     const { error } = validateNews(FormData);

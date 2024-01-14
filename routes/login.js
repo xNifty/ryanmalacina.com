@@ -1,9 +1,10 @@
 import express from "express";
 import passport from "passport";
+import config from "config";
 
 import auth from "../utils/auth.js";
 import { strings } from "../config/constants.js";
-import isLocalUrl from "../utils/validTarget.js";
+import ValidTarget from "../utils/validTarget.js";
 
 const router = express.Router();
 
@@ -20,11 +21,13 @@ router.post(
   function (req, res) {
     var returnTo = "";
     req.flash("success", strings.success.loginSuccess);
-    if (req.query.returnTo !== undefined) var returnTo = req.query.returnTo;
-
+    if (req.query.returnTo !== undefined) {
+      var returnToPath = new URL(req.query.returnTo, config.get("rootURL"));
+      returnTo = returnToPath.toString();
+    }
     if (returnTo === "") res.redirect("/");
     else {
-      if (isLocalUrl(returnTo)) res.redirect(returnTo);
+      if (ValidTarget(returnTo)) res.redirect(returnTo);
       else res.redirect("/");
     }
   },
@@ -49,7 +52,7 @@ router.post(
 
     if (returnTo === "") res.redirect("/");
     else {
-      if (isLocalUrl(returnTo)) res.redirect(returnTo);
+      if (ValidTarget(returnTo)) res.redirect(returnTo);
       else res.redirect("/");
     }
   },

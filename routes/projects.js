@@ -81,7 +81,7 @@ router.get("/", async (req, res) => {
 // @TODO: Fix return updating when errors on page
 router.get(
   "/new",
-  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     var returnTo;
 
@@ -126,7 +126,7 @@ router.get(
 
 router.post(
   "/new",
-  [auth.ValidateLoggedInJson, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
   async (req, res) => {
     const { _csrf, ...FormData } = req.body;
 
@@ -241,7 +241,7 @@ router.post(
 
 router.get(
   "/:id/edit",
-  [auth.ValidateLoggedIn, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     const project = await Project.findOne({
       _id: { $eq: req.params.id },
@@ -292,7 +292,7 @@ router.get(
 
 router.post(
   "/:id/edit",
-  [auth.ValidateLoggedInJson, auth.ValidateAdmin],
+  [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
   async (req, res) => {
     let project = await Project.find({ _id: { $eq: req.params.id } }).select({
       project_image: 1,
