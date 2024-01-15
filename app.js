@@ -108,19 +108,19 @@ app.use(
 
 let sess = createSession(secret_key, config, mongoStore);
 
-app.use(flash());
-app.use(
-  cookieParser(),
-  session(sess), // cookie security is set via config key, keeps getting flagged
-  passport.initialize(),
-  passport.session()
-);
-
 var limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 100,
 });
-app.use(limiter);
+
+app.use(
+  flash(),
+  cookieParser(),
+  session(sess), // cookie security is set via config key, keeps getting flagged
+  passport.initialize(),
+  passport.session(),
+  limiter
+);
 
 passport.serializeUser(function (user, done) {
   done(null, user._id);
