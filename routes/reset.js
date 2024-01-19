@@ -13,6 +13,9 @@ import { sendMailNoRedirect } from "../utils/sendMail.js";
 
 const router = express.Router();
 
+const FROM_EMAIL = process.env.mailgunFromEmail;
+const BCRYPT_SALT = process.env.BCRYPT_SALT;
+
 router.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("reset", {
     layout: "reset",
@@ -51,9 +54,7 @@ const resetPassword = async (email) => {
     await deleteExistingToken(user._id);
 
     const resetToken = await generateResetToken();
-    const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
-
-    const fromEmail = process.env.mailgunFromEmail;
+    const hash = await bcrypt.hash(resetToken, Number(BCRYPT_SALT));
 
     await saveTokenToDatabase(user._id, hash);
 
@@ -66,7 +67,7 @@ const resetPassword = async (email) => {
       invalidateLink
     );
 
-    await sendPasswordResetEmail(fromEmail, user.email, template);
+    await sendPasswordResetEmail(FROM_EMAIL, user.email, template);
 
     return true;
   } catch (error) {

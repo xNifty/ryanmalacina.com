@@ -40,16 +40,16 @@ if (!process.env.privateKey) {
   process.exit(1);
 }
 
-const app = express();
-const env = app.settings.env;
-const mongoURL = process.env.mongoURL;
-const secret_key = process.env.privateKey;
-const mongoStore = createMongoStore(mongoURL);
+const APP = express();
+const ENV = APP.settings.env;
+const MONGO_URL = process.env.mongoURL;
+const SECRET_KEY = process.env.privateKey;
+const MONGO_STORE = createMongoStore(MONGO_URL);
 
-const blogURL = config.get("blogURL");
-const showBlog = config.get("showBlog");
-const docsURL = config.get("docsURL");
-const showDocs = config.get("showDocs");
+const BLOG_URL = config.get("blogURL");
+const SHOW_BLOG = config.get("showBlog");
+const DOCS_URL = config.get("docsURL");
+const SHOW_DOCS = config.get("showDocs");
 
 const nonceOptions = {
   scripts: urls.scriptSrc,
@@ -76,28 +76,33 @@ const hbs = exphbs.create({
 });
 
 // Connect to the database
-connectToDatabase(mongoURL);
+try {
+  connectToDatabase(MONGO_URL);
+} catch (error) {
+  console.log(error);
+  process.exit(1);
+}
 
-app.engine("handlebars", hbs.engine);
-app.set("view engine", "handlebars");
-app.set("trust proxy", config.get("trustProxy"));
+APP.engine("handlebars", hbs.engine);
+APP.set("view engine", "handlebars");
+APP.set("trust proxy", config.get("trustProxy"));
 
-app.use(express.json());
-app.use(express.static("public"));
-app.use(
+APP.use(express.json());
+APP.use(express.static("public"));
+APP.use(
   express.urlencoded({
     extended: true,
   })
 );
 
-app.use(function (req, res, next) {
+APP.use(function (req, res, next) {
   var nonce = generateNonce();
   res.locals.nonce = nonce;
   res.locals.cspNonce = "nonce-" + nonce;
   next();
 });
 
-app.use(
+APP.use(
   csp({
     directives: getDirectives(
       (req, res) => `'${res.locals.cspNonce}'`,
@@ -106,14 +111,14 @@ app.use(
   })
 );
 
-let sess = createSession(secret_key, config, mongoStore);
+let sess = createSession(SECRET_KEY, config, MONGO_STORE);
 
 var limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 100,
 });
 
-app.use(
+APP.use(
   flash(),
   cookieParser(),
   session(sess), // cookie security is set via config key, keeps getting flagged
@@ -146,23 +151,23 @@ const local = new LocalStrategy((username, password, done) => {
 });
 passport.use("local", local);
 
-app.use(
+APP.use(
   lusca.csrf({
     cookie: true,
   })
 );
 
 // Default values; we can override this on a per-route basis if needed
-app.locals = {
+APP.locals = {
   currentyear: new Date().getFullYear(),
   title: strings.pageHeader.index,
   pageNotFound: strings.errors.pageNotFound,
   serverError: strings.errors.serverError,
-  environment: app.get("env"),
+  environment: APP.get("env"),
   notAuthorized: strings.errors.notAuthorized,
 };
 
-app.use(function (req, res, next) {
+APP.use(function (req, res, next) {
   res.locals.realName = req.session.name;
   res.locals.token = req.session.token;
   res.locals.authenticated = req.isAuthenticated();
@@ -170,7 +175,7 @@ app.use(function (req, res, next) {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
 
-  res.locals.displayBlogNav = showBlog;
+  res.locals.displayBlogNav = SHOW_BLOG;
 
   if (req.user) {
     res.locals.realName = req.user.realName;
@@ -181,42 +186,42 @@ app.use(function (req, res, next) {
 });
 
 // All of our paths
-app.use("/", homeRoute);
-app.use("/about", aboutRoute);
-app.use("/keybase", keybaseRoute);
-app.use("/keybase.txt", keybaseRoute); // for Keybase.io
-app.use("/projects", projectsRoute);
-app.use("/login", loginRoute);
-app.use("/logout", logoutRoute);
-app.use("/admin", adminRoute);
-app.use("/news", newsRoute);
-app.use("/reset", resetRoute);
-app.use("/resetPassword", passwordReset);
-app.use("/profile", profileRoute);
+APP.use("/", homeRoute);
+APP.use("/about", aboutRoute);
+APP.use("/keybase", keybaseRoute);
+APP.use("/keybase.txt", keybaseRoute); // for Keybase.io
+APP.use("/projects", projectsRoute);
+APP.use("/login", loginRoute);
+APP.use("/logout", logoutRoute);
+APP.use("/admin", adminRoute);
+APP.use("/news", newsRoute);
+APP.use("/reset", resetRoute);
+APP.use("/resetPassword", passwordReset);
+APP.use("/profile", profileRoute);
 
-if (showBlog) {
-  app.get("/blog/", function (req, res) {
-    res.redirect(301, blogURL);
+if (SHOW_BLOG) {
+  APP.get("/blog/", function (req, res) {
+    res.redirect(301, BLOG_URL);
   });
 }
 
-if (showDocs) {
-  app.get("/docs/", function (req, res) {
-    res.redirect(301, docsURL);
+if (SHOW_DOCS) {
+  APP.get("/docs/", function (req, res) {
+    res.redirect(301, DOCS_URL);
   });
 }
 /*
     Catch errors and pass information to our error handler to render the proper page.
 */
-app.use(function (req, res, next) {
+APP.use(function (req, res, next) {
   next(createHttpError(404, "Page Not Found"));
 });
 
-app.use(function (err, req, res, next) {
+APP.use(function (err, req, res, next) {
   const status = err.status ? err.status : 500;
-  renderError(env, status, err, req, res);
+  renderError(ENV, status, err, req, res);
 });
 
 // Start everything and enjoy. :heart:
-app.listen(process.env.PORT);
-console.log("Server is now running in " + env + " mode.");
+APP.listen(process.env.PORT);
+console.log("Server is now running in " + ENV + " mode.");
