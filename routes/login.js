@@ -6,16 +6,16 @@ import auth from "../utils/auth.js";
 import { strings } from "../config/constants.js";
 import ValidTarget from "../utils/validTarget.js";
 
-const router = express.Router();
+const ROUTER = express.Router();
 
-router.get("/", [auth.ValidateLoggedOut], async (req, res) => {
+ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("login", {
     title: strings.pageHeader.login,
     csrfToken: res.locals._csrf,
   });
 });
 
-router.post(
+ROUTER.post(
   "/",
   [passport.authenticate("local", { failWithError: true })],
   function (req, res) {
@@ -42,7 +42,7 @@ router.post(
   }
 );
 
-router.post(
+ROUTER.post(
   "/modal",
   passport.authenticate("local", { failWithError: true }),
   function (req, res) {
@@ -66,4 +66,4 @@ router.post(
   }
 );
 
-export { router as loginRoute };
+export { ROUTER as loginRoute };

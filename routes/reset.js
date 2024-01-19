@@ -11,19 +11,19 @@ import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import { sendMailNoRedirect } from "../utils/sendMail.js";
 
-const router = express.Router();
+const ROUTER = express.Router();
 
 const FROM_EMAIL = process.env.mailgunFromEmail;
 const BCRYPT_SALT = process.env.BCRYPT_SALT;
 
-router.get("/", [auth.ValidateLoggedOut], async (req, res) => {
+ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("reset", {
     layout: "reset",
     title: strings.pageHeader.forgotPassword,
   });
 });
 
-router.post("/", async function (req, res) {
+ROUTER.post("/", async function (req, res) {
   let emailOne = req.body.email_one;
   let emailTwo = req.body.email_two;
 
@@ -133,4 +133,4 @@ const sendPasswordResetEmail = async (fromEmail, toEmail, template) => {
   );
 };
 
-export { router as resetRoute };
+export { ROUTER as resetRoute };

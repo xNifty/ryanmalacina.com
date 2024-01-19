@@ -5,18 +5,18 @@ import MarkdownIt from "markdown-it";
 import _ from "lodash";
 
 import auth from "../utils/auth.js";
+import logErrorToFile from "../utils/errorLogging.js";
+
 import { Project } from "../models/projects.js";
 import { News, validateNews } from "../models/news.js";
-import logErrorToFile from "../utils/errorLogging.js";
 import { strings } from "../config/constants.js";
 
-const router = express.Router();
-const dateformat = dateFormat;
+const ROUTER = express.Router();
 
 //let converter = new showdown.Converter();
 let md = new MarkdownIt();
 
-router.get(
+ROUTER.get(
   "/",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
@@ -28,7 +28,7 @@ router.get(
   }
 );
 
-router.get(
+ROUTER.get(
   "/projects",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
@@ -43,7 +43,7 @@ router.get(
   }
 );
 
-router.put(
+ROUTER.put(
   "/projects/publish/:id",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
@@ -58,7 +58,7 @@ router.put(
   }
 );
 
-router.put(
+ROUTER.put(
   "/projects/unpublish/:id",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
@@ -73,7 +73,7 @@ router.put(
   }
 );
 
-router.get(
+ROUTER.get(
   "/news",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
@@ -89,7 +89,7 @@ router.get(
 );
 
 // Publish the news entry
-router.post(
+ROUTER.post(
   "/news/new",
   [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
   async (req, res) => {
@@ -134,7 +134,7 @@ router.post(
     news.news_clean_output = newsCleaned;
     let saveDate = new Date(Date.now());
 
-    news.published_date = dateformat(saveDate, "mmmm dd, yyyy @ h:MM TT");
+    news.published_date = dateFormat(saveDate, "mmmm dd, yyyy @ h:MM TT");
     news.published_date_unclean = saveDate;
 
     try {
@@ -155,7 +155,7 @@ router.post(
   }
 );
 
-router.put(
+ROUTER.put(
   "/news/publish/:id",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
@@ -170,7 +170,7 @@ router.put(
   }
 );
 
-router.put(
+ROUTER.put(
   "/news/unpublish/:id",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
@@ -185,7 +185,7 @@ router.put(
   }
 );
 
-router.put(
+ROUTER.put(
   "/news/delete/:id",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
@@ -201,7 +201,7 @@ router.put(
 );
 
 // Edit News
-router.get(
+ROUTER.get(
   "/news/:id/edit",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
@@ -258,7 +258,7 @@ router.get(
 );
 
 // Publish the news entry
-router.post(
+ROUTER.post(
   "/news/edit",
   [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
   async (req, res) => {
@@ -416,4 +416,4 @@ async function getNewsListing() {
     .lean();
 }
 
-export { router as adminRoute };
+export { ROUTER as adminRoute };

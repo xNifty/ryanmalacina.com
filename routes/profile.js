@@ -7,9 +7,9 @@ import { User } from "../models/user.js";
 import { resetPasswordNoToken } from "../utils/password.js";
 import logErrorToFile from "../utils/errorLogging.js";
 
-const router = express.Router();
+const ROUTER = express.Router();
 
-router.get("/", [auth.ValidateLoggedIn], async (req, res) => {
+ROUTER.get("/", [auth.ValidateLoggedIn()], async (req, res) => {
   return res.render("profile", {
     layout: "profile",
     title: strings.pageHeader.profile,
@@ -19,7 +19,7 @@ router.get("/", [auth.ValidateLoggedIn], async (req, res) => {
   });
 });
 
-router.post("/", [auth.ValidateLoggedIn], async (req, res) => {
+ROUTER.post("/", [auth.ValidateLoggedIn()], async (req, res) => {
   var userName = req.body.user_name;
   var email = req.body.user_email;
   var passwordOne = req.body.pass_change_one;
@@ -78,4 +78,4 @@ router.post("/", [auth.ValidateLoggedIn], async (req, res) => {
   return res.redirect("/profile");
 });
 
-export { router as profileRoute };
+export { ROUTER as profileRoute };

@@ -17,9 +17,10 @@ import auth from "../utils/auth.js";
 import { strings } from "../config/constants.js";
 import logErrorToFile from "../utils/errorLogging.js";
 
-const router = express.Router();
+const ROUTER = express.Router();
 // Actual default values
-const md = markdownit({
+
+const MARKDOWN = markdownit({
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
@@ -30,8 +31,6 @@ const md = markdownit({
     return ""; // use external default escaping
   },
 });
-
-const dateformat = dateFormat;
 
 const safeTags = [
   "h1",
@@ -67,9 +66,9 @@ const safeTags = [
 
 //let converter = new showdown.Converter();
 
-router.use(fileUpload());
+ROUTER.use(fileUpload());
 
-router.get("/", async (req, res) => {
+ROUTER.get("/", async (req, res) => {
   let project_list = await listProjects();
 
   res.render("projects", {
@@ -79,7 +78,7 @@ router.get("/", async (req, res) => {
 });
 
 // @TODO: Fix return updating when errors on page
-router.get(
+ROUTER.get(
   "/new",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
@@ -124,7 +123,7 @@ router.get(
   }
 );
 
-router.post(
+ROUTER.post(
   "/new",
   [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
   async (req, res) => {
@@ -157,7 +156,7 @@ router.post(
         _.pick(req.body, ["project_name", "project_title", "project_source"])
       );
 
-      let projectDescription = md.render(req.body.project_description);
+      let projectDescription = MARKDOWN.render(req.body.project_description);
       let projectSanitized = sanitize(projectDescription, {
         allowedTags: safeTags,
       });
@@ -239,7 +238,7 @@ router.post(
   }
 );
 
-router.get(
+ROUTER.get(
   "/:id/edit",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
@@ -290,7 +289,7 @@ router.get(
   }
 );
 
-router.post(
+ROUTER.post(
   "/:id/edit",
   [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
   async (req, res) => {
@@ -327,7 +326,7 @@ router.post(
         throw new Error(errorMessage);
       }
 
-      let projectDescription = md.render(req.body.project_description);
+      let projectDescription = MARKDOWN.render(req.body.project_description);
       let projectSanitized = sanitize(projectDescription, {
         allowedTags: safeTags,
       });
@@ -409,9 +408,9 @@ router.post(
 );
 
 // Delete project
-router.put(
+ROUTER.put(
   "/delete/:id",
-  [auth.ValidateAdmin, auth.ValidateLoggedIn],
+  [auth.ValidateAdmin, auth.ValidateLoggedIn()],
   async (req, res) => {
     let id = req.params.id;
     if (await deleteProject(id)) {
@@ -424,7 +423,7 @@ router.put(
   }
 );
 
-router.get("/:id", async (req, res) => {
+ROUTER.get("/:id", async (req, res) => {
   const project = await Project.findOne({
     _id: { $eq: req.params.id },
   });
@@ -437,25 +436,25 @@ router.get("/:id", async (req, res) => {
     return res.render("error", {
       error: strings.errors.invalidProject,
       title: strings.pageHeader.notFound,
-      status_code: strings.status[404],
+      status_code: strings.status[404](),
     });
   }
 
   res.render("projects", {
     project_title: project.project_title,
     project_source: project.project_source,
-    project_description: md.render(project.project_description_markdown),
+    project_description: MARKDOWN.render(project.project_description_markdown),
     project_name: project.project_name,
     is_valid: true,
-    last_save_date: dateformat(project.last_edited, "mmmm dd, yyyy @ h:MM TT"),
+    last_save_date: dateFormat(project.last_edited, "mmmm dd, yyyy @ h:MM TT"),
     title: "Ryan Malacina | " + project.project_name,
     id: project._id,
   });
 });
 
-router.put(
+ROUTER.put(
   "/update/:id",
-  [auth.ValidateAdmin, auth.ValidateLoggedIn],
+  [auth.ValidateAdmin, auth.ValidateLoggedIn()],
   async (req, res) => {
     let id = req.params.id;
     res.setHeader("content-type", "text/plain");
@@ -517,4 +516,4 @@ async function deleteProject(id) {
   }
 }
 
-export { router as projectsRoute };
+export { ROUTER as projectsRoute };
