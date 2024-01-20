@@ -51,7 +51,7 @@ const SHOW_BLOG = config.get("showBlog");
 const DOCS_URL = config.get("docsURL");
 const SHOW_DOCS = config.get("showDocs");
 
-const nonceOptions = {
+const NONCE_OPTIONS = {
   scripts: urls.scriptSrc,
   styles: urls.styleSrc,
   fonts: urls.fontSrc,
@@ -62,7 +62,7 @@ const nonceOptions = {
 
 // Set default layout, can be overridden per-route as needed
 // We also load any helper functions we wrote within helpers.js inside the functions folder
-const hbs = exphbs.create({
+const HBS = exphbs.create({
   defaultLayout: "main",
   partialsDir: "views/partials/",
   layoutsDir: "views/layouts/",
@@ -83,7 +83,7 @@ try {
   process.exit(1);
 }
 
-APP.engine("handlebars", hbs.engine);
+APP.engine("handlebars", HBS.engine);
 APP.set("view engine", "handlebars");
 APP.set("trust proxy", config.get("trustProxy"));
 
@@ -106,7 +106,7 @@ APP.use(
   csp({
     directives: getDirectives(
       (req, res) => `'${res.locals.cspNonce}'`,
-      nonceOptions
+      NONCE_OPTIONS
     ),
   })
 );
@@ -138,7 +138,7 @@ passport.deserializeUser(function (userId, done) {
 });
 
 // Passport Stuff
-const local = new LocalStrategy((username, password, done) => {
+const LOCAL_STRATEGY = new LocalStrategy((username, password, done) => {
   User.findOne({ username: { $eq: username } })
     .then((user) => {
       if (!user || !user.validPassword(password)) {
@@ -149,7 +149,7 @@ const local = new LocalStrategy((username, password, done) => {
     })
     .catch((e) => done(e));
 });
-passport.use("local", local);
+passport.use("local", LOCAL_STRATEGY);
 
 APP.use(
   lusca.csrf({
@@ -218,7 +218,7 @@ APP.use(function (req, res, next) {
 });
 
 APP.use(function (err, req, res, next) {
-  const status = err.status ? err.status : 500;
+  let status = err.status ? err.status : 500;
   renderError(ENV, status, err, req, res);
 });
 
