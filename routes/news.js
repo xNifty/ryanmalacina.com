@@ -2,9 +2,9 @@ import express from "express";
 
 import { News } from "../models/news.js";
 
-const router = express.Router();
+const ROUTER = express.Router();
 
-router.get("/", async (req, res) => {
+ROUTER.get("/", async (req, res) => {
   var news_list;
 
   let page = req.query.page;
@@ -32,7 +32,7 @@ router.get("/", async (req, res) => {
   });
 });
 
-router.post("/", async (req, res) => {
+ROUTER.post("/", async (req, res) => {
   var news_list;
 
   let page = req.query.page;
@@ -63,7 +63,7 @@ router.post("/", async (req, res) => {
   });
 });
 
-router.post("/search", async (req, res) => {
+ROUTER.post("/search", async (req, res) => {
   var news_list;
   var search = false;
   var term;
@@ -188,5 +188,5 @@ async function newsSearch(strSearch, limit = 5, page = 1, sort = null) {
   return News.paginate(query, options);
 }
 
-export { router as newsRoute };
+export { ROUTER as newsRoute };
 // module.exports = router;
