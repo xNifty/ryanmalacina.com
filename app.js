@@ -58,6 +58,7 @@ const NONCE_OPTIONS = {
   connect: urls.connectSrc,
   frame: urls.frameSrc,
   reportTo: urls.reportUri,
+  requireTrustedTypesFor: urls.requireTrustedTypesFor,
 };
 
 // Set default layout, can be overridden per-route as needed
