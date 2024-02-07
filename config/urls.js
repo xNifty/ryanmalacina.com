@@ -24,7 +24,7 @@ const fontSrc = [
 ];
 const frameSrc = [`https://www.google.com/recaptcha/`];
 const reportUri = [`https://ryanmalacina.report-uri.com/r/d/csp/enforce`];
-const requireTrustedTypesFor = ["script"];
+const requireTrustedTypesFor = ["'script'"];
 
 export default {
   defaultSrc,
