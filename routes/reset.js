@@ -6,21 +6,24 @@ import path from "path";
 import bcrypt from "bcrypt";
 
 import auth from "../utils/auth.js";
-import { pageHeader, success } from "../config/constants.js";
+import { strings } from "../config/constants.js";
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import { sendMailNoRedirect } from "../utils/sendMail.js";
 
-const router = express.Router();
+const ROUTER = express.Router();
 
-router.get("/", [auth.isLoggedOut], async (req, res) => {
+const FROM_EMAIL = process.env.mailgunFromEmail;
+const BCRYPT_SALT = process.env.BCRYPT_SALT;
+
+ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("reset", {
     layout: "reset",
-    title: pageHeader.forgotPassword,
+    title: strings.pageHeader.forgotPassword,
   });
 });
 
-router.post("/", async function (req, res) {
+ROUTER.post("/", async function (req, res) {
   let emailOne = req.body.email_one;
   let emailTwo = req.body.email_two;
 
@@ -32,7 +35,7 @@ router.post("/", async function (req, res) {
   let resetStatus = await resetPassword(emailOne);
 
   if (resetStatus) {
-    req.flash("success", success.passwordResetSent);
+    req.flash("success", strings.success.passwordResetSent);
     return res.redirect("/");
   } else {
     req.flash("error", errors.passwordChangeFail);
@@ -51,9 +54,7 @@ const resetPassword = async (email) => {
     await deleteExistingToken(user._id);
 
     const resetToken = await generateResetToken();
-    const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
-
-    const fromEmail = process.env.mailgunFromEmail;
+    const hash = await bcrypt.hash(resetToken, Number(BCRYPT_SALT));
 
     await saveTokenToDatabase(user._id, hash);
 
@@ -66,7 +67,7 @@ const resetPassword = async (email) => {
       invalidateLink
     );
 
-    await sendPasswordResetEmail(fromEmail, user.email, template);
+    await sendPasswordResetEmail(FROM_EMAIL, user.email, template);
 
     return true;
   } catch (error) {
@@ -132,4 +133,4 @@ const sendPasswordResetEmail = async (fromEmail, toEmail, template) => {
   );
 };
 
-export { router as resetRoute };
+export { ROUTER as resetRoute };

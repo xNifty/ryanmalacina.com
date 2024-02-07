@@ -1,15 +1,15 @@
 import express from "express";
 import config from "config";
-import { RecaptchaV3 as Recaptcha } from "express-recaptcha";
 import ghostAPI from "@tryghost/content-api";
 import dateFormat from "dateformat";
 import words from "number-to-words-en";
+import { RecaptchaV3 as Recaptcha } from "express-recaptcha";
 
 import { Project } from "../models/projects.js";
 import { News } from "../models/news.js";
 import { sendMailAndRespond } from "../utils/sendMail.js";
 
-const router = express.Router();
+const ROUTER = express.Router();
 
 const recaptcha = new Recaptcha(
   config.get("recaptchaSiteKey"),
@@ -19,7 +19,7 @@ const recaptcha = new Recaptcha(
   }
 );
 
-router.get("/", recaptcha.middleware.render, async (req, res) => {
+ROUTER.get("/", recaptcha.middleware.render, async (req, res) => {
   let project_list = await listProjects();
   let news_list = await listNews();
   var project_count = await getProjectCount();
@@ -75,7 +75,7 @@ router.get("/", recaptcha.middleware.render, async (req, res) => {
   });
 });
 
-router.post("/send", recaptcha.middleware.verify, async (req, res) => {
+ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
   let fromEmail = req.body.email;
   let toEmail = process.env.mailgunToEmail;
   let subject = req.body.subject;
@@ -142,4 +142,4 @@ async function getBlogPosts() {
   });
 }
 
-export { router as homeRoute };
+export { ROUTER as homeRoute };

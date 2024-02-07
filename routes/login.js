@@ -1,55 +1,58 @@
 import express from "express";
 import passport from "passport";
+import config from "config";
 
 import auth from "../utils/auth.js";
-import { pageHeader, success, errors } from "../config/constants.js";
-import isLocalUrl from "../utils/validTarget.js";
+import { strings } from "../config/constants.js";
+import ValidTarget from "../utils/validTarget.js";
 
-const router = express.Router();
+const ROUTER = express.Router();
 
-router.get("/", [auth.isLoggedOut], async (req, res) => {
+ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("login", {
-    title: pageHeader.login,
+    title: strings.pageHeader.login,
     csrfToken: res.locals._csrf,
   });
 });
 
-router.post(
+ROUTER.post(
   "/",
   [passport.authenticate("local", { failWithError: true })],
   function (req, res) {
     var returnTo = "";
-    req.flash("success", success.loginSuccess);
-    if (req.query.returnTo !== undefined) var returnTo = req.query.returnTo;
-
+    req.flash("success", strings.success.loginSuccess);
+    if (req.query.returnTo !== undefined) {
+      var returnToPath = new URL(req.query.returnTo, config.get("rootURL"));
+      returnTo = returnToPath.toString();
+    }
     if (returnTo === "") res.redirect("/");
     else {
-      if (isLocalUrl(returnTo)) res.redirect(returnTo);
+      if (ValidTarget(returnTo)) res.redirect(returnTo);
       else res.redirect("/");
     }
   },
   function (err, req, res, next) {
     if (req.query.returnTo !== null) {
-      req.flash("error", errors.invalidLogin);
+      req.flash("error", strings.errors.invalidLogin);
       return res.redirect("/login?returnTo=" + req.query.returnTo);
     } else {
-      req.flash("error", errors.invalidLogin);
+      req.flash("error", strings.errors.invalidLogin);
       return res.redirect("/login");
     }
   }
 );
 
-router.post(
+ROUTER.post(
   "/modal",
   passport.authenticate("local", { failWithError: true }),
   function (req, res) {
     var returnTo = "";
-    req.flash("success", success.loginSuccess);
+    req.flash("success", strings.success.loginSuccess);
     if (req.query.returnTo !== undefined) var returnTo = req.query.returnTo;
 
     if (returnTo === "") res.redirect("/");
     else {
-      if (isLocalUrl(returnTo)) res.redirect(returnTo);
+      if (ValidTarget(returnTo)) res.redirect(returnTo);
       else res.redirect("/");
     }
   },
@@ -57,10 +60,10 @@ router.post(
     if (req.session.returnTo == null) {
       return res.send('{"error" : "Login failed", "status" : 400}');
     } else {
-      req.flash("error", errors.invalidLogin);
+      req.flash("error", strings.errors.invalidLogin);
       return res.redirect("/login");
     }
   }
 );
 
-export { router as loginRoute };
+export { ROUTER as loginRoute };

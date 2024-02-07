@@ -1,15 +1,15 @@
 import express from "express";
 
-import { pageHeader } from "../config/constants.js";
+import { strings } from "../config/constants.js";
 
-const router = express.Router();
+const ROUTER = express.Router();
 
-router.get("/", function (req, res) {
+ROUTER.get("/", function (req, res) {
   res.render("about", {
-    title: pageHeader.about,
+    title: strings.pageHeader.about,
   });
 });
 
-export { router as aboutRoute };
+export { ROUTER as aboutRoute };
 
 //module.exports = router;

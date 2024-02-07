@@ -1,11 +1,19 @@
 import config from "config";
 
-function isLocalUrl(path) {
+function ValidTarget(path) {
+  let returnUrl;
+  let rootURL;
+
   try {
-    return new URL(path).hostname === config.get("rootURL");
+    rootURL = new URL(config.get("rootURL"));
+    returnUrl = new URL(path);
   } catch (e) {
     return false;
   }
+
+  const result = rootURL.hostname === returnUrl.hostname;
+
+  return result;
 }
 
-export default isLocalUrl;
+export default ValidTarget;

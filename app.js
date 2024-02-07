@@ -16,7 +16,7 @@ import { generateNonce, getDirectives } from "nonce-simple";
 import { User } from "./models/user.js";
 import { iff, versionedFile } from "./utils/helpers.js";
 import renderError from "./utils/renderErrorPage.js";
-import { errors, pageHeader } from "./config/constants.js";
+import { strings } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
 import urls from "./config/urls.js";
 
@@ -36,33 +36,34 @@ import { createMongoStore, createSession } from "./utils/sessionHandler.js";
 
 // Make sure our private token exists
 if (!process.env.privateKey) {
-  console.error(errors.missingKey);
+  console.error(strings.errors.missingKey);
   process.exit(1);
 }
 
-const app = express();
-const env = app.settings.env;
-const mongoURL = process.env.mongoURL;
-const secret_key = process.env.privateKey;
-const mongoStore = createMongoStore(mongoURL);
+const APP = express();
+const ENV = APP.settings.env;
+const MONGO_URL = process.env.mongoURL;
+const SECRET_KEY = process.env.privateKey;
+const MONGO_STORE = createMongoStore(MONGO_URL);
 
-const blogURL = config.get("blogURL");
-const showBlog = config.get("showBlog");
-const docsURL = config.get("docsURL");
-const showDocs = config.get("showDocs");
+const BLOG_URL = config.get("blogURL");
+const SHOW_BLOG = config.get("showBlog");
+const DOCS_URL = config.get("docsURL");
+const SHOW_DOCS = config.get("showDocs");
 
-const nonceOptions = {
+const NONCE_OPTIONS = {
   scripts: urls.scriptSrc,
   styles: urls.styleSrc,
   fonts: urls.fontSrc,
   connect: urls.connectSrc,
   frame: urls.frameSrc,
   reportTo: urls.reportUri,
+  requireTrustedTypesFor: urls.requireTrustedTypesFor,
 };
 
 // Set default layout, can be overridden per-route as needed
 // We also load any helper functions we wrote within helpers.js inside the functions folder
-const hbs = exphbs.create({
+const HBS = exphbs.create({
   defaultLayout: "main",
   partialsDir: "views/partials/",
   layoutsDir: "views/layouts/",
@@ -76,51 +77,56 @@ const hbs = exphbs.create({
 });
 
 // Connect to the database
-connectToDatabase(mongoURL);
+try {
+  connectToDatabase(MONGO_URL);
+} catch (error) {
+  console.log(error);
+  process.exit(1);
+}
 
-app.engine("handlebars", hbs.engine);
-app.set("view engine", "handlebars");
-app.set("trust proxy", config.get("trustProxy"));
+APP.engine("handlebars", HBS.engine);
+APP.set("view engine", "handlebars");
+APP.set("trust proxy", config.get("trustProxy"));
 
-app.use(express.json());
-app.use(express.static("public"));
-app.use(
+APP.use(express.json());
+APP.use(express.static("public"));
+APP.use(
   express.urlencoded({
     extended: true,
   })
 );
 
-app.use(function (req, res, next) {
+APP.use(function (req, res, next) {
   var nonce = generateNonce();
   res.locals.nonce = nonce;
   res.locals.cspNonce = "nonce-" + nonce;
   next();
 });
 
-app.use(
+APP.use(
   csp({
     directives: getDirectives(
       (req, res) => `'${res.locals.cspNonce}'`,
-      nonceOptions
+      NONCE_OPTIONS
     ),
   })
 );
 
-let sess = createSession(secret_key, config, mongoStore);
-
-app.use(flash());
-app.use(
-  cookieParser(),
-  session(sess), // cookie security is set via config key, keeps getting flagged
-  passport.initialize(),
-  passport.session()
-);
+let sess = createSession(SECRET_KEY, config, MONGO_STORE);
 
 var limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 100,
 });
-app.use(limiter);
+
+APP.use(
+  flash(),
+  cookieParser(),
+  session(sess), // cookie security is set via config key, keeps getting flagged
+  passport.initialize(),
+  passport.session(),
+  limiter
+);
 
 passport.serializeUser(function (user, done) {
   done(null, user._id);
@@ -133,36 +139,36 @@ passport.deserializeUser(function (userId, done) {
 });
 
 // Passport Stuff
-const local = new LocalStrategy((username, password, done) => {
+const LOCAL_STRATEGY = new LocalStrategy((username, password, done) => {
   User.findOne({ username: { $eq: username } })
     .then((user) => {
       if (!user || !user.validPassword(password)) {
-        done(null, false, { message: errors.invalidLogin });
+        done(null, false, { message: strings.errors.invalidLogin });
       } else {
         done(null, user);
       }
     })
     .catch((e) => done(e));
 });
-passport.use("local", local);
+passport.use("local", LOCAL_STRATEGY);
 
-app.use(
+APP.use(
   lusca.csrf({
     cookie: true,
   })
 );
 
 // Default values; we can override this on a per-route basis if needed
-app.locals = {
+APP.locals = {
   currentyear: new Date().getFullYear(),
-  title: pageHeader.index,
-  pageNotFound: errors.pageNotFound,
-  serverError: errors.serverError,
-  environment: app.get("env"),
-  notAuthorized: errors.notAuthorized,
+  title: strings.pageHeader.index,
+  pageNotFound: strings.errors.pageNotFound,
+  serverError: strings.errors.serverError,
+  environment: APP.get("env"),
+  notAuthorized: strings.errors.notAuthorized,
 };
 
-app.use(function (req, res, next) {
+APP.use(function (req, res, next) {
   res.locals.realName = req.session.name;
   res.locals.token = req.session.token;
   res.locals.authenticated = req.isAuthenticated();
@@ -170,7 +176,7 @@ app.use(function (req, res, next) {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
 
-  res.locals.displayBlogNav = showBlog;
+  res.locals.displayBlogNav = SHOW_BLOG;
 
   if (req.user) {
     res.locals.realName = req.user.realName;
@@ -181,42 +187,42 @@ app.use(function (req, res, next) {
 });
 
 // All of our paths
-app.use("/", homeRoute);
-app.use("/about", aboutRoute);
-app.use("/keybase", keybaseRoute);
-app.use("/keybase.txt", keybaseRoute); // for Keybase.io
-app.use("/projects", projectsRoute);
-app.use("/login", loginRoute);
-app.use("/logout", logoutRoute);
-app.use("/admin", adminRoute);
-app.use("/news", newsRoute);
-app.use("/reset", resetRoute);
-app.use("/resetPassword", passwordReset);
-app.use("/profile", profileRoute);
+APP.use("/", homeRoute);
+APP.use("/about", aboutRoute);
+APP.use("/keybase", keybaseRoute);
+APP.use("/keybase.txt", keybaseRoute); // for Keybase.io
+APP.use("/projects", projectsRoute);
+APP.use("/login", loginRoute);
+APP.use("/logout", logoutRoute);
+APP.use("/admin", adminRoute);
+APP.use("/news", newsRoute);
+APP.use("/reset", resetRoute);
+APP.use("/resetPassword", passwordReset);
+APP.use("/profile", profileRoute);
 
-if (showBlog) {
-  app.get("/blog/", function (req, res) {
-    res.redirect(301, blogURL);
+if (SHOW_BLOG) {
+  APP.get("/blog/", function (req, res) {
+    res.redirect(301, BLOG_URL);
   });
 }
 
-if (showDocs) {
-  app.get("/docs/", function (req, res) {
-    res.redirect(301, docsURL);
+if (SHOW_DOCS) {
+  APP.get("/docs/", function (req, res) {
+    res.redirect(301, DOCS_URL);
   });
 }
 /*
     Catch errors and pass information to our error handler to render the proper page.
 */
-app.use(function (req, res, next) {
+APP.use(function (req, res, next) {
   next(createHttpError(404, "Page Not Found"));
 });
 
-app.use(function (err, req, res, next) {
-  const status = err.status ? err.status : 500;
-  renderError(env, status, err, req, res);
+APP.use(function (err, req, res, next) {
+  let status = err.status ? err.status : 500;
+  renderError(ENV, status, err, req, res);
 });
 
 // Start everything and enjoy. :heart:
-app.listen(process.env.PORT);
-console.log("Server is now running in " + env + " mode.");
+APP.listen(process.env.PORT);
+console.log("Server is now running in " + ENV + " mode.");
