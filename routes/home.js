@@ -1,6 +1,6 @@
 import express from "express";
 import config from "config";
-import ghostAPI from "@tryghost/content-api";
+import GhostContentAPI from "@tryghost/content-api";
 import dateFormat from "dateformat";
 import words from "number-to-words-en";
 import { RecaptchaV3 as Recaptcha } from "express-recaptcha";
@@ -32,7 +32,7 @@ ROUTER.get("/", recaptcha.middleware.render, async (req, res) => {
   if (showBlog) {
     try {
       posts = await getBlogPosts();
-      for (var count in posts) {
+      for (var x in posts) {
         let counter_number = x;
         let date = posts[x].published_at;
         //console.log(date);
@@ -43,7 +43,8 @@ ROUTER.get("/", recaptcha.middleware.render, async (req, res) => {
           " @ " +
           dateFormat(date, "h:MM TT");
       }
-    } catch {
+    } catch (ex) {
+      console.log(ex.message);
       showBlog = false;
     }
   }
@@ -129,7 +130,7 @@ async function listNews() {
 }
 
 async function getBlogPosts() {
-  const ghost = new ghostAPI({
+  const ghost = new GhostContentAPI({
     url: config.get("blogURL"),
     key: process.env.blogAPI,
     version: config.get("blogVersion"),
