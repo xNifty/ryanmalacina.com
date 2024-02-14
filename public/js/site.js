@@ -20,22 +20,6 @@ $(document).ready(function () {
     });
   });
 
-  /* Validate contact form is filled out properly */
-  $("#submitmail").click(function () {
-    validateForm();
-  });
-
-  /* Project carosel */
-  $(".prjlist").slick({
-    infinite: true,
-    slidesToShow: 4,
-    slidesToScroll: 4,
-    arrows: true,
-    nextArrow: '<i class="fa fa-arrow-right nextArrowBtn"></i>',
-    prevArrow: '<i class="fa fa-arrow-left prevArrowBtn"></i>',
-    useTransform: false,
-  });
-
   /* Login caps lock checks */
   loginModalCapsLock();
   loginPageCapsLock();
@@ -131,102 +115,6 @@ function logout() {
   });
 
   return false;
-}
-
-function resetToken() {
-  grecaptcha.ready(function () {
-    grecaptcha
-      .execute("6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG", {
-        action: "homepage",
-      })
-      .then(cb);
-  });
-}
-
-function SubmitMail() {
-  var form = document.getElementById("contact-form");
-  var csrfToken = form.querySelector('[name="_csrf"]').value;
-  $.ajax({
-    url: "/send",
-    type: "post",
-    data: $("#contact-form").serialize(),
-    headers: {
-      "X-CSRF-TOKEN": csrfToken,
-    },
-    datatype: "jsonp",
-    success: function (json) {
-      if (json.status === 200) {
-        document.getElementById("contactformdiv").innerHTML =
-          '<div class="text-center">\n' +
-          '<div class="alert alert-success alert-dismissible center-block">Message sent! I\'ll get back ' +
-          "to you as soon as I can!</div></div>";
-        if (document.getElementById("emailerror") != null) {
-          document.getElementById("emailerror").innerHTML = "";
-          document.getElementById("emailalert").style.position = "absolute";
-          document.getElementById("emailalert").style.opacity = "0";
-        }
-      } else if (json.status === 406) {
-        document.getElementById("emailerror").innerHTML =
-          "Invalid sender email; please verify and " + "try again.";
-        document.getElementById("emailalert").style.position = "static";
-        document.getElementById("emailalert").style.opacity = "1";
-      } else {
-        document.getElementById("emailerror").innerHTML =
-          "There was an error sending the email..." + "please try again.";
-        document.getElementById("emailalert").style.position = "static";
-        document.getElementById("emailalert").style.opacity = "1";
-      }
-    },
-    error: function () {
-      document.getElementById("emailerror").innerHTML =
-        "There was an error sending the email..." +
-        "please try again.  If you continue to experience issues, please " +
-        '<a href="https://github.com/xnifty/ryanmalacina.com/issues">submit</a> an issue.';
-      document.getElementById("emailalert").style.position = "static";
-      document.getElementById("emailalert").style.opacity = "1";
-    },
-  });
-}
-
-function validateForm() {
-  let name = document.getElementById("name").value;
-  let errortext = "";
-  if (name === "") {
-    errortext += "Name is a required field.<br />";
-    document.getElementById("name").classList.add("invalid");
-  }
-  let email = document.getElementById("email").value;
-  if (email === "") {
-    errortext += "Email is a required field.<br />";
-    document.getElementById("email").classList.add("invalid");
-  } else {
-    let re =
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (!re.test(email)) {
-      errortext += "Please provide a valid email.<br />";
-      document.getElementById("email").classList.add("invalid");
-    }
-  }
-  let subject = document.getElementById("subject").value;
-  if (subject === "") {
-    errortext += "Subject is a required field.<br />";
-    document.getElementById("subject").classList.add("invalid");
-  }
-  let message = document.getElementById("message").value;
-  if (message === "") {
-    errortext += "Message is a required field.";
-    document.getElementById("message").classList.add("invalid");
-  }
-
-  if (errortext !== "") {
-    document.getElementById("emailerror").innerHTML = errortext;
-    document.getElementById("emailalert").style.position = "static";
-    document.getElementById("emailalert").style.opacity = "1";
-    return false;
-  } else {
-    resetToken();
-    SubmitMail();
-  }
 }
 
 // Select all links with hashes
