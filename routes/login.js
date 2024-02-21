@@ -49,18 +49,16 @@ ROUTER.post(
     var returnTo = "";
     req.flash("success", strings.success.loginSuccess);
 
-    console.log(req.originalUrl);
+    const HXReturnTo = req.get("HX-Current-URL");
 
-    if (req.query.returnTo !== undefined) {
-      var returnTo = req.query.returnTo;
-      if (!ValidTarget(req.query.returnTo)) {
+    if (HXReturnTo !== undefined) {
+      var returnTo = HXReturnTo;
+      if (!ValidTarget(HXReturnTo)) {
         returnTo = "/";
       }
     } else {
       returnTo = "/";
     }
-
-    console.log(returnTo);
 
     res.set("HX-Location", returnTo);
     res.status(200).end();
