@@ -7,7 +7,7 @@
                         <h3 class="panel-title">Login</h3>
                     </div>
                     <div class="panel-body">
-                        <form accept-charset="UTF-8" role="form" method="post" id="loginform">
+                        <form accept-charset="UTF-8" id="loginform" hx-post="/" hx-swap="outerHTML">
                             <input type="hidden" name="_csrf" value="{{csrfToken}}">
                             <fieldset>
                                 <div class="form-group">

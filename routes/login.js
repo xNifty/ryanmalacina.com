@@ -25,7 +25,7 @@ ROUTER.post(
       var returnToPath = new URL(req.query.returnTo, config.get("rootURL"));
       returnTo = returnToPath.toString();
     }
-    if (returnTo === "") res.redirect("/");
+    if (returnTo === "" || returnTo === "undefined") res.redirect("/");
     else {
       if (ValidTarget(returnTo)) res.redirect(returnTo);
       else res.redirect("/");
@@ -48,21 +48,28 @@ ROUTER.post(
   function (req, res) {
     var returnTo = "";
     req.flash("success", strings.success.loginSuccess);
-    if (req.query.returnTo !== undefined) var returnTo = req.query.returnTo;
 
-    if (returnTo === "") res.redirect("/");
-    else {
-      if (ValidTarget(returnTo)) res.redirect(returnTo);
-      else res.redirect("/");
+    console.log(req.originalUrl);
+
+    if (req.query.returnTo !== undefined) {
+      var returnTo = req.query.returnTo;
+      if (!ValidTarget(req.query.returnTo)) {
+        returnTo = "/";
+      }
+    } else {
+      returnTo = "/";
     }
+
+    console.log(returnTo);
+
+    res.set("HX-Location", returnTo);
+    res.status(200).end();
   },
   function (err, req, res, next) {
-    if (req.session.returnTo == null) {
-      return res.send('{"error" : "Login failed", "status" : 400}');
-    } else {
-      req.flash("error", strings.errors.invalidLogin);
-      return res.redirect("/login");
-    }
+    res.send(
+      '<div class="modalAlert alert alert-danger alert-dismissible center-block text-center">Invalid username or password!</div>'
+    );
+    return;
   }
 );
 

@@ -74,6 +74,7 @@ ROUTER.get("/", async (req, res) => {
   res.render("projects", {
     title: "Ryan Malacina | Projects",
     projects: project_list,
+    csrfToken: res.locals._csrf,
   });
 });
 

@@ -9,7 +9,7 @@ import path from "path";
 
 import { Project } from "../models/projects.js";
 import { News } from "../models/news.js";
-import { sendMailAndRespond, sendMailNoRedirect } from "../utils/sendMail.js";
+import { sendMailNoRedirect } from "../utils/sendMail.js";
 
 const ROUTER = express.Router();
 
@@ -125,13 +125,13 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
 
   const errorFile = path.join(
     __dirname,
-    "/views/partials/contact/contacterrors.handlebars"
+    "/views/layouts/templates/contact/error.handlebars"
   );
   const errorSource = fs.readFileSync(errorFile, "utf-8").toString();
 
   const successFile = path.join(
     __dirname,
-    "/views/partials/contact/contactsuccess.handlebars"
+    "/views/layouts/templates/contact/success.handlebars"
   );
   const successSource = fs.readFileSync(successFile, "utf-8").toString();
 
@@ -245,7 +245,15 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
     return;
   } catch (error) {
     console.error("Error sending email:", error);
-    res.status(500).send("Error sending email.");
+    template = errorSource;
+
+    template = template.replace(
+      "{{contacterrors}}",
+      "There was an error sending your message. Please try again later."
+    );
+
+    res.send(template);
+    return;
   }
 });
 

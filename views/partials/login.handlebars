@@ -1,9 +1,9 @@
 <!-- Modal HTML -->
-<div id="loginModal" class="modal fade">
+<div id="loginModal" class="modal fade" hx-ext="response-targets">
   <div class="modal-dialog modal-login">
     <div class="modal-content">
-      <form action="#" method="post" accept-charset="UTF-8" id="loginFormModal">
-        <input type="hidden" name="modal_csrf" value="{{csrfToken}}">
+      <form id="loginFormModal" hx-post="login/modal" hx-swap="innerHTML" hx-target="#loginStatus" hx-target-error="#loginStatus">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <div class="modal-header">
           <h4 class="modal-title">Login</h4>
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
