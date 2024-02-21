@@ -59,64 +59,6 @@ function loginPageCapsLock() {
   }
 }
 
-// function login() {
-//   var form = document.getElementById("loginFormModal");
-//   var csrfToken = form.querySelector('[name="modal_csrf"]').value;
-//   form.onsubmit = function (e) {
-//     e.preventDefault();
-//     var user = form.username.value;
-//     var pass = form.password.value;
-//     $.ajax({
-//       type: "POST",
-//       headers: {
-//         "X-CSRF-TOKEN": csrfToken,
-//       },
-//       url: "/login/modal",
-//       data: {
-//         username: user,
-//         password: pass,
-//       },
-//       datatype: "json",
-//       success: function () {
-//         $("#loginSubmit").hide();
-//         $("#loginStatus").html(
-//           '<div class="modalAlert alert alert-success alert-dismissible center-block text-center">You have been successfully logged in!</div>'
-//         );
-//         $("#sp_uname").prop("disabled", true);
-//         $("#sp_pass").prop("disabled", true);
-//         setTimeout(location.reload.bind(location), 3000);
-//       },
-//       error: function () {
-//         $("#loginStatus").html(
-//           '<div class="modalAlert alert alert-danger alert-dismissible center-block text-center">Invalid username or password!</div>'
-//         );
-//         $("#loginModal").effect("shake");
-//       },
-//       always: function () {
-//         location.reload();
-//       },
-//     });
-//   };
-// }
-
-function logout() {
-  $.ajax({
-    type: "post",
-    url: "/logout",
-    datatype: "json",
-    success: function () {
-      location.reload();
-    },
-    fail: function () {
-      alert(
-        "There was an issue logging out, please report this if it continues."
-      );
-    },
-  });
-
-  return false;
-}
-
 // Select all links with hashes
 $('a[href*="#"]')
   // Remove links that don't actually link to anything

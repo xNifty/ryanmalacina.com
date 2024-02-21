@@ -39,12 +39,6 @@ ROUTER.post(
       returnTo = returnToPath.toString();
     }
 
-    // if (returnTo === "" || returnTo === "undefined") res.redirect("/");
-    // else {
-    //   if (ValidTarget(returnTo)) res.redirect(returnTo);
-    //   else res.redirect("/");
-    // }
-
     if (returnTo !== undefined && returnTo !== "") {
       if (!ValidTarget(returnTo)) {
         returnTo = "/";

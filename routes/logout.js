@@ -17,13 +17,12 @@ ROUTER.post("/", async (req, res, next) => {
   if (req.isAuthenticated()) {
     req.logout(function (err) {
       req.flash("success", strings.success.logoutSuccess);
-      return res.send('{"success" : "Logged out success", "status" : 200}');
+      return res.status(200).end();
     });
     req.flash("success", strings.success.logoutSuccess);
-    return res.send('{"success" : "Logged out success", "status" : 200}');
+    return res.status(200).end();
   } else {
-    console.log("Not logged in, so can't log out");
-    return res.send("/");
+    return res.status(200).end();
   }
 });
 
