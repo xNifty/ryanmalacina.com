@@ -1,8 +1,6 @@
 // sitewide javascript
 
 $(document).ready(function () {
-  // $("#loginFormModal").on("click", login);
-
   /* Scroll to top */
   $(window).scroll(function () {
     var height = $(window).scrollTop();
@@ -12,12 +10,11 @@ $(document).ready(function () {
       $("#scroll").fadeOut();
     }
   });
-  $(document).ready(function () {
-    $("#scroll").click(function (event) {
-      event.preventDefault();
-      $("html, body").animate({ scrollTop: 0 }, "slow");
-      return false;
-    });
+
+  $("#scroll").click(function (event) {
+    event.preventDefault();
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+    return false;
   });
 
   /* Login caps lock checks */
