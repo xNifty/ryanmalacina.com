@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" id="project_index">
     <div class="text-center"><h1>Admin Backend - Projects</h1></div>
     <input type="hidden" name="_csrf" value="{{csrfToken}}" id="_csrf">
     {{#iff projects.length ">" 0}}
@@ -13,9 +13,9 @@
                         <div class="caption center-block">
                             {{ projects.project_title }}<br />
                             {{#if projects.is_published}}
-                                Published - <a class="unpublish" href="" data-id="{{ projects._id}}">Unpublish</a>
+                                Published - <a class="unpublish" href="" data-hx-put="/admin/projects/unpublish" hx-swap="beforebegin" hx-target="project_index">Unpublish</a>
                             {{else}}
-                                Unpublished - <a class="publish" href="" data-id="{{ projects._id}}">Publish</a>
+                                Unpublished - <a class="publish" href="" data-hx-put="/admin/projects/unpublish" hx-swap="beforebegin" hx-target="project_index">Publish</a>
                             {{/if}}
                             {{#if projects.show_index}}
                                 <input class="projCheckbox" data-id="{{ projects._id}} "type="checkbox" name="projectCheckbox{{projects._id}}" value="projectCheckbox{{projects._id}}" checked>

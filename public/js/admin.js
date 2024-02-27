@@ -1,7 +1,7 @@
 // admin pages javascript
 $(document).ready(function () {
-  $(".publish").on("click", publishProject);
-  $(".unpublish").on("click", unpublishProject);
+  // $(".publish").on("click", publishProject);
+  // $(".unpublish").on("click", unpublishProject);
   // $('.deleteProject').on('click', deleteProject);
   $(".projCheckbox").on("click", updateCheckbox);
 

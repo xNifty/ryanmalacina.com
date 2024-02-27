@@ -47,6 +47,7 @@ ROUTER.put(
   "/projects/publish/:id",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
+    console.log("Publishing project");
     let id = req.params.id;
     if (await publishProject(id)) {
       req.flash("success", strings.success.projectPublished);
@@ -62,6 +63,7 @@ ROUTER.put(
   "/projects/unpublish/:id",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
+    console.log("Unpublishing project");
     let id = req.params.id;
     if (await unpublishProject(id)) {
       req.flash("success", strings.success.projectUnpublished);
