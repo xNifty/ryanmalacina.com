@@ -16,8 +16,6 @@ document.getElementById("newProjectForm").addEventListener(
     // Get CSRF token value
     var csrfToken = document.querySelector("input[name='_csrf']").value;
 
-    console.log(csrfToken);
-
     // Make an AJAX request
     $.ajax({
       type: "POST",

@@ -415,6 +415,7 @@ ROUTER.put(
   async (req, res) => {
     let id = req.params.id;
     if (await deleteProject(id)) {
+      console.log("Project Deleted");
       req.flash("success", strings.success.deleteSuccess);
       return res.end('{"success" : "Project Deleted", "status" : 200}');
     } else {
@@ -470,7 +471,8 @@ ROUTER.put(
 
     if (!status && totalIndex === 3) {
       req.flash("error", strings.errors.indexLimitReached);
-      return res.end('{"fail" : "Too Many Index Projects", "status" : 500}');
+      res.set("HX-Location", "/admin/projects");
+      return res.status(400).end();
     }
 
     try {
@@ -489,9 +491,11 @@ ROUTER.put(
           }
         );
       }
-      return res.end('{"success" : "Index rating updated", "status" : 200}');
+      res.set("HX-Location", "/admin/projects");
+      return res.status(200).end();
     } catch (err) {
-      return res.end('{"fail" : "Server error", "status" : 500}');
+      res.set("HX-Location", "/admin/projects");
+      return res.status(500).end();
     }
   }
 );

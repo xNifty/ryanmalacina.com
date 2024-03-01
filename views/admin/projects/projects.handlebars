@@ -1,4 +1,4 @@
-<div class="container" id="project_index">
+<div class="container" id="project_index" hx-ext="response-targets">
     <div class="text-center"><h1>Admin Backend - Projects</h1></div>
     <input type="hidden" name="_csrf" value="{{csrfToken}}" id="_csrf">
     {{#iff projects.length ">" 0}}
@@ -13,14 +13,14 @@
                         <div class="caption center-block">
                             {{ projects.project_title }}<br />
                             {{#if projects.is_published}}
-                                Published - <a class="unpublish" href="" data-hx-put="/admin/projects/unpublish" hx-swap="beforebegin" hx-target="project_index">Unpublish</a>
+                                Published - <a class="unpublish" href="" hx-trigger="click" hx-put="/admin/projects/unpublish/{{projects._id}}" hx-swap="beforebegin" hx-target="#project_index" hx-headers='{ "X-CSRF-TOKEN": "{{csrfToken}}" }'>Unpublish</a>
                             {{else}}
-                                Unpublished - <a class="publish" href="" data-hx-put="/admin/projects/unpublish" hx-swap="beforebegin" hx-target="project_index">Publish</a>
+                                Unpublished - <a class="publish" href="" hx-put="/admin/projects/publish/{{projects._id}}" hx-swap="beforebegin" hx-target="#project_index" hx-headers='{ "X-CSRF-TOKEN": "{{csrfToken}}" }'>Publish</a>
                             {{/if}}
                             {{#if projects.show_index}}
-                                <input class="projCheckbox" data-id="{{ projects._id}} "type="checkbox" name="projectCheckbox{{projects._id}}" value="projectCheckbox{{projects._id}}" checked>
+                                <input class="projCheckbox" data-id="{{ projects._id}} "type="checkbox" name="projectCheckbox{{projects._id}}" value="projectCheckbox{{projects._id}}" checked hx-put="/projects/update/{{ projects._id }}" hx-headers='{ "X-CSRF-TOKEN": "{{csrfToken}}" }'>
                             {{else}}
-                                <input class="projCheckbox" data-id="{{ projects._id}} "type="checkbox" name="projectCheckbox{{projects._id}}" value="projectCheckbox{{projects._id}}">
+                                <input class="projCheckbox" data-id="{{ projects._id}} "type="checkbox" name="projectCheckbox{{projects._id}}" value="projectCheckbox{{projects._id}}" hx-put="/projects/update/{{ projects._id }}" hx-headers='{ "X-CSRF-TOKEN": "{{csrfToken}}" }'>
                             {{/if}}
                             <a class="confirmModal deleteProject trigger-btn" data-id="{{ projects._id}}" data-toggle="modal" data-target="#confirmModal"> <i class="fa fa-trash"></i></a>
                             {{!-- <a class="deleteProject trigger-btn" data-toggle="modal" data-id="{{ projects._id}}" data-target="#confirmModal"> <i class="fa fa-trash"></i></a> --}}

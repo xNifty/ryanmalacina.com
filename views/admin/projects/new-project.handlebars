@@ -1,7 +1,7 @@
 <div class="container">
     <a class="back-button" href="{{return_to}}" data-toogle="tooltip" title="Go Back"></a>
     <form action="/projects/new" method="post" id="newProjectForm" enctype="multipart/form-data">
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" id="_csrf">
         <div class="form-group">
             <div class="form-group">
                 <label for="project_name">Project Name</label>
