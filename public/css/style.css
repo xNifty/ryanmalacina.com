@@ -13,6 +13,10 @@ html {
     /*color: white;*/
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 #content {
     text-align: center;
     padding-top: 25%;

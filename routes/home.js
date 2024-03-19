@@ -4,10 +4,12 @@ import GhostContentAPI from "@tryghost/content-api";
 import dateFormat from "dateformat";
 import words from "number-to-words-en";
 import { RecaptchaV3 as Recaptcha } from "express-recaptcha";
+import fs from "fs";
+import path from "path";
 
 import { Project } from "../models/projects.js";
 import { News } from "../models/news.js";
-import { sendMailAndRespond } from "../utils/sendMail.js";
+import { sendMailNoRedirect } from "../utils/sendMail.js";
 
 const ROUTER = express.Router();
 
@@ -88,14 +90,170 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
   let messaged_combined =
     `Contact form email on behalf of: ${subject_name}\n\n----\n\n` + message;
 
-  if (!req.recaptcha.error) {
-    await sendMailAndRespond(
+  let errors = "";
+  let badEmail = false;
+
+  // Validate name
+  if (!subject_name) {
+    errors += "Name is a required field.<br>";
+  }
+
+  // Validate email
+  if (!fromEmail) {
+    errors += "Email is a required field.<br>";
+  } else {
+    let re =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!re.test(fromEmail)) {
+      errors += "Please provide a valid email.<br>";
+
+      badEmail = true;
+    }
+  }
+
+  // Validate subject
+  if (!subject) {
+    errors += "Subject is a required field.<br>";
+  }
+
+  // Validate message
+  if (!message) {
+    errors += "Message is a required field.";
+  }
+
+  const __dirname = path.resolve();
+
+  const errorFile = path.join(
+    __dirname,
+    "/views/layouts/templates/contact/error.handlebars"
+  );
+  const errorSource = fs.readFileSync(errorFile, "utf-8").toString();
+
+  const successFile = path.join(
+    __dirname,
+    "/views/layouts/templates/contact/success.handlebars"
+  );
+  const successSource = fs.readFileSync(successFile, "utf-8").toString();
+
+  var template;
+
+  if (errors !== "") {
+    template = errorSource;
+
+    template = template.replace("{{contacterrors}}", errors);
+
+    if (subject_name) {
+      template = template.replace(
+        '<input type="text" id="name" name="name" class="form-control" placeholder="John Doe" autocomplete="off">',
+        `<input type="text" id="name" name="name" class="form-control" placeholder="John Doe" autocomplete="off" value="${subject_name}">`
+      );
+    } else {
+      template = template.replace(
+        '<input type="text" id="name" name="name" class="form-control" placeholder="John Doe" autocomplete="off">',
+        `<input type="text" id="name" name="name" class="form-control invalid" placeholder="John Doe" autocomplete="off">`
+      );
+    }
+
+    if (subject) {
+      template = template.replace(
+        '<input type="text" id="subject" name="subject" class="form-control" placeholder="Hello!" autocomplete="off">',
+        `<input type="text" id="subject" name="subject" class="form-control" placeholder="Hello!" autocomplete="off" value="${subject}">`
+      );
+    } else {
+      template = template.replace(
+        '<input type="text" id="subject" name="subject" class="form-control" placeholder="Hello!" autocomplete="off">',
+        `<input type="text" id="subject" name="subject" class="form-control invalid" placeholder="Hello!" autocomplete="off">`
+      );
+    }
+
+    if (fromEmail && !badEmail) {
+      template = template.replace(
+        '<input type="text" id="email" name="email" class="form-control" placeholder="you@your.email" autocomplete="on">',
+        `<input type="text" id="email" name="email" class="form-control" placeholder="you@your.email" autocomplete="on" value="${fromEmail}">`
+      );
+    } else {
+      if (fromEmail && badEmail) {
+        template = template.replace(
+          '<input type="text" id="email" name="email" class="form-control" placeholder="you@your.email" autocomplete="on">',
+          `<input type="text" id="email" name="email" class="form-control invalid" placeholder="you@your.email" autocomplete="on" value="${fromEmail}">`
+        );
+      } else {
+        template = template.replace(
+          '<input type="text" id="email" name="email" class="form-control" placeholder="you@your.email" autocomplete="on">',
+          `<input type="text" id="email" name="email" class="form-control invalid" placeholder="you@your.email" autocomplete="on">`
+        );
+      }
+    }
+
+    if (message) {
+      template = template.replace(
+        '<textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" placeholder="This is your email content."></textarea>',
+        `<textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" placeholder="This is your email content.">${message}</textarea>`
+      );
+    } else {
+      template = template.replace(
+        '<textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" placeholder="This is your email content."></textarea>',
+        `<textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea invalid" placeholder="This is your email content."></textarea>`
+      );
+    }
+
+    template = template.replace("{{csrfToken}}", res.locals._csrf);
+
+    // If there are validation errors, render the contact partial with the errors
+    res.send(template);
+    return;
+  }
+
+  if (req.recaptcha.error) {
+    template = errorSource;
+
+    template = template.replace("{{contacterrors}}", req.recaptcha.error);
+
+    // If there are validation errors, render the contact partial with the errors
+    res.send(template);
+    return;
+  }
+
+  // Send the email
+  try {
+    var sendStatus = await sendMailNoRedirect(
       fromEmail,
       toEmail,
       subject_combined,
       messaged_combined,
       res
     );
+
+    if (sendStatus) {
+      template = successSource;
+
+      template = template.replace(
+        "{{contacterrors}}",
+        "Message sent! I'll get back to you as soon as I can!"
+      );
+    } else {
+      template = errorSource;
+
+      template = template.replace(
+        "{{contacterrors}}",
+        "There was an error sending your message. Please try again later."
+      );
+    }
+
+    // If there are validation errors, render the contact partial with the errors
+    res.send(template);
+    return;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    template = errorSource;
+
+    template = template.replace(
+      "{{contacterrors}}",
+      "There was an error sending your message. Please try again later."
+    );
+
+    res.send(template);
+    return;
   }
 });
 

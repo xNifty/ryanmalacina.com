@@ -34,6 +34,10 @@ ROUTER.get(
   async (req, res) => {
     let project_list = await listProjects();
 
+    project_list.forEach((project) => {
+      project.csrfToken = res.locals._csrf;
+    });
+
     res.render("admin/projects/projects", {
       layout: "admin",
       title: strings.pageHeader.adminProject,
@@ -47,13 +51,16 @@ ROUTER.put(
   "/projects/publish/:id",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
+    console.log("Publishing project");
     let id = req.params.id;
     if (await publishProject(id)) {
       req.flash("success", strings.success.projectPublished);
-      return res.end('{"success" : "Updated Successfully", "status" : 200}');
+      res.set("HX-Location", "/admin/projects");
+      return res.status(200).end();
     } else {
       req.flash("error", strings.errors.publishError);
-      return res.end('{"success" : "Server error", "status" : 500}');
+      res.set("HX-Location", "/admin/projects");
+      return res.status(500).end();
     }
   }
 );
@@ -62,13 +69,16 @@ ROUTER.put(
   "/projects/unpublish/:id",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
+    console.log("Unpublishing project");
     let id = req.params.id;
     if (await unpublishProject(id)) {
       req.flash("success", strings.success.projectUnpublished);
-      return res.end('{"success" : "Updated Successfully", "status" : 200}');
+      res.set("HX-Location", "/admin/projects");
+      return res.status(200).end();
     } else {
       req.flash("error", strings.errors.publishError);
-      return res.end('{"fail" : "Server error", "status" : 500}');
+      res.set("HX-Location", "/admin/projects");
+      res.status(400).end();
     }
   }
 );

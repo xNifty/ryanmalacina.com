@@ -21,24 +21,48 @@ ROUTER.post(
   function (req, res) {
     var returnTo = "";
     req.flash("success", strings.success.loginSuccess);
+
+    const HXReturnTo = req.get("HX-Current-URL");
+
+    if (HXReturnTo.includes("returnTo=")) {
+      var parts = HXReturnTo.split("returnTo=");
+      var returnParts = parts[1];
+      returnParts = decodeURIComponent(returnParts);
+      returnToPath = new URL(returnParts, config.get("rootURL"));
+      returnTo = returnToPath.toString();
+    } else {
+      returnTo = "/";
+    }
+
     if (req.query.returnTo !== undefined) {
       var returnToPath = new URL(req.query.returnTo, config.get("rootURL"));
       returnTo = returnToPath.toString();
     }
-    if (returnTo === "") res.redirect("/");
-    else {
-      if (ValidTarget(returnTo)) res.redirect(returnTo);
-      else res.redirect("/");
+
+    if (returnTo !== undefined && returnTo !== "") {
+      if (!ValidTarget(returnTo)) {
+        returnTo = "/";
+      }
+    } else {
+      returnTo = "/";
     }
+
+    res.set("HX-Location", returnTo);
+    res.status(200).end();
   },
   function (err, req, res, next) {
-    if (req.query.returnTo !== null) {
-      req.flash("error", strings.errors.invalidLogin);
-      return res.redirect("/login?returnTo=" + req.query.returnTo);
-    } else {
-      req.flash("error", strings.errors.invalidLogin);
-      return res.redirect("/login");
-    }
+    // console.log(err);
+    res.send(
+      `<div class="container">
+    <div class="text-center">
+        <div class="alert alert-danger center-block">
+            <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
+            Invalid username or password!
+        </div>
+    </div>
+</div>`
+    );
+    return;
   }
 );
 
@@ -48,21 +72,26 @@ ROUTER.post(
   function (req, res) {
     var returnTo = "";
     req.flash("success", strings.success.loginSuccess);
-    if (req.query.returnTo !== undefined) var returnTo = req.query.returnTo;
 
-    if (returnTo === "") res.redirect("/");
-    else {
-      if (ValidTarget(returnTo)) res.redirect(returnTo);
-      else res.redirect("/");
+    const HXReturnTo = req.get("HX-Current-URL");
+
+    if (HXReturnTo !== undefined) {
+      var returnTo = HXReturnTo;
+      if (!ValidTarget(HXReturnTo)) {
+        returnTo = "/";
+      }
+    } else {
+      returnTo = "/";
     }
+
+    res.set("HX-Location", returnTo);
+    res.status(200).end();
   },
   function (err, req, res, next) {
-    if (req.session.returnTo == null) {
-      return res.send('{"error" : "Login failed", "status" : 400}');
-    } else {
-      req.flash("error", strings.errors.invalidLogin);
-      return res.redirect("/login");
-    }
+    res.send(
+      '<div class="modalAlert alert alert-danger alert-dismissible center-block text-center">Invalid username or password!</div>'
+    );
+    return;
   }
 );
 
