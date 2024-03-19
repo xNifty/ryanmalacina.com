@@ -298,7 +298,7 @@ ROUTER.post(
     news.news_clean_output = newsCleaned;
     let saveDate = new Date(Date.now());
 
-    news.published_date = dateformat(saveDate, "mmmm dd, yyyy @ h:MM TT");
+    news.published_date = dateFormat(saveDate, "mmmm dd, yyyy @ h:MM TT");
     news.published_date_unclean = saveDate;
 
     try {
