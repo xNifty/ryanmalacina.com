@@ -3,7 +3,6 @@ import express from "express";
 import exphbs from "express-handlebars";
 import config from "config";
 import session from "express-session";
-import csp from "helmet-csp";
 import flash from "connect-flash";
 import cookieParser from "cookie-parser";
 import passport from "passport";
@@ -12,6 +11,7 @@ import lusca from "lusca";
 import rateLimit from "express-rate-limit";
 import createHttpError from "http-errors";
 import { generateNonce, getDirectives } from "nonce-simple";
+import { createRequire } from "module";
 
 import { User } from "./models/user.js";
 import { iff, versionedFile } from "./utils/helpers.js";
@@ -33,6 +33,8 @@ import { resetRoute } from "./routes/reset.js";
 import { passwordReset } from "./routes/resetPassword.js";
 import { profileRoute } from "./routes/profile.js";
 import { createMongoStore, createSession } from "./utils/sessionHandler.js";
+
+const require = createRequire(import.meta.url);
 
 // Make sure our private token exists
 if (!process.env.privateKey) {
@@ -103,15 +105,6 @@ APP.use(function (req, res, next) {
   next();
 });
 
-APP.use(
-  csp({
-    directives: getDirectives(
-      (req, res) => `'${res.locals.cspNonce}'`,
-      NONCE_OPTIONS
-    ),
-  })
-);
-
 let sess = createSession(SECRET_KEY, config, MONGO_STORE);
 
 var limiter = rateLimit({
@@ -127,6 +120,21 @@ APP.use(
   passport.session(),
   limiter
 );
+
+// Required for helmet-csp after v4.0.0
+async function setupHelmetCSP() {
+  const csp = require("helmet-csp");
+  APP.use(
+    csp({
+      directives: getDirectives(
+        (req, res) => `'${res.locals.cspNonce}'`,
+        NONCE_OPTIONS
+      ),
+    })
+  );
+}
+
+setupHelmetCSP().catch(console.error);
 
 passport.serializeUser(function (user, done) {
   done(null, user._id);

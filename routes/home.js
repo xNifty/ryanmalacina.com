@@ -6,6 +6,8 @@ import words from "number-to-words-en";
 import { RecaptchaV3 as Recaptcha } from "express-recaptcha";
 import fs from "fs";
 import path from "path";
+import createDOMPurify from "dompurify";
+import { JSDOM } from "jsdom";
 
 import { Project } from "../models/projects.js";
 import { News } from "../models/news.js";
@@ -83,8 +85,8 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
   let toEmail = process.env.mailgunToEmail;
   let subject = req.body.subject;
   let message = req.body.message;
-
   let subject_name = req.body.name;
+
   let subject_combined =
     `Email received on behalf of ${subject_name}:\n ` + subject;
   let messaged_combined =
@@ -140,12 +142,22 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
   if (errors !== "") {
     template = errorSource;
 
-    template = template.replace("{{contacterrors}}", errors);
+    const window = new JSDOM("").window;
+    const DOMPurify = createDOMPurify(window);
+
+    let sanitizedErrors = DOMPurify.sanitize(errors);
+    let sanitizedSubject = DOMPurify.sanitize(subject);
+    let sanitizedSubjectName = DOMPurify.sanitize(subject_name);
+    let sanitizedFromEmail = DOMPurify.sanitize(fromEmail);
+    let sanitizedMessage = DOMPurify.sanitize(message);
+    let sanitizedCSRFToken = DOMPurify.sanitize(res.locals._csrf);
+
+    template = template.replace("{{contacterrors}}", sanitizedErrors);
 
     if (subject_name) {
       template = template.replace(
         '<input type="text" id="name" name="name" class="form-control" placeholder="John Doe" autocomplete="off">',
-        `<input type="text" id="name" name="name" class="form-control" placeholder="John Doe" autocomplete="off" value="${subject_name}">`
+        `<input type="text" id="name" name="name" class="form-control" placeholder="John Doe" autocomplete="off" value="${sanitizedSubjectName}">`
       );
     } else {
       template = template.replace(
@@ -157,7 +169,7 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
     if (subject) {
       template = template.replace(
         '<input type="text" id="subject" name="subject" class="form-control" placeholder="Hello!" autocomplete="off">',
-        `<input type="text" id="subject" name="subject" class="form-control" placeholder="Hello!" autocomplete="off" value="${subject}">`
+        `<input type="text" id="subject" name="subject" class="form-control" placeholder="Hello!" autocomplete="off" value="${sanitizedSubject}">`
       );
     } else {
       template = template.replace(
@@ -169,13 +181,13 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
     if (fromEmail && !badEmail) {
       template = template.replace(
         '<input type="text" id="email" name="email" class="form-control" placeholder="you@your.email" autocomplete="on">',
-        `<input type="text" id="email" name="email" class="form-control" placeholder="you@your.email" autocomplete="on" value="${fromEmail}">`
+        `<input type="text" id="email" name="email" class="form-control" placeholder="you@your.email" autocomplete="on" value="${sanitizedFromEmail}">`
       );
     } else {
       if (fromEmail && badEmail) {
         template = template.replace(
           '<input type="text" id="email" name="email" class="form-control" placeholder="you@your.email" autocomplete="on">',
-          `<input type="text" id="email" name="email" class="form-control invalid" placeholder="you@your.email" autocomplete="on" value="${fromEmail}">`
+          `<input type="text" id="email" name="email" class="form-control invalid" placeholder="you@your.email" autocomplete="on" value="${sanitizedFromEmail}">`
         );
       } else {
         template = template.replace(
@@ -188,7 +200,7 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
     if (message) {
       template = template.replace(
         '<textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" placeholder="This is your email content."></textarea>',
-        `<textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" placeholder="This is your email content.">${message}</textarea>`
+        `<textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" placeholder="This is your email content.">${sanitizedMessage}</textarea>`
       );
     } else {
       template = template.replace(
@@ -197,7 +209,7 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
       );
     }
 
-    template = template.replace("{{csrfToken}}", res.locals._csrf);
+    template = template.replace("{{csrfToken}}", sanitizedCSRFToken);
 
     // If there are validation errors, render the contact partial with the errors
     res.send(template);
