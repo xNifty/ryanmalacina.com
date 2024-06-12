@@ -4,37 +4,38 @@ import handleResponse from "./responseHandler.js";
 
 const { mg, domain } = mailgunConfig;
 
-export async function sendMailAndRespond(
-  fromEmail,
-  toEmail,
-  subject,
-  text,
-  res
-) {
-  try {
-    const messageOptions = createMessageOptions(
-      fromEmail,
-      toEmail,
-      subject,
-      text
-    );
+// export async function sendMailAndRespond(
+//   fromEmail,
+//   toEmail,
+//   subject,
+//   text,
+//   res
+// ) {
+//   try {
+//     const messageOptions = createMessageOptions(
+//       fromEmail,
+//       toEmail,
+//       subject,
+//       text
+//     );
 
-    await mg.messages.create(domain, messageOptions);
+//     await mg.messages.create(domain, messageOptions);
 
-    return handleResponse(res, "Updated Successfully", 200);
-  } catch (err) {
-    logErrorToFile(err);
+//     return handleResponse(res, "Updated Successfully", 200);
+//   } catch (err) {
+//     logErrorToFile(err);
 
-    return handleResponse(res, "Error", 400);
-  }
-}
+//     return handleResponse(res, "Error", 400);
+//   }
+// }
 
 export async function sendMailNoRedirect(
   fromEmail,
   toEmail,
   subject,
   text,
-  ishtml
+  ishtml,
+  returnJson = false
 ) {
   try {
     const messageOptions = createMessageOptions(
@@ -46,10 +47,20 @@ export async function sendMailNoRedirect(
     );
 
     await mg.messages.create(domain, messageOptions);
-    return true;
+
+    if (returnJson) {
+      return handleResponse(res, "Updated Successfully", 200);
+    } else {
+      return true;
+    }
   } catch (err) {
     logErrorToFile(err);
-    return false;
+
+    if (returnJson) {
+      return handleResponse(res, "Error", 400);
+    } else {
+      return false;
+    }
   }
 }
 
@@ -70,6 +81,6 @@ function createMessageOptions(fromEmail, toEmail, subject, text, ishtml) {
 }
 
 export default {
-  sendMailAndRespond,
+  // sendMailAndRespond,
   sendMailNoRedirect,
 };
