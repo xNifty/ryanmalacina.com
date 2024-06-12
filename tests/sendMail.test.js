@@ -1,5 +1,5 @@
 import mailgunConfig from "../config/mailgunConfig";
-import { sendMailAndRespond, sendMailNoRedirect } from "../utils/sendMail.js";
+import { sendMail } from "../utils/sendMail.js";
 import logErrorToFile from "../utils/errorLogging.js";
 import handleResponse from "../utils/responseHandler.js";
 
@@ -40,8 +40,10 @@ describe("Mail Service", () => {
       const subject = "Test Subject";
       const text = "Test Text";
       const res = {};
+      const isJson = true;
+      const isHtml = false;
 
-      await sendMailAndRespond(fromEmail, toEmail, subject, text, res);
+      await sendMail(fromEmail, toEmail, subject, text, isHtml, isJson, res);
 
       expect(mailgunConfig.mg.messages.create).toHaveBeenCalledWith(
         "mockDomain",
@@ -75,12 +77,16 @@ describe("Mail Service", () => {
       const subject = "Test Subject";
       const text = "Test Text";
       const res = {};
+      const isJson = true;
+      const isHtml = false;
 
-      const result = await sendMailAndRespond(
+      const result = await sendMail(
         fromEmail,
         toEmail,
         subject,
         text,
+        isHtml,
+        isJson,
         res
       );
 
@@ -106,13 +112,7 @@ describe("Mail Service", () => {
       const text = "Test Text";
       const isHtml = false;
 
-      const result = await sendMailNoRedirect(
-        fromEmail,
-        toEmail,
-        subject,
-        text,
-        isHtml
-      );
+      const result = await sendMail(fromEmail, toEmail, subject, text, isHtml);
 
       expect(mailgunConfig.mg.messages.create).toHaveBeenCalledWith(
         "mockDomain",
@@ -140,13 +140,7 @@ describe("Mail Service", () => {
       const text = "Test Text";
       const isHtml = false;
 
-      const result = await sendMailNoRedirect(
-        fromEmail,
-        toEmail,
-        subject,
-        text,
-        isHtml
-      );
+      const result = await sendMail(fromEmail, toEmail, subject, text, isHtml);
 
       expect(mailgunConfig.mg.messages.create).toHaveBeenCalledWith(
         "mockDomain",

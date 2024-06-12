@@ -11,7 +11,7 @@ import { JSDOM } from "jsdom";
 
 import { Project } from "../models/projects.js";
 import { News } from "../models/news.js";
-import { sendMailNoRedirect } from "../utils/sendMail.js";
+import { sendMail } from "../utils/sendMail.js";
 
 const ROUTER = express.Router();
 
@@ -228,7 +228,7 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
 
   // Send the email
   try {
-    var sendStatus = await sendMailNoRedirect(
+    var sendStatus = await sendMail(
       fromEmail,
       toEmail,
       subject_combined,

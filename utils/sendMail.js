@@ -29,13 +29,14 @@ const { mg, domain } = mailgunConfig;
 //   }
 // }
 
-export async function sendMailNoRedirect(
+export async function sendMail(
   fromEmail,
   toEmail,
   subject,
   text,
   ishtml,
-  returnJson = false
+  returnJson = false,
+  res = false
 ) {
   try {
     const messageOptions = createMessageOptions(
@@ -82,5 +83,5 @@ function createMessageOptions(fromEmail, toEmail, subject, text, ishtml) {
 
 export default {
   // sendMailAndRespond,
-  sendMailNoRedirect,
+  sendMailNoRedirect: sendMail,
 };

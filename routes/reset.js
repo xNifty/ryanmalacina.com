@@ -9,7 +9,7 @@ import auth from "../utils/auth.js";
 import { strings } from "../config/constants.js";
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
-import { sendMailNoRedirect } from "../utils/sendMail.js";
+import { sendMail } from "../utils/sendMail.js";
 
 const ROUTER = express.Router();
 
@@ -124,13 +124,7 @@ const generateEmailTemplate = async (userName, link, invalidateLink) => {
 };
 
 const sendPasswordResetEmail = async (fromEmail, toEmail, template) => {
-  await sendMailNoRedirect(
-    fromEmail,
-    toEmail,
-    "Password Reset Email",
-    template,
-    true
-  );
+  await sendMail(fromEmail, toEmail, "Password Reset Email", template, true);
 };
 
 export { ROUTER as resetRoute };
