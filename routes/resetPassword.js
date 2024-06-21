@@ -12,6 +12,7 @@ router.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("resetPassword", {
     layout: "reset",
     title: strings.pageHeader.resetPassword,
+    csrfToken: res.locals._csrf,
   });
 });
 

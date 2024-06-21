@@ -20,6 +20,7 @@ ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("reset", {
     layout: "reset",
     title: strings.pageHeader.forgotPassword,
+    csrfToken: res.locals._csrf,
   });
 });
 
@@ -67,7 +68,13 @@ const resetPassword = async (email) => {
       invalidateLink
     );
 
-    await sendPasswordResetEmail(FROM_EMAIL, user.email, template);
+    await sendMail(
+      FROM_EMAIL,
+      user.email,
+      "Password Reset Email",
+      template,
+      true
+    );
 
     return true;
   } catch (error) {
@@ -77,7 +84,7 @@ const resetPassword = async (email) => {
 };
 
 const deleteExistingToken = async (userId) => {
-  const token = await Token.findOne({ _id: { $eq: userId } });
+  const token = await Token.findOne({ userId: { $eq: userId } });
   if (token) await token.deleteOne();
 };
 
@@ -121,10 +128,6 @@ const generateEmailTemplate = async (userName, link, invalidateLink) => {
     console.error("Error generating email template:", error);
     throw error;
   }
-};
-
-const sendPasswordResetEmail = async (fromEmail, toEmail, template) => {
-  await sendMail(fromEmail, toEmail, "Password Reset Email", template, true);
 };
 
 export { ROUTER as resetRoute };
