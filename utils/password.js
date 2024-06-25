@@ -4,10 +4,10 @@ import path from "path";
 
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
-import { sendMailNoRedirect } from "./sendMail.js";
+import { sendMail } from "./sendMail.js";
 
 export async function resetPassword(userId, token, password) {
-  let passwordToken = await Token.findOne({ _id: { $eq: userId } });
+  let passwordToken = await Token.findOne({ userId: { $eq: userId } });
   if (!passwordToken) return false;
 
   const isValid = await bcrypt.compare(token, passwordToken.token);
@@ -16,7 +16,7 @@ export async function resetPassword(userId, token, password) {
   const hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
 
   await User.updateOne(
-    { _id: { $eq: userId } },
+    { _id: userId },
     { $set: { password: hash } },
     { new: true }
   );
@@ -29,11 +29,11 @@ export async function resetPassword(userId, token, password) {
   const source = fs.readFileSync(filePath, "utf-8").toString();
   var template = source;
 
-  const user = await User.findById({ _id: { $eq: userId } });
+  const user = await User.findById({ _id: userId });
 
   template = template.replace("{{user}}", user.realName);
 
-  await sendMailNoRedirect(
+  await sendMail(
     process.env.mailgunFromEmail,
     user.email,
     "Password Changed",

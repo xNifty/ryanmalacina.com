@@ -4,38 +4,41 @@ import handleResponse from "./responseHandler.js";
 
 const { mg, domain } = mailgunConfig;
 
-export async function sendMailAndRespond(
+// export async function sendMailAndRespond(
+//   fromEmail,
+//   toEmail,
+//   subject,
+//   text,
+//   res
+// ) {
+//   try {
+//     const messageOptions = createMessageOptions(
+//       fromEmail,
+//       toEmail,
+//       subject,
+//       text
+//     );
+
+//     await mg.messages.create(domain, messageOptions);
+
+//     return handleResponse(res, "Updated Successfully", 200);
+//   } catch (err) {
+//     logErrorToFile(err);
+
+//     return handleResponse(res, "Error", 400);
+//   }
+// }
+
+export async function sendMail(
   fromEmail,
   toEmail,
   subject,
   text,
-  res
+  ishtml,
+  returnJson = false,
+  res = false
 ) {
-  try {
-    const messageOptions = createMessageOptions(
-      fromEmail,
-      toEmail,
-      subject,
-      text
-    );
-
-    await mg.messages.create(domain, messageOptions);
-
-    return handleResponse(res, "Updated Successfully", 200);
-  } catch (err) {
-    logErrorToFile(err);
-
-    return handleResponse(res, "Error", 400);
-  }
-}
-
-export async function sendMailNoRedirect(
-  fromEmail,
-  toEmail,
-  subject,
-  text,
-  ishtml
-) {
+  let success = false;
   try {
     const messageOptions = createMessageOptions(
       fromEmail,
@@ -45,11 +48,27 @@ export async function sendMailNoRedirect(
       ishtml
     );
 
-    await mg.messages.create(domain, messageOptions);
-    return true;
+    await mg.messages.create(domain, messageOptions)
+    .then((msg) => success = true)
+    .catch((err) => success = false);
+
+    if (returnJson && success) {
+      return handleResponse(res, "Updated Successfully", 200);
+    } else if (!returnJson && success) {
+      return true;
+    } else if (returnJson && !success) {
+      return handleResponse(res, "Error", 400);
+    } else {
+      return false;
+    }
   } catch (err) {
     logErrorToFile(err);
-    return false;
+
+    if (returnJson) {
+      return handleResponse(res, "Error", 400);
+    } else {
+      return false;
+    }
   }
 }
 
@@ -70,6 +89,6 @@ function createMessageOptions(fromEmail, toEmail, subject, text, ishtml) {
 }
 
 export default {
-  sendMailAndRespond,
-  sendMailNoRedirect,
+  // sendMailAndRespond,
+  sendMailNoRedirect: sendMail,
 };
