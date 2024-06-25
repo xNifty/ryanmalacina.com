@@ -4,31 +4,6 @@ import handleResponse from "./responseHandler.js";
 
 const { mg, domain } = mailgunConfig;
 
-// export async function sendMailAndRespond(
-//   fromEmail,
-//   toEmail,
-//   subject,
-//   text,
-//   res
-// ) {
-//   try {
-//     const messageOptions = createMessageOptions(
-//       fromEmail,
-//       toEmail,
-//       subject,
-//       text
-//     );
-
-//     await mg.messages.create(domain, messageOptions);
-
-//     return handleResponse(res, "Updated Successfully", 200);
-//   } catch (err) {
-//     logErrorToFile(err);
-
-//     return handleResponse(res, "Error", 400);
-//   }
-// }
-
 export async function sendMail(
   fromEmail,
   toEmail,
