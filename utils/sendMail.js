@@ -38,6 +38,7 @@ export async function sendMail(
   returnJson = false,
   res = false
 ) {
+  let success = false;
   try {
     const messageOptions = createMessageOptions(
       fromEmail,
@@ -47,12 +48,18 @@ export async function sendMail(
       ishtml
     );
 
-    await mg.messages.create(domain, messageOptions);
+    await mg.messages.create(domain, messageOptions)
+    .then((msg) => success = true)
+    .catch((err) => success = false);
 
-    if (returnJson) {
+    if (returnJson && success) {
       return handleResponse(res, "Updated Successfully", 200);
-    } else {
+    } else if (!returnJson && success) {
       return true;
+    } else if (returnJson && !success) {
+      return handleResponse(res, "Error", 400);
+    } else {
+      return false;
     }
   } catch (err) {
     logErrorToFile(err);
