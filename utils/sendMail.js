@@ -9,7 +9,7 @@ export async function sendMail(
   toEmail,
   subject,
   text,
-  ishtml,
+  ishtml = false,
   returnJson = false,
   res = false
 ) {
@@ -25,7 +25,7 @@ export async function sendMail(
 
     await mg.messages.create(domain, messageOptions)
     .then((msg) => success = true)
-    .catch((err) => success = false);
+    .catch((err) => { success = false; logErrorToFile(err); });
 
     if (returnJson && success) {
       return handleResponse(res, "Updated Successfully", 200);
