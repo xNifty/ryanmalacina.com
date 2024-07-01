@@ -5,31 +5,34 @@ import path from "path";
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import { sendMail } from "./sendMail.js";
+import { sanitizeUserId } from "./sanitizeUserId.js";
+
+// Define consts
+const __dirname = path.resolve();
+const filePath = path.join(
+  __dirname,
+  "/views/layouts/templates/passwordResetSuccess.handlebars"
+);
+const source = fs.readFileSync(filePath, "utf-8").toString();
 
 export async function resetPassword(userId, token, password) {
   let passwordToken = await Token.findOne({ userId: { $eq: userId } });
   if (!passwordToken) return false;
 
-  const isValid = await bcrypt.compare(token, passwordToken.token);
+  let isValid = await bcrypt.compare(token, passwordToken.token);
   if (!isValid) return false;
 
-  const hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
+  let hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
 
   await User.updateOne(
-    { _id: userId },
+    { _id: { $eq: userId } },
     { $set: { password: hash } },
     { new: true }
   );
 
-  const __dirname = path.resolve();
-  const filePath = path.join(
-    __dirname,
-    "/views/layouts/templates/passwordResetSuccess.handlebars"
-  );
-  const source = fs.readFileSync(filePath, "utf-8").toString();
   var template = source;
 
-  const user = await User.findById({ _id: userId });
+  let user = await User.findById({ _id: { $eq: userId } });
 
   template = template.replace("{{user}}", user.realName);
 
