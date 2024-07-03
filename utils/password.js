@@ -5,7 +5,6 @@ import path from "path";
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import { sendMail } from "./sendMail.js";
-import { sanitizeUserId } from "./sanitizeUserId.js";
 
 // Define consts
 const __dirname = path.resolve();

@@ -163,8 +163,8 @@ ROUTER.post(
       });
 
       /*
-          Default the project image to blank and if it exists, we can then set the image to the image from the
-          body of the page.  If there is no image found, we will use the default image that we set.
+        Default the project image to blank and if it exists, we can then set the image to the image from the
+        body of the page.  If there is no image found, we will use the default image that we set.
       */
       let projectImage = "";
       let adjustedFileName = "";
