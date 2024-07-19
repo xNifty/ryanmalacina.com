@@ -33,9 +33,13 @@ $(document).ready(function () {
 });
 function searchNews(e, sortOrder) {
   var search = $("#news-search-box").val();
+  var csrfToken = document.getElementById("_csrf").value;
   e.preventDefault();
   $.ajax({
     type: "POST",
+    headers: {
+      "X-CSRF-TOKEN": csrfToken,
+    },
     url: "/news/search?sort=" + sortOrder,
     data: {
       search: search,
@@ -107,8 +111,12 @@ function advancePage(currentpage, e, search = "", totalPages = 1) {
     url = "/news?page=" + currentpage;
   }
   e.preventDefault();
+  var csrfToken = document.getElementById("_csrf").value;
   $.ajax({
     type: "POST",
+    headers: {
+      "X-CSRF-TOKEN": csrfToken,
+    },
     url: url,
     data: {
       page: currentpage,

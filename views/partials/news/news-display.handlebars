@@ -2,12 +2,12 @@
     {{#if search }}
         <input type="hidden" id="pageCount" value={{ totalPages }}>
         <input type="hidden" id="itemCount" value={{ totalPages }}>
-        There are {{ totalPages }} pages in the search result for <b>{{ searchTerm }}</b>, with a total entry count of {{ totalItems }}.<br />
+        There are {{ totalPages }} pages in the search result for <b>{{ searchTerm }}</b>, with {{ totalItems }} total results.<br />
     {{else}}
         <input type="hidden" id="pageCount" value={{ totalPages }}>
         <input type="hidden" id="itemCount" value={{ totalPages }}>
         <input type="hidden" id="currentPage" value={{ currentPage }}>
-        There are {{ totalPages }} pages in the current news index, with a total entry count of {{ totalItems }}.<br />
+        There are {{ totalPages }} pages in the current news index, with {{ totalItems }} total news entries.<br />
         {{!-- You are on page {{ currentPage }}. --}}
     {{/if}}
 <div class="panel-group">

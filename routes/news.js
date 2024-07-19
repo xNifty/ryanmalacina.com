@@ -29,6 +29,7 @@ ROUTER.get("/", async (req, res) => {
     totalPages: news_list["totalPages"],
     totalItems: news_list["totalDocs"],
     currentPage: page,
+    csrfToken: res.locals._csrf,
   });
 });
 
