@@ -1,6 +1,8 @@
 <div class="container">
-    <a class="back-button" href="/projects/{{_id}}" data-toogle="tooltip" title="Return to Project"></a>
-    <form action="/projects/{{id}}/edit" method="post" id="projectEditForm" enctype="multipart/form-data"> 
+    <a class="back-button" href="/projects/{{id}}" data-toogle="tooltip" title="Return to Project"></a>
+    <form action="/projects/edit" method="post" id="projectEditForm" data="{{id}}">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <input type="hidden" name="project_id" value="{{id}}">
         <div class="form-group">
             <div class="form-group">
                 <label for="project_name">Project Name</label>
@@ -27,7 +29,6 @@
             </div>
             <input type="file" class="custom-text" name="project_image">
         </div>
-        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <button type="submit" class="btn btn-primary" id="submitBtn"><span class="glyphicon glyphicon-pencil"></span> Update Project</button>
     </form>
 </div>

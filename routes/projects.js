@@ -294,6 +294,8 @@ ROUTER.post(
   "/:id/edit",
   [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
   async (req, res) => {
+    const { _csrf, ...FormData } = req.body;
+
     let project = await Project.find({ _id: { $eq: req.params.id } }).select({
       project_image: 1,
       _id: 0,
@@ -301,8 +303,6 @@ ROUTER.post(
     });
 
     req.session.project_image = project[0].project_image;
-
-    const { _csrf, ...FormData } = req.body;
 
     try {
       const { error } = validateProject(FormData);
@@ -403,6 +403,129 @@ ROUTER.post(
         project_description: req.session.project_description_markdown,
         project_image: project[0].project_image,
         csrfToken: res.locals._csrf,
+      });
+    }
+  }
+);
+
+ROUTER.post(
+  "/edit",
+  [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
+  async (req, res) => {
+    const { _csrf, ...FormData } = req.body;
+
+    console.log(FormData);
+
+    let project = await Project.find({
+      _id: { $eq: req.body.project_id },
+    }).select({
+      project_image: 1,
+      _id: 0,
+      is_published: 1,
+    });
+
+    req.session.project_image = project[0].project_image;
+
+    try {
+      const { error } = validateProject(FormData);
+      var errorMessage = "";
+
+      if (error) {
+        // Handle validation error
+        for (let i = 0; i < error.details.length; i++) {
+          if (error.details[i].context.key === "project_description") {
+            errorMessage += strings.errors.projectDescriptionLength + "<br>";
+          }
+          if (error.details[i].context.key === "project_name") {
+            errorMessage += strings.errors.projectName + "<br>";
+          }
+          if (error.details[i].context.key === "project_title") {
+            errorMessage += strings.errors.projectTitle + "<br>";
+          }
+          if (error.details[i].context.key === "project_source") {
+            errorMessage += strings.errors.projectSource + "<br>";
+          }
+        }
+        throw new Error(errorMessage);
+      }
+
+      let projectDescription = MARKDOWN.render(req.body.project_description);
+      let projectSanitized = sanitize(projectDescription, {
+        allowedTags: safeTags,
+      });
+
+      let saveDate = new Date(Date.now());
+      let projectImage = req.session.project_image;
+      let adjustedFileName = "";
+
+      if (req.files && req.files.project_image) {
+        projectImage = req.files.project_image;
+        adjustedFileName = projectImage.name
+          .split(".")
+          .join("-" + Date.now() + ".");
+
+        req.session.project_image = projectImage;
+
+        const moveFilePromise = util.promisify(projectImage.mv);
+
+        try {
+          await moveFilePromise("./public/images/" + adjustedFileName);
+          projectImage = adjustedFileName;
+        } catch (error) {
+          logErrorToFile(error);
+        }
+      }
+
+      let projectUpdate = await Project.findById(req.params.id);
+      projectUpdate.project_name = req.body.project_name;
+      projectUpdate.project_title = req.body.project_title;
+      projectUpdate.project_source = req.body.project_source;
+      projectUpdate.project_description_markdown = req.body.project_description;
+      projectUpdate.project_description_html = projectSanitized;
+      projectUpdate.project_image = projectImage;
+      projectUpdate.last_edited = saveDate;
+
+      await projectUpdate.save();
+      clearProjectEditSession(req);
+      req.flash("success", strings.success.projectUpdated);
+      res.status(200).json({
+        status: 200,
+        message: strings.success.projectUpdated,
+      });
+    } catch (ex) {
+      if (ex.code === 11000) {
+        const indexNameMatch = ex.message.match(/index: (\w+)/);
+        const indexName = indexNameMatch ? indexNameMatch[1] : null;
+
+        if (indexName === "project_name_1") {
+          errorMessage = strings.errors.projectNameUnique;
+        } else if (indexName === "project_title_1") {
+          errorMessage = strings.errors.projectTitleUnique;
+        } else {
+          errorMessage = strings.errors.genericError;
+        }
+      } else {
+        errorMessage = strings.errors.genericError;
+        logErrorToFile(ex);
+      }
+
+      req.session.loadProjectFromSession = true;
+      req.session.project_name = req.body.project_name;
+      req.session.project_title = req.body.project_title;
+      req.session.project_source = req.body.project_source;
+      req.session.project_description_markdown = req.body.project_description;
+
+      req.flash("error", errorMessage);
+      return res.status(400).render("admin/projects/update-project", {
+        layout: "update-project",
+        update_project: true,
+        project_name: req.session.project_name,
+        project_title: req.session.project_title,
+        project_source: req.session.project_source,
+        project_description: req.session.project_description_markdown,
+        project_image: project[0].project_image,
+        csrfToken: res.locals._csrf,
+        id: req.session.project_id,
       });
     }
   }
