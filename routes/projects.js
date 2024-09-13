@@ -296,9 +296,6 @@ ROUTER.post(
   async (req, res) => {
     const { _csrf, ...FormData } = req.body;
 
-    // If we upload a new image, redirect back with page refresh
-    let successRedirect = false;
-
     let project = await Project.find({ _id: { $eq: req.params.id } }).select({
       project_image: 1,
       _id: 0,
@@ -369,25 +366,30 @@ ROUTER.post(
 
       await projectUpdate.save();
 
-      console.log(successRedirect);
-
       if (req.headers["hx-request"]) {
-        res.status(200).send(`
-          <div id="statusBox">
+        // Assuming success
+        const successHtml = `
+      <div class="container">
             <div class="text-center">
-              <div class="alert alert-success center-block">
-                <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
-                Project updated successfully!
-              </div>
-            </div>
-          </div>
-          <div id="image-container" class="col-md-3 col-xs-6">
-            <div class="thumbnail">
-                <img class="img-responsive" src="/images/${projectImage}" alt="Logo">
-                <div class="caption center-block">Current Image</div>
+                <div class="alert alert-success center-block">
+                    <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
+                    ${strings.success.projectUpdated}
+                </div>
             </div>
         </div>
-        `);
+    `;
+
+        const updatedImageHtml = `
+      <div class="thumbnail">
+        <img class="img-responsive" src="/images/${projectImage}" alt="Updated Image">
+        <div class="caption center-block">Current Image</div>
+      </div>
+    `;
+
+        return res
+          .status(200)
+          .set("HX-Trigger", JSON.stringify({ updateImage: updatedImageHtml }))
+          .send(`${successHtml}`);
       } else {
         req.flash("success", strings.success.projectUpdated);
         res.redirect(`/projects/${req.params.id}`);
