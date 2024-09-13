@@ -1,8 +1,16 @@
 <div class="container">
     <a class="back-button" href="/projects/{{id}}" data-toogle="tooltip" title="Return to Project"></a>
-    <form action="/projects/edit" method="post" id="projectEditForm" data="{{id}}">
+    <form
+    hx-post="/projects/{{id}}/edit"
+    hx-include="#projectEditForm"
+    hx-target="#statusBox"
+    hx-swap="innerHTML"
+    hx-headers='{"X-CSRF-Token": "{{csrfToken}}"}'
+    method="post"
+    id="projectEditForm"
+    enctype="multipart/form-data"
+  >
         <input type="hidden" name="_csrf" value="{{csrfToken}}">
-        <input type="hidden" name="project_id" value="{{id}}">
         <div class="form-group">
             <div class="form-group">
                 <label for="project_name">Project Name</label>
@@ -20,13 +28,12 @@
                 <label for="project_description">Project Description</label>
                 <textarea class="form-control" id="project_description" name="project_description">{{#if project_description}}{{{ project_description }}}{{/if}}</textarea>
             </div>
-            <div class="col-md-3 col-xs-6">
-                <div class="thumbnail">
-                    <img class="img-responsive" src="/images/{{ project_image}}"
-                                alt="Logo">
-                    <div class="caption center-block">Current Image</div>
-                </div>
+            <div id="image-container" class="col-md-3 col-xs-6">
+            <div class="thumbnail">
+                <img class="img-responsive" src="/images/{{ project_image }}" alt="Logo">
+                <div class="caption center-block">Current Image</div>
             </div>
+        </div>
             <input type="file" class="custom-text" name="project_image">
         </div>
         <button type="submit" class="btn btn-primary" id="submitBtn"><span class="glyphicon glyphicon-pencil"></span> Update Project</button>
