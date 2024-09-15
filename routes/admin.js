@@ -113,7 +113,6 @@ ROUTER.post(
 
     if (error) {
       var errorMessage;
-      //console.log("Error 3: ", error);
 
       for (let i = 0; i < error.details.length; i++) {
         if (error.details[i].context.key === "news_description") {
@@ -133,7 +132,7 @@ ROUTER.post(
       });
     }
     let newsDescription = md.render(req.body.news_description);
-    // let newsDescription = converter.makeHtml(req.body.news_description);
+
     let newsSanitized = sanitize(newsDescription, {
       allowedTags: sanitize.defaults.allowedTags.concat(["h1"]),
     });
@@ -150,7 +149,6 @@ ROUTER.post(
     try {
       await news.save();
     } catch (ex) {
-      // console.log('Error 2: ', ex);
       return res.status(400).render("admin/news/news", {
         error: strings.errors.allFieldsRequired,
         layout: "news",

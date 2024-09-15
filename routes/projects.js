@@ -18,7 +18,6 @@ import { strings } from "../config/constants.js";
 import logErrorToFile from "../utils/errorLogging.js";
 
 const ROUTER = express.Router();
-// Actual default values
 
 const MARKDOWN = markdownit({
   highlight: function (str, lang) {
