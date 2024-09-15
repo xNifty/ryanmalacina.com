@@ -429,18 +429,6 @@ ROUTER.post(
         req.flash("error", errorMessage);
         res.redirect(`/projects/${req.params.id}/edit`);
       }
-
-      // req.flash("error", errorMessage);
-      // return res.status(400).render("admin/projects/update-project", {
-      //   layout: "update-project",
-      //   update_project: true,
-      //   project_name: req.session.project_name,
-      //   project_title: req.session.project_title,
-      //   project_source: req.session.project_source,
-      //   project_description: req.session.project_description_markdown,
-      //   project_image: project[0].project_image,
-      //   csrfToken: res.locals._csrf,
-      // });
     }
   }
 );
