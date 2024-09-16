@@ -200,15 +200,9 @@ ROUTER.post(
 
       clearProjectEditSession(req);
 
-      // TODO: implement HTMX
-      // TOOD: HX-Redirect to newly created project
       req.flash("success", strings.success.projectAdded);
       res.setHeader("HX-Redirect", "/projects/" + _id + "/edit");
       res.status(200).end();
-      // res.status(200).json({
-      //   status: 200,
-      //   message: strings.success.projectAdded,
-      // });
     } catch (ex) {
       req.session.loadProjectFromSession = true;
       req.session.project_name = req.body.project_name;
