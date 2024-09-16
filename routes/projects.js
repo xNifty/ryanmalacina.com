@@ -183,18 +183,32 @@ ROUTER.post(
       project.project_description_markdown = req.body.project_description;
       project.project_description_html = projectSanitized;
 
+      var _id;
+
       if (projectImage) {
         await projectImage.mv("./public/images/" + adjustedFileName);
       }
-      await project.save();
+
+      await project
+        .save()
+        .then((result) => {
+          _id = result._id;
+        })
+        .catch((err) => {
+          logErrorToFile(err);
+        });
 
       clearProjectEditSession(req);
 
+      // TODO: implement HTMX
+      // TOOD: HX-Redirect to newly created project
       req.flash("success", strings.success.projectAdded);
-      res.status(200).json({
-        status: 200,
-        message: strings.success.projectAdded,
-      });
+      res.setHeader("HX-Redirect", "/projects/" + _id + "/edit");
+      res.status(200).end();
+      // res.status(200).json({
+      //   status: 200,
+      //   message: strings.success.projectAdded,
+      // });
     } catch (ex) {
       req.session.loadProjectFromSession = true;
       req.session.project_name = req.body.project_name;
@@ -219,21 +233,41 @@ ROUTER.post(
 
       let saveDate = new Date(Date.now());
 
-      req.flash(
-        "error",
-        errorMessage ? errorMessage : strings.errors.allFieldsRequired
-      );
-      return res.status(400).render("admin/projects/new-project", {
-        layout: "new-project",
-        new_project: true,
-        error: errorMessage ? errorMessage : strings.errors.allFieldsRequired,
-        project_name: req.body.project_name,
-        project_title: req.body.project_title,
-        project_source: req.body.project_source,
-        project_description: req.body.project_description,
-        project_image: req.files ? req.files.project_image : "",
-        last_edited: saveDate,
-      });
+      let error = errorMessage
+        ? errorMessage
+        : strings.errors.allFieldsRequired;
+
+      if (req.headers["hx-request"]) {
+        return res.status(200).send(`
+          <div class="container">
+            <div class="text-center">
+              <div class="alert alert-danger center-block">
+                <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
+                ${error}
+              </div>
+            </div>
+          </div>
+        `);
+      } else {
+        req.flash("error", errorMessage);
+        res.redirect(`/projects/${req.params.id}/edit`);
+      }
+
+      // req.flash(
+      //   "error",
+      //   errorMessage ? errorMessage : strings.errors.allFieldsRequired
+      // );
+      // return res.status(400).render("admin/projects/new-project", {
+      //   layout: "new-project",
+      //   new_project: true,
+      //   error: errorMessage ? errorMessage : strings.errors.allFieldsRequired,
+      //   project_name: req.body.project_name,
+      //   project_title: req.body.project_title,
+      //   project_source: req.body.project_source,
+      //   project_description: req.body.project_description,
+      //   project_image: req.files ? req.files.project_image : "",
+      //   last_edited: saveDate,
+      // });
     }
   }
 );
@@ -462,7 +496,7 @@ ROUTER.get("/:id", async (req, res) => {
     return res.render("error", {
       error: strings.errors.invalidProject,
       title: strings.pageHeader.notFound,
-      status_code: strings.status[404](),
+      status_code: strings.status[404],
     });
   }
 
