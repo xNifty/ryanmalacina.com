@@ -9,10 +9,7 @@ import config from "config";
 import _ from "lodash";
 
 import { Project, validateProject } from "../models/projects.js";
-import {
-  clearProjectEditSession,
-  clearProjectSession,
-} from "../utils/sessionHandler.js";
+import { clearProjectSession } from "../utils/sessionHandler.js";
 import auth from "../utils/auth.js";
 import { strings } from "../config/constants.js";
 import logErrorToFile from "../utils/errorLogging.js";
@@ -99,27 +96,14 @@ ROUTER.get(
       req.session.returnToSession = req.get("referrer");
     }
 
-    if (!req.session.loadProjectFromSession) {
-      res.render("admin/projects/new-project", {
-        layout: "new-project",
-        new_project: true,
-        return_to: returnTo,
-        csrfToken: res.locals._csrf,
-      });
-    } else {
-      res.render("admin/projects/new-project", {
-        layout: "new-project",
-        new_project: true,
-        project_name: req.session.project_name,
-        project_title: req.session.project_title,
-        project_source: req.session.project_source,
-        project_description: req.session.project_description_markdown,
-        csrfToken: res.locals._csrf,
-      });
+    res.render("admin/projects/new-project", {
+      layout: "new-project",
+      new_project: true,
+      return_to: returnTo,
+      csrfToken: res.locals._csrf,
+    });
 
-      clearProjectSession(req);
-      clearProjectEditSession(req);
-    }
+    clearProjectSession(req);
   }
 );
 
@@ -198,8 +182,6 @@ ROUTER.post(
           logErrorToFile(err);
         });
 
-      clearProjectEditSession(req);
-
       req.flash("success", strings.success.projectAdded);
       res.setHeader("HX-Redirect", "/projects/" + _id + "/edit");
       res.status(200).end();
@@ -250,9 +232,6 @@ ROUTER.get(
       _id: { $eq: req.params.id },
     });
 
-    delete req.session.project_id;
-    req.session.project_id = project._id;
-
     res.render("admin/projects/update-project", {
       layout: "update-project",
       update_project: true,
@@ -264,10 +243,6 @@ ROUTER.get(
       id: project._id,
       csrfToken: res.locals._csrf,
     });
-
-    // Finally, clear up the session variables
-    // TODO: delete if we no longer need the session variables for anything
-    clearProjectEditSession(req);
   }
 );
 
@@ -282,8 +257,6 @@ ROUTER.post(
       _id: 0,
       is_published: 1,
     });
-
-    req.session.project_image = project[0].project_image;
 
     try {
       const { error } = validateProject(FormData);
@@ -314,7 +287,7 @@ ROUTER.post(
       });
 
       let saveDate = new Date(Date.now());
-      let projectImage = req.session.project_image;
+      let projectImage = project[0].project_image;
       let adjustedFileName = "";
 
       if (req.files && req.files.project_image) {
@@ -322,8 +295,6 @@ ROUTER.post(
         adjustedFileName = projectImage.name
           .split(".")
           .join("-" + Date.now() + ".");
-
-        req.session.project_image = projectImage;
 
         const moveFilePromise = util.promisify(projectImage.mv);
 
