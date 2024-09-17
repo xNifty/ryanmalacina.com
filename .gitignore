@@ -14,3 +14,4 @@ app-testing.js
 /public/.DS_Store
 /dist
 /errors
+.vscode/

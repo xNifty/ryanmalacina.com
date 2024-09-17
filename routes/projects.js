@@ -204,12 +204,6 @@ ROUTER.post(
       res.setHeader("HX-Redirect", "/projects/" + _id + "/edit");
       res.status(200).end();
     } catch (ex) {
-      req.session.loadProjectFromSession = true;
-      req.session.project_name = req.body.project_name;
-      req.session.project_title = req.body.project_title;
-      req.session.project_source = req.body.project_source;
-      req.session.project_description_markdown = req.body.project_description;
-
       if (ex.code === 11000) {
         const indexNameMatch = ex.message.match(/index: (\w+)/);
         const indexName = indexNameMatch ? indexNameMatch[1] : null;
@@ -224,8 +218,6 @@ ROUTER.post(
       } else if (errorMessage === "") {
         logErrorToFile(ex);
       }
-
-      let saveDate = new Date(Date.now());
 
       let error = errorMessage
         ? errorMessage
@@ -246,22 +238,6 @@ ROUTER.post(
         req.flash("error", errorMessage);
         res.redirect(`/projects/${req.params.id}/edit`);
       }
-
-      // req.flash(
-      //   "error",
-      //   errorMessage ? errorMessage : strings.errors.allFieldsRequired
-      // );
-      // return res.status(400).render("admin/projects/new-project", {
-      //   layout: "new-project",
-      //   new_project: true,
-      //   error: errorMessage ? errorMessage : strings.errors.allFieldsRequired,
-      //   project_name: req.body.project_name,
-      //   project_title: req.body.project_title,
-      //   project_source: req.body.project_source,
-      //   project_description: req.body.project_description,
-      //   project_image: req.files ? req.files.project_image : "",
-      //   last_edited: saveDate,
-      // });
     }
   }
 );
@@ -277,43 +253,21 @@ ROUTER.get(
     delete req.session.project_id;
     req.session.project_id = project._id;
 
-    // For if the edit fails, otherwise we want to return to the normal project information page
-    // Instead of this, hard set the URL from configfile (set a base url) and from there we can load the
-    // proper project since we know the ID
-    req.session.projectEditReturnTo =
-      config.get("rootURL") + "/projects/" + project._id + "/edit";
-    req.session.projectEditSuccess =
-      config.get("rootURL") + "/projects/" + project._id;
+    res.render("admin/projects/update-project", {
+      layout: "update-project",
+      update_project: true,
+      project_name: project.project_name,
+      project_title: project.project_title,
+      project_source: project.project_source,
+      project_description: project.project_description_markdown,
+      project_image: project.project_image,
+      id: project._id,
+      csrfToken: res.locals._csrf,
+    });
 
-    // If not load from session, then load normally; else, load from session
-    if (!req.session.loadProjectFromSession) {
-      res.render("admin/projects/update-project", {
-        layout: "update-project",
-        update_project: true,
-        project_name: project.project_name,
-        project_title: project.project_title,
-        project_source: project.project_source,
-        project_description: project.project_description_markdown,
-        project_image: project.project_image,
-        id: project._id,
-        csrfToken: res.locals._csrf,
-      });
-    } else {
-      res.render("admin/projects/update-project", {
-        layout: "update-project",
-        update_project: true,
-        project_name: req.session.project_name,
-        project_title: req.session.project_title,
-        project_source: req.session.project_source,
-        project_description: req.session.project_description_markdown,
-        project_image: req.session.project_image,
-        id: req.session.project_id,
-        csrfToken: res.locals._csrf,
-      });
-
-      // Finally, clear up the session variables
-      clearProjectEditSession(req);
-    }
+    // Finally, clear up the session variables
+    // TODO: delete if we no longer need the session variables for anything
+    clearProjectEditSession(req);
   }
 );
 
