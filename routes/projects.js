@@ -301,7 +301,6 @@ ROUTER.post(
         try {
           await moveFilePromise("./public/images/" + adjustedFileName);
           projectImage = adjustedFileName;
-          successRedirect = true;
         } catch (error) {
           logErrorToFile(error);
         }
