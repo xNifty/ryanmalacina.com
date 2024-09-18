@@ -391,7 +391,7 @@ ROUTER.put(
   async (req, res) => {
     let id = req.params.id;
     if (await deleteProject(id)) {
-      console.log("Project Deleted");
+      //console.log("Project Deleted");
       req.flash("success", strings.success.deleteSuccess);
       return res.end('{"success" : "Project Deleted", "status" : 200}');
     } else {
