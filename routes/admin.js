@@ -200,10 +200,14 @@ ROUTER.put(
     let id = req.params.id;
     if (await deleteNews(id)) {
       req.flash("success", strings.success.deleteSuccess);
-      return res.end('{"success" : "News Entry Deleted", "status" : 200}');
+      res.setHeader("HX-Redirect", "/admin/news");
+      res.status(200).end();
+      //return res.end('{"success" : "News Entry Deleted", "status" : 200}');
     } else {
       req.flash("error", strings.errors.publishError);
-      return res.end('{"fail" : "Server error", "status" : 500}');
+      res.setHeader("HX-Redirect", "/adin/news");
+      res.status(500).end();
+      //return res.end('{"fail" : "Server error", "status" : 500}');
     }
   }
 );
@@ -396,6 +400,7 @@ async function deleteNews(id) {
     await News.deleteOne({ _id: id });
     return true;
   } catch (err) {
+    console.log("Error deleting.")
     logErrorToFile(err);
     return false;
   }

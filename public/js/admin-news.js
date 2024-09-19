@@ -35,7 +35,6 @@ function publishNews() {
 
 function unpublishNews() {
   var csrfToken = document.getElementById("_csrf").value;
-  alert(csrfToken);
   $.ajax({
     type: "PUT",
     headers: {
