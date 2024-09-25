@@ -200,12 +200,10 @@ ROUTER.put(
     let id = req.params.id;
     if (await deleteNews(id)) {
       req.flash("success", strings.success.deleteSuccess);
-      res.setHeader("HX-Redirect", "/admin/news"); // This will trigger a full reload
-      return res.status(200).end();
+      return res.end('{"success" : "News Entry Deleted", "status" : 200}');
     } else {
-      req.flash("error", strings.errors.deleteError);
-      res.setHeader("HX-Redirect", "/admin/news");
-      return res.status(500).end();
+      req.flash("error", strings.errors.publishError);
+      return res.end('{"fail" : "Server error", "status" : 500}');
     }
   }
 );

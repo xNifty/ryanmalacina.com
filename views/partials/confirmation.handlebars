@@ -1,13 +1,7 @@
 <div id="confirmModal" class="modal fade">
   <div class="modal-dialog modal-login">
     <div class="modal-content">
-      <form 
-        id="confirmForm" 
-        hx-put="/admin/news/delete/{{ confirm-id }}" 
-        hx-headers='{"X-CSRF-TOKEN": "{{csrfToken}}"}'
-        hx-target="#confirmStatus" 
-        hx-on="submit: this.submit();"
-      >
+      <form id="confirmForm">
         <div class="modal-header">
           <h4 class="modal-title">Confirm Delete</h4>
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -15,10 +9,10 @@
         <div class="modal-body">
           Are you sure you wish to delete this entry?
         </div>
-        <div class="modal-footer" id="modalFooter">
-          <input type="hidden" value="" name="confirm-id" id="confirm-id">
-          <input type="hidden" name="_csrf" id="confirm-csrf" value="{{csrfToken}}">
-          <input type="submit" class="btn btn-primary pull-right" id="modalSubmit" value="Confirm">
+        <div class="modal-footer">
+          <input type="hidden" id="confirm-id" value="">
+          <input type="hidden" id="confirm-csrf" value="{{csrfToken}}">
+          <button type="button" class="btn btn-primary" id="modalSubmit">Confirm</button>
           <div id="confirmStatus"></div>
         </div>
       </form>

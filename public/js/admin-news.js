@@ -62,16 +62,14 @@ function deleteNews() {
       "X-CSRF-TOKEN": csrfToken,
     },
     url: "/admin/news/delete/" + deleteID,
-    dataType: "json",
-    success: function (response) {
-      if (response.success) {
-        window.location.href = "/admin/news"; // Redirect manually if necessary
-      } else {
-        alert("Error: " + response.fail);
-      }
+    datatype: "json",
+    success: function () {
+      window.location.reload();
     },
     fail: function () {
       alert("There was an issue deleting.");
     },
   });
+
+  return true;
 }
