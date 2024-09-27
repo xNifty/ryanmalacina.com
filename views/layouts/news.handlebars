@@ -4,10 +4,12 @@
 {{> header}}
 <body>
     {{> nav}}
-    {{> status}}
-    {{> confirmation}}
+    <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">
+        {{> status}}
+    </div>
     {{{ body }}}
 
+<div id="confirmation-modal"></div>
     {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
     {{> footer currentyear=currentyear}}
     <script
@@ -15,6 +17,8 @@
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous" nonce="{{nonce}}">
     </script>
+    <script src="https://unpkg.com/htmx.org@1.9.10" nonce="{{nonce}}"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js" nonce="{{nonce}}"></script>
     <script rel="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" nonce="{{nonce}}"></script>
     
     <script rel="text/javascript" src="{{ versionedFile 'site.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
@@ -30,5 +34,6 @@
     <script nonce="{{nonce}}">
         var simplemde = new SimpleMDE({ element: document.getElementById("editor"), toolbar: ["preview"], placeholder: "News Description Here - Write in Markdown", });
     </script>
+</script>
 </body>
 </html>

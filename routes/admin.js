@@ -200,10 +200,12 @@ ROUTER.put(
     let id = req.params.id;
     if (await deleteNews(id)) {
       req.flash("success", strings.success.deleteSuccess);
-      return res.end('{"success" : "News Entry Deleted", "status" : 200}');
+      res.setHeader("HX-Redirect", "/admin/news");
+      res.status(200).end(); // or res.sendStatus(200)
     } else {
       req.flash("error", strings.errors.publishError);
-      return res.end('{"fail" : "Server error", "status" : 500}');
+      res.setHeader("HX-Redirect", "/admin/news");
+      res.status(500).end(); // or res.sendStatus(200)
     }
   }
 );
@@ -424,5 +426,37 @@ async function getNewsListing() {
     })
     .lean();
 }
+
+ROUTER.get("/news/delete-modal/:id", (req, res) => {
+  // console.log("Route hit for modal with id:", req.params.id);
+  // console.log("CSRF Token: ", req.csrfToken());
+  res.send(`<div id="confirmModal" class="modal fade">
+  <div class="modal-dialog modal-login">
+    <div class="modal-content">
+      <form 
+        id="confirmForm" 
+  hx-put="/admin/news/delete/${req.params.id}" 
+  hx-headers='{"X-CSRF-TOKEN": "${req.csrfToken()}" }'
+  hx-target="#statusBox"
+  hx-swap="outerHTML"
+      >
+        <div class="modal-header">
+          <h4 class="modal-title">Confirm Delete</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <div class="modal-body">
+          Are you sure you wish to delete this entry?
+        </div>
+        <div class="modal-footer" id="modalFooter">
+          <input type="submit" class="btn btn-primary pull-right" id="modalSubmit" value="Confirm">
+          <div id="confirmStatus"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div><script>
+      $('#confirmModal').modal('show');
+    </script>`);
+});
 
 export { ROUTER as adminRoute };
