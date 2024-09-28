@@ -6,6 +6,7 @@ import _ from "lodash";
 
 import auth from "../utils/auth.js";
 import logErrorToFile from "../utils/errorLogging.js";
+import deleteModal from "../utils/delete-modal.js";
 
 import { Project } from "../models/projects.js";
 import { News, validateNews } from "../models/news.js";
@@ -430,33 +431,8 @@ async function getNewsListing() {
 ROUTER.get("/news/delete-modal/:id", (req, res) => {
   // console.log("Route hit for modal with id:", req.params.id);
   // console.log("CSRF Token: ", req.csrfToken());
-  res.send(`<div id="confirmModal" class="modal fade">
-  <div class="modal-dialog modal-login">
-    <div class="modal-content">
-      <form 
-        id="confirmForm" 
-  hx-put="/admin/news/delete/${req.params.id}" 
-  hx-headers='{"X-CSRF-TOKEN": "${req.csrfToken()}" }'
-  hx-target="#statusBox"
-  hx-swap="outerHTML"
-      >
-        <div class="modal-header">
-          <h4 class="modal-title">Confirm Delete</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        </div>
-        <div class="modal-body">
-          Are you sure you wish to delete this entry?
-        </div>
-        <div class="modal-footer" id="modalFooter">
-          <input type="submit" class="btn btn-primary pull-right" id="modalSubmit" value="Confirm">
-          <div id="confirmStatus"></div>
-        </div>
-      </form>
-    </div>
-  </div>
-</div><script>
-      $('#confirmModal').modal('show');
-    </script>`);
+  let modal = deleteModal(req.params.id, req.csrfToken());
+  res.send(modal);
 });
 
 export { ROUTER as adminRoute };
