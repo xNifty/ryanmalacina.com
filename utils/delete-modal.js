@@ -1,10 +1,10 @@
-function deleteModal(id, csrf) {
+function deleteModal(id, csrf, url) {
   return `<div id="confirmModal" class="modal fade">
   <div class="modal-dialog modal-login">
     <div class="modal-content">
       <form 
         id="confirmForm" 
-  hx-put="/admin/news/delete/${id}" 
+  hx-put="${url}${id}" 
   hx-headers='{"X-CSRF-TOKEN": "${csrf}" }'
   hx-target="#statusBox"
   hx-swap="outerHTML"

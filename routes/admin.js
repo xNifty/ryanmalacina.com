@@ -429,9 +429,11 @@ async function getNewsListing() {
 }
 
 ROUTER.get("/news/delete-modal/:id", (req, res) => {
-  // console.log("Route hit for modal with id:", req.params.id);
-  // console.log("CSRF Token: ", req.csrfToken());
-  let modal = deleteModal(req.params.id, req.csrfToken());
+  let modal = deleteModal(
+    req.params.id,
+    req.csrfToken(),
+    "/admin/news/delete/"
+  );
   res.send(modal);
 });
 
