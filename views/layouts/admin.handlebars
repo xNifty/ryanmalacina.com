@@ -5,9 +5,7 @@
 <body>
     {{> nav}}
     {{> login}}
-    <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">
-        {{> status}}
-    </div>
+    <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">{{> status}}</div>
     {{{ body }}}
 
     <div id="confirmation-modal"></div>

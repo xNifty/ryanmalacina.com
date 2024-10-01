@@ -54,7 +54,6 @@ ROUTER.put(
   "/projects/publish/:id",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
-    //console.log("Publishing project");
     let id = req.params.id;
     if (await publishProject(id)) {
       req.flash("success", strings.success.projectPublished);
@@ -72,7 +71,6 @@ ROUTER.put(
   "/projects/unpublish/:id",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
-    //console.log("Unpublishing project");
     let id = req.params.id;
     if (await unpublishProject(id)) {
       req.flash("success", strings.success.projectUnpublished);
@@ -192,7 +190,6 @@ ROUTER.put(
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
-    console.log("id: ", id);
     if (await unpublishNews(id)) {
       req.flash("success", strings.success.newsUnpublished);
       res.set("HX-Location", "/admin/news");
@@ -327,7 +324,6 @@ ROUTER.post(
         news_clean_output: newsCleaned,
       });
     } catch (ex) {
-      // console.log("Error 2: ", ex);
       return res.status(400).render("admin/news/edit", {
         layout: "news",
         error: strings.errors.allFieldsRequired,
@@ -423,7 +419,6 @@ async function deleteNews(id) {
     await News.deleteOne({ _id: id });
     return true;
   } catch (err) {
-    console.log("Error deleting.");
     logErrorToFile(err);
     return false;
   }
