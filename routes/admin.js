@@ -279,7 +279,6 @@ ROUTER.post(
     let news = new News(_.pick(req.body, ["news_title"]));
 
     if (error) {
-      // console.log("Error 3: ", error);
       return res.status(400).render("admin/news/edit", {
         layout: "news",
         error: strings.errors.allFieldsRequired,
@@ -331,6 +330,15 @@ ROUTER.post(
     res.redirect("/admin/news");
   }
 );
+
+ROUTER.get("/news/delete-modal/:id", (req, res) => {
+  let modal = deleteModal(
+    req.params.id,
+    req.csrfToken(),
+    "/admin/news/delete/"
+  );
+  res.send(modal);
+});
 
 async function publishProject(id) {
   try {
@@ -427,14 +435,5 @@ async function getNewsListing() {
     })
     .lean();
 }
-
-ROUTER.get("/news/delete-modal/:id", (req, res) => {
-  let modal = deleteModal(
-    req.params.id,
-    req.csrfToken(),
-    "/admin/news/delete/"
-  );
-  res.send(modal);
-});
 
 export { ROUTER as adminRoute };

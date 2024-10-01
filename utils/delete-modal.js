@@ -25,6 +25,12 @@ function deleteModal(id, csrf, url) {
   </div>
 </div><script>
       $('#confirmModal').modal('show');
+
+      function closeModal() {
+  document.querySelector("#confirmModal").classList.remove("show");
+  document.body.classList.remove("modal-open");
+  document.querySelector(".modal-backdrop").remove();
+}
     </script>`;
 }
 
