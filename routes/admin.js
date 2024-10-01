@@ -90,6 +90,10 @@ ROUTER.get(
   async (req, res) => {
     let news_list = await getNewsListing();
 
+    news_list.forEach((news) => {
+      news.csrfToken = res.locals._csrf;
+    });
+
     res.render("admin/news/news", {
       layout: "news",
       title: strings.pageHeader.adminProject,
@@ -171,10 +175,12 @@ ROUTER.put(
     let id = req.params.id;
     if (await publishNews(id)) {
       req.flash("success", strings.success.newsPublished);
-      return res.end('{"success" : "Updated Successfully", "status" : 200}');
+      res.set("HX-Location", "/admin/news");
+      return res.status(200).end();
     } else {
       req.flash("error", strings.errors.publishError);
-      return res.end('{"success" : "Server error", "status" : 500}');
+      res.set("HX-Location", "/admin/news");
+      res.status(400).end();
     }
   }
 );
@@ -184,12 +190,15 @@ ROUTER.put(
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
+    console.log("id: ", id);
     if (await unpublishNews(id)) {
       req.flash("success", strings.success.newsUnpublished);
-      return res.end('{"success" : "Updated Successfully", "status" : 200}');
+      res.set("HX-Location", "/admin/news");
+      return res.status(200).end();
     } else {
       req.flash("error", strings.errors.publishError);
-      return res.end('{"fail" : "Server error", "status" : 500}');
+      res.set("HX-Location", "/admin/news");
+      res.status(400).end();
     }
   }
 );

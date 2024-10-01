@@ -19,9 +19,9 @@
 </a>
                             {{ news.news_title }}<br />
                             {{#if news.is_published}}
-                                Published - <a class="unpublishNews" href="" data-id="{{ news._id}}">Unpublish</a>
+                                Published - <a class="unpublishNews" href="" hx-put="/admin/news/unpublish/{{news._id}}" hx-target="#statusBox" hx-swap="innerHTML" hx-trigger="click" hx-headers='{ "X-CSRF-TOKEN": "{{csrfToken}}" }'>Unpublish</a>
                             {{else}}
-                                Unpublished - <a class="publishNews" href="" data-id="{{ news._id}}">Publish</a>
+                                Unpublished - <a class="publishNews" href="" hx-put="/admin/news/publish/{{news._id}}" hx-target="#statusBox" hx-swap="innerHTML" hx-trigger="click" hx-headers='{ "X-CSRF-TOKEN": "{{csrfToken}}" }'>Publish</a>
                             {{/if}}
                         </div>
                     </div>
