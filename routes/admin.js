@@ -3,6 +3,8 @@ import sanitize from "sanitize-html";
 import dateFormat from "dateformat";
 import MarkdownIt from "markdown-it";
 import _ from "lodash";
+import createDOMPurify from "dompurify";
+import { JSDOM } from "jsdom";
 
 import auth from "../utils/auth.js";
 import logErrorToFile from "../utils/errorLogging.js";
@@ -341,9 +343,14 @@ ROUTER.post(
 );
 
 ROUTER.get("/news/delete-modal/:id", (req, res) => {
+  const window = new JSDOM("").window;
+  const DOMPurify = createDOMPurify(window);
+
+  let sanitizedID = DOMPurify.sanitize(req.params.id);
+  let sanitizedCSRFToken = DOMPurify.sanitize(res.locals._csrf);
   let modal = deleteModal(
-    req.params.id,
-    req.csrfToken(),
+    sanitizedID,
+    sanitizedCSRFToken,
     "/admin/news/delete/"
   );
   res.send(modal);

@@ -15,7 +15,6 @@ const config = {
     extensions: [".js"],
   },
   entry: {
-    "admin-news": "@js/admin-news.js",
     admin: "@js/admin.js",
     "jquery.simplePagination": "@js/jquery.simplePagination.js",
     news: "@js/news.js",
