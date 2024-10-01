@@ -4,10 +4,13 @@
 {{> header}}
 <body>
     {{> nav}}
-    {{> status}}
     {{> login}}
-    {{> confirmation}}
+    <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">
+        {{> status}}
+    </div>
     {{{ body }}}
+
+<div id="confirmation-modal"></div>
 
     {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
     {{> footer currentyear=currentyear}}

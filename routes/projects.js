@@ -7,12 +7,15 @@ import hljs from "highlight.js";
 import util from "util";
 import config from "config";
 import _ from "lodash";
+import createDOMPurify from "dompurify";
+import { JSDOM } from "jsdom";
 
 import { Project, validateProject } from "../models/projects.js";
 import { clearProjectSession } from "../utils/sessionHandler.js";
 import auth from "../utils/auth.js";
 import { strings } from "../config/constants.js";
 import logErrorToFile from "../utils/errorLogging.js";
+import deleteModal from "../utils/delete-modal.js";
 
 const ROUTER = express.Router();
 
@@ -393,13 +396,25 @@ ROUTER.put(
     if (await deleteProject(id)) {
       //console.log("Project Deleted");
       req.flash("success", strings.success.deleteSuccess);
-      return res.end('{"success" : "Project Deleted", "status" : 200}');
+      res.setHeader("HX-Redirect", "/admin/projects");
+      res.status(200).end(); // or res.sendStatus(200)
     } else {
       req.flash("error", strings.errors.publishError);
-      return res.end('{"fail" : "Server error", "status" : 500}');
+      res.setHeader("HX-Redirect", "/admin/projects");
+      res.status(500).end(); // or res.sendStatus(200)
     }
   }
 );
+
+ROUTER.get("/delete-modal/:id", (req, res) => {
+  const window = new JSDOM("").window;
+  const DOMPurify = createDOMPurify(window);
+
+  let sanitizedID = DOMPurify.sanitize(req.params.id);
+  let sanitizedCSRFToken = DOMPurify.sanitize(res.locals._csrf);
+  let modal = deleteModal(sanitizedID, sanitizedCSRFToken, "/projects/delete/");
+  res.send(modal);
+});
 
 ROUTER.get("/:id", async (req, res) => {
   const project = await Project.findOne({

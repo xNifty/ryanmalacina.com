@@ -22,7 +22,15 @@
                             {{else}}
                                 <input class="projCheckbox" data-id="{{ projects._id}} "type="checkbox" name="projectCheckbox{{projects._id}}" value="projectCheckbox{{projects._id}}" hx-put="/projects/update/{{ projects._id }}" hx-headers='{ "X-CSRF-TOKEN": "{{csrfToken}}" }'>
                             {{/if}}
-                            <a class="confirmModal deleteProject trigger-btn" data-id="{{ projects._id}}" data-toggle="modal" data-target="#confirmModal"> <i class="fa fa-trash"></i></a>
+                            <a 
+                                hx-get="/projects/delete-modal/{{ projects._id }}" 
+                                hx-target="#confirmation-modal" 
+                                hx-swap="innerHTML"
+                                hx-trigger="click"
+                                class="deleteProject trigger-btn">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                            {{!-- <a class="confirmModal deleteProject trigger-btn" data-id="{{ projects._id}}" data-toggle="modal" data-target="#confirmModal"> <i class="fa fa-trash"></i></a> --}}
                             {{!-- <a class="deleteProject trigger-btn" data-toggle="modal" data-id="{{ projects._id}}" data-target="#confirmModal"> <i class="fa fa-trash"></i></a> --}}
                         </div>
                     </div>
