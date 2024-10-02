@@ -4,9 +4,7 @@
 {{> header}}
 <body>
     {{> nav}}
-    <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">
-        {{> status}}
-    </div>
+    <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">{{> status}}</div>
     {{> confirmation}}
     {{{ body }}}
 
