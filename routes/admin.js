@@ -1,3 +1,28 @@
+/*
+  Contains all the admin routes for the site
+
+  /projects - List all projects
+  /projects/publish/:id - Publish a project
+  /projects/unpublish/:id - Unpublish a project
+  /news - List all news
+  /news/new - Add a new news entry
+  /news/publish/:id - Publish a news entry
+  /news/unpublish/:id - Unpublish a news entry
+  /news/delete/:id - Delete a news entry
+  /news/:id/edit - Edit a news entry
+  /news/edit - Save the edited news entry
+  /news/delete-modal/:id - Get the delete modal for a news entry
+
+  publishProject - Publish a project
+  unpublishProject - Unpublish a project
+  publishNews - Publish a news entry
+  unpublishNews - Unpublish a news entry
+  deleteNews - Delete a news entry
+  listProjects - List all projects
+  getNewsListing - List all news entries
+
+*/
+
 import express from "express";
 import sanitize from "sanitize-html";
 import dateFormat from "dateformat";

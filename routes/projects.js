@@ -1,3 +1,16 @@
+/*
+  contains all the routes for the projects page
+
+  /projects - GET - returns all the projects
+  /projects/new - GET - returns the new project page
+  /projects/new - POST - creates a new project
+  /projects/:id/edit - GET - returns the edit project page
+  /projects/:id/edit - POST - updates a project
+  /projects/:id - GET - returns a single project
+  /projects/:id/update - PUT - updates the index of a project
+  /projects/delete/:id - PUT - deletes a project
+*/
+
 import express from "express";
 import markdownit from "markdown-it";
 import sanitize from "sanitize-html";
