@@ -2,8 +2,10 @@
 
 ###### https://ryanmalacina.com
 
-This repository contains the code for my personal website, which is built on NodeJS, Express-Handlebars and Bootstrap.  
-The development branch may be broken at any given time - I actively push in progress stuff to work on between machines which may or may not be tested and working. If it's not merged into master, assume it has a high chance of being broken.
+These are the files for my personal website. The site is built on NodeJS, Express and MongoDB and makes use of
+Bootstrap for the styling of the site.
+
+Any branch but master may be broken at any given time and is not guaranteed to work.
 
 ---
 
