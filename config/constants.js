@@ -11,7 +11,7 @@ var errorStrings = {
     "FATAL ERROR: Private key is not defined. Please double check that everything is setup correctly",
   pageNotFound: "Seems this page doesn't exist...sorry about that!",
   serverError: "Uh oh, something went wrong when loading this page.",
-  notAuthorized: "Unauthorized",
+  notAuthorized: "Permission Denied - Unauthorized",
   allFieldsRequired:
     "An error has occurred. Please make sure all fields are filled and try again.",
   allFieldsRequiredUploadImage:

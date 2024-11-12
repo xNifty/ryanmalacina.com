@@ -1,6 +1,7 @@
 /*
     Error Handling
-    Catch both 404 and 500 in a manner I prefer, render appropriate view with error message
+    
+    Catch errors and render appropriate error message and/or page.
 
     This is still required to render the right view with the right error message.  In the development environment
     we show the error message right on the screen so that we can fix it, while on production we just render
