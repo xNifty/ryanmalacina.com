@@ -20,6 +20,7 @@ const config = {
     news: "@js/news.js",
     profile: "@js/profile.js",
     site: "@js/site.js",
+    welcome: "@js/welcome.js",
     "update-project": "@js/update-project.js",
     simplePagination: "@css/simplePagination.css",
     style: "@css/style.css",

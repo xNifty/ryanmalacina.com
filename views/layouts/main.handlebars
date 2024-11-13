@@ -3,13 +3,16 @@
 <html>
 {{> header}}
 <body>
-    {{> nav}}
-    <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">{{> status}}</div>
-    {{> login}}
-    {{{ body }}}
+    <div id="welcomeMsg" class="welcome">Hey, I'm Ryan, and welcome to my site!</div>
+    <div id="mainBody" class="hidden">
+        {{> nav}}
+        <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">{{> status}}</div>
+        {{> login}}
+        {{{ body }}}
 
-    {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
-    {{> footer currentyear=currentyear}}
+        {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
+        {{> footer currentyear=currentyear}}
+    </div>
     <script nonce="{{nonce}}">
         if (!window.grecaptcha) {
             const script = document.createElement('script');
@@ -34,6 +37,7 @@
         integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
         crossorigin="anonymous" nonce="{{nonce}}">
     </script>
+    <script rel="text/javascript" src="{{ versionedFile 'welcome.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
     {{!-- <script type="text/javascript" nonce="{{nonce}}" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script> --}}
     {{!-- <script src="https://www.google.com/recaptcha/api.js?render=6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG" nonce="{{nonce}}" async defer></script> --}}
 </body>

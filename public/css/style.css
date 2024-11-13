@@ -623,3 +623,31 @@ button.btn.btn-primary.right {
         display: none;
     }
 }
+
+.welcome {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #333;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+}
+
+.welcome.hide {
+    opacity: 0;
+}
+
+#mainBody {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+#mainBody.fade-in {
+    opacity: 1;
+}
