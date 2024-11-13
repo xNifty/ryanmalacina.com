@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!hasVisited) {
     // Show the welcome message
+    welcomeMessage.classList.remove("hide");
     welcomeMessage.classList.add("show");
 
     // Hold the welcome message for a few seconds, then fade it out

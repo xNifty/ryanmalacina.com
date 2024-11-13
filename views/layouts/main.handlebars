@@ -3,7 +3,7 @@
 <html>
 {{> header}}
 <body>
-    <div id="welcomeMsg" class="welcome">Hey, I'm Ryan, and welcome to my site!</div>
+    <div id="welcomeMsg" class="welcome hide">Hey, I'm Ryan, and welcome to my site!</div>
     <div id="mainBody" class="hidden">
         {{> nav}}
         <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">{{> status}}</div>
