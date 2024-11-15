@@ -1,11 +1,13 @@
 /*
-    Error Handling
-    
+    A simple error handling file. Does exactly what you would expect it to do:
     Catch errors and render appropriate error message and/or page.
 
-    This is still required to render the right view with the right error message.  In the development environment
-    we show the error message right on the screen so that we can fix it, while on production we just render
-    the error page with the generic error message relevant to that error message.
+    Depending on the environment, we either show a generic message or more detailed breakdown
+    of the error that occurred. Mostly, this is just so that on development environements we can
+    actually see the error whereas production should just get a generic message defined from within
+    the constants.js file where we define all the constant strings.
+
+    /config/constants.js
 */
 import { strings } from "../config/constants.js";
 
