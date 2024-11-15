@@ -19,6 +19,7 @@ import renderError from "./utils/renderErrorPage.js";
 import { strings } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
 import urls from "./config/urls.js";
+import client from './utils/elastic.js';
 
 // Routes
 import { homeRoute } from "./routes/home.js";
@@ -78,6 +79,30 @@ const HBS = exphbs.create({
   },
 });
 
+const ELASTIC = async () => {
+  const exists = await client.indices.exists({ index: 'news' });
+  console.log("Exists: ", exists, "body: ", exists.body);
+  if (!exists) {
+    await client.indices.create({
+      index: 'news',
+      body: {
+        mappings: {
+          properties: {
+            news_title: { type: 'text' },
+            news_description_html: { type: 'text' },
+            published_date: { type: 'text' },
+            published_date_unclean: { type: 'date' },
+            news_clean_output: { type: 'text' },
+          },
+        },
+      },
+    });
+  }
+};
+
+// Create index
+ELASTIC();
+
 // Connect to the database
 try {
   connectToDatabase(MONGO_URL);
@@ -98,7 +123,7 @@ APP.use(
   })
 );
 
-APP.use(function (req, res, next) {
+APP.use(function(req, res, next) {
   var nonce = generateNonce();
   res.locals.nonce = nonce;
   res.locals.cspNonce = "nonce-" + nonce;
@@ -136,11 +161,11 @@ async function setupHelmetCSP() {
 
 setupHelmetCSP().catch(console.error);
 
-passport.serializeUser(function (user, done) {
+passport.serializeUser(function(user, done) {
   done(null, user._id);
 });
 
-passport.deserializeUser(function (userId, done) {
+passport.deserializeUser(function(userId, done) {
   User.findById(userId).then((user) => {
     done(null, user);
   });
@@ -176,7 +201,7 @@ APP.locals = {
   notAuthorized: strings.errors.notAuthorized,
 };
 
-APP.use(function (req, res, next) {
+APP.use(function(req, res, next) {
   res.locals.realName = req.session.name;
   res.locals.token = req.session.token;
   res.locals.authenticated = req.isAuthenticated();
@@ -209,24 +234,24 @@ APP.use("/resetPassword", passwordReset);
 APP.use("/profile", profileRoute);
 
 if (SHOW_BLOG) {
-  APP.get("/blog/", function (req, res) {
+  APP.get("/blog/", function(req, res) {
     res.redirect(301, BLOG_URL);
   });
 }
 
 if (SHOW_DOCS) {
-  APP.get("/docs/", function (req, res) {
+  APP.get("/docs/", function(req, res) {
     res.redirect(301, DOCS_URL);
   });
 }
 /*
     Catch errors and pass information to our error handler to render the proper page.
 */
-APP.use(function (req, res, next) {
+APP.use(function(req, res, next) {
   next(createHttpError(404, "Page Not Found"));
 });
 
-APP.use(function (err, req, res, next) {
+APP.use(function(err, req, res, next) {
   let status = err.status ? err.status : 500;
   renderError(ENV, status, err, req, res);
 });

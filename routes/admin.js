@@ -34,6 +34,7 @@ import { JSDOM } from "jsdom";
 import auth from "../utils/auth.js";
 import logErrorToFile from "../utils/errorLogging.js";
 import deleteModal from "../utils/delete-modal.js";
+import client from "../utils/elastic.js";
 
 import { Project } from "../models/projects.js";
 import { News, validateNews } from "../models/news.js";
@@ -348,7 +349,17 @@ ROUTER.post(
         news_description_html: newsSanitized,
         news_clean_output: newsCleaned,
       });
+
+      await client.index({
+        index: 'news',
+        id: news_id,
+        body: {
+          news_title: req.body.news_title,
+          news_description_html: newsSanitized,
+        }
+      });
     } catch (ex) {
+      console.log("Error in news edit: ", ex.message);
       return res.status(400).render("admin/news/edit", {
         layout: "news",
         error: strings.errors.allFieldsRequired,
@@ -442,6 +453,7 @@ async function unpublishNews(id) {
 async function deleteNews(id) {
   try {
     await News.deleteOne({ _id: id });
+    await client.delete({ index: 'news', id: id.toString() });
     return true;
   } catch (err) {
     logErrorToFile(err);

@@ -1,6 +1,7 @@
 import express from "express";
 
 import { News } from "../models/news.js";
+import client from '../utils/elastic.js';
 
 const ROUTER = express.Router();
 
@@ -152,41 +153,64 @@ async function listNews(limit = 5, page = 1, term = null, sort = null) {
 async function newsSearch(strSearch, limit = 5, page = 1, sort = null) {
   var query = { $text: { $search: strSearch } };
 
-  var sortMethod;
+  let sortMethod = [{ _id: { order: "desc" } }];
 
   if (!sort) {
-    sortMethod = { _id: -1 };
+    sortMethod = [{ _id: { order: "desc" } }];
   } else {
     if (sort === "dateAsc") {
-      sortMethod = { published_date_unclean: 1 };
+      sortMethod = [{ published_date_unclean: { order: "asc" } }];
     } else if (sort === "dateDesc") {
-      sortMethod = { published_date_unclean: -1 };
+      sortMethod = [{ published_date_unclean: { order: "desc" } }];
     } else if (sort === "titleAsc") {
-      sortMethod = { news_title: 1 };
+      sortMethod = [{ news_title: { order: "asc" } }];
     } else if (sort === "titleDesc") {
-      sortMethod = { news_title: -1 };
+      sortMethod = [{ news_title: { order: "desc" } }];
     }
   }
 
-  const labels = {
-    docs: "newsItems",
-  };
-  const options = {
-    page: page,
-    limit: limit,
-    sort: sortMethod,
-    find: { is_published: 1 },
-    select: {
-      news_title: 1,
-      published_date: 1,
-      news_description_html: 1,
-      _id: 0,
+
+  const results = await client.search({
+    index: 'news',
+    from: (page - 1) * limit,
+    size: limit,
+    body: {
+      query: {
+        multi_match: {
+          query: strSearch,
+          fields: ['news_title', 'news_description_html', 'news_clean_output'],  // Fields to search in
+        },
+      },
+      sort: sortMethod,
+      highlight: {
+        fields: {
+          news_title: {},
+          news_description_html: {},
+          news_clean_output: {},
+        },
+        pre_tags: ['<mark>'],  // Start tag for highlighting
+        post_tags: ['</mark>'],  // End tag for highlighting
+      },
     },
-    lean: true,
-    customLabels: labels,
+  });
+
+  console.log("results: ", results);
+
+  return {
+    newsItems: results.hits.hits.map(hit => {
+      // Extract the highlighted fields
+      const highlighted = hit.highlight || {};
+      return {
+        ...hit._source,
+        highlightedTitle: highlighted.news_title ? highlighted.news_title[0] : hit._source.news_title,
+        highlightedDescription: highlighted.news_description_html ? highlighted.news_description_html[0] : hit._source.news_description_html,
+        highlightedBody: highlighted.news_clean_output ? highlighted.news_clean_output[0] : hit._source.news_clean_output,
+      };
+    }),
+    totalDocs: results.hits.total.value,
+    totalPages: Math.ceil(results.hits.total.value / limit),
   };
 
-  return News.paginate(query, options);
 }
 
 export { ROUTER as newsRoute };
