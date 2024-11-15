@@ -177,14 +177,14 @@ async function newsSearch(strSearch, limit = 5, page = 1, sort = null) {
     body: {
       query: {
         multi_match: {
-          query: strSearch,
+          query: strSearch || '',
           fields: ['news_title', 'news_description_html', 'news_clean_output'],  // Fields to search in
         },
       },
       sort: sortMethod,
       highlight: {
         fields: {
-          news_title: { type: "unified" },
+          news_title: {},
           news_description_html: {},
           news_clean_output: {},
         },
