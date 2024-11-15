@@ -2,7 +2,7 @@ import express from "express";
 import config from "config";
 import GhostContentAPI from "@tryghost/content-api";
 import dateFormat from "dateformat";
-import words from "number-to-words-en";
+import words from "number-to-words";
 import { RecaptchaV3 as Recaptcha } from "express-recaptcha";
 import fs from "fs";
 import path from "path";
