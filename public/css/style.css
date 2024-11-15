@@ -651,3 +651,12 @@ button.btn.btn-primary.right {
 #mainBody.fade-in {
     opacity: 1;
 }
+
+mark {
+    background-color: #ff5733; /* Vibrant orange/red color */
+    color: white;              /* Make the text white for contrast */
+    font-weight: bold;         /* Make the highlighted text bold */
+    padding: 0.2em;            /* Optional: Add some padding for a better look */
+    border-radius: 3px;        /* Optional: Add rounded corners to the highlight */
+    box-shadow: 0 0 5px rgba(255, 87, 51, 0.5); /* Optional: Add a glowing effect */
+}

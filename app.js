@@ -81,9 +81,10 @@ const HBS = exphbs.create({
 
 const ELASTIC = async () => {
   const exists = await client.indices.exists({ index: 'news' });
-  console.log("Exists: ", exists, "body: ", exists.body);
+  console.log("Exists: ", exists);
   if (!exists) {
-    await client.indices.create({
+    console.log("create news index");
+    const response = await client.indices.create({
       index: 'news',
       body: {
         mappings: {
@@ -97,11 +98,26 @@ const ELASTIC = async () => {
         },
       },
     });
+    console.log("created: ", response);
+  } else {
+    console.log("index exists already");
   }
 };
 
 // Create index
 ELASTIC();
+
+const VERIFY_INDEX = async () => {
+  try {
+    const response = await client.indices.get({ index: 'news' });
+    console.log("Index details:", JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error("Error fetching index details:", error);
+  }
+};
+
+// Verify the index
+VERIFY_INDEX();
 
 // Connect to the database
 try {

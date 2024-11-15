@@ -8,26 +8,26 @@
         <input type="hidden" id="itemCount" value={{ totalPages }}>
         <input type="hidden" id="currentPage" value={{ currentPage }}>
         There are {{ totalPages }} pages in the current news index, with {{ totalItems }} total news entries.<br />
-        {{!-- You are on page {{ currentPage }}. --}}
     {{/if}}
-<div class="panel-group">
-    {{#each news as |news| }}
-        <div class="panel panel-info">
-            <div class="panel-heading collapsed">
-                <i class="fa fa-fw fa-chevron-down" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>
-                <i class="fa fa-fw fa-chevron-right" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>{{ news.news_title }} | {{ news.published_date }}
-            </div>
-            <div class="panel-collapse collapse custom-text" id="coll{{ news.counter }}">
-                <div class="panel-body">
-                    {{{ news.news_description_html }}}
+    <div class="panel-group">
+        {{#each news as |news| }}
+            <div class="panel panel-info">
+                <div class="panel-heading collapsed">
+                    <i class="fa fa-fw fa-chevron-down" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>
+                    <i class="fa fa-fw fa-chevron-right" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>
+                    {{{ news.highlightedTitle }}} | {{ news.published_date }}
+                </div>
+                <div class="panel-collapse collapse custom-text" id="coll{{ news.counter }}">
+                    <div class="panel-body">
+                        {{{ news.highlightedDescription }}}
+                    </div>
                 </div>
             </div>
+        {{/each}}
+        <div class="pagination-holder clearfix parentpage">
+            <div id="compact-pagination" class="center"></div>
         </div>
-    {{/each}}
-    <div class="pagination-holder clearfix parentpage">
-        <div id="compact-pagination" class="center"></div>
-	</div>
-</div>
+    </div>
 {{else}}
   No results found, or news has no entries.
 {{/iff}}

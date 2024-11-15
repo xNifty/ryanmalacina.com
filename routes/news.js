@@ -184,7 +184,7 @@ async function newsSearch(strSearch, limit = 5, page = 1, sort = null) {
       sort: sortMethod,
       highlight: {
         fields: {
-          news_title: {},
+          news_title: { type: "unified" },
           news_description_html: {},
           news_clean_output: {},
         },
@@ -194,7 +194,7 @@ async function newsSearch(strSearch, limit = 5, page = 1, sort = null) {
     },
   });
 
-  console.log("results: ", results);
+  console.log("results: ", JSON.stringify(results, null, 2));
 
   return {
     newsItems: results.hits.hits.map(hit => {
