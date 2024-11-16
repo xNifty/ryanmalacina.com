@@ -1,7 +1,7 @@
 import express from "express";
 
 import { News } from "../models/news.js";
-import client from '../utils/elastic.js';
+import { CLIENT } from '../app.js';
 
 const ROUTER = express.Router();
 
@@ -170,7 +170,7 @@ async function newsSearch(strSearch, limit = 5, page = 1, sort = null) {
   }
 
 
-  const results = await client.search({
+  const results = await CLIENT.search({
     index: 'news',
     from: (page - 1) * limit,
     size: limit,
@@ -194,7 +194,7 @@ async function newsSearch(strSearch, limit = 5, page = 1, sort = null) {
     },
   });
 
-  console.log("results: ", JSON.stringify(results, null, 2));
+  //console.log("results: ", JSON.stringify(results, null, 2));
 
   return {
     newsItems: results.hits.hits.map(hit => {

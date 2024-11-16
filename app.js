@@ -19,7 +19,7 @@ import renderError from "./utils/renderErrorPage.js";
 import { strings } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
 import urls from "./config/urls.js";
-import client from './utils/elastic.js';
+import connectToClient from './utils/elastic.js';
 
 // Routes
 import { homeRoute } from "./routes/home.js";
@@ -48,6 +48,9 @@ const ENV = APP.settings.env;
 const MONGO_URL = process.env.mongoURL;
 const SECRET_KEY = process.env.privateKey;
 const MONGO_STORE = createMongoStore(MONGO_URL);
+const ELASTIC_USERNAME = process.env.elasticUsername;
+const ELASTIC_PASSWORD = process.env.elasticPassword;
+const ELASTIC_URL = process.env.elasticURL;
 
 const BLOG_URL = config.get("blogURL");
 const SHOW_BLOG = config.get("showBlog");
@@ -79,12 +82,14 @@ const HBS = exphbs.create({
   },
 });
 
+const CLIENT = connectToClient(ELASTIC_USERNAME, ELASTIC_PASSWORD, ELASTIC_URL);
+export { CLIENT };
+
 const ELASTIC = async () => {
-  const exists = await client.indices.exists({ index: 'news' });
+  const exists = await CLIENT.indices.exists({ index: 'news' });
   console.log("Exists: ", exists);
   if (!exists) {
-    console.log("create news index");
-    const response = await client.indices.create({
+    await CLIENT.indices.create({
       index: 'news',
       body: {
         mappings: {
@@ -98,9 +103,7 @@ const ELASTIC = async () => {
         },
       },
     });
-    console.log("created: ", response);
   } else {
-    console.log("index exists already");
   }
 };
 
@@ -126,6 +129,8 @@ APP.use(
     extended: true,
   })
 );
+
+APP.locals.elasticClient = CLIENT;
 
 APP.use(function(req, res, next) {
   var nonce = generateNonce();
