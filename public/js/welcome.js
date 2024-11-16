@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
   const welcomeMessage = document.getElementById("welcomeMsg");
   const mainContent = document.getElementById("mainBody");
   const hasVisited = document.cookie.includes("welcomeShown=true");

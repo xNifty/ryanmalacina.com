@@ -107,18 +107,6 @@ const ELASTIC = async () => {
 // Create index
 ELASTIC();
 
-const VERIFY_INDEX = async () => {
-  try {
-    const response = await client.indices.get({ index: 'news' });
-    console.log("Index details:", JSON.stringify(response, null, 2));
-  } catch (error) {
-    console.error("Error fetching index details:", error);
-  }
-};
-
-// Verify the index
-VERIFY_INDEX();
-
 // Connect to the database
 try {
   connectToDatabase(MONGO_URL);
