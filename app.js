@@ -20,6 +20,7 @@ import { strings } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
 import urls from "./config/urls.js";
 import connectToClient from './utils/elastic.js';
+import ElasticIndex from './utils/elasticIndex.js';
 
 // Routes
 import { homeRoute } from "./routes/home.js";
@@ -51,6 +52,7 @@ const MONGO_STORE = createMongoStore(MONGO_URL);
 const ELASTIC_USERNAME = process.env.elasticUsername;
 const ELASTIC_PASSWORD = process.env.elasticPassword;
 const ELASTIC_URL = process.env.elasticURL;
+const USE_ELASTIC = process.env.useElastic;
 
 const BLOG_URL = config.get("blogURL");
 const SHOW_BLOG = config.get("showBlog");
@@ -67,6 +69,8 @@ const NONCE_OPTIONS = {
   requireTrustedTypesFor: urls.requireTrustedTypesFor,
 };
 
+var CLIENT;
+
 // Set default layout, can be overridden per-route as needed
 // We also load any helper functions we wrote within helpers.js inside the functions folder
 const HBS = exphbs.create({
@@ -82,33 +86,41 @@ const HBS = exphbs.create({
   },
 });
 
-const CLIENT = connectToClient(ELASTIC_USERNAME, ELASTIC_PASSWORD, ELASTIC_URL);
-export { CLIENT };
+if (USE_ELASTIC == 'true') {
+  ElasticIndex();
 
-const ELASTIC = async () => {
-  const exists = await CLIENT.indices.exists({ index: 'news' });
-  console.log("Exists: ", exists);
-  if (!exists) {
-    await CLIENT.indices.create({
-      index: 'news',
-      body: {
-        mappings: {
-          properties: {
-            news_title: { type: 'text' },
-            news_description_html: { type: 'text' },
-            published_date: { type: 'text' },
-            published_date_unclean: { type: 'date' },
-            news_clean_output: { type: 'text' },
+  CLIENT = connectToClient(ELASTIC_USERNAME, ELASTIC_PASSWORD, ELASTIC_URL);
+  //export { CLIENT };
+
+  // TODO: create function to automatically create indexes for schemas so that we don't have to do this here and can
+  // instead handle this per model schema and have them all be included in Elasticsearch
+  const ELASTIC = async () => {
+    const exists = await CLIENT.indices.exists({ index: 'news' });
+    console.log("Exists: ", exists);
+    if (!exists) {
+      await CLIENT.indices.create({
+        index: 'news',
+        body: {
+          mappings: {
+            properties: {
+              news_title: { type: 'text' },
+              news_description_html: { type: 'text' },
+              published_date: { type: 'text' },
+              published_date_unclean: { type: 'date' },
+              news_clean_output: { type: 'text' },
+            },
           },
         },
-      },
-    });
-  } else {
-  }
-};
+      });
+    } else {
+    }
+  };
 
-// Create index
-ELASTIC();
+  // Create index
+  ELASTIC();
+}
+
+export { CLIENT };
 
 // Connect to the database
 try {
