@@ -33,11 +33,11 @@ import deleteModal from "../utils/delete-modal.js";
 const ROUTER = express.Router();
 
 const MARKDOWN = markdownit({
-  highlight: function (str, lang) {
+  highlight: function(str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
         return hljs.highlight(str, { language: lang }).value;
-      } catch (__) {}
+      } catch (__) { }
     }
 
     return ""; // use external default escaping
@@ -469,9 +469,7 @@ ROUTER.put(
     });
 
     let status = project.show_index;
-    const totalIndex = await Project.countDocuments({ show_index: true })
-      .count()
-      .exec();
+    const totalIndex = await Project.countDocuments({ show_index: true });
 
     if (!status && totalIndex === 3) {
       req.flash("error", strings.errors.indexLimitReached);
