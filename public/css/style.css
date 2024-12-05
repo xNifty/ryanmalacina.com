@@ -660,3 +660,9 @@ mark {
     border-radius: 3px;        /* Optional: Add rounded corners to the highlight */
     box-shadow: 0 0 5px rgba(255, 87, 51, 0.5); /* Optional: Add a glowing effect */
 }
+
+#prj-index img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
