@@ -2,9 +2,17 @@
 import { strings } from "../config/constants.js";
 import handleResponse from "./responseHandler.js";
 
-// Make sure the user is logged in, and if not, redirect to login with a message
+/**
+ * @param {boolean} isJson - Whether the request is expecting a JSON response
+ * @returns {Function} - The middleware function
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ * @param {Function} next - The next middleware function
+ * @returns {void}
+ * @description Make sure the user is logged in before proceeding
+ */
 function ValidateLoggedIn(isJson = false) {
-  return function (req, res, next) {
+  return function(req, res, next) {
     if (req.isAuthenticated()) next();
     else {
       var returnTo = "";
@@ -28,13 +36,25 @@ function ValidateLoggedIn(isJson = false) {
   };
 }
 
-// Only allow unauthenticated users access (e.g. for /login)
+/**
+  * @param {Object} req - The request object
+  * @param {Object} res - The response object
+  * @param {Function} next - The next middleware function
+  * @returns {void}
+  * @description Make sure the user is logged out before proceeding
+*/
 function ValidateLoggedOut(req, res, next) {
   if (req.isUnauthenticated()) next();
   else res.redirect("/");
 }
 
-// Make sure the user is an admin
+/**
+  * @param {Object} req - The request object
+  * @param {Object} res - The response object
+  * @param {Function} next - The next middleware function
+  * @returns {void}
+  * @description Make sure the user is an admin
+*/
 function ValidateAdmin(req, res, next) {
   if (req.user.isAdmin) next();
   else {

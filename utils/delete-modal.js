@@ -1,3 +1,9 @@
+/**
+  * @param {string} id - The id of the entry to be deleted
+  * @param {string} csrf - The CSRF token to be sent with the request
+  * @param {string} url - The URL to send the delete request to
+  * @returns {string} - The HTML for the delete modal
+*/
 function deleteModal(id, csrf, url) {
   return `<div id="confirmModal" class="modal fade">
   <div class="modal-dialog modal-login">

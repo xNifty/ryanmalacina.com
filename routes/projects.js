@@ -53,7 +53,8 @@ const MARKDOWN = markdownit({
       try {
         return hljs.highlight(str, { language: lang }).value;
       } catch (err) {
-        // Handle error
+        // simply log error and move on
+        logErrorToFile(err);
       }
     }
     return '';
@@ -92,8 +93,6 @@ const safeTags = [
   "pre",
 ];
 
-//let converter = new showdown.Converter();
-
 ROUTER.use(fileUpload());
 
 ROUTER.get("/", async (req, res) => {
@@ -106,7 +105,6 @@ ROUTER.get("/", async (req, res) => {
   });
 });
 
-// @TODO: Fix return updating when errors on page
 ROUTER.get(
   "/new",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
@@ -518,6 +516,10 @@ ROUTER.put(
   }
 );
 
+/**
+ * List all published projects
+ * @returns {Promise} - A promise that resolves to an array of projects
+ */
 async function listProjects() {
   return Project.find({ is_published: 1 })
     .select({
@@ -529,6 +531,11 @@ async function listProjects() {
     .lean();
 }
 
+/**
+  * Delete a project
+  * @param {string} id - The id of the project to delete
+  * @returns {boolean} - Whether the project was deleted
+  */
 async function deleteProject(id) {
   try {
     await Project.deleteOne({ _id: id });
