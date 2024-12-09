@@ -12,7 +12,9 @@
         </div>
         <h4><a href="{{ project_source }}" target="_blank">Source</a></h4>
     </div>
-    {{{project_description}}}
+    <div class="markdown-body">
+        {{{project_description}}}
+    </div>
     <div id="edit">
         {{#if last_save_date}}<div id="lastedit">Last Updated: {{ last_save_date }}</div>{{/if}}
     </div>

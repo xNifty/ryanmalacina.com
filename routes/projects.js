@@ -30,18 +30,29 @@ import { strings } from "../config/constants.js";
 import logErrorToFile from "../utils/errorLogging.js";
 import deleteModal from "../utils/delete-modal.js";
 
+import js from "highlight.js/lib/languages/javascript";
+import go from "highlight.js/lib/languages/go";
+import cmd from "highlight.js/lib/languages/dos";
+import ts from "highlight.js/lib/languages/typescript";
+
 const ROUTER = express.Router();
+
+hljs.registerLanguage("javascript", js);
+hljs.registerLanguage("go", go);
+hljs.registerLanguage("cmd", cmd);
+hljs.registerLanguage("typescript", ts);
 
 const MARKDOWN = markdownit({
   highlight: function(str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
         return hljs.highlight(str, { language: lang }).value;
-      } catch (__) { }
+      } catch (err) {
+        // Handle error
+      }
     }
-
-    return ""; // use external default escaping
-  },
+    return '';
+  }
 });
 
 const safeTags = [

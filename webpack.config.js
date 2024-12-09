@@ -24,6 +24,8 @@ const config = {
     "update-project": "@js/update-project.js",
     simplePagination: "@css/simplePagination.css",
     style: "@css/style.css",
+    github: "@css/github.css",
+    githubdark: "@css/githubdark.css",
   },
   output: {
     filename: "js/[name].[contenthash].js",
