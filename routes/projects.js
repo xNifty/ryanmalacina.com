@@ -30,17 +30,22 @@ import { strings } from "../config/constants.js";
 import logErrorToFile from "../utils/errorLogging.js";
 import deleteModal from "../utils/delete-modal.js";
 
+// highlight.js language imports
 import js from "highlight.js/lib/languages/javascript";
 import go from "highlight.js/lib/languages/go";
-import cmd from "highlight.js/lib/languages/dos";
+import dos from "highlight.js/lib/languages/dos";
 import ts from "highlight.js/lib/languages/typescript";
-
-const ROUTER = express.Router();
+import py from "highlight.js/lib/languages/python";
+import csharp from "highlight.js/lib/languages/csharp";
 
 hljs.registerLanguage("javascript", js);
 hljs.registerLanguage("go", go);
-hljs.registerLanguage("cmd", cmd);
+hljs.registerLanguage("dos", dos);
 hljs.registerLanguage("typescript", ts);
+hljs.registerLanguage("python", py);
+hljs.registerLanguage("csharp", csharp);
+
+const ROUTER = express.Router();
 
 const MARKDOWN = markdownit({
   highlight: function(str, lang) {

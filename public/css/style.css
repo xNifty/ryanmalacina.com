@@ -666,3 +666,7 @@ mark {
     height: auto;
     display: block;
 }
+
+#prj-index code:not([class]) {
+    background-color: #fff;
+}
