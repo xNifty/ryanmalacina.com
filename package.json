@@ -35,7 +35,7 @@
     "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.7",
     "dateformat": "^5.0.3",
-    "dompurify": "^3.2.2",
+    "dompurify": "^3.2.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-fileupload": "^1.5.1",
