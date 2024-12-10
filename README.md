@@ -43,10 +43,10 @@ npx webpack
    a. cookieName  
    b. port  
    c. blogURL (if making use of Ghost Blog to integrate posts into homepage)  
-   d. blogVersion (if making use of Ghost Blog to integrate posts into homepage (at this time it should be set to v5.0 if using latest Ghost))
-   e. showBlog (set to true if you are integrating with Ghost for displaying posts)
-   f. recaptchaSiteKey (publicly available key that is used to generate the recaptcha)
-   g. trustProxy (set to true if behind a reverse proxy)
+   d. blogVersion (if making use of Ghost Blog to integrate posts into homepage (at this time it should be set to v5.0 if using latest Ghost))  
+   e. showBlog (set to true if you are integrating with Ghost for displaying posts)  
+   f. recaptchaSiteKey (publicly available key that is used to generate the recaptcha)  
+   g. trustProxy (set to true if behind a reverse proxy)  
 
 3. Required keys that you must change:  
    a. rootURL
