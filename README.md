@@ -41,20 +41,25 @@ The following are the list of keys within this file, and what they are used for 
 16. useElasic - This is a boolean value that determines if the site will use ElasticSearch or default MongoDB for searching. This should be set to false if you do not have an ElasticSearch instance.
 
 ## Config File
+his file is used to store configuration information that is not sensitive and can be shared with others. This file is used to store information that is used to configure the site. This file is not included in the repository and must be created by the user. An example is provided in the default.json.example file, which you can rename to default.json or production.json and modify.
 
-1. Rename default.json.example to default.json (for development environment) or production.json (for production environment)
-2. Required keys that you should change are:
+** YOU MUST SET rootURL TO THE URL OF YOUR SITE **
 
-   a. cookieName  
-   b. port  
-   c. blogURL (if making use of Ghost Blog to integrate posts into homepage)  
-   d. blogVersion (if making use of Ghost Blog to integrate posts into homepage (at this time it should be set to v5.0 if using latest Ghost))  
-   e. showBlog (set to true if you are integrating with Ghost for displaying posts)  
-   f. recaptchaSiteKey (publicly available key that is used to generate the recaptcha)  
-   g. trustProxy (set to true if behind a reverse proxy)  
-
-3. Required keys that you must change:  
-   a. rootURL
+1. cookieName - This is the name of the cookie for the site.
+2. useProxy - This is a boolean value that determines if the site is behind a proxy. This should be set to true if the site is behind a proxy.
+3. resave - This is a boolean value that determines if the session should be saved on every request.
+4. saveUninitialized - This is a boolean value that determines if the session should be saved even if it is not modified.
+5. secureCookie - This is a boolean value that determines if the cookie should only be sent over HTTPS. Set true if the site is using HTTPS.
+6. sameSite - This is a string value that determines the SameSite attribute of the cookie. This should be set to 'Lax' if the site is using HTTPS.
+7. maxAge - This is the maximum age of the cookie in milliseconds.
+8. blogURL - This is the URL to the Ghost blog. This is used to link to the blog from the site.
+9. docsURL - I use this to link to my documentation URL; however, you can use this for any URL that you want to link to, technically.
+10. showBlog - Boolen value that determines if the blog should be shown on the site.
+11. blogVersion - Ghost version, in Major.Minor format (e.g. v5.0)
+12. rootURL - This is the root URL of the site. This is used to generate URLs for the site.
+13. recapchaSiteKey - This is the site key for Google's reCAPTCHA. This is used to prevent bots from submitting forms. This is a public key, and is different from the key in .env
+14. trustProxy - This is a boolean value that determines if the site should trust the proxy. This should be set to true if the site is behind a proxy.
+15. showDocs - Boolean value that determines if the documentation link should be shown on the site.
 
 ## Installing
 
