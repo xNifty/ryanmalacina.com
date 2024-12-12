@@ -677,3 +677,7 @@ mark {
 #prj-index code:not([class]) {
     background-color: #fff;
 }
+
+.markdown-body a {
+    color: #00CF32 !important;
+}
