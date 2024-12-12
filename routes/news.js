@@ -66,8 +66,8 @@ ROUTER.post("/", async (req, res) => {
       let counter_number = x;
       counter_number++;
       news_list["newsItems"][x].counter = counter_number;
-      news_list["newsItems"][x].news_title = replaceTerm(news_list["newsItems"][x].news_title, term, "<mark>" + term + "</mark>");
-      news_list["newsItems"][x].news_description_html = replaceTerm(news_list["newsItems"][x].news_description_html, term, "<mark>" + term + "</mark>");
+      news_list["newsItems"][x].news_title = replaceTerm(news_list["newsItems"][x].news_title, term, "<mark>{term}</mark>");
+      news_list["newsItems"][x].news_description_html = replaceTerm(news_list["newsItems"][x].news_description_html, term, "<mark>{term}</mark>");
     }
   } else {
     for (var x in news_list["newsItems"]) {
@@ -118,9 +118,10 @@ ROUTER.post("/search", async (req, res) => {
     for (var x in news_list["newsItems"]) {
       let counter_number = x;
       counter_number++;
+      let replacement = `<mark>${term}</mark>`;
       news_list["newsItems"][x].counter = counter_number;
-      news_list["newsItems"][x].news_title = replaceTerm(news_list["newsItems"][x].news_title, term, "<mark>" + term + "</mark>");
-      news_list["newsItems"][x].news_description_html = replaceTerm(news_list["newsItems"][x].news_description_html, term, "<mark>" + term + "</mark>");
+      news_list["newsItems"][x].news_title = replaceTerm(news_list["newsItems"][x].news_title, term, replacement);
+      news_list["newsItems"][x].news_description_html = replaceTerm(news_list["newsItems"][x].news_description_html, term, replacement);
     }
   } else {
     for (var x in news_list["newsItems"]) {
@@ -289,21 +290,20 @@ async function newsSearchMongo(strSearch, limit = 5, page = 1, sort = null) {
 }
 
 function replaceTerm(str, term, replacement) {
-  let regex = new RegExp(term, "gi");
+  let regex = new RegExp(term, 'gi');
+  console.log(`str: ${str}, term: ${term}, replacement: ${replacement}`);
   return str.replace(regex, (match) => {
-    if (match === match.toUpperCase()) {
-      return replacement.toUpperCase();
+    let formattedReplacement = '';
+    for (let i = 0; i < match.length; i++) {
+      if (i < replacement.length) {
+        formattedReplacement += match[i] === match[i].toUpperCase()
+          ? replacement[i].toUpperCase()
+          : replacement[i].toLowerCase();
+      } else {
+        formattedReplacement += match[i];
+      }
     }
-
-    if (match === match.toLowerCase()) {
-      return replacement.toLowerCase();
-    }
-
-    if (match[0] === match[0].toUpperCase()) {
-      return replacement[0].toUpperCase() + replacement.slice(1);
-    }
-
-    return replacement;
+    return replacement.replace('{term}', formattedReplacement);
   });
 }
 
