@@ -679,3 +679,15 @@ mark {
 .markdown-body a {
     color: #00CF32 !important;
 }
+
+#site-news .panel-body img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+#site-news .panel-body {
+    overflow: hidden;
+    padding: 10px;
+    box-sizing: border-box;
+}

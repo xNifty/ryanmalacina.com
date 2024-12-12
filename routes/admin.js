@@ -42,6 +42,8 @@ import { strings } from "../config/constants.js";
 
 const ROUTER = express.Router();
 
+const USE_ELASTIC = process.env.useElastic;
+
 //let converter = new showdown.Converter();
 let md = new MarkdownIt();
 
@@ -350,14 +352,16 @@ ROUTER.post(
         news_clean_output: newsCleaned,
       });
 
-      await client.index({
-        index: 'news',
-        id: news_id,
-        body: {
-          news_title: req.body.news_title,
-          news_description_html: newsSanitized,
-        }
-      });
+      if (USE_ELASTIC == "true") {
+        await client.index({
+          index: 'news',
+          id: news_id,
+          body: {
+            news_title: req.body.news_title,
+            news_description_html: newsSanitized,
+          }
+        });
+      }
     } catch (ex) {
       console.log("Error in news edit: ", ex.message);
       return res.status(400).render("admin/news/edit", {
