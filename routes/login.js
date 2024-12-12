@@ -47,7 +47,8 @@ ROUTER.post(
       returnTo = "/";
     }
 
-    res.set("HX-Location", returnTo);
+    res.set("HX-Redirect", returnTo);
+    res.send('<meta http-equiv="refresh" content="0');
     res.status(200).end();
   },
   function(err, req, res, next) {
