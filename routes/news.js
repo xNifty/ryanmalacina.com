@@ -250,7 +250,7 @@ async function newsSearchElastic(strSearch, limit = 5, page = 1, sort = null) {
 }
 
 async function newsSearchMongo(strSearch, limit = 5, page = 1, sort = null) {
-  var query = { $text: { $search: strSearch } };
+  var query = { $text: { $search: `"${strSearch}"` } };
 
   var sortMethod;
 
@@ -290,22 +290,21 @@ async function newsSearchMongo(strSearch, limit = 5, page = 1, sort = null) {
 }
 
 function replaceTerm(str, term, replacement) {
-  let regex = new RegExp(term, 'gi');
-  console.log(`str: ${str}, term: ${term}, replacement: ${replacement}`);
+  let regex = new RegExp(term, "gi");
   return str.replace(regex, (match) => {
-    let formattedReplacement = '';
-    for (let i = 0; i < match.length; i++) {
-      if (i < replacement.length) {
-        formattedReplacement += match[i] === match[i].toUpperCase()
-          ? replacement[i].toUpperCase()
-          : replacement[i].toLowerCase();
-      } else {
-        formattedReplacement += match[i];
-      }
+    if (match === match.toUpperCase()) {
+      return replacement.toUpperCase();
     }
-    return replacement.replace('{term}', formattedReplacement);
+    if (match === match.toLowerCase()) {
+      return replacement.toLowerCase();
+    }
+    if (match[0] === match[0].toUpperCase()) {
+      return replacement.replace(term, match[0].toUpperCase() + match.slice(1));
+    }
+    return replacement;
   });
 }
+
 
 export { ROUTER as newsRoute };
 // module.exports = router;
