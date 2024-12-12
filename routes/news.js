@@ -61,11 +61,22 @@ ROUTER.post("/", async (req, res) => {
     }
   }
 
-  for (var x in news_list["newsItems"]) {
-    let counter_number = x;
-    counter_number++;
-    news_list["newsItems"][x].counter = counter_number;
+  if (req.body.search) {
+    for (var x in news_list["newsItems"]) {
+      let counter_number = x;
+      counter_number++;
+      news_list["newsItems"][x].counter = counter_number;
+      news_list["newsItems"][x].news_title = replaceTerm(news_list["newsItems"][x].news_title, term, "<mark>" + term + "</mark>");
+      news_list["newsItems"][x].news_description_html = replaceTerm(news_list["newsItems"][x].news_description_html, term, "<mark>" + term + "</mark>");
+    }
+  } else {
+    for (var x in news_list["newsItems"]) {
+      let counter_number = x;
+      counter_number++;
+      news_list["newsItems"][x].counter = counter_number;
+    }
   }
+
   return res.render("partials/news/news-display", {
     layout: false,
     news: news_list["newsItems"],
@@ -91,7 +102,7 @@ ROUTER.post("/search", async (req, res) => {
     if (USE_ELASTIC == 'true') {
       news_list = await newsSearchElastic(req.body.search, 5, 1, sort);
     } else {
-      news_list = await newsSearchMongo(req.body.search, 5, sort);
+      news_list = await newsSearchMongo(req.body.search, 5, 1, sort);
     }
     const addQuery = (req, res, next) => {
       req.query.term = req.body.search;
@@ -103,10 +114,20 @@ ROUTER.post("/search", async (req, res) => {
     news_list = await listNews(5, page, null, sort);
   }
 
-  for (var x in news_list["newsItems"]) {
-    let counter_number = x;
-    counter_number++;
-    news_list["newsItems"][x].counter = counter_number;
+  if (req.body.search) {
+    for (var x in news_list["newsItems"]) {
+      let counter_number = x;
+      counter_number++;
+      news_list["newsItems"][x].counter = counter_number;
+      news_list["newsItems"][x].news_title = replaceTerm(news_list["newsItems"][x].news_title, term, "<mark>" + term + "</mark>");
+      news_list["newsItems"][x].news_description_html = replaceTerm(news_list["newsItems"][x].news_description_html, term, "<mark>" + term + "</mark>");
+    }
+  } else {
+    for (var x in news_list["newsItems"]) {
+      let counter_number = x;
+      counter_number++;
+      news_list["newsItems"][x].counter = counter_number;
+    }
   }
 
   return res.render("partials/news/news-display", {
@@ -265,6 +286,25 @@ async function newsSearchMongo(strSearch, limit = 5, page = 1, sort = null) {
   };
 
   return News.paginate(query, options);
+}
+
+function replaceTerm(str, term, replacement) {
+  let regex = new RegExp(term, "gi");
+  return str.replace(regex, (match) => {
+    if (match === match.toUpperCase()) {
+      return replacement.toUpperCase();
+    }
+
+    if (match === match.toLowerCase()) {
+      return replacement.toLowerCase();
+    }
+
+    if (match[0] === match[0].toUpperCase()) {
+      return replacement[0].toUpperCase() + replacement.slice(1);
+    }
+
+    return replacement;
+  });
 }
 
 export { ROUTER as newsRoute };
