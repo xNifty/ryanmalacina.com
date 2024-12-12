@@ -167,7 +167,6 @@ APP.use(
   limiter
 );
 
-// Required for helmet-csp after v4.0.0
 async function setupHelmetCSP() {
   const csp = require("helmet-csp");
   APP.use(

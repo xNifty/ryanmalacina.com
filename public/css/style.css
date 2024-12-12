@@ -36,6 +36,7 @@ html {
 }
 
 #project-header #editbtn-wrapper {
+    padding-top: 10px;
     position: absolute;
 }
 
@@ -223,7 +224,7 @@ li.dropdown:hover > .dropdown-menu a {
 #lastedit {
     font-size: 75%;
     float: right;
-    margin-bottom: -1%;
+    /*margin-bottom: -1%;*/
 }
 
 /* In case we need it later. */
@@ -661,10 +662,16 @@ mark {
     box-shadow: 0 0 5px rgba(255, 87, 51, 0.5); /* Optional: Add a glowing effect */
 }
 
+#prj-index {
+    border: 1px solid white;
+    /*background: #050c43;*/
+}
+
 #prj-index img {
     max-width: 100%;
     height: auto;
     display: block;
+
 }
 
 #prj-index code:not([class]) {

@@ -469,6 +469,7 @@ ROUTER.get("/:id", async (req, res) => {
     last_save_date: dateFormat(project.last_edited, "mmmm dd, yyyy @ h:MM TT"),
     title: "Ryan Malacina | " + project.project_name,
     id: project._id,
+    csrfToken: res.locals._csrf,
   });
 });
 

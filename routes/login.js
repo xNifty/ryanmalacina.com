@@ -18,7 +18,7 @@ ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
 ROUTER.post(
   "/",
   [passport.authenticate("local", { failWithError: true })],
-  function (req, res) {
+  function(req, res) {
     var returnTo = "";
     req.flash("success", strings.success.loginSuccess);
 
@@ -50,7 +50,7 @@ ROUTER.post(
     res.set("HX-Location", returnTo);
     res.status(200).end();
   },
-  function (err, req, res, next) {
+  function(err, req, res, next) {
     // console.log(err);
     res.send(
       `<div class="container">
@@ -69,7 +69,7 @@ ROUTER.post(
 ROUTER.post(
   "/modal",
   passport.authenticate("local", { failWithError: true }),
-  function (req, res) {
+  function(req, res) {
     var returnTo = "";
     req.flash("success", strings.success.loginSuccess);
 
@@ -87,7 +87,7 @@ ROUTER.post(
     res.set("HX-Location", returnTo);
     res.status(200).end();
   },
-  function (err, req, res, next) {
+  function(err, req, res, next) {
     res.send(
       '<div class="modalAlert alert alert-danger alert-dismissible center-block text-center">Invalid username or password!</div>'
     );
