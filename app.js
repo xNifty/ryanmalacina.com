@@ -67,6 +67,7 @@ const NONCE_OPTIONS = {
   frame: urls.frameSrc,
   reportTo: urls.reportUri,
   requireTrustedTypesFor: urls.requireTrustedTypesFor,
+  images: urls.imgSrc,
 };
 
 var CLIENT;

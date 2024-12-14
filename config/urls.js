@@ -15,7 +15,7 @@ const styleSrc = [
   `https://maxcdn.bootstrapcdn.com`,
   `https://cdn.jsdelivr.net`,
 ];
-const imgSrc = [];
+const imgSrc = [`https://i.imgur.com`];
 const connectSrc = [`https://cdn.jsdelivr.net`];
 const fontSrc = [
   `https://cdnjs.cloudflare.com`,
