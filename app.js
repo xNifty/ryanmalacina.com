@@ -86,6 +86,7 @@ const HBS = exphbs.create({
   },
 });
 
+// @TODO: I think this can be moved to a util and then just have a single call in here to that
 if (USE_ELASTIC == 'true') {
   ElasticIndex();
 

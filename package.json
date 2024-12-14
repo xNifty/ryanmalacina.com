@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/xNifty/ryanmalacina.com#readme",
   "dependencies": {
-    "@elastic/elasticsearch": "^8.16.2",
+    "@elastic/elasticsearch": "^8.17.0",
     "@hapi/joi": "^17.1.1",
     "@mapbox/node-pre-gyp": "^1.0.11",
     "@tryghost/content-api": "^1.11.21",
@@ -57,7 +57,7 @@
     "mailgun.js": "^10.2.4",
     "markdown-it": "^14.1.0",
     "mem": "^10.0.0",
-    "mongoose": "^8.8.4",
+    "mongoose": "^8.9.0",
     "mongoose-paginate-v2": "^1.8.5",
     "nonce-simple": "^1.1.0",
     "number-to-words": "^1.2.4",
