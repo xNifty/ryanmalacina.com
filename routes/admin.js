@@ -457,7 +457,10 @@ async function unpublishNews(id) {
 async function deleteNews(id) {
   try {
     await News.deleteOne({ _id: id });
-    await client.delete({ index: 'news', id: id.toString() });
+
+    if (USE_ELASTIC == 'true') {
+      await client.delete({ index: 'news', id: id.toString() });
+    }
     return true;
   } catch (err) {
     logErrorToFile(err);
