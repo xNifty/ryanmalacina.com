@@ -167,7 +167,7 @@ ROUTER.post(
     let newsDescription = md.render(req.body.news_description);
 
     let newsSanitized = sanitize(newsDescription, {
-      allowedTags: sanitize.defaults.allowedTags.concat(["h1"]),
+      allowedTags: sanitize.defaults.allowedTags.concat(["h1", "img"]),
     });
     let newsCleaned = sanitize(newsDescription, { allowedTags: [] });
 
@@ -325,7 +325,7 @@ ROUTER.post(
     }
     let newsDescription = md.render(req.body.news_description);
     let newsSanitized = sanitize(newsDescription, {
-      allowedTags: sanitize.defaults.allowedTags.concat(["h1"]),
+      allowedTags: sanitize.defaults.allowedTags.concat(["h1", "img"]),
     });
     let newsCleaned = sanitize(newsDescription, { allowedTags: [] });
 
