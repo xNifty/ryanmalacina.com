@@ -289,8 +289,13 @@ async function newsSearchMongo(strSearch, limit = 5, page = 1, sort = null) {
   return News.paginate(query, options);
 }
 
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function replaceTerm(str, term, replacement) {
-  let regex = new RegExp(term, "gi");
+  let sanitized = escapeRegExp(term);
+  let regex = new RegExp(sanitized, "gi");
   return str.replace(regex, (match) => {
     if (match === match.toUpperCase()) {
       return replacement.toUpperCase();
