@@ -676,6 +676,10 @@ mark {
     background-color: #fff;
 }
 
+.markdown-body {
+    background: none;
+}
+
 .markdown-body a {
     color: #00CF32 !important;
 }

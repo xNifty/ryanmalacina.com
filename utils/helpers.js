@@ -2,6 +2,7 @@
 
 import path from "path";
 import { readFileSync } from "fs";
+import Handlebars from "handlebars";
 
 export function iff(v1, operator, v2, options) {
   switch (operator) {
@@ -41,7 +42,16 @@ export function versionedFile(filename, basePath, type) {
   return `/${type}/${filename}?v=${contentHash}`;
 }
 
+export function sanitize(options) {
+  var data = options.fn(this);
+  var parser = new DOMParser();
+  var doc = parser.parseFromString(data, "text/html");
+  var sanitizedHTML = doc.body.innerHTML;
+  return new Handlebars.SafeString(sanitizedHTML);
+}
+
 export default {
   iff,
   versionedFile,
+  sanitize,
 };

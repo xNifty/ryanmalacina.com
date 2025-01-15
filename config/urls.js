@@ -23,8 +23,8 @@ const fontSrc = [
   `https://maxcdn.bootstrapcdn.com`,
 ];
 const frameSrc = [`https://www.google.com/recaptcha/`];
-const reportUri = [`https://ryanmalacina.report-uri.com/r/d/csp/enforce`];
-const requireTrustedTypesFor = ["'script'"];
+const reportUri = [];
+const requireTrustedTypesFor = [];
 
 export default {
   defaultSrc,
