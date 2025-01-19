@@ -1,4 +1,4 @@
-<div class="container" id="project_index" hx-ext="response-targets">
+<div class="container" id="project_index" hx-ext="response-targets" nonce="{{nonce}}">
     <div class="text-center"><h1>Admin Backend - Projects</h1></div>
     <input type="hidden" name="_csrf" value="{{csrfToken}}" id="_csrf">
     {{#iff projects.length ">" 0}}

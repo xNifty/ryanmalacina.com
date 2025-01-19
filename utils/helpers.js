@@ -3,6 +3,7 @@
 import path from "path";
 import { readFileSync } from "fs";
 import Handlebars from "handlebars";
+import { trustedTypes } from "trusted-types";
 
 export function iff(v1, operator, v2, options) {
   switch (operator) {
@@ -42,11 +43,15 @@ export function versionedFile(filename, basePath, type) {
   return `/${type}/${filename}?v=${contentHash}`;
 }
 
+const defaultPolicy = trustedTypes.createPolicy("default", {
+  createHTML: (html) => html,
+});
+
 export function sanitize(options) {
   var data = options.fn(this);
   var parser = new DOMParser();
   var doc = parser.parseFromString(data, "text/html");
-  var sanitizedHTML = doc.body.innerHTML;
+  var sanitizedHTML = defaultPolicy.createHTML(doc.body.innerHTML);
   return new Handlebars.SafeString(sanitizedHTML);
 }
 

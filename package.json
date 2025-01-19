@@ -66,6 +66,7 @@
     "postcss": "^8.5.1",
     "sanitize-html": "^2.14.0",
     "tiny-csrf": "^1.1.4",
+    "trusted-types": "^2.0.0",
     "uuid": "^11.0.5",
     "yargs": "^17.7.2"
   },

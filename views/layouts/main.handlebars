@@ -6,7 +6,7 @@
     <!--<div id="welcomeMsg" class="welcome hide">Hey, I'm Ryan, and welcome to my site!</div>-->
     <!--<div id="mainBody"> -->
         {{> nav}}
-        <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">{{> status}}</div>
+        <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load" nonce="{{nonce}}">{{> status}}</div>
         {{> login}}
         {{{ body }}}
 
@@ -16,7 +16,7 @@
     <script nonce="{{nonce}}">
         if (!window.grecaptcha) {
             const script = document.createElement('script');
-            script.src = 'https://www.google.com/recaptcha/api.js?render=6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG';
+            script.src = 'https://www.google.com/recaptcha/api.js?trustedtypes=true&render=6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG';
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
