@@ -463,10 +463,16 @@ ROUTER.get("/:id", async (req, res) => {
     });
   }
 
+  let project_html = MARKDOWN.render(project.project_description_markdown);
+  //project_html = project_html.replace(
+  //  /<img src="https:\/\/github\.com\/user-attachment/g,
+  //  '<img src="/proxy-image?url=https://github.com/user-attachment'
+  //);
+
   res.render("projects", {
     project_title: project.project_title,
     project_source: project.project_source,
-    project_description: MARKDOWN.render(project.project_description_markdown),
+    project_description: project_html,
     project_name: project.project_name,
     is_valid: true,
     last_save_date: dateFormat(project.last_edited, "mmmm dd, yyyy @ h:MM TT"),

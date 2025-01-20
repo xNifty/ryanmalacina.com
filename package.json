@@ -28,6 +28,7 @@
     "@types/express": "^5.0.0",
     "@types/express-handlebars": "^6.0.2",
     "@types/number-to-words": "^1.2.3",
+    "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "config": "~3.3.12",
     "connect-ensure-login": "^0.1.1",

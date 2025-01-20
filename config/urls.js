@@ -15,7 +15,7 @@ const styleSrc = [
   `https://maxcdn.bootstrapcdn.com`,
   `https://cdn.jsdelivr.net`,
 ];
-const imgSrc = [`https://i.imgur.com`];
+const imgSrc = [`https://i.imgur.com`, `*.s3.amazonaws.com`, `https://github.githubassets.com`, `https://github.com/user-attachments/`];
 const connectSrc = [`https://cdn.jsdelivr.net`];
 const fontSrc = [
   `https://cdnjs.cloudflare.com`,
@@ -24,7 +24,8 @@ const fontSrc = [
 ];
 const frameSrc = [`https://www.google.com/recaptcha/`];
 const reportUri = [];
-const requireTrustedTypesFor = ["'script'"];
+const requireTrustedTypesFor = [];
+//const requireTrustedTypesFor = ["'script'"];
 
 export default {
   defaultSrc,
