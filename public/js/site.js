@@ -1,8 +1,8 @@
 // sitewide javascript
 
-$(document).ready(function () {
+$(document).ready(function() {
   /* Scroll to top */
-  $(window).scroll(function () {
+  $(window).scroll(function() {
     var height = $(window).scrollTop();
     if (height > 100) {
       $("#scroll").fadeIn();
@@ -11,7 +11,7 @@ $(document).ready(function () {
     }
   });
 
-  $("#scroll").click(function (event) {
+  $("#scroll").click(function(event) {
     event.preventDefault();
     $("html, body").animate({ scrollTop: 0 }, "slow");
     return false;
@@ -60,3 +60,4 @@ function cb(token) {
   //console.log('token:', token);
   $("#g-recaptcha-response").val(token);
 }
+
