@@ -24,8 +24,8 @@ const fontSrc = [
 ];
 const frameSrc = [`https://www.google.com/recaptcha/`];
 const reportUri = [];
-//const requireTrustedTypesFor = [];
-const requireTrustedTypesFor = ["'script'"];
+const requireTrustedTypesFor = [];
+//const requireTrustedTypesFor = ["'script'"];
 
 export default {
   defaultSrc,
