@@ -16,7 +16,7 @@ const styleSrc = [
   `https://cdn.jsdelivr.net`,
 ];
 const imgSrc = [`https://i.imgur.com`, `*.s3.amazonaws.com`, `https://github.githubassets.com`, `https://github.com/user-attachments/`];
-const connectSrc = [`https://cdn.jsdelivr.net`];
+const connectSrc = [`https://cdn.jsdelivr.net`, `https://www.google.com/recaptcha/`];
 const fontSrc = [
   `https://cdnjs.cloudflare.com`,
   `https://fonts.gstatic.com`,
