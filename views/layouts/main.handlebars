@@ -25,16 +25,12 @@
     <script src="https://unpkg.com/htmx.org@1.9.10" nonce="{{nonce}}"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js" nonce="{{nonce}}"></script>
     <script
-        src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous" nonce="{{nonce}}">
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0-beta/jquery.min.js" nonce="{{nonce}}"
     </script>
     <script rel="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" nonce="{{nonce}}"></script>
     <script rel="text/javascript" src="{{ versionedFile 'site.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
     <script
-        src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-        crossorigin="anonymous" nonce="{{nonce}}">
+        src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.14.1/jquery-ui.min.js" nonce="{{nonce}}">
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js" nonce="{{nonce}}"></script>
     <script nonce="{{nonce}}">hljs.highlightAll();</script>
@@ -44,7 +40,8 @@
         htmx.config.inlineScriptNonce = "{{nonce}}";
         htmx.config.includeIndicatorStyles = false;
     </script>
-    <script rel="text/javascript" src="{{ versionedFile 'trustedtype.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
+    <!--<script rel="text/javascript" src="{{ versionedFile 'trustedtype.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>-->
+    <script type="module" src="{{ versionedFile 'trusedtype.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
     {{!-- <script rel="text/javascript" src="{{ versionedFile 'welcome.js' 'dist' 'js'}}" nonce="{{nonce}}"></script> --}}
     {{!-- <script type="text/javascript" nonce="{{nonce}}" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script> --}}
     {{!-- <script src="https://www.google.com/recaptcha/api.js?render=6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG" nonce="{{nonce}}" async defer></script> --}}
