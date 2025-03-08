@@ -10,6 +10,7 @@ const scriptSrc = [
   `'unsafe-inline'`,
 ];
 const styleSrc = [
+  `'unsafe-inline'`,
   `https://cdnjs.cloudflare.com`,
   `https://fonts.googleapis.com`,
   `https://maxcdn.bootstrapcdn.com`,

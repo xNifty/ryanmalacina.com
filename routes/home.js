@@ -209,6 +209,8 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
       );
     }
 
+    template = template.replace("{{nonce}}", res.locals._csrf);
+
     template = template.replace("{{csrfToken}}", sanitizedCSRFToken);
 
     // If there are validation errors, render the contact partial with the errors
