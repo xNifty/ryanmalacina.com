@@ -11,7 +11,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12 mb-md-0 mb-5">
-                    <form id="contact-form" hx-post="/send" hx-target="#contact" hx-swap="outerHTML">
+                    <form id="contact-form" hx-post="/send" hx-target="#contactformdiv" hx-swap="outerHTML swap:0 settle:0">
                         <input type="hidden" name="_csrf" value="{{csrfToken}}">
                         <div class="row">
                             <div class="col-md-6">
@@ -47,7 +47,7 @@
                         </div>
                         <div class="text-center">
                             <input type="text" id="g-recaptcha-response" name="g-recaptcha-response" value="" hidden>
-                            <script src="//www.google.com/recaptcha/api.js?trustedtypes=true&render=6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG" nonce="{{nonce}}"></script><script nonce="{{nonce}}">grecaptcha.ready(function(){grecaptcha.execute('6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG', {action: 'homepage'}).then(cb);});</script>
+                            <script src="//www.google.com/recaptcha/api.js?trustedtypes=true&render=6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG" nonce="{{nonce}}"></script>
                             <div class="text-md-left">
                                 <input class="btn btn-primary" type="submit" value="Send Email">
                             </div>

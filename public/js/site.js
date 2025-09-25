@@ -21,12 +21,11 @@ $(document).ready(function() {
   loginModalCapsLock();
   loginPageCapsLock();
 
-  /* Debug login modal */
-  console.log('Login modal element:', document.getElementById('loginModal'));
-  console.log('jQuery version:', $.fn.jquery);
-  console.log('Bootstrap version:', typeof $.fn.modal);
-  console.log('Bootstrap object:', typeof window.bootstrap);
-  console.log('jQuery UI version:', typeof $.fn.dialog);
+  /* Initialize reCAPTCHA on load */
+  initializeRecaptcha();
+
+  /* Ensure scrolling is enabled after login and dynamic actions */
+  document.body.style.overflow = "auto";
 });
 
 function loginModalCapsLock() {
@@ -68,3 +67,30 @@ function cb(token) {
   $("#g-recaptcha-response").val(token);
 }
 
+/* Centralized reCAPTCHA initializer (no inline scripts) */
+function initializeRecaptcha() {
+  if (typeof grecaptcha === 'undefined' || !document.getElementById('g-recaptcha-response')) {
+    return;
+  }
+  try {
+    grecaptcha.ready(function() {
+      grecaptcha.execute('6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG', { action: 'homepage' }).then(cb);
+    });
+  } catch (e) {
+    console.warn('reCAPTCHA init skipped:', e);
+  }
+}
+
+/* Re-run reCAPTCHA after HTMX swaps that touch the contact form */
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+  var elt = evt.target;
+  if (elt && elt.querySelector && elt.querySelector('#contactformdiv')) {
+    initializeRecaptcha();
+  }
+});
+
+if ('SecurityPolicyViolationEvent' in window)
+  document.addEventListener('securitypolicyviolation', (e) => {
+     console.log(e.sample + '` in `' + e.violatedDirective + '`');
+  } );
+else console.log('SecurityPolicyViolationEvent unsupported');
