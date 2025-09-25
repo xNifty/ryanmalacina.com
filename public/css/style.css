@@ -695,3 +695,18 @@ mark {
     padding: 10px;
     box-sizing: border-box;
 }
+
+/* Contact form error alert - show when there are errors */
+#emailalert:has(#emailerror:not(:empty)) {
+    position: static !important;
+    opacity: 1 !important;
+}
+
+/* Fallback for browsers that don't support :has() */
+#emailerror:not(:empty) {
+    display: inline;
+}
+
+#emailerror:not(:empty) ~ * {
+    display: block;
+}

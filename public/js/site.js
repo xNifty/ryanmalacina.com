@@ -20,6 +20,13 @@ $(document).ready(function() {
   /* Login caps lock checks */
   loginModalCapsLock();
   loginPageCapsLock();
+
+  /* Debug login modal */
+  console.log('Login modal element:', document.getElementById('loginModal'));
+  console.log('jQuery version:', $.fn.jquery);
+  console.log('Bootstrap version:', typeof $.fn.modal);
+  console.log('Bootstrap object:', typeof window.bootstrap);
+  console.log('jQuery UI version:', typeof $.fn.dialog);
 });
 
 function loginModalCapsLock() {
