@@ -30,12 +30,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.14.1/jquery-ui.min.js" nonce="{{nonce}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js" nonce="{{nonce}}"></script>
     <script nonce="{{nonce}}">hljs.highlightAll();</script>
-    <script nonce="{{nonce}}">
-        htmx.config.nonce = "{{nonce}}";
-        htmx.config.inlineStyleNonce = "{{nonce}}";
-        htmx.config.inlineScriptNonce = "{{nonce}}";
-        htmx.config.includeIndicatorStyles = false;
-    </script>
     <!--<script rel="text/javascript" src="{{ versionedFile 'trustedtype.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>-->
     <script type="module" src="{{ versionedFile 'trustedtype.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
     {{!-- <script rel="text/javascript" src="{{ versionedFile 'welcome.js' 'dist' 'js'}}" nonce="{{nonce}}"></script> --}}
