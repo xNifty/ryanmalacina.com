@@ -148,8 +148,14 @@ APP.use(
 APP.locals.elasticClient = CLIENT;
 
 APP.use(function(req, res, next) {
-  var nonce = generateNonce();
-  res.locals.nonce = nonce;
+  const htmxNonce = req.get("X-CSP-Nonce");
+  if (req.get("HX-Request") && htmxNonce) {
+    res.locals.nonce = htmxNonce;
+  } else {
+    // Otherwise generate a fresh nonce for full page loads
+    res.locals.nonce = generateNonce();
+  }
+  var nonce = res.locals.nonce;
   res.locals.cspNonce = "nonce-" + nonce;
   next();
 });

@@ -68,3 +68,9 @@ function cb(token) {
   $("#g-recaptcha-response").val(token);
 }
 
+document.body.addEventListener("htmx:configRequest", (evt) => {
+  const nonce = document.querySelector('meta[name="htmx-config"]')
+    .getAttribute("content")
+    .match(/"inlineStyleNonce":"([^"]+)"/)[1]; // extract from meta JSON
+  evt.detail.headers['X-CSP-Nonce'] = nonce;
+});
