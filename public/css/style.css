@@ -710,3 +710,6 @@ mark {
 #emailerror:not(:empty) ~ * {
     display: block;
 }
+
+#sp_pass_message.capslock-hidden { display: none !important; }
+#sp_pass_message.capslock-visible { display: block !important; }
