@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Joi from "@hapi/joi";
 import mongoosePaginate from "mongoose-paginate-v2";
-import client from '../utils/elastic.js';
+import connectToClient from "../utils/elastic.js";
 import "dotenv/config";
 
 const newsScheme = new mongoose.Schema({
@@ -48,10 +48,10 @@ newsScheme.plugin(mongoosePaginate);
 
 // const News = mongoose.model('News', newsScheme);
 
-if (USE_ELASTIC === 'true') {
+if (USE_ELASTIC === "true") {
   async function indexNewsToElasticsearch(news) {
     await client.index({
-      index: 'news',
+      index: "news",
       id: news._id.toString(),
       body: {
         news_title: news.news_title,
@@ -63,15 +63,15 @@ if (USE_ELASTIC === 'true') {
     });
   }
 
-  newsScheme.post('save', async function(doc) {
+  newsScheme.post("save", async function (doc) {
     await indexNewsToElasticsearch(doc);
   });
 
-  newsScheme.post('findOneAndUpdate', async function(doc) {
+  newsScheme.post("findOneAndUpdate", async function (doc) {
     await indexNewsToElasticsearch(doc);
   });
 } else {
-  newsScheme.index({ news_search: 'text', news_title: 'text' });
+  newsScheme.index({ news_search: "text", news_title: "text" });
 }
 
 function validateNews(user) {
