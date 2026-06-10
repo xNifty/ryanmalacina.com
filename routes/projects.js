@@ -20,8 +20,7 @@ import hljs from "highlight.js";
 import util from "util";
 import config from "config";
 import _ from "lodash";
-import createDOMPurify from "dompurify";
-import { JSDOM } from "jsdom";
+import { sanitizeText } from "../utils/sanitizeText.js";
 
 import { Project, validateProject } from "../models/projects.js";
 import { clearProjectSession } from "../utils/sessionHandler.js";
@@ -437,11 +436,8 @@ ROUTER.put(
 );
 
 ROUTER.get("/delete-modal/:id", (req, res) => {
-  const window = new JSDOM("").window;
-  const DOMPurify = createDOMPurify(window);
-
-  let sanitizedID = DOMPurify.sanitize(req.params.id);
-  let sanitizedCSRFToken = DOMPurify.sanitize(res.locals._csrf);
+  let sanitizedID = sanitizeText(req.params.id);
+  let sanitizedCSRFToken = sanitizeText(res.locals._csrf);
   let modal = deleteModal(sanitizedID, sanitizedCSRFToken, "/projects/delete/");
   res.send(modal);
 });

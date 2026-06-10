@@ -28,8 +28,7 @@ import sanitize from "sanitize-html";
 import dateFormat from "dateformat";
 import MarkdownIt from "markdown-it";
 import _ from "lodash";
-import createDOMPurify from "dompurify";
-import { JSDOM } from "jsdom";
+import { sanitizeText } from "../utils/sanitizeText.js";
 
 import auth from "../utils/auth.js";
 import logErrorToFile from "../utils/errorLogging.js";
@@ -379,11 +378,8 @@ ROUTER.post(
 );
 
 ROUTER.get("/news/delete-modal/:id", (req, res) => {
-  const window = new JSDOM("").window;
-  const DOMPurify = createDOMPurify(window);
-
-  let sanitizedID = DOMPurify.sanitize(req.params.id);
-  let sanitizedCSRFToken = DOMPurify.sanitize(res.locals._csrf);
+  let sanitizedID = sanitizeText(req.params.id);
+  let sanitizedCSRFToken = sanitizeText(res.locals._csrf);
   let modal = deleteModal(
     sanitizedID,
     sanitizedCSRFToken,

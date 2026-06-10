@@ -6,8 +6,7 @@ import words from "number-to-words";
 import { RecaptchaV3 as Recaptcha } from "express-recaptcha";
 import fs from "fs";
 import path from "path";
-import createDOMPurify from "dompurify";
-import { JSDOM } from "jsdom";
+import { sanitizeText } from "../utils/sanitizeText.js";
 
 import { Project } from "../models/projects.js";
 import { News } from "../models/news.js";
@@ -142,15 +141,12 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
   if (errors !== "") {
     template = errorSource;
 
-    const window = new JSDOM("").window;
-    const DOMPurify = createDOMPurify(window);
-
-    let sanitizedErrors = DOMPurify.sanitize(errors);
-    let sanitizedSubject = DOMPurify.sanitize(subject);
-    let sanitizedSubjectName = DOMPurify.sanitize(subject_name);
-    let sanitizedFromEmail = DOMPurify.sanitize(fromEmail);
-    let sanitizedMessage = DOMPurify.sanitize(message);
-    let sanitizedCSRFToken = DOMPurify.sanitize(res.locals._csrf);
+    let sanitizedErrors = sanitizeText(errors);
+    let sanitizedSubject = sanitizeText(subject);
+    let sanitizedSubjectName = sanitizeText(subject_name);
+    let sanitizedFromEmail = sanitizeText(fromEmail);
+    let sanitizedMessage = sanitizeText(message);
+    let sanitizedCSRFToken = sanitizeText(res.locals._csrf);
 
     template = template.replace("{{contacterrors}}", sanitizedErrors);
 
