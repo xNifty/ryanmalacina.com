@@ -19,7 +19,7 @@ import renderError from "./utils/renderErrorPage.js";
 import { strings } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
 import urls from "./config/urls.js";
-import connectToClient from './utils/elastic.js';
+import { connectToClient, ensureNewsIndex } from './utils/elastic.js';
 import ElasticIndex from './utils/elasticIndex.js';
 
 // Routes
@@ -91,36 +91,8 @@ const HBS = exphbs.create({
 // @TODO: I think this can be moved to a util and then just have a single call in here to that
 if (USE_ELASTIC == 'true') {
   ElasticIndex();
-
   CLIENT = connectToClient(ELASTIC_USERNAME, ELASTIC_PASSWORD, ELASTIC_URL);
-  //export { CLIENT };
-
-  // TODO: create function to automatically create indexes for schemas so that we don't have to do this here and can
-  // instead handle this per model schema and have them all be included in Elasticsearch
-  const ELASTIC = async () => {
-    const exists = await CLIENT.indices.exists({ index: 'news' });
-    console.log("Exists: ", exists);
-    if (!exists) {
-      await CLIENT.indices.create({
-        index: 'news',
-        body: {
-          mappings: {
-            properties: {
-              news_title: { type: 'text' },
-              news_description_html: { type: 'text' },
-              published_date: { type: 'text' },
-              published_date_unclean: { type: 'date' },
-              news_clean_output: { type: 'text' },
-            },
-          },
-        },
-      });
-    } else {
-    }
-  };
-
-  // Create index
-  ELASTIC();
+  ensureNewsIndex(CLIENT);
 }
 
 export { CLIENT };

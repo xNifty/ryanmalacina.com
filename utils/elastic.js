@@ -25,4 +25,31 @@ function connectToClient(username, password, url) {
   return client;
 }
 
-export default connectToClient;
+
+export async function ensureNewsIndex(client) {
+  try {
+    const exists = await client.indices.exists({ index: 'news' });
+    console.log('Exists: ', exists);
+    if (!exists) {
+      await client.indices.create({
+        index: 'news',
+        body: {
+          mappings: {
+            properties: {
+              news_title: { type: 'text' },
+              news_description_html: { type: 'text' },
+              published_date: { type: 'text' },
+              published_date_unclean: { type: 'date' },
+              news_clean_output: { type: 'text' },
+            },
+          },
+        },
+      });
+      console.log('Created news index.');
+    }
+  } catch (err) {
+    console.error('Error ensuring news index:', err);
+  }
+}
+
+export { connectToClient, ensureNewsIndex };
