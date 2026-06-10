@@ -1,6 +1,6 @@
 <div class="container" id="blog">
     <h1>Latest Blog Posts</h1>
-    These are the last 5 blog posts that I have made.  If you would like to visit the entire blog, you can do so by clicking <a href="{{blogURL}}">here</a>.
+    <p class="section-intro">These are the last 5 blog posts that I have made. If you would like to visit the entire blog, you can do so by clicking <a href="{{blogURL}}" class="text-link">here</a>.</p>
     {{#iff blogPosts.length ">" 0}}
     <div class="panel-group">
         {{#each blogPosts as |posts| }}
@@ -11,14 +11,14 @@
             </div>
             <div class="panel-collapse collapse custom-text" id="blog{{ posts.counter }}">
                 <div class="panel-body">
-                    {{{ posts.excerpt }}} <a href="{{posts.url}}" data-toogle="tooltip" title="View &quot;{{posts.title}}&quot; on the blog"><i class="fa fa-arrow-right"></i></a>
+                    {{{ posts.excerpt }}} <a href="{{posts.url}}" data-toogle="tooltip" title="View &quot;{{posts.title}}&quot; on the blog" class="text-link"><i class="fa fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
         {{/each}}
     </div>
     {{else}}
-        There appears to have been an issue grabbing the latest blog posts. You can view the blog by clicking <a href="{{blogURL}}">here</a>.
+        <p class="section-intro">There appears to have been an issue grabbing the latest blog posts. You can view the blog by clicking <a href="{{blogURL}}" class="text-link">here</a>.</p>
     {{/iff}}
     <hr>
 </div>

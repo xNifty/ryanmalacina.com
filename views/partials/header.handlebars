@@ -1,4 +1,14 @@
 <head>
+    <script nonce="{{nonce}}">
+    (function() {
+        var match = document.cookie.match(/(?:^|; )theme=([^;]*)/);
+        var theme = match ? decodeURIComponent(match[1]) : null;
+        if (theme !== 'light' && theme !== 'dark') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+    </script>
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -9,8 +19,24 @@
     <link rel="stylesheet" href="{{ versionedFile 'style.css' 'dist' 'css'}}">
     <link rel="stylesheet" href="{{ versionedFile 'simplePagination.css' 'dist' 'css'}}"/>
     <link rel="stylesheet" href="{{ versionedFile 'github.css' 'dist' 'css'}}">
-    <link rel="stylesheet" href="{{ versionedFile 'githubdark.css' 'dist' 'css'}}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+    <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+    <script nonce="{{nonce}}">
+    (function() {
+        var theme = document.documentElement.getAttribute('data-theme');
+        var lightLink = document.getElementById('hljs-light');
+        var darkLink = document.getElementById('hljs-dark');
+        if (lightLink && darkLink) {
+            if (theme === 'dark') {
+                lightLink.media = 'not all';
+                darkLink.media = 'all';
+            } else {
+                lightLink.media = 'all';
+                darkLink.media = 'not all';
+            }
+        }
+    })();
+    </script>
     <link rel="shortcut icon" href="/images/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">

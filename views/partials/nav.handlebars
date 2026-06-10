@@ -46,6 +46,11 @@
                 <li><a class="nav-link" href="/#contact">Contact</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <button type="button" class="theme-toggle" aria-label="Toggle color theme" title="Toggle color theme">
+                        <i class="fa fa-sun-o" aria-hidden="true"></i>
+                    </button>
+                </li>
                 {{#if authenticated }} {{!-- This is coming from res.locals --}}
 		            <li class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">Hello, {{ realName }}</a>

@@ -1,21 +1,29 @@
 <div class="container" id="prj-index">
-    <div class="text-center">
-        <div id="project-header">
-            {{#iff authenticated '&&' isAdmin}}
-                <div id="editbtn-wrapper">
-                    <span id="editbutton"><a href="/projects/{{id}}/edit" class="btn btn-primary">
-                        <span class="glyphicon glyphicon-pencil"></span> Edit Project</a>
-                    </span>
-                </div>
-            {{/iff}}
-            <h1>{{ project_title }}</h1>
+    <div class="project-hero">
+        {{#iff authenticated '&&' isAdmin}}
+            <div class="editbtn-wrapper">
+                <a href="/projects/{{id}}/edit" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-pencil"></span> Edit Project
+                </a>
+            </div>
+        {{/iff}}
+        <h1>{{ project_title }}</h1>
+        <div class="project-meta">
+            {{#if project_source}}
+                <a href="{{ project_source }}" target="_blank" rel="noopener noreferrer" class="project-badge">
+                    <i class="fa fa-github" aria-hidden="true"></i> View Source
+                </a>
+            {{/if}}
+            {{#if last_save_date}}
+                <span class="project-badge">
+                    <i class="fa fa-clock-o" aria-hidden="true"></i> Updated {{ last_save_date }}
+                </span>
+            {{/if}}
         </div>
-        <h4><a href="{{ project_source }}" target="_blank">Source</a></h4>
     </div>
-    <div class="markdown-body">
-        {{{project_description}}}
-    </div>
-    <div id="edit">
-        {{#if last_save_date}}<div id="lastedit">Last Updated: {{ last_save_date }}</div>{{/if}}
+    <div class="project-content-card">
+        <div class="markdown-body">
+            {{{project_description}}}
+        </div>
     </div>
 </div>

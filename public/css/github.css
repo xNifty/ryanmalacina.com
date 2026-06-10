@@ -10,8 +10,7 @@
   --fontStack-monospace: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
   --fgColor-accent: Highlight;
 }
-@media (prefers-color-scheme: dark) {
-  .markdown-body, [data-theme="dark"] {
+[data-theme="dark"] .markdown-body {
     /* dark */
     color-scheme: dark;
     --focus-outlineColor: #1f6feb;
@@ -22,13 +21,13 @@
     --fgColor-attention: #d29922;
     --fgColor-danger: #f85149;
     --fgColor-done: #ab7df8;
-    --bgColor-default: #0d1117;
-    --bgColor-muted: #151b23;
-    --bgColor-neutral-muted: #656c7633;
+    --bgColor-default: #2a7a9a;
+    --bgColor-muted: #235e78;
+    --bgColor-neutral-muted: rgba(255, 255, 255, 0.12);
     --bgColor-attention-muted: #bb800926;
-    --borderColor-default: #3d444d;
-    --borderColor-muted: #3d444db3;
-    --borderColor-neutral-muted: #3d444db3;
+    --borderColor-default: rgba(255, 255, 255, 0.22);
+    --borderColor-muted: rgba(255, 255, 255, 0.18);
+    --borderColor-neutral-muted: rgba(255, 255, 255, 0.15);
     --borderColor-accent-emphasis: #1f6feb;
     --borderColor-success-emphasis: #238636;
     --borderColor-attention-emphasis: #9e6a03;
@@ -64,10 +63,8 @@
     --color-prettylights-syntax-markup-ignored-bg: #1158c7;
     --color-prettylights-syntax-meta-diff-range: #d2a8ff;
     --color-prettylights-syntax-sublimelinter-gutter-mark: #3d444d;
-  }
 }
-@media (prefers-color-scheme: light) {
-  .markdown-body, [data-theme="light"] {
+[data-theme="light"] .markdown-body {
     /* light */
     color-scheme: light;
     --focus-outlineColor: #0969da;
@@ -120,7 +117,6 @@
     --color-prettylights-syntax-markup-ignored-bg: #0550ae;
     --color-prettylights-syntax-meta-diff-range: #8250df;
     --color-prettylights-syntax-sublimelinter-gutter-mark: #818b98;
-  }
 }
 
 .markdown-body {

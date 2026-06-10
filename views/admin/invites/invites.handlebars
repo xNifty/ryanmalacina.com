@@ -1,0 +1,49 @@
+<div class="container">
+    <div class="text-center"><h1>Admin Backend - Invites</h1></div>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" id="_csrf">
+    {{#iff invites.length ">" 0}}
+        <div class="row text-center">
+            {{#each invites as |invite| }}
+                <div class="col-md-3 col-xs-3">
+                    <div class="thumbnail">
+                        <div class="caption center-block">
+                            {{#if (eq invite.inviteused 0)}}
+                                <a class="editInvite" href="/createinvite/{{ invite._id}}/edit" data-id="{{ invite._id}}"> <i class="fa fa-pencil"></i></a>
+                                <a 
+                                  hx-get="/createinvite/delete-modal/{{ invite._id }}" 
+                                  hx-target="#confirmation-modal" 
+                                  hx-swap="innerHTML"
+                                  hx-trigger="click"
+                                  class="trigger-btn">
+                                  <i class="fa fa-trash"></i>
+                                </a>
+                            {{/if}}
+                            <strong>{{ invite.email }}</strong><br />
+                            <small>Code: {{ invite.inviteCode }}</small><br />
+                            {{#if (eq invite.inviteused 1)}}
+                                <span class="text-success">Used</span>
+                            {{else}}
+                                <span class="text-warning">Unused</span>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    {{else}}
+        <hr>
+        There are no invites at this time.
+    {{/iff}}
+    <hr><br>
+    <form action="/createinvite" method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <div class="form-group">
+            <label for="email">Email Address</label><br>
+            <input type="email" class="custom-text" name="email" placeholder="user@example.com" required><br><br>
+        </div>
+        <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-plus"></span> Create Invite</button>
+    </form>
+</div>
+<div id="confirmation-modal"></div>
+

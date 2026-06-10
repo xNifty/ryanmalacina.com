@@ -1,4 +1,16 @@
 // news javascript
+
+function getPaginationStyle() {
+  var theme = document.documentElement.getAttribute("data-theme");
+  if (theme === "dark") {
+    return "dark-theme";
+  }
+  if (theme === "light") {
+    return "light-theme";
+  }
+  return "compact-theme";
+}
+
 $(document).ready(function () {
   $("#news-search").on("click", function (event) {
     var sortOrder;
@@ -22,7 +34,7 @@ $(document).ready(function () {
 
     $("#compact-pagination").pagination({
       pages: pages,
-      cssStyle: "compact-theme",
+      cssStyle: getPaginationStyle(),
       hrefTextPrefix: "?page=",
       currentPage: 1,
       onPageClick: function (page, event) {
@@ -80,7 +92,7 @@ function reloadPagination(search = "", curpage = 1) {
   if (useTerm) {
     $("#compact-pagination").pagination({
       pages: pages,
-      cssStyle: "compact-theme",
+      cssStyle: getPaginationStyle(),
       hrefTextPrefix: "?page=",
       hrefTextSuffix: "&term=" + search,
       currentPage: curpage,
@@ -91,7 +103,7 @@ function reloadPagination(search = "", curpage = 1) {
   } else {
     $("#compact-pagination").pagination({
       pages: pages,
-      cssStyle: "compact-theme",
+      cssStyle: getPaginationStyle(),
       hrefTextPrefix: "?page=",
       currentPage: curpage,
       onPageClick: function (page, event) {
@@ -129,7 +141,7 @@ function advancePage(currentpage, e, search = "", totalPages = 1) {
       if (search != "") {
         $("#compact-pagination").pagination({
           pages: totalPages,
-          cssStyle: "compact-theme",
+          cssStyle: getPaginationStyle(),
           hrefTextPrefix: "?page=",
           hrefTextSuffix: "&term=" + search,
           currentPage: currentpage,
@@ -140,7 +152,7 @@ function advancePage(currentpage, e, search = "", totalPages = 1) {
       } else {
         $("#compact-pagination").pagination({
           pages: totalPages,
-          cssStyle: "compact-theme",
+          cssStyle: getPaginationStyle(),
           hrefTextPrefix: "?page=",
           currentPage: currentpage,
           onPageClick: function (page, event) {

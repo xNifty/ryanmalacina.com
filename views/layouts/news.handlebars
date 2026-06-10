@@ -3,6 +3,7 @@
 <html>
 {{> header}}
 <body>
+    {{> theme-script}}
     {{> nav}}
     <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load" nonce="{{nonce}}">{{> status}}</div>
     {{{ body }}}

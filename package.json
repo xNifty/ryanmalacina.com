@@ -71,6 +71,9 @@
     "uuid": "^13.0.0",
     "yargs": "^18.0.0"
   },
+  "overrides": {
+    "parse5": "7.3.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.28.4",
     "@babel/preset-env": "^7.28.3",

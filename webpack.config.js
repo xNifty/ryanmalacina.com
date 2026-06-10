@@ -22,11 +22,11 @@ const config = {
     site: "@js/site.js",
     welcome: "@js/welcome.js",
     "update-project": "@js/update-project.js",
+    theme: "@js/theme.js",
     trustedtype: "@js/trustedtype.js",
     simplePagination: "@css/simplePagination.css",
     style: "@css/style.css",
     github: "@css/github.css",
-    githubdark: "@css/githubdark.css",
   },
   output: {
     filename: "js/[name].[contenthash].js",

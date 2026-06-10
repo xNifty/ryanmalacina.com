@@ -1,0 +1,19 @@
+<div class="container">
+    <a class="back-button" href="/createinvite" data-toogle="tooltip" title="Return to invites"></a>
+    <form action="/createinvite/{{invite._id}}/edit" method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <div class="form-group">
+            <label for="email">Email Address</label><br>
+            <input type="email" class="custom-text" name="email" placeholder="user@example.com" value="{{invite.email}}" required><br><br>
+        </div>
+        <div class="form-group">
+            <label>Invite Code</label><br>
+            <input type="text" class="custom-text" value="{{invite.inviteCode}}" readonly><br>
+            <small class="text-muted">Invite code cannot be changed</small><br><br>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <span class="glyphicon glyphicon-pencil"></span> Update Invite
+        </button>
+    </form>
+</div>
+

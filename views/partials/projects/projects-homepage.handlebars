@@ -1,27 +1,26 @@
-<div class="container" id="projects">
+<div class="container projects-section" id="projects">
     <h1>Projects</h1>
-    <p>I work on multiple different projects in my free time, some of which are completed, and others that are
-    simply basic ideas that I started but may not have finished.  While I only show three projects here on the home page, there are currently
-    {{ project_count }} projects that I have listed. To view a list of all projects I have worked on you can click <a href="projects">here</a>.</p>
+    <p class="section-intro">I work on multiple different projects in my free time, some of which are completed, and others that are
+    simply basic ideas that I started but may not have finished. While I only show three projects here on the home page, there are currently
+    {{ project_count }} projects that I have listed. To view a list of all projects I have worked on you can click <a href="projects" class="text-link">here</a>.</p>
     {{#iff projects.length ">" 0}}
-        <div class="row text-center">
+        <div class="row project-grid">
             {{#each projects as |projects| }}
-            <div class="prjlist"></div>
                 <div class="col-xs-6 col-sm-4">
-                    <div class="thumbnail prjThumb">
+                    <div class="project-card prjThumb">
                         <a href="/projects/{{ projects._id }}">
-                            <img class="img-responsive greyimg" src="/images/{{ projects.project_image }}"
-                                 alt="{{ projects.project_name }} Logo">
+                            <div class="project-card-image">
+                                <img class="greyimg" src="/images/{{ projects.project_image }}"
+                                     alt="{{ projects.project_name }} Logo">
+                            </div>
+                            <div class="project-card-title">{{ projects.project_title }}</div>
                         </a>
-                        <div class="caption center-block">
-                            {{ projects.project_title }}
-                        </div>
                     </div>
                 </div>
             {{/each}}
         </div>
     {{else}}
-        Uh oh! It appears I haven't selected any projects to display here.
+        <p class="section-intro">Uh oh! It appears I haven't selected any projects to display here.</p>
     {{/iff}}
     <hr>
 </div>
