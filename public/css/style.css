@@ -363,9 +363,31 @@ li.dropdown:hover > .dropdown-menu a:hover,
     outline: none;
 }
 
-.theme-toggle i {
+.theme-toggle-icon {
     font-size: 16px;
     margin: 0;
+}
+
+.theme-toggle-icon--dark {
+    display: none;
+}
+
+[data-theme="dark"] .theme-toggle-icon--light {
+    display: none;
+}
+
+[data-theme="dark"] .theme-toggle-icon--dark {
+    display: inline-block;
+}
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme]) .theme-toggle-icon--light {
+        display: none;
+    }
+
+    html:not([data-theme]) .theme-toggle-icon--dark {
+        display: inline-block;
+    }
 }
 
 #lastedit {
