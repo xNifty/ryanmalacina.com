@@ -559,6 +559,54 @@ i.fa {
 
 .modal-title {
     display: inline-block;
+    color: var(--color-text);
+}
+
+.modal-content {
+    background-color: var(--color-content-bg);
+    color: var(--color-text);
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-card);
+}
+
+.modal-header,
+.modal-footer {
+    border-color: var(--color-border);
+}
+
+.modal .close {
+    color: var(--color-text);
+    text-shadow: none;
+    opacity: 0.7;
+}
+
+.modal .close:hover,
+.modal .close:focus {
+    color: var(--color-text);
+    opacity: 1;
+}
+
+.modal .form-control {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.modal .form-control::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+}
+
+.modal a,
+.modal a:active,
+.modal a:visited {
+    color: var(--color-accent);
+}
+
+.modal a:hover,
+.modal a:focus {
+    color: var(--color-accent-hover);
+    text-decoration: none;
 }
 
 /* Edit and Delete icons on the news page */
