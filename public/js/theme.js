@@ -33,19 +33,12 @@
     }
   }
 
-  function updateToggleIcon(theme) {
-    const toggles = document.querySelectorAll(".theme-toggle");
-    toggles.forEach(function(toggle) {
-      const icon = toggle.querySelector("i");
-      if (!icon) {
-        return;
-      }
+  function updateToggleLabels(theme) {
+    document.querySelectorAll(".theme-toggle").forEach(function(toggle) {
       if (theme === "dark") {
-        icon.className = "fa fa-sun-o";
         toggle.setAttribute("title", "Switch to light mode");
         toggle.setAttribute("aria-label", "Switch to light mode");
       } else {
-        icon.className = "fa fa-moon-o";
         toggle.setAttribute("title", "Switch to dark mode");
         toggle.setAttribute("aria-label", "Switch to dark mode");
       }
@@ -55,7 +48,7 @@
   function applyTheme(theme, persist) {
     document.documentElement.setAttribute("data-theme", theme);
     applyHljsTheme(theme);
-    updateToggleIcon(theme);
+    updateToggleLabels(theme);
 
     if (persist) {
       document.cookie = THEME_COOKIE + "=" + theme + "; max-age=31536000; path=/; SameSite=Lax";
