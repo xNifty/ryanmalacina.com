@@ -47,8 +47,9 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <button type="button" class="theme-toggle" aria-label="Toggle color theme" title="Toggle color theme">
-                        <i class="fa fa-sun-o" aria-hidden="true"></i>
+                    <button type="button" class="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+                        <i class="fa fa-moon-o theme-toggle-icon theme-toggle-icon--light" aria-hidden="true"></i>
+                        <i class="fa fa-sun-o theme-toggle-icon theme-toggle-icon--dark" aria-hidden="true"></i>
                     </button>
                 </li>
                 {{#if authenticated }} {{!-- This is coming from res.locals --}}
