@@ -4,6 +4,7 @@
 {{> header}}
 <body>
     {{> theme-script}}
+    {{> splash-screen}}
     {{> nav}}
     <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">{{> status}}</div>
     {{> confirmation}}
@@ -26,6 +27,7 @@
     </script>
     <script rel="text/javascript" nonce="{{nonce}}" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script nonce="{{nonce}}" src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script rel="text/javascript" src="{{ versionedFile 'welcome.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
     <script rel="text/javascript" src="{{ versionedFile 'new-project.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
     <script nonce="{{nonce}}">
         var simplemde = new SimpleMDE({ element: document.getElementById("project_description"), toolbar: ["preview"], placeholder: "Project Description Here - Write in Markdown", });

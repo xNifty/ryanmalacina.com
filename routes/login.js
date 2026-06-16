@@ -8,6 +8,34 @@ import ValidTarget from "../utils/validTarget.js";
 
 const ROUTER = express.Router();
 
+function getSafeReturnTo(req) {
+  const rootURL = config.get("rootURL");
+  let returnTo = "/";
+
+  try {
+    if (typeof req.query.returnTo === "string" && req.query.returnTo !== "") {
+      returnTo = new URL(req.query.returnTo, rootURL).toString();
+    } else {
+      const currentURL = req.get("HX-Current-URL");
+
+      if (currentURL) {
+        const parsedCurrentURL = new URL(currentURL, rootURL);
+        const nestedReturnTo = parsedCurrentURL.searchParams.get("returnTo");
+
+        if (nestedReturnTo) {
+          returnTo = new URL(nestedReturnTo, rootURL).toString();
+        } else if (parsedCurrentURL.pathname !== "/login") {
+          returnTo = parsedCurrentURL.toString();
+        }
+      }
+    }
+  } catch (err) {
+    returnTo = "/";
+  }
+
+  return ValidTarget(returnTo) ? returnTo : "/";
+}
+
 ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("login", {
     title: strings.pageHeader.login,
@@ -19,37 +47,15 @@ ROUTER.post(
   "/",
   [passport.authenticate("local", { failWithError: true })],
   function(req, res) {
-    var returnTo = "";
+    const returnTo = getSafeReturnTo(req);
     req.flash("success", strings.success.loginSuccess);
 
-    const HXReturnTo = req.get("HX-Current-URL");
-
-    if (HXReturnTo.includes("returnTo=")) {
-      var parts = HXReturnTo.split("returnTo=");
-      var returnParts = parts[1];
-      returnParts = decodeURIComponent(returnParts);
-      returnToPath = new URL(returnParts, config.get("rootURL"));
-      returnTo = returnToPath.toString();
-    } else {
-      returnTo = "/";
+    if (req.get("HX-Request")) {
+      res.set("HX-Redirect", returnTo);
+      return res.status(200).end();
     }
 
-    if (req.query.returnTo !== undefined) {
-      var returnToPath = new URL(req.query.returnTo, config.get("rootURL"));
-      returnTo = returnToPath.toString();
-    }
-
-    if (returnTo !== undefined && returnTo !== "") {
-      if (!ValidTarget(returnTo)) {
-        returnTo = "/";
-      }
-    } else {
-      returnTo = "/";
-    }
-
-    res.set("HX-Redirect", returnTo);
-    res.send('<meta http-equiv="refresh" content="0');
-    res.status(200).end();
+    return res.redirect(returnTo);
   },
   function(err, req, res, next) {
     // console.log(err);
@@ -71,22 +77,15 @@ ROUTER.post(
   "/modal",
   passport.authenticate("local", { failWithError: true }),
   function(req, res) {
-    var returnTo = "";
+    const returnTo = getSafeReturnTo(req);
     req.flash("success", strings.success.loginSuccess);
 
-    const HXReturnTo = req.get("HX-Current-URL");
-
-    if (HXReturnTo !== undefined) {
-      var returnTo = HXReturnTo;
-      if (!ValidTarget(HXReturnTo)) {
-        returnTo = "/";
-      }
-    } else {
-      returnTo = "/";
+    if (req.get("HX-Request")) {
+      res.set("HX-Redirect", returnTo);
+      return res.status(200).end();
     }
 
-    res.set("HX-Location", returnTo);
-    res.status(200).end();
+    return res.redirect(returnTo);
   },
   function(err, req, res, next) {
     res.send(
