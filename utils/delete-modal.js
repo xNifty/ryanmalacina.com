@@ -5,7 +5,7 @@
   * @returns {string} - The HTML for the delete modal
 */
 function deleteModal(id, csrf, url) {
-  return `<div id="confirmModal" class="modal fade">
+  return `<div id="confirmModal" class="modal csp-modal is-visible" aria-hidden="false">
   <div class="modal-dialog modal-login">
     <div class="modal-content">
       <form 
@@ -17,7 +17,7 @@ function deleteModal(id, csrf, url) {
       >
         <div class="modal-header">
           <h4 class="modal-title">Confirm Delete</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <button type="button" class="close" data-csp-modal-dismiss aria-hidden="true">&times;</button>
         </div>
         <div class="modal-body">
           Are you sure you wish to delete this entry?
@@ -29,15 +29,7 @@ function deleteModal(id, csrf, url) {
       </form>
     </div>
   </div>
-</div><script>
-      $('#confirmModal').modal('show');
-
-      function closeModal() {
-  document.querySelector("#confirmModal").classList.remove("show");
-  document.body.classList.remove("modal-open");
-  document.querySelector(".modal-backdrop").remove();
-}
-    </script>`;
+</div>`;
 }
 
 export default deleteModal;

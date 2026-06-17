@@ -152,10 +152,13 @@ async function setupHelmetCSP() {
   const csp = require("helmet-csp");
   APP.use(
     csp({
-      directives: getDirectives(
-        (req, res) => `'${res.locals.cspNonce}'`,
-        NONCE_OPTIONS
-      ),
+      directives: {
+        ...getDirectives(
+          (req, res) => `'${res.locals.cspNonce}'`,
+          NONCE_OPTIONS
+        ),
+        styleSrcAttr: urls.styleSrcAttr,
+      },
     })
   );
 }

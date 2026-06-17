@@ -455,6 +455,57 @@ section.social a:hover {
     color: var(--color-accent);
 }
 
+#scroll.is-visible {
+    display: block;
+}
+
+body.is-scroll-enabled {
+    overflow: auto;
+}
+
+.csp-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: 0;
+}
+
+.csp-modal.is-visible {
+    display: block;
+}
+
+.csp-modal.is-visible::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #000;
+    opacity: 0.5;
+    z-index: 0;
+}
+
+.csp-modal .modal-dialog {
+    position: relative;
+    z-index: 1;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+#emailalert.emailalert-visible {
+    position: static;
+    opacity: 1;
+}
+
 #scroll {
     width: 40px;
     line-height: 40px;
