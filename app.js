@@ -206,6 +206,10 @@ APP.use(function(req, res, next) {
   res.locals.realName = req.session.name;
   res.locals.token = req.session.token;
   res.locals.authenticated = req.isAuthenticated();
+  res.locals.showSplashScreen =
+    !req.get("HX-Request") &&
+    req.cookies?.siteSplashSeen !== "true" &&
+    req.cookies?.welcomeShown !== "true";
 
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");

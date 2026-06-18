@@ -4,6 +4,7 @@
 {{> header}}
 <body>
     {{> theme-script}}
+    {{> splash-screen}}
     {{> nav-no-login}}
     <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">{{> status}}</div>
     {{{ body }}}
@@ -16,6 +17,7 @@
         crossorigin="anonymous" nonce="{{nonce}}">
     </script>
     <script rel="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" nonce="{{nonce}}"></script>
+    <script rel="text/javascript" src="{{ versionedFile 'welcome.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
     <script
         src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
         integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
