@@ -170,12 +170,9 @@ ROUTER.post(
       );
 
       let projectDescription = MARKDOWN.render(req.body.project_description);
-
-      // routes/projects.js
-      let projectSanitized = trustedTypes.createPolicy('default', {
-        createHTML: (html) => html
-      }).createHTML(sanitize(projectDescription, { allowedTags: safeTags }));
-
+      let projectSanitized = sanitize(projectDescription, {
+        allowedTags: safeTags,
+      });
 
       /*
         Default the project image to blank and if it exists, we can then set the image to the image from the
