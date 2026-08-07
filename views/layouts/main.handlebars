@@ -4,16 +4,14 @@
 {{> header}}
 <body>
     {{> theme-script}}
-    <!--<div id="welcomeMsg" class="welcome hide">Hey, I'm Ryan, and welcome to my site!</div>-->
-    <!--<div id="mainBody"> -->
-        {{> nav}}
-        <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load" nonce="{{nonce}}">{{> status}}</div>
-        {{> login}}
-        {{{ body }}}
+    {{> splash-screen}}
+    {{> nav}}
+    <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load" nonce="{{nonce}}">{{> status}}</div>
+    {{> login}}
+    {{{ body }}}
 
-        {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
-        {{> footer currentyear=currentyear}}
-    <!-- </div> --> 
+    {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
+    {{> footer currentyear=currentyear}}
     <script nonce="{{nonce}}">
         if (!window.grecaptcha) {
             const script = document.createElement('script');
@@ -31,7 +29,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.14.1/jquery-ui.min.js" nonce="{{nonce}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js" nonce="{{nonce}}"></script>
     <script nonce="{{nonce}}">hljs.highlightAll();</script>
-    {{!-- <script rel="text/javascript" src="{{ versionedFile 'welcome.js' 'dist' 'js'}}" nonce="{{nonce}}"></script> --}}
+    <script rel="text/javascript" src="{{ versionedFile 'welcome.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
     {{!-- <script type="text/javascript" nonce="{{nonce}}" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script> --}}
     {{!-- <script src="https://www.google.com/recaptcha/api.js?trustedtypes=true&render=6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG" nonce="{{nonce}}" async defer></script> --}}
 </body>

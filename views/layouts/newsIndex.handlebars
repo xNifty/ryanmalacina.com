@@ -4,6 +4,7 @@
 {{> header}}
 <body>
     {{> theme-script}}
+    {{> splash-screen}}
     {{> nav}}
     <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">{{> status}}</div>
     {{> login}}
@@ -21,6 +22,7 @@
     <script rel="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" nonce="{{nonce}}"></script>
     <script rel="text/javascript" src="/js/jquery.simplePagination.js" nonce="{{nonce}}"></script>
     <script rel="text/javascript" src="{{ versionedFile 'site.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
+    <script rel="text/javascript" src="{{ versionedFile 'welcome.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
     <script rel="text/javascript" src="{{ versionedFile 'news.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
     <script
         src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
