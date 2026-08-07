@@ -1,15 +1,20 @@
-// Use the browser's built-in trustedTypes API
-if (typeof trustedTypes !== 'undefined') {
-  // Create a Trusted Types policy
-  const policy = trustedTypes.createPolicy('default', {
+(function () {
+  const passthroughPolicy = {
     createHTML: (input) => input,
     createScript: (input) => input,
-    createScriptURL: (input) => input
-  });
+    createScriptURL: (input) => input,
+  };
 
-  // Make the policy globally accessible
-  window.trustedTypesPolicy = policy;
-} else {
-  // Fallback if trustedTypes is not available
-  console.warn('Trusted Types not supported in this browser');
-}
+  if (window.trustedTypesPolicy) {
+    return;
+  }
+
+  if (!window.trustedTypes || !window.trustedTypes.createPolicy) {
+    window.trustedTypesPolicy = passthroughPolicy;
+    return;
+  }
+
+  // The default policy lets existing server-rendered HTMX swaps pass through
+  // Trusted Types sinks while CSP enforcement is enabled.
+  window.trustedTypesPolicy = window.trustedTypes.createPolicy("default", passthroughPolicy);
+})();

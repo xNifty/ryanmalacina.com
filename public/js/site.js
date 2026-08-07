@@ -1,13 +1,52 @@
 // sitewide javascript
 
+function openCspModal(modalId) {
+  var modal = document.getElementById(modalId);
+  if (!modal) {
+    return;
+  }
+  modal.classList.add("is-visible");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+}
+
+function closeCspModal(modal) {
+  if (typeof modal === "string") {
+    modal = document.getElementById(modal);
+  }
+  if (!modal) {
+    return;
+  }
+  modal.classList.remove("is-visible");
+  modal.setAttribute("aria-hidden", "true");
+  if (!document.querySelector(".csp-modal.is-visible")) {
+    document.body.classList.remove("modal-open");
+  }
+}
+
+function syncModalBodyClass() {
+  if (document.querySelector(".csp-modal.is-visible")) {
+    document.body.classList.add("modal-open");
+  }
+}
+
 $(document).ready(function() {
+  if ($.support) {
+    $.support.transition = false;
+  }
+
+  document.body.classList.add("is-scroll-enabled");
+
   /* Scroll to top */
   $(window).scroll(function() {
-    var height = $(window).scrollTop();
-    if (height > 100) {
-      $("#scroll").fadeIn();
+    var scrollButton = document.getElementById("scroll");
+    if (!scrollButton) {
+      return;
+    }
+    if ($(window).scrollTop() > 100) {
+      scrollButton.classList.add("is-visible");
     } else {
-      $("#scroll").fadeOut();
+      scrollButton.classList.remove("is-visible");
     }
   });
 
@@ -23,9 +62,27 @@ $(document).ready(function() {
 
   /* Initialize reCAPTCHA on load */
   initializeRecaptcha();
+});
 
-  /* Ensure scrolling is enabled after login and dynamic actions */
-  document.body.style.overflow = "auto";
+document.body.addEventListener("click", function(event) {
+  var openTrigger = event.target.closest("[data-csp-modal-open]");
+  if (openTrigger) {
+    event.preventDefault();
+    openCspModal(openTrigger.getAttribute("data-csp-modal-open"));
+    return;
+  }
+
+  var dismissTrigger = event.target.closest("[data-csp-modal-dismiss]");
+  if (dismissTrigger) {
+    event.preventDefault();
+    closeCspModal(dismissTrigger.closest(".csp-modal"));
+    return;
+  }
+
+  var modal = event.target.closest(".csp-modal.is-visible");
+  if (modal && event.target === modal) {
+    closeCspModal(modal);
+  }
 });
 
 function loginModalCapsLock() {
@@ -83,6 +140,7 @@ function initializeRecaptcha() {
 
 document.body.addEventListener('htmx:afterSwap', function(evt) {
   var elt = evt.target;
+  syncModalBodyClass();
   if (elt && elt.querySelector && elt.querySelector('#contactformdiv')) {
     initializeRecaptcha();
   }

@@ -16,8 +16,8 @@
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous" nonce="{{nonce}}">
     </script>
-    <script src="https://unpkg.com/htmx.org@1.9.10" nonce="{{nonce}}"></script>
-    <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js" nonce="{{nonce}}"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.10/dist/htmx.min.js" nonce="{{nonce}}"></script>
+    <script src="https://unpkg.com/htmx-ext-response-targets@2.0.4/dist/response-targets.js" nonce="{{nonce}}"></script>
     <script rel="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" nonce="{{nonce}}"></script>
     
     <script rel="text/javascript" src="{{ versionedFile 'site.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
@@ -27,7 +27,7 @@
         crossorigin="anonymous" nonce="{{nonce}}">
     </script>
     <script type="text/javascript" nonce="{{nonce}}" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js?render=6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG" nonce="{{nonce}}" async defer></script>
+    <script src="https://www.google.com/recaptcha/api.js?trustedtypes=true&render=6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG" nonce="{{nonce}}" async defer></script>
     <script nonce="{{nonce}}" src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
     <script nonce="{{nonce}}">
         var simplemde = new SimpleMDE({ element: document.getElementById("editor"), toolbar: ["preview"], placeholder: "News Description Here - Write in Markdown", });

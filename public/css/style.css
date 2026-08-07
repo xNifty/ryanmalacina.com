@@ -363,9 +363,31 @@ li.dropdown:hover > .dropdown-menu a:hover,
     outline: none;
 }
 
-.theme-toggle i {
+.theme-toggle-icon {
     font-size: 16px;
     margin: 0;
+}
+
+.theme-toggle-icon--dark {
+    display: none;
+}
+
+[data-theme="dark"] .theme-toggle-icon--light {
+    display: none;
+}
+
+[data-theme="dark"] .theme-toggle-icon--dark {
+    display: inline-block;
+}
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme]) .theme-toggle-icon--light {
+        display: none;
+    }
+
+    html:not([data-theme]) .theme-toggle-icon--dark {
+        display: inline-block;
+    }
 }
 
 #lastedit {
@@ -431,6 +453,57 @@ section.social a {
 
 section.social a:hover {
     color: var(--color-accent);
+}
+
+#scroll.is-visible {
+    display: block;
+}
+
+body.is-scroll-enabled {
+    overflow: auto;
+}
+
+.csp-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: 0;
+}
+
+.csp-modal.is-visible {
+    display: block;
+}
+
+.csp-modal.is-visible::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #000;
+    opacity: 0.5;
+    z-index: 0;
+}
+
+.csp-modal .modal-dialog {
+    position: relative;
+    z-index: 1;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+#emailalert.emailalert-visible {
+    position: static;
+    opacity: 1;
 }
 
 #scroll {
@@ -559,6 +632,54 @@ i.fa {
 
 .modal-title {
     display: inline-block;
+    color: var(--color-text);
+}
+
+.modal-content {
+    background-color: var(--color-content-bg);
+    color: var(--color-text);
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-card);
+}
+
+.modal-header,
+.modal-footer {
+    border-color: var(--color-border);
+}
+
+.modal .close {
+    color: var(--color-text);
+    text-shadow: none;
+    opacity: 0.7;
+}
+
+.modal .close:hover,
+.modal .close:focus {
+    color: var(--color-text);
+    opacity: 1;
+}
+
+.modal .form-control {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.modal .form-control::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+}
+
+.modal a,
+.modal a:active,
+.modal a:visited {
+    color: var(--color-accent);
+}
+
+.modal a:hover,
+.modal a:focus {
+    color: var(--color-accent-hover);
+    text-decoration: none;
 }
 
 /* Edit and Delete icons on the news page */

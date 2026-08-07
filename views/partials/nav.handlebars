@@ -47,8 +47,9 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <button type="button" class="theme-toggle" aria-label="Toggle color theme" title="Toggle color theme">
-                        <i class="fa fa-sun-o" aria-hidden="true"></i>
+                    <button type="button" class="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+                        <i class="fa fa-moon-o theme-toggle-icon theme-toggle-icon--light" aria-hidden="true"></i>
+                        <i class="fa fa-sun-o theme-toggle-icon theme-toggle-icon--dark" aria-hidden="true"></i>
                     </button>
                 </li>
                 {{#if authenticated }} {{!-- This is coming from res.locals --}}
@@ -65,7 +66,7 @@
 			            </ul>
 		            </li>
                 {{ else }}
-                    <li><a href="#loginModal" class="trigger-btn" data-toggle="modal">Login <span class="fa fa-sign-in"></span></a></li>
+                    <li><a href="#loginModal" class="trigger-btn" data-csp-modal-open="loginModal">Login <span class="fa fa-sign-in"></span></a></li>
                 {{/if}}
             </ul>
         </div><!-- /.navbar-collapse -->
