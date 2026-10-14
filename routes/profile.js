@@ -49,7 +49,7 @@ ROUTER.post("/", [auth.ValidateLoggedIn()], async (req, res) => {
         try {
           await User.updateOne(
             { _id: req.user.id },
-            { $set: { password: hash, email: email, real_name: userName } },
+            { $set: { password: hash, email: email, realName: userName } },
             { new: true }
           );
           req.flash("success", strings.profile.profileUpdateSuccess);

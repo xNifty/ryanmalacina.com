@@ -25,6 +25,13 @@ export function connectToClient(username, password, url) {
   return client;
 }
 
+/**
+ * @returns {Client|null} - The shared client, or null if connectToClient has not been called
+ */
+export function getClient() {
+  return client;
+}
+
 export async function ensureNewsIndex(client) {
   try {
     const exists = await client.indices.exists({ index: "news" });
@@ -53,5 +60,6 @@ export async function ensureNewsIndex(client) {
 
 export default {
   connectToClient,
+  getClient,
   ensureNewsIndex,
 };

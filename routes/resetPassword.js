@@ -11,7 +11,7 @@ const router = express.Router();
 router.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("resetPassword", {
     layout: "reset",
-    title: strings.pageHeader.resetPassword,
+    title: strings.pageHeader.forgotPassword,
     csrfToken: res.locals._csrf,
   });
 });
@@ -46,13 +46,18 @@ router.get("/invalidate", async function (req, res) {
   var userId = req.query.id;
   var token = req.query.token;
 
-  let passwordToken = await Token.findOne({ _id: { $eq: userId } });
+  if (typeof userId !== "string" || typeof token !== "string") {
+    req.flash("error", strings.errors.invalidToken);
+    return res.redirect("/");
+  }
+
+  let passwordToken = await Token.findOne({ userId: { $eq: userId } });
   if (!passwordToken) {
     req.flash("error", strings.errors.invalidToken);
     return res.redirect("/");
   }
 
-  const isValid = bcrypt.compare(token, passwordToken.token);
+  const isValid = await bcrypt.compare(token, passwordToken.token);
   if (!isValid) {
     req.flash("error", strings.errors.invalidToken);
     return res.redirect("/");

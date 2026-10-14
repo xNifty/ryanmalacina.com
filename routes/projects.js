@@ -17,9 +17,10 @@ import sanitize from "sanitize-html";
 import dateFormat from "dateformat";
 import fileUpload from "express-fileupload";
 import hljs from "highlight.js";
-import util from "util";
+import { prepareImageUpload, MAX_IMAGE_BYTES } from "../utils/imageUpload.js";
 import config from "config";
 import _ from "lodash";
+import mongoose from "mongoose";
 import { sanitizeText } from "../utils/sanitizeText.js";
 
 import { Project, validateProject } from "../models/projects.js";
@@ -92,7 +93,7 @@ const safeTags = [
   "pre",
 ];
 
-ROUTER.use(fileUpload());
+ROUTER.use(fileUpload({ limits: { fileSize: MAX_IMAGE_BYTES } }));
 
 ROUTER.get("/", async (req, res) => {
   let project_list = await listProjects();
@@ -181,11 +182,14 @@ ROUTER.post(
       let projectImage = "";
       let adjustedFileName = "";
 
-      if (req.files) {
+      if (req.files && req.files.project_image) {
+        const upload = prepareImageUpload(req.files.project_image);
+        if (upload.error) {
+          errorMessage = upload.error;
+          throw new Error(errorMessage);
+        }
         projectImage = req.files.project_image;
-        adjustedFileName = projectImage.name
-          .split(".")
-          .join("-" + Date.now() + ".");
+        adjustedFileName = upload.fileName;
         project.project_image = adjustedFileName;
       } else {
         if (!project.project_image) {
@@ -196,23 +200,15 @@ ROUTER.post(
       project.project_description_markdown = req.body.project_description;
       project.project_description_html = projectSanitized;
 
-      var _id;
+      // Save first so a validation or duplicate-key failure doesn't leave an orphaned upload
+      const result = await project.save();
 
       if (projectImage) {
         await projectImage.mv("./public/images/" + adjustedFileName);
       }
 
-      await project
-        .save()
-        .then((result) => {
-          _id = result._id;
-        })
-        .catch((err) => {
-          logErrorToFile(err);
-        });
-
       req.flash("success", strings.success.projectAdded);
-      res.setHeader("HX-Redirect", "/projects/" + _id + "/edit");
+      res.setHeader("HX-Redirect", "/projects/" + result._id + "/edit");
       res.status(200).end();
     } catch (ex) {
       if (ex.code === 11000) {
@@ -246,8 +242,8 @@ ROUTER.post(
           </div>
         `);
       } else {
-        req.flash("error", errorMessage);
-        res.redirect(`/projects/${req.params.id}/edit`);
+        req.flash("error", error);
+        res.redirect("/projects/new");
       }
     }
   }
@@ -257,9 +253,11 @@ ROUTER.get(
   "/:id/edit",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
-    const project = await Project.findOne({
-      _id: { $eq: req.params.id },
-    });
+    const project = await findProjectById(req.params.id);
+
+    if (!project) {
+      return renderProjectNotFound(res);
+    }
 
     res.render("admin/projects/update-project", {
       layout: "update-project",
@@ -281,11 +279,11 @@ ROUTER.post(
   async (req, res) => {
     const { _csrf, ...FormData } = req.body;
 
-    let project = await Project.find({ _id: { $eq: req.params.id } }).select({
-      project_image: 1,
-      _id: 0,
-      is_published: 1,
-    });
+    const projectUpdate = await findProjectById(req.params.id);
+
+    if (!projectUpdate) {
+      return renderProjectNotFound(res);
+    }
 
     try {
       const { error } = validateProject(FormData);
@@ -316,26 +314,24 @@ ROUTER.post(
       });
 
       let saveDate = new Date(Date.now());
-      let projectImage = project[0].project_image;
-      let adjustedFileName = "";
+      let projectImage = projectUpdate.project_image;
 
       if (req.files && req.files.project_image) {
-        projectImage = req.files.project_image;
-        adjustedFileName = projectImage.name
-          .split(".")
-          .join("-" + Date.now() + ".");
-
-        const moveFilePromise = util.promisify(projectImage.mv);
+        const upload = prepareImageUpload(req.files.project_image);
+        if (upload.error) {
+          errorMessage = upload.error;
+          throw new Error(errorMessage);
+        }
 
         try {
-          await moveFilePromise("./public/images/" + adjustedFileName);
-          projectImage = adjustedFileName;
+          await req.files.project_image.mv("./public/images/" + upload.fileName);
+          projectImage = upload.fileName;
         } catch (error) {
+          // Keep the existing image if the move fails
           logErrorToFile(error);
         }
       }
 
-      let projectUpdate = await Project.findById(req.params.id);
       projectUpdate.project_name = req.body.project_name;
       projectUpdate.project_title = req.body.project_title;
       projectUpdate.project_source = req.body.project_source;
@@ -416,7 +412,7 @@ ROUTER.post(
 // Delete project
 ROUTER.put(
   "/delete/:id",
-  [auth.ValidateAdmin, auth.ValidateLoggedIn()],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     if (await deleteProject(id)) {
@@ -432,7 +428,7 @@ ROUTER.put(
   }
 );
 
-ROUTER.get("/delete-modal/:id", (req, res) => {
+ROUTER.get("/delete-modal/:id", [auth.ValidateLoggedIn(), auth.ValidateAdmin], (req, res) => {
   let sanitizedID = sanitizeText(req.params.id);
   let sanitizedCSRFToken = sanitizeText(res.locals._csrf);
   let modal = deleteModal(sanitizedID, sanitizedCSRFToken, "/projects/delete/");
@@ -440,21 +436,15 @@ ROUTER.get("/delete-modal/:id", (req, res) => {
 });
 
 ROUTER.get("/:id", async (req, res) => {
-  const project = await Project.findOne({
-    _id: { $eq: req.params.id },
-  });
-
-  req.session.projectReturnTo =
-    config.get("rootURL") + "/projects/" + project._id;
+  const project = await findProjectById(req.params.id);
 
   // Intentionally leaving this different, as our "custom" error page doesn't display the text via alerts
   if (!project || !project.is_published) {
-    return res.render("error", {
-      error: strings.errors.invalidProject,
-      title: strings.pageHeader.notFound,
-      status_code: strings.status[404],
-    });
+    return renderProjectNotFound(res);
   }
+
+  req.session.projectReturnTo =
+    config.get("rootURL") + "/projects/" + project._id;
 
   let project_html = MARKDOWN.render(project.project_description_markdown);
   //project_html = project_html.replace(
@@ -477,13 +467,16 @@ ROUTER.get("/:id", async (req, res) => {
 
 ROUTER.put(
   "/update/:id",
-  [auth.ValidateAdmin, auth.ValidateLoggedIn()],
+  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
     let id = req.params.id;
     res.setHeader("content-type", "text/plain");
-    const project = await Project.findOne({
-      _id: id,
-    });
+    const project = await findProjectById(id);
+
+    if (!project) {
+      res.set("HX-Location", "/admin/projects");
+      return res.status(404).end();
+    }
 
     let status = project.show_index;
     const totalIndex = await Project.countDocuments({ show_index: true });
@@ -518,6 +511,24 @@ ROUTER.put(
     }
   }
 );
+
+/**
+ * Find a project by id, treating malformed ids as not found
+ * @param {string} id - The id of the project
+ * @returns {Promise} - A promise that resolves to the project or null
+ */
+async function findProjectById(id) {
+  if (!mongoose.isValidObjectId(id)) return null;
+  return Project.findOne({ _id: { $eq: id } });
+}
+
+function renderProjectNotFound(res) {
+  return res.status(404).render("error", {
+    error: strings.errors.invalidProject,
+    title: strings.pageHeader.notFound,
+    status_code: strings.status[404],
+  });
+}
 
 /**
  * List all published projects

@@ -56,7 +56,7 @@ function ValidateLoggedOut(req, res, next) {
   * @description Make sure the user is an admin
 */
 function ValidateAdmin(req, res, next) {
-  if (req.user.isAdmin) next();
+  if (req.user?.isAdmin) next();
   else {
     req.flash("error", strings.errors.accessDenied);
     res.status(401);

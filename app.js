@@ -14,13 +14,12 @@ import { generateNonce, getDirectives } from "nonce-simple";
 import { createRequire } from "module";
 
 import { User } from "./models/user.js";
-import { iff, versionedFile, sanitize } from "./utils/helpers.js";
+import { iff, versionedFile } from "./utils/helpers.js";
 import renderError from "./utils/renderErrorPage.js";
 import { strings } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
 import urls from "./config/urls.js";
 import { connectToClient, ensureNewsIndex } from './utils/elastic.js';
-import ElasticIndex from './utils/elasticIndex.js';
 
 // Routes
 import { homeRoute } from "./routes/home.js";
@@ -84,18 +83,14 @@ const HBS = exphbs.create({
   helpers: {
     iff: iff,
     versionedFile: versionedFile,
-    sanitize: sanitize,
   },
 });
 
 // @TODO: I think this can be moved to a util and then just have a single call in here to that
 if (USE_ELASTIC == 'true') {
-  ElasticIndex();
   CLIENT = connectToClient(ELASTIC_USERNAME, ELASTIC_PASSWORD, ELASTIC_URL);
   ensureNewsIndex(CLIENT);
 }
-
-export { CLIENT };
 
 // Connect to the database
 try {

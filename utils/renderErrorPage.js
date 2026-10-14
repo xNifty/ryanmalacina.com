@@ -12,38 +12,25 @@
 import { strings } from "../config/constants.js";
 
 export default function renderErrorPage(env, status, err, req, res) {
+  const showStack = env === "development" && err?.stack;
+  let message;
+
   if (status === 404) {
-    res.render("error", {
-      error:
-        env === "development"
-          ? err.stack.replace(/\n/g, "<br />")
-          : strings.errors.pageNotFound,
-      status_code: status[404],
-      title: strings.pageHeader.error,
-    });
-  } else if (status === 500) {
-    res.render("error", {
-      error:
-        env === "development"
-          ? err.stack.replace(/\n/g, "<br />")
-          : strings.errors.serverError,
-      status_code: status[500],
-      title: strings.pageHeader.error,
-    });
+    message = strings.errors.pageNotFound;
   } else if (status === 401) {
-    res.render("error", {
-      error: strings.errors.notAuthorized,
-      status_code: status[401],
-      title: strings.pageHeader.error,
-    });
+    message = strings.errors.notAuthorized;
   } else {
-    res.render("error", {
-      error:
-        env === "development"
-          ? err.stack.replace(/\n/g, "<br />")
-          : strings.errors.serverError,
-      status_code: status[500],
-      title: strings.pageHeader.error,
-    });
+    // Keep other client errors (e.g. 403 from a bad CSRF token) as-is; anything else is a 500
+    if (!(status >= 400 && status < 500)) status = 500;
+    message = strings.errors.serverError;
   }
+
+  res.status(status).render("error", {
+    error:
+      showStack && status !== 401
+        ? err.stack.replace(/\n/g, "<br />")
+        : message,
+    status_code: strings.status[status] ?? String(status),
+    title: strings.pageHeader.error,
+  });
 }

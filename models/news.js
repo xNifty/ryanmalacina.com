@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Joi from "@hapi/joi";
 import mongoosePaginate from "mongoose-paginate-v2";
-import connectToClient from "../utils/elastic.js";
+import { getClient } from "../utils/elastic.js";
 import "dotenv/config";
 
 const newsScheme = new mongoose.Schema({
@@ -9,7 +9,7 @@ const newsScheme = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
-    maxlength: 40,
+    maxlength: 125,
   },
   news_description_markdown: {
     type: String,
@@ -20,7 +20,7 @@ const newsScheme = new mongoose.Schema({
   news_description_html: {
     type: String,
     minlength: 10,
-    maxlength: 2000, // to be safe when markdown is converted
+    maxlength: 5000, // rendered HTML can be much longer than the markdown
   },
   published_date: {
     type: String,
@@ -35,7 +35,7 @@ const newsScheme = new mongoose.Schema({
   news_clean_output: {
     type: String,
     minlength: 10,
-    maxlength: 2000,
+    maxlength: 5000,
   },
   published_date_unclean: {
     type: Date,
@@ -50,7 +50,7 @@ newsScheme.plugin(mongoosePaginate);
 
 if (USE_ELASTIC === "true") {
   async function indexNewsToElasticsearch(news) {
-    await client.index({
+    await getClient().index({
       index: "news",
       id: news._id.toString(),
       body: {

@@ -1,8 +1,7 @@
 import express from "express";
 
 import { News } from "../models/news.js";
-import { CLIENT } from '../app.js';
-import "dotenv/config";
+import { getClient } from "../utils/elastic.js";
 
 const ROUTER = express.Router();
 const USE_ELASTIC = process.env.useElastic;
@@ -206,7 +205,7 @@ async function newsSearchElastic(strSearch, limit = 5, page = 1, sort = null) {
   }
 
 
-  const results = await CLIENT.search({
+  const results = await getClient().search({
     index: 'news',
     from: (page - 1) * limit,
     size: limit,

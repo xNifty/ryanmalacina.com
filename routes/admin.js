@@ -28,12 +28,13 @@ import sanitize from "sanitize-html";
 import dateFormat from "dateformat";
 import MarkdownIt from "markdown-it";
 import _ from "lodash";
+import mongoose from "mongoose";
 import { sanitizeText } from "../utils/sanitizeText.js";
 
 import auth from "../utils/auth.js";
 import logErrorToFile from "../utils/errorLogging.js";
 import deleteModal from "../utils/delete-modal.js";
-import client from "../utils/elastic.js";
+import { getClient } from "../utils/elastic.js";
 
 import { Project } from "../models/projects.js";
 import { News, validateNews } from "../models/news.js";
@@ -251,55 +252,34 @@ ROUTER.get(
   "/news/:id/edit",
   [auth.ValidateLoggedIn(), auth.ValidateAdmin],
   async (req, res) => {
-    let id = req.params.id;
-
-    if (id == undefined) {
-      id = req.session.news_id;
-      req.session.news_id = null;
-    }
-
+    const id = req.params.id;
     let news = null;
 
-    try {
-      news = await News.findOne({
-        _id: { $eq: id },
-      });
-    } catch (err) {
-      logErrorToFile(err);
-      let news_list = await getNewsListing();
-      req.session.news_id = null;
-
-      res.render("admin/news/admin-news", {
-        title: strings.pageHeader.adminProject,
-        news: news_list,
-        csrfToken: res.locals._csrf,
-      });
+    if (mongoose.isValidObjectId(id)) {
+      try {
+        news = await News.findOne({ _id: { $eq: id } });
+      } catch (err) {
+        logErrorToFile(err);
+      }
     }
 
-    req.session.news_id = news._id;
-
-    // Render edit news section - if no valid ID is found, send back to the news index and reset session var to be safe
-    if (id != undefined) {
-      res.render("admin/news/edit", {
-        layout: "news",
-        title: news.news_title,
-        news_title: news.news_title,
-        news_description: news.news_description_markdown,
-        loadJS: true,
-        csrfToken: res.locals._csrf,
-      });
-    } else {
-      let news_list = await getNewsListing();
+    // If no valid entry is found, send back to the news index and reset session var to be safe
+    if (!news) {
       req.session.news_id = null;
-
-      res.render("admin/news/news", {
-        layout: "admin",
-        title: strings.pageHeader.adminProject,
-        news: news_list,
-        loadJS: true,
-        csrfToken: res.locals._csrf,
-      });
+      req.flash("error", strings.errors.genericError);
+      return res.redirect("/admin/news");
     }
+
+    req.session.news_id = news._id.toString();
+
+    res.render("admin/news/edit", {
+      layout: "news",
+      title: news.news_title,
+      news_title: news.news_title,
+      news_description: news.news_description_markdown,
+      loadJS: true,
+      csrfToken: res.locals._csrf,
+    });
   }
 );
 
@@ -352,7 +332,7 @@ ROUTER.post(
       });
 
       if (USE_ELASTIC == "true") {
-        await client.index({
+        await getClient().index({
           index: 'news',
           id: news_id,
           body: {
@@ -377,7 +357,7 @@ ROUTER.post(
   }
 );
 
-ROUTER.get("/news/delete-modal/:id", (req, res) => {
+ROUTER.get("/news/delete-modal/:id", [auth.ValidateLoggedIn(), auth.ValidateAdmin], (req, res) => {
   let sanitizedID = sanitizeText(req.params.id);
   let sanitizedCSRFToken = sanitizeText(res.locals._csrf);
   let modal = deleteModal(
@@ -455,7 +435,7 @@ async function deleteNews(id) {
     await News.deleteOne({ _id: id });
 
     if (USE_ELASTIC == 'true') {
-      await client.delete({ index: 'news', id: id.toString() });
+      await getClient().delete({ index: 'news', id: id.toString() });
     }
     return true;
   } catch (err) {

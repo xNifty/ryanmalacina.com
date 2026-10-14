@@ -19,6 +19,8 @@ var errorStrings = {
   projectDescriptionLength:
     "The project description must be at least 20 characters in length.",
   imageRequired: "You must upload an image.",
+  imageInvalid: "Images must be a PNG, JPG, GIF or WebP file.",
+  imageTooLarge: "Images must be 5MB or smaller.",
   uniqueImageName:
     "Please make sure file names are unique.  If you've already uploaded this image, you do not need to upload it again.",
   invalidProject:

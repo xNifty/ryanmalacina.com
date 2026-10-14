@@ -10,6 +10,7 @@ import { strings } from "../config/constants.js";
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import { sendMail } from "../utils/sendMail.js";
+import logErrorToFile from "../utils/errorLogging.js";
 
 const ROUTER = express.Router();
 
@@ -29,8 +30,8 @@ ROUTER.post("/", async function (req, res) {
   let emailTwo = req.body.email_two;
 
   if (emailOne !== emailTwo) {
-    req.flash("errors", errors.emailMismatch);
-    return res.redirect("/");
+    req.flash("error", strings.errors.emailMismatch);
+    return res.redirect("/reset");
   }
 
   let resetStatus = await resetPassword(emailOne);
@@ -39,7 +40,7 @@ ROUTER.post("/", async function (req, res) {
     req.flash("success", strings.success.passwordResetSent);
     return res.redirect("/");
   } else {
-    req.flash("error", errors.passwordChangeFail);
+    req.flash("error", strings.errors.passwordChangeFail);
     return res.redirect("/");
   }
 });
