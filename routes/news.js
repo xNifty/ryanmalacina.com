@@ -1,166 +1,99 @@
+/*
+  Public news pages
+
+  GET  /news         - the news index (page, term in the query string)
+  POST /news         - one page of results for the pagination control (HTMX/AJAX)
+  POST /news/search  - search results for the search box (HTMX/AJAX)
+*/
 import express from "express";
 
-import { News } from "../models/news.js";
+import * as news from "../services/news.js";
 import { highlightTerm } from "../utils/highlight.js";
 
 const ROUTER = express.Router();
 
+const PAGE_SIZE = 5;
+
 ROUTER.get("/", async (req, res) => {
-  var news_list;
-
-  let page = req.query.page;
-  let term = req.query.term;
-
-  if (page == undefined) {
-    page = 1;
-  }
-
-  news_list = await listNews(5, page, term);
-
-  for (var x in news_list["newsItems"]) {
-    let counter_number = x;
-    counter_number++;
-    news_list["newsItems"][x].counter = counter_number;
-  }
+  const page = toPage(req.query.page);
+  const results = await news.paginatePublished({ page, limit: PAGE_SIZE, term: req.query.term });
 
   return res.render("news-index", {
     pageScripts: ["jquery.simplePagination.js", "news.js"],
     title: "Ryan Malacina | News",
-    news: news_list["newsItems"],
-    totalPages: news_list["totalPages"],
-    totalItems: news_list["totalDocs"],
+    news: results.newsItems,
+    totalPages: results.totalPages,
+    totalItems: results.totalDocs,
     currentPage: page,
     csrfToken: res.locals._csrf,
   });
 });
 
 ROUTER.post("/", async (req, res) => {
-  var news_list;
+  const page = toPage(req.query.page);
+  const results = await loadResults(req, page, req.query.term);
 
-  let page = req.query.page;
-  let term = req.query.term;
-  let sort = req.query.sort;
-
-  if (page == undefined) {
-    page = 1;
-  }
-
-  if (req.body.search) {
-    news_list = await newsSearchMongo(req.body.search, 5, 1, sort);
-  } else {
-    news_list = await listNews(5, page, term, sort);
-  }
-
-  if (req.body.search) {
-    for (var x in news_list["newsItems"]) {
-      let counter_number = x;
-      counter_number++;
-      news_list["newsItems"][x].counter = counter_number;
-      news_list["newsItems"][x].news_title = highlightTerm(news_list["newsItems"][x].news_title, req.body.search);
-      news_list["newsItems"][x].news_description_html = highlightTerm(news_list["newsItems"][x].news_description_html, req.body.search);
-    }
-  } else {
-    for (var x in news_list["newsItems"]) {
-      let counter_number = x;
-      counter_number++;
-      news_list["newsItems"][x].counter = counter_number;
-    }
-  }
-
-  return res.render("partials/news/news-display", {
-    layout: false,
-    news: news_list["newsItems"],
-    totalPages: news_list["totalPages"],
-    totalItems: news_list["totalDocs"],
-    currentPage: page,
-  });
+  return renderResults(res, results, { currentPage: page });
 });
 
 ROUTER.post("/search", async (req, res) => {
-  var news_list;
-  var search = false;
-  var term;
+  const page = toPage(req.query.page);
+  const results = await loadResults(req, page, null);
+  const search = searchTerm(req);
 
-  var sort = req.query.sort;
-
-  let page = req.query.page;
-  if (page == undefined) {
-    page = 1;
-  }
-
-  if (req.body.search) {
-    news_list = await newsSearchMongo(req.body.search, 5, 1, sort);
-    search = true;
-    term = req.body.search;
-  } else {
-    news_list = await listNews(5, page, null, sort);
-  }
-
-  if (req.body.search) {
-    for (var x in news_list["newsItems"]) {
-      let counter_number = x;
-      counter_number++;
-      news_list["newsItems"][x].counter = counter_number;
-      news_list["newsItems"][x].news_title = highlightTerm(news_list["newsItems"][x].news_title, term);
-      news_list["newsItems"][x].news_description_html = highlightTerm(news_list["newsItems"][x].news_description_html, term);
-    }
-  } else {
-    for (var x in news_list["newsItems"]) {
-      let counter_number = x;
-      counter_number++;
-      news_list["newsItems"][x].counter = counter_number;
-    }
-  }
-
-  return res.render("partials/news/news-display", {
-    layout: false,
-    news: news_list["newsItems"],
-    totalPages: news_list["totalPages"],
-    totalItems: news_list["totalDocs"],
+  return renderResults(res, results, {
     currentPage: 1,
-    search: search,
-    searchTerm: term,
+    search: Boolean(search),
+    searchTerm: search || undefined,
   });
 });
 
-const MONGO_SORTS = {
-  dateAsc: { published_date_unclean: 1 },
-  dateDesc: { published_date_unclean: -1 },
-  titleAsc: { news_title: 1 },
-  titleDesc: { news_title: -1 },
-};
+/**
+ * A search-box submission (body.search) returns the first page of exact-phrase matches with
+ * the term highlighted; otherwise the requested page, filtered by fallbackTerm if given.
+ */
+async function loadResults(req, page, fallbackTerm) {
+  const sort = req.query.sort;
+  const search = searchTerm(req);
 
-function paginateNews(query, limit, page, sort) {
-  // Only published entries are ever public; mongoose-paginate-v2 has no filter option,
-  // so the filter has to live in the query itself
-  return News.paginate(
-    { ...query, is_published: true },
-    {
-      page: page,
-      limit: limit,
-      sort: MONGO_SORTS[sort] ?? { _id: -1 },
-      select: {
-        news_title: 1,
-        published_date: 1,
-        news_description_html: 1,
-        _id: 0,
-      },
-      lean: true,
-      customLabels: { docs: "newsItems" },
-    }
-  );
-}
-
-async function listNews(limit = 5, page = 1, term = null, sort = null) {
-  if (typeof term === "string" && term !== "") {
-    return paginateNews({ $text: { $search: term } }, limit, page, sort);
+  if (!search) {
+    return news.paginatePublished({ page, limit: PAGE_SIZE, sort, term: fallbackTerm });
   }
-  return paginateNews({}, limit, page, sort);
+
+  const results = await news.paginatePublished({
+    page: 1,
+    limit: PAGE_SIZE,
+    sort,
+    term: search,
+    exactPhrase: true,
+  });
+
+  results.newsItems = results.newsItems.map((item) => ({
+    ...item,
+    news_title: highlightTerm(item.news_title, search),
+    news_description_html: highlightTerm(item.news_description_html, search),
+  }));
+
+  return results;
 }
 
-async function newsSearchMongo(strSearch, limit = 5, page = 1, sort = null) {
-  return paginateNews({ $text: { $search: `"${strSearch}"` } }, limit, page, sort);
+function renderResults(res, results, extra) {
+  return res.render("partials/news/news-display", {
+    layout: false,
+    news: results.newsItems,
+    totalPages: results.totalPages,
+    totalItems: results.totalDocs,
+    ...extra,
+  });
+}
+
+function searchTerm(req) {
+  return typeof req.body.search === "string" ? req.body.search : "";
+}
+
+function toPage(value) {
+  const page = Number.parseInt(value, 10);
+  return Number.isInteger(page) && page > 0 ? page : 1;
 }
 
 export { ROUTER as newsRoute };
-// module.exports = router;

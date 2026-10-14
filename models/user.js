@@ -32,17 +32,16 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre("save", async function (next) {
+// Mongoose 9 middleware: async functions resolve instead of calling next()
+userSchema.pre("save", async function () {
   if (!this.isModified("password")) {
-    return next();
+    return;
   }
 
-  const hash = await bcrypt.hash(
+  this.password = await bcrypt.hash(
     this.password,
-    Number(process.env.BCRYPT_SALT)
+    Number(process.env.BCRYPT_SALT) || 12
   );
-  this.password = hash;
-  next();
 });
 
 userSchema.methods.validPassword = function (password) {

@@ -1,450 +1,213 @@
 /*
   Contains all the admin routes for the site
 
-  /projects - List all projects
-  /projects/publish/:id - Publish a project
-  /projects/unpublish/:id - Unpublish a project
-  /news - List all news
-  /news/new - Add a new news entry
-  /news/publish/:id - Publish a news entry
-  /news/unpublish/:id - Unpublish a news entry
-  /news/delete/:id - Delete a news entry
-  /news/:id/edit - Edit a news entry
-  /news/edit - Save the edited news entry
-  /news/delete-modal/:id - Get the delete modal for a news entry
-
-  publishProject - Publish a project
-  unpublishProject - Unpublish a project
-  publishNews - Publish a news entry
-  unpublishNews - Unpublish a news entry
-  deleteNews - Delete a news entry
-  listProjects - List all projects
-  getNewsListing - List all news entries
-
+  /                         - GET - admin home
+  /projects                 - GET - list all projects
+  /projects/publish/:id     - PUT - publish a project
+  /projects/unpublish/:id   - PUT - unpublish a project
+  /news                     - GET - list all news, with the new-entry form
+  /news/new                 - POST - add a news entry
+  /news/publish/:id         - PUT - publish a news entry
+  /news/unpublish/:id       - PUT - unpublish a news entry
+  /news/delete/:id          - PUT - delete a news entry
+  /news/:id/edit            - GET - edit a news entry
+  /news/:id/edit            - POST - save an edited news entry
+  /news/delete-modal/:id    - GET - the delete confirmation modal for a news entry
 */
 
 import express from "express";
-import sanitize from "sanitize-html";
-import dateFormat from "dateformat";
-import MarkdownIt from "markdown-it";
-import _ from "lodash";
-import mongoose from "mongoose";
 
+import * as projects from "../services/projects.js";
+import * as news from "../services/news.js";
+import { validateNews } from "../models/news.js";
 import auth from "../utils/auth.js";
 import logErrorToFile from "../utils/errorLogging.js";
 import { renderDeleteModal } from "../utils/renderPartial.js";
-
-import { Project } from "../models/projects.js";
-import { News, validateNews } from "../models/news.js";
 import { strings } from "../config/constants.js";
 
 const ROUTER = express.Router();
 
-//let converter = new showdown.Converter();
-let md = new MarkdownIt();
+// Every admin route requires a signed-in admin
+const ADMIN = [auth.ValidateLoggedIn(), auth.ValidateAdmin];
+const ADMIN_FORM = [auth.ValidateLoggedIn(true), auth.ValidateAdmin];
 
-ROUTER.get(
-  "/",
-  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
-  async (req, res) => {
-    res.render("admin", {
-      layout: "admin",
-      title: strings.pageHeader.admin,
-      csrfToken: res.locals._csrf,
+ROUTER.get("/", ADMIN, async (req, res) => {
+  res.render("admin", {
+    layout: "admin",
+    title: strings.pageHeader.admin,
+    csrfToken: res.locals._csrf,
+  });
+});
+
+ROUTER.get("/projects", ADMIN, async (req, res) => {
+  res.render("admin/projects/projects", {
+    layout: "admin",
+    title: strings.pageHeader.adminProject,
+    projects: await projects.listAll(),
+    csrfToken: res.locals._csrf,
+  });
+});
+
+ROUTER.put("/projects/publish/:id", ADMIN, (req, res) =>
+  publishAction(req, res, () => projects.setPublished(req.params.id, true), {
+    success: strings.success.projectPublished,
+    location: "/admin/projects",
+  })
+);
+
+ROUTER.put("/projects/unpublish/:id", ADMIN, (req, res) =>
+  publishAction(req, res, () => projects.setPublished(req.params.id, false), {
+    success: strings.success.projectUnpublished,
+    location: "/admin/projects",
+  })
+);
+
+ROUTER.get("/news", ADMIN, async (req, res) => {
+  return renderNewsList(res);
+});
+
+ROUTER.post("/news/new", ADMIN_FORM, async (req, res) => {
+  const { _csrf, ...fields } = req.body;
+  const { error } = validateNews(fields);
+
+  if (error) {
+    const descriptionInvalid = error.details.some(
+      (detail) => detail.context.key === "news_description"
+    );
+    return renderNewsList(res.status(400), {
+      error: descriptionInvalid ? strings.errors.newsDescriptionLength : strings.errors.allFieldsRequired,
+      news_title: req.body.news_title,
+      news_description: req.body.news_description,
     });
   }
-);
 
-ROUTER.get(
-  "/projects",
-  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
-  async (req, res) => {
-    let project_list = await listProjects();
-
-    project_list.forEach((project) => {
-      project.csrfToken = res.locals._csrf;
-    });
-
-    res.render("admin/projects/projects", {
-      layout: "admin",
-      title: strings.pageHeader.adminProject,
-      projects: project_list,
-      csrfToken: res.locals._csrf,
+  try {
+    await news.create(fields.news_title, fields.news_description);
+  } catch (ex) {
+    logErrorToFile(ex);
+    return renderNewsList(res.status(400), {
+      error: strings.errors.allFieldsRequired,
+      news_title: req.body.news_title,
+      news_description: req.body.news_description,
     });
   }
+
+  req.flash("success", strings.success.newsAdded);
+  return res.redirect("/admin/news");
+});
+
+ROUTER.put("/news/publish/:id", ADMIN, (req, res) =>
+  publishAction(req, res, () => news.setPublished(req.params.id, true), {
+    success: strings.success.newsPublished,
+    location: "/admin/news",
+  })
 );
 
-ROUTER.put(
-  "/projects/publish/:id",
-  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
-  async (req, res) => {
-    let id = req.params.id;
-    if (await publishProject(id)) {
-      req.flash("success", strings.success.projectPublished);
-      res.set("HX-Location", "/admin/projects");
-      return res.status(200).end();
-    } else {
-      req.flash("error", strings.errors.publishError);
-      res.set("HX-Location", "/admin/projects");
-      return res.status(500).end();
-    }
+ROUTER.put("/news/unpublish/:id", ADMIN, (req, res) =>
+  publishAction(req, res, () => news.setPublished(req.params.id, false), {
+    success: strings.success.newsUnpublished,
+    location: "/admin/news",
+  })
+);
+
+ROUTER.put("/news/delete/:id", ADMIN, async (req, res) => {
+  let deleted = false;
+  try {
+    deleted = await news.remove(req.params.id);
+  } catch (err) {
+    logErrorToFile(err);
   }
-);
 
-ROUTER.put(
-  "/projects/unpublish/:id",
-  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
-  async (req, res) => {
-    let id = req.params.id;
-    if (await unpublishProject(id)) {
-      req.flash("success", strings.success.projectUnpublished);
-      res.set("HX-Location", "/admin/projects");
-      return res.status(200).end();
-    } else {
-      req.flash("error", strings.errors.publishError);
-      res.set("HX-Location", "/admin/projects");
-      res.status(400).end();
-    }
+  req.flash(deleted ? "success" : "error", deleted ? strings.success.deleteSuccess : strings.errors.publishError);
+  res.setHeader("HX-Redirect", "/admin/news");
+  return res.status(deleted ? 200 : 500).end();
+});
+
+ROUTER.get("/news/:id/edit", ADMIN, async (req, res) => {
+  const entry = await news.findById(req.params.id);
+
+  if (!entry) {
+    req.flash("error", strings.errors.genericError);
+    return res.redirect("/admin/news");
   }
-);
 
-ROUTER.get(
-  "/news",
-  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
-  async (req, res) => {
-    let news_list = await getNewsListing();
+  return renderNewsEdit(res, {
+    id: entry._id,
+    news_title: entry.news_title,
+    news_description: entry.news_description_markdown,
+  });
+});
 
-    news_list.forEach((news) => {
-      news.csrfToken = res.locals._csrf;
-    });
+ROUTER.post("/news/:id/edit", ADMIN_FORM, async (req, res) => {
+  const { _csrf, ...fields } = req.body;
+  const { error } = validateNews(fields);
+  const form = {
+    id: req.params.id,
+    news_title: req.body.news_title,
+    news_description: req.body.news_description,
+  };
 
-    res.render("admin/news/news", {
-      layout: "admin",
-      markdownEditor: true,
-      title: strings.pageHeader.adminProject,
-      news: news_list,
-      csrfToken: res.locals._csrf,
-    });
+  if (error) {
+    return renderNewsEdit(res.status(400), { ...form, error: strings.errors.allFieldsRequired });
   }
-);
 
-// Publish the news entry
-ROUTER.post(
-  "/news/new",
-  [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
-  async (req, res) => {
-    const { _csrf, ...FormData } = req.body;
-
-    const { error } = validateNews(FormData);
-
-    let news_list = await getNewsListing();
-
-    let news = new News(_.pick(req.body, ["news_title"]));
-
-    if (error) {
-      var errorMessage;
-
-      for (let i = 0; i < error.details.length; i++) {
-        if (error.details[i].context.key === "news_description") {
-          errorMessage = strings.errors.newsDescriptionLength;
-        } else {
-          errorMessage = strings.errors.allFieldsRequired;
-        }
-      }
-
-      return res.status(400).render("admin/news/news", {
-        error: errorMessage,
-        layout: "admin",
-        markdownEditor: true,
-        news_title: req.body.news_title,
-        news_description: req.body.news_description,
-        loadJS: true,
-        news: news_list,
-      });
-    }
-    let newsDescription = md.render(req.body.news_description);
-
-    let newsSanitized = sanitize(newsDescription, {
-      allowedTags: sanitize.defaults.allowedTags.concat(["h1", "img"]),
-    });
-    let newsCleaned = sanitize(newsDescription, { allowedTags: [] });
-
-    news.news_description_markdown = req.body.news_description;
-    news.news_description_html = newsSanitized;
-    news.news_clean_output = newsCleaned;
-    let saveDate = new Date(Date.now());
-
-    news.published_date = dateFormat(saveDate, "mmmm dd, yyyy @ h:MM TT");
-    news.published_date_unclean = saveDate;
-
-    try {
-      await news.save();
-    } catch (ex) {
-      return res.status(400).render("admin/news/news", {
-        error: strings.errors.allFieldsRequired,
-        layout: "admin",
-        markdownEditor: true,
-        news_title: req.body.news_title,
-        news_description: req.body.news_description,
-        loadJS: true,
-        news: news_list,
-      });
-    }
-    req.flash("success", strings.success.newsAdded);
-    res.redirect("/admin/news");
+  let found;
+  try {
+    found = await news.update(req.params.id, fields.news_title, fields.news_description);
+  } catch (ex) {
+    logErrorToFile(ex);
+    return renderNewsEdit(res.status(400), { ...form, error: strings.errors.allFieldsRequired });
   }
-);
 
-ROUTER.put(
-  "/news/publish/:id",
-  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
-  async (req, res) => {
-    let id = req.params.id;
-    if (await publishNews(id)) {
-      req.flash("success", strings.success.newsPublished);
-      res.set("HX-Location", "/admin/news");
-      return res.status(200).end();
-    } else {
-      req.flash("error", strings.errors.publishError);
-      res.set("HX-Location", "/admin/news");
-      res.status(400).end();
-    }
+  if (!found) {
+    req.flash("error", strings.errors.genericError);
+    return res.redirect("/admin/news");
   }
-);
 
-ROUTER.put(
-  "/news/unpublish/:id",
-  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
-  async (req, res) => {
-    let id = req.params.id;
-    if (await unpublishNews(id)) {
-      req.flash("success", strings.success.newsUnpublished);
-      res.set("HX-Location", "/admin/news");
-      return res.status(200).end();
-    } else {
-      req.flash("error", strings.errors.publishError);
-      res.set("HX-Location", "/admin/news");
-      res.status(400).end();
-    }
-  }
-);
+  req.flash("success", strings.success.newsEdited);
+  return res.redirect("/admin/news");
+});
 
-ROUTER.put(
-  "/news/delete/:id",
-  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
-  async (req, res) => {
-    let id = req.params.id;
-    if (await deleteNews(id)) {
-      req.flash("success", strings.success.deleteSuccess);
-      res.setHeader("HX-Redirect", "/admin/news");
-      res.status(200).end(); // or res.sendStatus(200)
-    } else {
-      req.flash("error", strings.errors.publishError);
-      res.setHeader("HX-Redirect", "/admin/news");
-      res.status(500).end(); // or res.sendStatus(200)
-    }
-  }
-);
-
-// Edit News
-ROUTER.get(
-  "/news/:id/edit",
-  [auth.ValidateLoggedIn(), auth.ValidateAdmin],
-  async (req, res) => {
-    const id = req.params.id;
-    let news = null;
-
-    if (mongoose.isValidObjectId(id)) {
-      try {
-        news = await News.findOne({ _id: { $eq: id } });
-      } catch (err) {
-        logErrorToFile(err);
-      }
-    }
-
-    // If no valid entry is found, send back to the news index and reset session var to be safe
-    if (!news) {
-      req.session.news_id = null;
-      req.flash("error", strings.errors.genericError);
-      return res.redirect("/admin/news");
-    }
-
-    req.session.news_id = news._id.toString();
-
-    res.render("admin/news/edit", {
-      layout: "admin",
-      markdownEditor: true,
-      title: news.news_title,
-      news_title: news.news_title,
-      news_description: news.news_description_markdown,
-      loadJS: true,
-      csrfToken: res.locals._csrf,
-    });
-  }
-);
-
-// Publish the news entry
-ROUTER.post(
-  "/news/edit",
-  [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
-  async (req, res) => {
-    const { _csrf, ...FormData } = req.body;
-    const { error } = validateNews(FormData);
-
-    let news = new News(_.pick(req.body, ["news_title"]));
-
-    if (error) {
-      return res.status(400).render("admin/news/edit", {
-        layout: "admin",
-        markdownEditor: true,
-        error: strings.errors.allFieldsRequired,
-        title: req.body.news_title,
-        news_title: req.body.news_title,
-        news_description: req.body.news_description,
-      });
-    }
-    let newsDescription = md.render(req.body.news_description);
-    let newsSanitized = sanitize(newsDescription, {
-      allowedTags: sanitize.defaults.allowedTags.concat(["h1", "img"]),
-    });
-    let newsCleaned = sanitize(newsDescription, { allowedTags: [] });
-
-    news.news_description_markdown = req.body.news_description;
-    news.news_description_html = newsSanitized;
-    news.news_clean_output = newsCleaned;
-    let saveDate = new Date(Date.now());
-
-    news.published_date = dateFormat(saveDate, "mmmm dd, yyyy @ h:MM TT");
-    news.published_date_unclean = saveDate;
-
-    try {
-      let news_id = req.session.news_id;
-
-      if (typeof news_id !== "string") {
-        res.status(400).json({ status: "error" });
-        return;
-      }
-
-      await News.findByIdAndUpdate(news_id, {
-        news_title: req.body.news_title,
-        news_description_markdown: req.body.news_description,
-        news_description_html: newsSanitized,
-        news_clean_output: newsCleaned,
-      });
-    } catch (ex) {
-      console.log("Error in news edit: ", ex.message);
-      return res.status(400).render("admin/news/edit", {
-        layout: "admin",
-        markdownEditor: true,
-        error: strings.errors.allFieldsRequired,
-        title: req.body.news_title,
-        news_title: req.body.news_title,
-        news_description: req.body.news_description,
-      });
-    }
-    req.session.news_id = null;
-    req.flash("success", strings.success.newsEdited);
-    res.redirect("/admin/news");
-  }
-);
-
-ROUTER.get("/news/delete-modal/:id", [auth.ValidateLoggedIn(), auth.ValidateAdmin], (req, res) => {
+ROUTER.get("/news/delete-modal/:id", ADMIN, (req, res) => {
   return renderDeleteModal(res, "/admin/news/delete/", req.params.id);
 });
 
-async function publishProject(id) {
+/**
+ * Run a publish/unpublish action and tell HTMX to reload the list.
+ * @param {Function} action - Resolves true if the entry exists
+ */
+async function publishAction(req, res, action, { success, location }) {
+  let found = false;
   try {
-    await Project.findByIdAndUpdate(
-      { _id: id },
-      {
-        is_published: true,
-      }
-    );
-    return true;
+    found = await action();
   } catch (err) {
     logErrorToFile(err);
-    return false;
   }
+
+  req.flash(found ? "success" : "error", found ? success : strings.errors.publishError);
+  res.set("HX-Location", location);
+  return res.status(found ? 200 : 400).end();
 }
 
-async function unpublishProject(id) {
-  try {
-    await Project.findByIdAndUpdate(
-      { _id: id },
-      {
-        is_published: false,
-      }
-    );
-    return true;
-  } catch (err) {
-    logErrorToFile(err);
-    return false;
-  }
+async function renderNewsList(res, extra = {}) {
+  return res.render("admin/news/news", {
+    layout: "admin",
+    markdownEditor: true,
+    title: strings.pageHeader.adminProject,
+    news: await news.listAll(),
+    csrfToken: res.locals._csrf,
+    ...extra,
+  });
 }
 
-async function publishNews(id) {
-  try {
-    let saveDate = new Date(Date.now());
-    await News.findByIdAndUpdate(
-      { _id: id },
-      {
-        is_published: true,
-        published_date_unclean: saveDate,
-      }
-    );
-    return true;
-  } catch (err) {
-    logErrorToFile(err);
-    return false;
-  }
-}
-
-async function unpublishNews(id) {
-  try {
-    await News.findByIdAndUpdate(
-      { _id: id },
-      {
-        is_published: false,
-      }
-    );
-    return true;
-  } catch (err) {
-    logErrorToFile(err);
-    return false;
-  }
-}
-
-async function deleteNews(id) {
-  try {
-    await News.deleteOne({ _id: id });
-    return true;
-  } catch (err) {
-    logErrorToFile(err);
-    return false;
-  }
-}
-
-async function listProjects() {
-  return Project.find()
-    .select({
-      project_name: 1,
-      project_image: 1,
-      project_title: 1,
-      is_published: 1,
-      show_index: 1,
-      _id: 1,
-    })
-    .lean();
-}
-
-async function getNewsListing() {
-  return News.find()
-    .select({
-      news_title: 1,
-      is_published: 1,
-      _id: 1,
-    })
-    .lean();
+function renderNewsEdit(res, context) {
+  return res.render("admin/news/edit", {
+    layout: "admin",
+    markdownEditor: true,
+    title: context.news_title,
+    csrfToken: res.locals._csrf,
+    ...context,
+  });
 }
 
 export { ROUTER as adminRoute };

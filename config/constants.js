@@ -43,6 +43,7 @@ var errorStrings = {
   invalidToken: "Invalid token.",
   passwordChangeFail: "There was an issue updating your password.",
   passwordsDontMatch: "The entered passwords do not match.",
+  passwordTooShort: "Passwords must be at least 8 characters long.",
   emailMismatch: "The provided emails do not match.",
 };
 
@@ -51,6 +52,8 @@ var profileStrings = {
     "The entered passwords do not match. No profile changes have been made.",
   currentPasswordWrong:
     "No profile information has been changed; the current password was incorrect.",
+  passwordTooShort:
+    "No profile information has been changed; new passwords must be at least 8 characters long.",
   profileUpdateSuccess: "Your information has been updated.",
   profileUpdateError: "Your information was not changed.",
 };

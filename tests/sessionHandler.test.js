@@ -1,54 +1,9 @@
 import MongoStore from "connect-mongo";
-import {
-  clearProjectSession,
-  clearProjectEditSession,
-  createMongoStore,
-  createSession,
-} from "../utils/sessionHandler.js";
+import { createMongoStore, createSession } from "../utils/sessionHandler.js";
 
 jest.mock("connect-mongo");
 
-describe("clearProjectSession", () => {
-  it("should clear the project session", () => {
-    const req = {
-      session: {
-        projectReturnTo: "test value",
-        projectEditReturnTo: "test value",
-        project_id: "test value",
-        projectEditSuccess: "test value",
-      },
-    };
-    clearProjectSession(req);
-
-    expect(req.session.projectReturnTo).toBeUndefined();
-    expect(req.session.projectEditReturnTo).toBeUndefined();
-    expect(req.session.project_id).toBeUndefined();
-    expect(req.session.projectEditSuccess).toBeUndefined();
-  });
-
-  it("should clear the project edit session", () => {
-    const req = {
-      session: {
-        loadProjectFromSession: "test value",
-        project_name: "test value",
-        project_title: "test value",
-        project_source: "test value",
-        project_description_markdown: "test value",
-        project_image: "test value",
-        project_id: "test value",
-      },
-    };
-    clearProjectEditSession(req);
-
-    expect(req.session.loadProjectFromSession).toBeUndefined();
-    expect(req.session.project_name).toBeUndefined();
-    expect(req.session.project_title).toBeUndefined();
-    expect(req.session.project_source).toBeUndefined();
-    expect(req.session.project_description_markdown).toBeUndefined();
-    expect(req.session.project_image).toBeUndefined();
-    expect(req.session.project_id).toBeUndefined();
-  });
-
+describe("sessionHandler", () => {
   describe("createMongoStore", () => {
     it("should create a MongoStore with provided configuration", () => {
       const mockCreate = jest.fn();

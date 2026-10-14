@@ -6,10 +6,10 @@
         {{#each blogPosts as |posts| }}
         <div class="panel panel-info">
             <div class="panel-heading collapsed">
-                <i class="fa fa-fw fa-chevron-down" data-toggle="collapse" data-target="#blog{{ posts.counter }}"></i>
-                <i class="fa fa-fw fa-chevron-right" data-toggle="collapse" data-target="#blog{{ posts.counter }}"></i>{{ posts.title }} | {{posts.formatted_date}}
+                <i class="fa fa-fw fa-chevron-down" data-toggle="collapse" data-target="#blog{{ @index }}"></i>
+                <i class="fa fa-fw fa-chevron-right" data-toggle="collapse" data-target="#blog{{ @index }}"></i>{{ posts.title }} | {{posts.formatted_date}}
             </div>
-            <div class="panel-collapse collapse custom-text" id="blog{{ posts.counter }}">
+            <div class="panel-collapse collapse custom-text" id="blog{{ @index }}">
                 <div class="panel-body">
                     {{{ posts.excerpt }}} <a href="{{posts.url}}" data-toogle="tooltip" title="View &quot;{{posts.title}}&quot; on the blog" class="text-link"><i class="fa fa-arrow-right"></i></a>
                 </div>

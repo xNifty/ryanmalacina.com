@@ -1,10 +1,9 @@
 import express from "express";
-import bcrypt from "bcrypt";
 
 import auth from "../utils/auth.js";
 import { strings } from "../config/constants.js";
-import { resetPassword } from "../utils/password.js";
-import { Token } from "../models/token.js";
+import { completePasswordReset, invalidatePasswordReset } from "../services/account.js";
+import logErrorToFile from "../utils/errorLogging.js";
 
 const router = express.Router();
 
@@ -17,54 +16,50 @@ router.get("/", [auth.ValidateLoggedOut], async (req, res) => {
 });
 
 router.post("/", async function (req, res) {
-  var password_one;
-  var password_two;
+  const { id: userId, token } = req.query;
+  const password = req.body.password_one;
+  const backToForm =
+    "/resetPassword?" + new URLSearchParams({ token: String(token ?? ""), id: String(userId ?? "") });
 
-  password_one = req.body.password_one;
-  password_two = req.body.password_two;
-
-  var userId = req.query.id;
-  var token = req.query.token;
-
-  if (password_one !== password_two) {
+  if (password !== req.body.password_two) {
     req.flash("error", strings.errors.passwordsDontMatch);
-    return res.redirect("/resetPassword?token=" + token + "&id=" + userId);
+    return res.redirect(backToForm);
   }
 
-  var resetSuccess = await resetPassword(userId, token, password_one);
+  let outcome;
+  try {
+    outcome = await completePasswordReset(userId, token, password);
+  } catch (error) {
+    logErrorToFile(error);
+    outcome = "error";
+  }
 
-  if (resetSuccess) {
+  if (outcome === "weakPassword") {
+    req.flash("error", strings.errors.passwordTooShort);
+    return res.redirect(backToForm);
+  }
+
+  if (outcome === "changed") {
     req.flash("success", strings.success.passwordChanged);
-    return res.redirect("/");
   } else {
     req.flash("error", strings.errors.passwordChangeFail);
-    return res.redirect("/");
   }
+  return res.redirect("/");
 });
 
 router.get("/invalidate", async function (req, res) {
-  var userId = req.query.id;
-  var token = req.query.token;
-
-  if (typeof userId !== "string" || typeof token !== "string") {
-    req.flash("error", strings.errors.invalidToken);
-    return res.redirect("/");
+  let invalidated = false;
+  try {
+    invalidated = await invalidatePasswordReset(req.query.id, req.query.token);
+  } catch (error) {
+    logErrorToFile(error);
   }
 
-  let passwordToken = await Token.findOne({ userId: { $eq: userId } });
-  if (!passwordToken) {
+  if (invalidated) {
+    req.flash("success", strings.success.resetInvalidated);
+  } else {
     req.flash("error", strings.errors.invalidToken);
-    return res.redirect("/");
   }
-
-  const isValid = await bcrypt.compare(token, passwordToken.token);
-  if (!isValid) {
-    req.flash("error", strings.errors.invalidToken);
-    return res.redirect("/");
-  }
-
-  await passwordToken.deleteOne();
-  req.flash("success", strings.success.resetInvalidated);
   return res.redirect("/");
 });
 
