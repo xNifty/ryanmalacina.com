@@ -34,15 +34,12 @@ import { sanitizeText } from "../utils/sanitizeText.js";
 import auth from "../utils/auth.js";
 import logErrorToFile from "../utils/errorLogging.js";
 import deleteModal from "../utils/delete-modal.js";
-import { getClient } from "../utils/elastic.js";
 
 import { Project } from "../models/projects.js";
 import { News, validateNews } from "../models/news.js";
 import { strings } from "../config/constants.js";
 
 const ROUTER = express.Router();
-
-const USE_ELASTIC = process.env.useElastic;
 
 //let converter = new showdown.Converter();
 let md = new MarkdownIt();
@@ -330,17 +327,6 @@ ROUTER.post(
         news_description_html: newsSanitized,
         news_clean_output: newsCleaned,
       });
-
-      if (USE_ELASTIC == "true") {
-        await getClient().index({
-          index: 'news',
-          id: news_id,
-          body: {
-            news_title: req.body.news_title,
-            news_description_html: newsSanitized,
-          }
-        });
-      }
     } catch (ex) {
       console.log("Error in news edit: ", ex.message);
       return res.status(400).render("admin/news/edit", {
@@ -433,10 +419,6 @@ async function unpublishNews(id) {
 async function deleteNews(id) {
   try {
     await News.deleteOne({ _id: id });
-
-    if (USE_ELASTIC == 'true') {
-      await getClient().delete({ index: 'news', id: id.toString() });
-    }
     return true;
   } catch (err) {
     logErrorToFile(err);

@@ -11,7 +11,7 @@ import lusca from "lusca";
 import rateLimit from "express-rate-limit";
 import createHttpError from "http-errors";
 import { generateNonce, getDirectives } from "nonce-simple";
-import { createRequire } from "module";
+import helmet from "helmet";
 
 import { User } from "./models/user.js";
 import { iff, versionedFile } from "./utils/helpers.js";
@@ -19,7 +19,6 @@ import renderError from "./utils/renderErrorPage.js";
 import { strings } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
 import urls from "./config/urls.js";
-import { connectToClient, ensureNewsIndex } from './utils/elastic.js';
 
 // Routes
 import { homeRoute } from "./routes/home.js";
@@ -35,7 +34,6 @@ import { passwordReset } from "./routes/resetPassword.js";
 import { profileRoute } from "./routes/profile.js";
 import { createMongoStore, createSession } from "./utils/sessionHandler.js";
 
-const require = createRequire(import.meta.url);
 
 // Make sure our private token exists
 if (!process.env.privateKey) {
@@ -48,10 +46,6 @@ const ENV = APP.settings.env;
 const MONGO_URL = process.env.mongoURL;
 const SECRET_KEY = process.env.privateKey;
 const MONGO_STORE = createMongoStore(MONGO_URL);
-const ELASTIC_USERNAME = process.env.elasticUsername;
-const ELASTIC_PASSWORD = process.env.elasticPassword;
-const ELASTIC_URL = process.env.elasticURL;
-const USE_ELASTIC = process.env.useElastic;
 
 const BLOG_URL = config.get("blogURL");
 const SHOW_BLOG = config.get("showBlog");
@@ -69,8 +63,6 @@ const NONCE_OPTIONS = {
   images: urls.imgSrc,
 };
 
-var CLIENT;
-
 // Set default layout, can be overridden per-route as needed
 // We also load any helper functions we wrote within helpers.js inside the functions folder
 const HBS = exphbs.create({
@@ -85,12 +77,6 @@ const HBS = exphbs.create({
     versionedFile: versionedFile,
   },
 });
-
-// @TODO: I think this can be moved to a util and then just have a single call in here to that
-if (USE_ELASTIC == 'true') {
-  CLIENT = connectToClient(ELASTIC_USERNAME, ELASTIC_PASSWORD, ELASTIC_URL);
-  ensureNewsIndex(CLIENT);
-}
 
 // Connect to the database
 try {
@@ -111,8 +97,6 @@ APP.use(
     extended: true,
   })
 );
-
-APP.locals.elasticClient = CLIENT;
 
 APP.use(function(req, res, next) {
   const htmxNonce = req.get("X-CSP-Nonce");
@@ -143,10 +127,9 @@ APP.use(
   limiter
 );
 
-async function setupHelmetCSP() {
-  const csp = require("helmet-csp");
-  APP.use(
-    csp({
+APP.use(
+  helmet({
+    contentSecurityPolicy: {
       directives: {
         ...getDirectives(
           (req, res) => `'${res.locals.cspNonce}'`,
@@ -154,33 +137,35 @@ async function setupHelmetCSP() {
         ),
         styleSrcAttr: urls.styleSrcAttr,
       },
-    })
-  );
-}
-
-setupHelmetCSP().catch(console.error);
+    },
+    // helmet defaults to no-referrer, which breaks the same-site return_to logic in /projects/new
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    // don't force HTTPS onto subdomains (blog, docs) this app doesn't control
+    strictTransportSecurity: { includeSubDomains: false },
+  })
+);
 
 passport.serializeUser(function(user, done) {
   done(null, user._id);
 });
 
 passport.deserializeUser(function(userId, done) {
-  User.findById(userId).then((user) => {
-    done(null, user);
-  });
+  User.findById(userId)
+    .then((user) => done(null, user))
+    .catch((err) => done(err));
 });
 
 // Passport Stuff
-const LOCAL_STRATEGY = new LocalStrategy((username, password, done) => {
-  User.findOne({ username: { $eq: username } })
-    .then((user) => {
-      if (!user || !user.validPassword(password)) {
-        done(null, false, { message: strings.errors.invalidLogin });
-      } else {
-        done(null, user);
-      }
-    })
-    .catch((e) => done(e));
+const LOCAL_STRATEGY = new LocalStrategy(async (username, password, done) => {
+  try {
+    const user = await User.findOne({ username: { $eq: username } });
+    if (!user || !(await user.validPassword(password))) {
+      return done(null, false, { message: strings.errors.invalidLogin });
+    }
+    return done(null, user);
+  } catch (e) {
+    return done(e);
+  }
 });
 passport.use("local", LOCAL_STRATEGY);
 
@@ -198,6 +183,7 @@ APP.locals = {
   serverError: strings.errors.serverError,
   environment: APP.get("env"),
   notAuthorized: strings.errors.notAuthorized,
+  recaptchaSiteKey: config.get("recaptchaSiteKey"),
 };
 
 APP.use(function(req, res, next) {

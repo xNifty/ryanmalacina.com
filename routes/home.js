@@ -128,7 +128,10 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
     __dirname,
     "/views/layouts/templates/contact/error.handlebars"
   );
-  const errorSource = fs.readFileSync(errorFile, "utf-8").toString();
+  const errorSource = fs
+    .readFileSync(errorFile, "utf-8")
+    .toString()
+    .replaceAll("{{recaptchaSiteKey}}", config.get("recaptchaSiteKey"));
 
   const successFile = path.join(
     __dirname,

@@ -15,19 +15,11 @@
                 <div class="panel-heading collapsed">
                     <i class="fa fa-fw fa-chevron-down" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>
                     <i class="fa fa-fw fa-chevron-right" data-toggle="collapse" data-target="#coll{{ news.counter }}"></i>
-                    {{#if news.highlightedTitle}}
-                        {{{ news.highlightedTitle }}} | {{ news.published_date }}
-                        {{else}}
-                            {{{ news.news_title }}} | {{ news.published_date }}
-                    {{/if}}
+                    {{{ news.news_title }}} | {{ news.published_date }}
                 </div>
                 <div class="panel-collapse collapse custom-text" id="coll{{ news.counter }}">
                     <div class="panel-body">
-                        {{#if news.highlightedDescription}}
-                            {{{ news.highlightedDescription }}}
-                        {{else}}
-                            {{{ news.news_description_html }}}
-                        {{/if}}
+                        {{{ news.news_description_html }}}
                     </div>
                 </div>
             </div>

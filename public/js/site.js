@@ -125,13 +125,18 @@ function cb(token) {
   $("#g-recaptcha-response").val(token);
 }
 
+function recaptchaSiteKey() {
+  var meta = document.querySelector('meta[name="recaptcha-site-key"]');
+  return meta ? meta.content : '';
+}
+
 function initializeRecaptcha() {
   if (typeof grecaptcha === 'undefined' || !document.getElementById('g-recaptcha-response')) {
     return;
   }
   try {
     grecaptcha.ready(function() {
-      grecaptcha.execute('6LeCKqYUAAAAAAh4n_WgK7e-fKbqOgrukjjBmqBG', { action: 'homepage' }).then(cb);
+      grecaptcha.execute(recaptchaSiteKey(), { action: 'homepage' }).then(cb);
     });
   } catch (e) {
     console.warn('reCAPTCHA init skipped:', e);

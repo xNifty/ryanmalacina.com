@@ -24,7 +24,7 @@ There are several pieces in this file that MUST be changed in order for the site
 
 The following are the list of keys within this file, and what they are used for and if you must change them to get the site to work properly.
 
-1. privateKey - This is used to sign the JWT tokens that are used for authentication. This key should be a random string of characters and should be kept secret.
+1. privateKey - This is the secret used to sign session cookies. This key should be a random string of characters and should be kept secret.
 2. mailgunAPIKey - This is used to send emails from the site. This key should be kept secret and is provied by Mailgun.
 3. mailgunDomain - This is used to send emails from the site. This is simply the mailing address domain that you have set up with Mailgun.
 4. secretKey - 
@@ -35,10 +35,6 @@ The following are the list of keys within this file, and what they are used for 
 10. BCRYPT_SALT - This is the number of rounds that bcrypt will use to hash passwords. This should be a number between 10 and 12.
 11. mailgunFromEmail - This is simply the email that will show when sending emails (e.g. noreply@yourwebsite.com)
 12. csrfSecret - This is used to generate the CSRF token. This should be a random string of characters and should be kept secret.
-13. elasticUsername - This is the username for the ElasticSearch instance. This should be kept secret.
-14. elasticPassword - This is the password for the ElasticSearch instance. This should be kept secret.
-15. elasticURL - This is the URL to the ElasticSearch instance. This should be kept secret.
-16. useElasic - This is a boolean value that determines if the site will use ElasticSearch or default MongoDB for searching. This should be set to false if you do not have an ElasticSearch instance.
 
 ## Config File
 his file is used to store configuration information that is not sensitive and can be shared with others. This file is used to store information that is used to configure the site. This file is not included in the repository and must be created by the user. An example is provided in the default.json.example file, which you can rename to default.json or production.json and modify.

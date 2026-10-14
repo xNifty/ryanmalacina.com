@@ -7,6 +7,9 @@ var errorStrings = {
   accessDenied: "You do not have permission to access this content.",
   loginRequired: "Please login to access this content.",
   invalidLogin: "Invalid username or password!",
+  tooManyLoginAttempts:
+    "Too many failed login attempts. Please wait 15 minutes and try again.",
+  tooManyRequests: "Too many requests. Please try again later.",
   missingKey:
     "FATAL ERROR: Private key is not defined. Please double check that everything is setup correctly",
   pageNotFound: "Seems this page doesn't exist...sorry about that!",

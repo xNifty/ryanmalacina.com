@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Joi from "@hapi/joi";
+import Joi from "joi";
 
 const projectScheme = new mongoose.Schema({
   project_name: {

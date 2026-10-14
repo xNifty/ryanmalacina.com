@@ -5,6 +5,7 @@ import config from "config";
 import auth from "../utils/auth.js";
 import { strings } from "../config/constants.js";
 import ValidTarget from "../utils/validTarget.js";
+import { loginLimiter } from "../utils/rateLimits.js";
 
 const ROUTER = express.Router();
 
@@ -36,6 +37,21 @@ function getSafeReturnTo(req) {
   return ValidTarget(returnTo) ? returnTo : "/";
 }
 
+function pageAlert(message) {
+  return `<div class="container">
+    <div class="text-center">
+        <div class="alert alert-danger center-block">
+            <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
+            ${message}
+        </div>
+    </div>
+</div>`;
+}
+
+function modalAlert(message) {
+  return `<div class="modalAlert alert alert-danger alert-dismissible center-block text-center">${message}</div>`;
+}
+
 ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("login", {
     title: strings.pageHeader.login,
@@ -45,7 +61,7 @@ ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
 
 ROUTER.post(
   "/",
-  [passport.authenticate("local", { failWithError: true })],
+  [loginLimiter(pageAlert), passport.authenticate("local", { failWithError: true })],
   function(req, res) {
     const returnTo = getSafeReturnTo(req);
     req.flash("success", strings.success.loginSuccess);
@@ -58,24 +74,13 @@ ROUTER.post(
     return res.redirect(returnTo);
   },
   function(err, req, res, next) {
-    // console.log(err);
-    res.send(
-      `<div class="container">
-    <div class="text-center">
-        <div class="alert alert-danger center-block">
-            <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
-            Invalid username or password!
-        </div>
-    </div>
-</div>`
-    );
-    return;
+    res.send(pageAlert(strings.errors.invalidLogin));
   }
 );
 
 ROUTER.post(
   "/modal",
-  passport.authenticate("local", { failWithError: true }),
+  [loginLimiter(modalAlert), passport.authenticate("local", { failWithError: true })],
   function(req, res) {
     const returnTo = getSafeReturnTo(req);
     req.flash("success", strings.success.loginSuccess);
@@ -88,10 +93,7 @@ ROUTER.post(
     return res.redirect(returnTo);
   },
   function(err, req, res, next) {
-    res.send(
-      '<div class="modalAlert alert alert-danger alert-dismissible center-block text-center">Invalid username or password!</div>'
-    );
-    return;
+    res.send(modalAlert(strings.errors.invalidLogin));
   }
 );
 

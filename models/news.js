@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
-import Joi from "@hapi/joi";
+import Joi from "joi";
 import mongoosePaginate from "mongoose-paginate-v2";
-import { getClient } from "../utils/elastic.js";
-import "dotenv/config";
 
 const newsScheme = new mongoose.Schema({
   news_title: {
@@ -42,37 +40,14 @@ const newsScheme = new mongoose.Schema({
   },
 });
 
-const USE_ELASTIC = process.env.useElastic;
-
 newsScheme.plugin(mongoosePaginate);
 
-// const News = mongoose.model('News', newsScheme);
-
-if (USE_ELASTIC === "true") {
-  async function indexNewsToElasticsearch(news) {
-    await getClient().index({
-      index: "news",
-      id: news._id.toString(),
-      body: {
-        news_title: news.news_title,
-        news_description_html: news.news_description_html,
-        published_date: news.published_date,
-        published_date_unclean: news.published_date_unclean,
-        news_clean_output: news.news_clean_output,
-      },
-    });
-  }
-
-  newsScheme.post("save", async function (doc) {
-    await indexNewsToElasticsearch(doc);
-  });
-
-  newsScheme.post("findOneAndUpdate", async function (doc) {
-    await indexNewsToElasticsearch(doc);
-  });
-} else {
-  newsScheme.index({ news_search: "text", news_title: "text" });
-}
+// news_clean_output is the post body with tags stripped. A collection only allows one
+// text index, so after changing this run `npm run sync-indexes` to swap the old one out.
+newsScheme.index(
+  { news_title: "text", news_clean_output: "text" },
+  { name: "news_text_search" }
+);
 
 function validateNews(user) {
   const schema = Joi.object({

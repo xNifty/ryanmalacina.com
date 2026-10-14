@@ -11,6 +11,7 @@ import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import { sendMail } from "../utils/sendMail.js";
 import logErrorToFile from "../utils/errorLogging.js";
+import { resetLimiter } from "../utils/rateLimits.js";
 
 const ROUTER = express.Router();
 
@@ -25,7 +26,7 @@ ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   });
 });
 
-ROUTER.post("/", async function (req, res) {
+ROUTER.post("/", resetLimiter, async function (req, res) {
   let emailOne = req.body.email_one;
   let emailTwo = req.body.email_two;
 
