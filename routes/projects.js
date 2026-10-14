@@ -13,7 +13,6 @@
 */
 
 import express from "express";
-import dateFormat from "dateformat";
 import fileUpload from "express-fileupload";
 
 import * as projects from "../services/projects.js";
@@ -107,11 +106,12 @@ ROUTER.get(
       markdownEditor: true,
       pageScripts: ["update-project.js"],
       update_project: true,
-      project_name: project.project_name,
-      project_title: project.project_title,
-      project_source: project.project_source,
-      project_description: project.project_description_markdown,
-      project_image: project.project_image,
+      // The form's field names predate the schema's
+      project_name: project.name,
+      project_title: project.title,
+      project_source: project.source,
+      project_description: project.descriptionMarkdown,
+      project_image: project.image,
       id: project._id,
       csrfToken: res.locals._csrf,
     });
@@ -164,7 +164,7 @@ ROUTER.post(
 
     if (req.get("HX-Request")) {
       // update-project.js swaps the thumbnail to this URL
-      res.set("HX-Trigger", JSON.stringify({ updateImage: { src: `/images/${project.project_image}` } }));
+      res.set("HX-Trigger", JSON.stringify({ updateImage: { src: `/images/${project.image}` } }));
       return renderAlert(res, "success", strings.success.projectUpdated);
     }
 
@@ -194,22 +194,24 @@ ROUTER.get("/delete-modal/:id", [auth.ValidateLoggedIn(), auth.ValidateAdmin], (
   return renderDeleteModal(res, "/projects/delete/", req.params.id);
 });
 
-ROUTER.get("/:id", async (req, res) => {
-  const project = await projects.findById(req.params.id);
+// Public project page, by slug. Links from before slugs existed used the id; those redirect.
+ROUTER.get("/:slug", async (req, res) => {
+  const bySlug = await projects.findBySlug(req.params.slug);
+  const project = bySlug ?? (await projects.findById(req.params.slug));
 
-  if (!project || !project.is_published) {
+  if (!project || !project.isPublished) {
     return renderProjectNotFound(res);
   }
 
+  if (!bySlug) {
+    return res.redirect(301, `/projects/${project.slug}`);
+  }
+
   res.render("projects", {
-    project_title: project.project_title,
-    project_source: project.project_source,
-    project_description: renderProjectPage(project.project_description_markdown),
-    project_name: project.project_name,
     is_valid: true,
-    last_save_date: dateFormat(project.last_edited, "mmmm dd, yyyy @ h:MM TT"),
-    title: "Ryan Malacina | " + project.project_name,
-    id: project._id,
+    project: project.toObject(),
+    descriptionHtml: renderProjectPage(project.descriptionMarkdown),
+    title: "Ryan Malacina | " + project.name,
     csrfToken: res.locals._csrf,
   });
 });
@@ -266,9 +268,8 @@ function projectValidationErrors(error) {
  */
 function duplicateKeyMessage(ex) {
   if (ex.code !== 11000) return null;
-  const index = ex.message.match(/index: (\w+)/)?.[1];
-  if (index === "project_name_1") return strings.errors.projectNameUnique;
-  if (index === "project_title_1") return strings.errors.projectTitleUnique;
+  if (ex.keyPattern?.name) return strings.errors.projectNameUnique;
+  if (ex.keyPattern?.title) return strings.errors.projectTitleUnique;
   return strings.errors.genericError;
 }
 

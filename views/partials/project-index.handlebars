@@ -9,12 +9,12 @@
             {{#each projects as |projects| }}
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="project-card">
-                        <a href="/projects/{{ projects._id }}">
+                        <a href="/projects/{{ projects.slug }}">
                             <div class="project-card-image">
-                                <img class="greyimg" src="/images/{{ projects.project_image }}"
-                                     alt="{{ projects.project_title }}">
+                                <img class="greyimg" src="/images/{{ projects.image }}"
+                                     alt="{{ projects.title }}">
                             </div>
-                            <div class="project-card-title">{{ projects.project_title }}</div>
+                            <div class="project-card-title">{{ projects.title }}</div>
                         </a>
                     </div>
                 </div>

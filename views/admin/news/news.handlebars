@@ -17,8 +17,8 @@
   class="trigger-btn">
   <i class="fa fa-trash"></i>
 </a>
-                            {{ news.news_title }}<br />
-                            {{#if news.is_published}}
+                            {{ news.title }}<br />
+                            {{#if news.isPublished}}
                                 Published - <a class="unpublishNews" href="" hx-put="/admin/news/unpublish/{{news._id}}" hx-target="#statusBox" hx-swap="innerHTML" hx-trigger="click" hx-headers='{ "X-CSRF-TOKEN": "{{@root.csrfToken}}" }'>Unpublish</a>
                             {{else}}
                                 Unpublished - <a class="publishNews" href="" hx-put="/admin/news/publish/{{news._id}}" hx-target="#statusBox" hx-swap="innerHTML" hx-trigger="click" hx-headers='{ "X-CSRF-TOKEN": "{{@root.csrfToken}}" }'>Publish</a>

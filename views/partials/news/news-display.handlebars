@@ -15,11 +15,11 @@
                 <div class="panel-heading collapsed">
                     <i class="fa fa-fw fa-chevron-down" data-toggle="collapse" data-target="#coll{{ @index }}"></i>
                     <i class="fa fa-fw fa-chevron-right" data-toggle="collapse" data-target="#coll{{ @index }}"></i>
-                    {{{ news.news_title }}} | {{ news.published_date }}
+                    {{{ news.title }}} | {{ formatDate news.publishedAt }}
                 </div>
                 <div class="panel-collapse collapse custom-text" id="coll{{ @index }}">
                     <div class="panel-body">
-                        {{{ news.news_description_html }}}
+                        {{{ news.bodyHtml }}}
                     </div>
                 </div>
             </div>

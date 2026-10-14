@@ -15,3 +15,5 @@ app-testing.js
 /dist
 /errors
 .vscode/
+# Data migration backups
+backups/

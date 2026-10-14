@@ -2,28 +2,28 @@
     <div class="project-hero">
         {{#iff authenticated '&&' isAdmin}}
             <div class="editbtn-wrapper">
-                <a href="/projects/{{id}}/edit" class="btn btn-primary btn-sm">
+                <a href="/projects/{{ project._id }}/edit" class="btn btn-primary btn-sm">
                     <span class="glyphicon glyphicon-pencil"></span> Edit Project
                 </a>
             </div>
         {{/iff}}
-        <h1>{{ project_title }}</h1>
+        <h1>{{ project.title }}</h1>
         <div class="project-meta">
-            {{#if project_source}}
-                <a href="{{ project_source }}" target="_blank" rel="noopener noreferrer" class="project-badge">
+            {{#if project.source}}
+                <a href="{{ project.source }}" target="_blank" rel="noopener noreferrer" class="project-badge">
                     <i class="fa fa-github" aria-hidden="true"></i> View Source
                 </a>
             {{/if}}
-            {{#if last_save_date}}
+            {{#if project.updatedAt}}
                 <span class="project-badge">
-                    <i class="fa fa-clock-o" aria-hidden="true"></i> Updated {{ last_save_date }}
+                    <i class="fa fa-clock-o" aria-hidden="true"></i> Updated {{ formatDate project.updatedAt }}
                 </span>
             {{/if}}
         </div>
     </div>
     <div class="project-content-card">
         <div class="markdown-body">
-            {{{project_description}}}
+            {{{ descriptionHtml }}}
         </div>
     </div>
 </div>

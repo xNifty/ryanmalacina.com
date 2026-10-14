@@ -86,6 +86,37 @@ describe("layouts", () => {
     expect(html).toContain("&lt;/textarea&gt;");
   });
 
+  it("should render a project page from the stored fields", async () => {
+    const html = await render("projects", {
+      is_valid: true,
+      authenticated: true,
+      isAdmin: true,
+      project: {
+        _id: "abc123",
+        title: "Snoring Ninja Bot",
+        source: "https://github.com/xNifty/snoring",
+        updatedAt: new Date(2026, 9, 14, 15, 5),
+      },
+      descriptionHtml: "<p>Body</p>",
+    });
+    expect(html).toContain("<h1>Snoring Ninja Bot</h1>");
+    expect(html).toContain('href="https://github.com/xNifty/snoring"');
+    expect(html).toContain("Updated October 14, 2026 @ 3:05 PM");
+    expect(html).toContain('href="/projects/abc123/edit"');
+    expect(html).toContain("<p>Body</p>");
+  });
+
+  it("should link project cards and show news dates from the new fields", async () => {
+    const html = await render("index", {
+      projects: [{ name: "Ninja", title: "Ninja Bot", slug: "ninja", image: "ninja.png" }],
+      showNews: true,
+      news: [{ title: "Launch", bodyHtml: "<p>Live</p>", publishedAt: new Date(2026, 5, 10, 7, 52) }],
+    });
+    expect(html).toContain('href="/projects/ninja"');
+    expect(html).toContain('src="/images/ninja.png"');
+    expect(html).toContain("Launch | June 10, 2026 @ 7:52 AM");
+  });
+
   it.each([
     ["index", "main", { projects: [], news: [] }],
     ["about", "main", {}],

@@ -64,3 +64,8 @@ There should be nothing else special that you need to do other than installing a
 ```
 npm install
 ```
+
+## Database maintenance
+
+- `npm run sync-indexes` makes MongoDB's indexes match the schemas. Run it after changing an index in a model.
+- `npm run migrate-data-model` moves projects and news from the original field names (`project_name`, `news_title`, string dates, ...) to the current schema. It prints every change and writes nothing unless you add `-- --apply`, which first saves a JSON backup of both collections to `backups/`. Deploy the matching code and run it at the same time, on the server itself: older posts stored their dates as text without a timezone, so they are read in the server's local time. It is safe to run again.

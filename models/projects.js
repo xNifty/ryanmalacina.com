@@ -1,56 +1,63 @@
 import mongoose from "mongoose";
 import Joi from "joi";
 
-const projectScheme = new mongoose.Schema({
-  project_name: {
-    type: String,
-    unique: true,
-    required: true,
-    maxlength: 125,
+const projectSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      unique: true,
+      required: true,
+      maxlength: 125,
+    },
+    title: {
+      type: String,
+      unique: true,
+      required: true,
+      maxlength: 125,
+    },
+    // Set once at creation so public URLs stay stable when the name changes
+    slug: {
+      type: String,
+      unique: true,
+      required: true,
+      maxlength: 100,
+    },
+    source: {
+      type: String,
+      required: true,
+      maxlength: 100,
+    },
+    descriptionMarkdown: {
+      type: String,
+      required: true,
+      minlength: 10,
+      maxlength: 25000,
+    },
+    descriptionHtml: {
+      type: String,
+      minlength: 10,
+      maxlength: 25000,
+    },
+    image: {
+      type: String,
+      maxlength: 150,
+      default: "default.png",
+    },
+    isPublished: {
+      type: Boolean,
+      default: false,
+    },
+    // Shown on the home page; services/projects.js caps how many
+    featured: {
+      type: Boolean,
+      default: false,
+    },
   },
-  project_title: {
-    type: String,
-    unique: true,
-    required: true,
-    maxlength: 125,
-  },
-  project_source: {
-    type: String,
-    required: true,
-    maxlength: 100,
-  },
-  project_description_markdown: {
-    type: String,
-    required: true,
-    minlength: 10,
-    maxlength: 25000,
-  },
-  project_description_html: {
-    type: String,
-    minlength: 10,
-    maxlength: 25000,
-  },
-  project_image: {
-    type: String,
-    maxlength: 150,
-  },
-  last_edited: {
-    type: String,
-  },
-  is_published: {
-    type: Boolean,
-    default: false,
-  },
-  show_index: {
-    type: Boolean,
-    default: false,
-  },
-});
+  { timestamps: true }
+);
 
-projectScheme.index({ project_name: "text", project_title: "text" });
-// const Project = mongoose.model('Project', projectScheme);
-
-export function validateProject(user) {
+// Validates the admin project form (whose field names predate the schema's)
+export function validateProject(form) {
   const schema = Joi.object({
     project_name: Joi.string().max(125).required(),
     project_title: Joi.string().max(125).required(),
@@ -59,12 +66,10 @@ export function validateProject(user) {
     project_image: Joi.string().max(150).allow(""),
   }).options({ abortEarly: false });
 
-  return schema.validate(user);
+  return schema.validate(form);
 }
-
-// exports.validateProject = validateProject;
 
 export default {
   validateProject,
 };
-export const Project = mongoose.model("Project", projectScheme);
+export const Project = mongoose.model("Project", projectSchema);

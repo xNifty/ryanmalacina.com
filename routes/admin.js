@@ -133,8 +133,9 @@ ROUTER.get("/news/:id/edit", ADMIN, async (req, res) => {
 
   return renderNewsEdit(res, {
     id: entry._id,
-    news_title: entry.news_title,
-    news_description: entry.news_description_markdown,
+    // The form's field names predate the schema's
+    news_title: entry.title,
+    news_description: entry.bodyMarkdown,
   });
 });
 

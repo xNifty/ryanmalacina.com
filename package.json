@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --stats verbose",
     "test": "jest",
-    "sync-indexes": "node scripts/syncIndexes.js"
+    "sync-indexes": "node scripts/syncIndexes.js",
+    "migrate-data-model": "node scripts/migrate-data-model.js"
   },
   "repository": "git+https://github.com/xNifty/ryanmalacina.com.git",
   "keywords": [

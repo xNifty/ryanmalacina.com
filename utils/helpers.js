@@ -2,6 +2,7 @@
 
 import path from "path";
 import { readFileSync } from "fs";
+import dateFormat from "dateformat";
 
 export function iff(v1, operator, v2, options) {
   switch (operator) {
@@ -42,7 +43,21 @@ export function versionedFile(filename, basePath, type) {
   return `/${type}/${filename}?v=${contentHash}`;
 }
 
+export const DATE_FORMAT = "mmmm dd, yyyy @ h:MM TT";
+
+/**
+ * {{formatDate someDate}} -> "October 14, 2026 @ 3:05 PM"; empty for a missing or invalid date.
+ * An optional second argument is a dateformat mask.
+ */
+export function formatDate(date, mask) {
+  if (!date) return "";
+  const value = date instanceof Date ? date : new Date(date);
+  if (Number.isNaN(value.getTime())) return "";
+  return dateFormat(value, typeof mask === "string" ? mask : DATE_FORMAT);
+}
+
 export default {
   iff,
   versionedFile,
+  formatDate,
 };

@@ -70,8 +70,8 @@ async function loadResults(req, page, fallbackTerm) {
 
   results.newsItems = results.newsItems.map((item) => ({
     ...item,
-    news_title: highlightTerm(item.news_title, search),
-    news_description_html: highlightTerm(item.news_description_html, search),
+    title: highlightTerm(item.title, search),
+    bodyHtml: highlightTerm(item.bodyHtml, search),
   }));
 
   return results;

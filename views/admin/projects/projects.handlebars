@@ -7,17 +7,17 @@
                 <div class="col-md-3 col-xs-3">
                     <div class="thumbnail">
                         <a href="/projects/{{ projects._id }}/edit">
-                            <img class="img-responsive greyimg" src="/images/{{ projects.project_image }}"
+                            <img class="img-responsive greyimg" src="/images/{{ projects.image }}"
                                  alt="Logo">
                         </a>
                         <div class="caption center-block">
-                            {{ projects.project_title }}<br />
-                            {{#if projects.is_published}}
+                            {{ projects.title }}<br />
+                            {{#if projects.isPublished}}
                                 Published - <a class="unpublish" href="" hx-trigger="click" hx-put="/admin/projects/unpublish/{{projects._id}}" hx-swap="beforebegin" hx-target="#project_index" hx-headers='{ "X-CSRF-TOKEN": "{{@root.csrfToken}}" }'>Unpublish</a>
                             {{else}}
                                 Unpublished - <a class="publish" href="" hx-put="/admin/projects/publish/{{projects._id}}" hx-swap="beforebegin" hx-target="#project_index" hx-headers='{ "X-CSRF-TOKEN": "{{@root.csrfToken}}" }'>Publish</a>
                             {{/if}}
-                            {{#if projects.show_index}}
+                            {{#if projects.featured}}
                                 <input class="projCheckbox" data-id="{{ projects._id}} "type="checkbox" name="projectCheckbox{{projects._id}}" value="projectCheckbox{{projects._id}}" checked hx-put="/projects/update/{{ projects._id }}" hx-headers='{ "X-CSRF-TOKEN": "{{@root.csrfToken}}" }'>
                             {{else}}
                                 <input class="projCheckbox" data-id="{{ projects._id}} "type="checkbox" name="projectCheckbox{{projects._id}}" value="projectCheckbox{{projects._id}}" hx-put="/projects/update/{{ projects._id }}" hx-headers='{ "X-CSRF-TOKEN": "{{@root.csrfToken}}" }'>
