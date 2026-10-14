@@ -6,6 +6,7 @@ import auth from "../utils/auth.js";
 import { strings } from "../config/constants.js";
 import ValidTarget from "../utils/validTarget.js";
 import { loginLimiter } from "../utils/rateLimits.js";
+import { renderAlert } from "../utils/renderPartial.js";
 
 const ROUTER = express.Router();
 
@@ -37,19 +38,27 @@ function getSafeReturnTo(req) {
   return ValidTarget(returnTo) ? returnTo : "/";
 }
 
-function pageAlert(message) {
-  return `<div class="container">
-    <div class="text-center">
-        <div class="alert alert-danger center-block">
-            <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
-            ${message}
-        </div>
-    </div>
-</div>`;
+const PAGE_ALERT = "partials/alert";
+const MODAL_ALERT = "partials/modal-alert";
+
+// Passport's failWithError hands us a 401 for bad credentials; anything else is a real error
+function loginFailure(view) {
+  return function(err, req, res, next) {
+    if (err.status !== 401) return next(err);
+    return renderAlert(res, "danger", strings.errors.invalidLogin, { view });
+  };
 }
 
-function modalAlert(message) {
-  return `<div class="modalAlert alert alert-danger alert-dismissible center-block text-center">${message}</div>`;
+function loginSuccess(req, res) {
+  const returnTo = getSafeReturnTo(req);
+  req.flash("success", strings.success.loginSuccess);
+
+  if (req.get("HX-Request")) {
+    res.set("HX-Redirect", returnTo);
+    return res.status(200).end();
+  }
+
+  return res.redirect(returnTo);
 }
 
 ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
@@ -61,40 +70,16 @@ ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
 
 ROUTER.post(
   "/",
-  [loginLimiter(pageAlert), passport.authenticate("local", { failWithError: true })],
-  function(req, res) {
-    const returnTo = getSafeReturnTo(req);
-    req.flash("success", strings.success.loginSuccess);
-
-    if (req.get("HX-Request")) {
-      res.set("HX-Redirect", returnTo);
-      return res.status(200).end();
-    }
-
-    return res.redirect(returnTo);
-  },
-  function(err, req, res, next) {
-    res.send(pageAlert(strings.errors.invalidLogin));
-  }
+  [loginLimiter(PAGE_ALERT), passport.authenticate("local", { failWithError: true })],
+  loginSuccess,
+  loginFailure(PAGE_ALERT)
 );
 
 ROUTER.post(
   "/modal",
-  [loginLimiter(modalAlert), passport.authenticate("local", { failWithError: true })],
-  function(req, res) {
-    const returnTo = getSafeReturnTo(req);
-    req.flash("success", strings.success.loginSuccess);
-
-    if (req.get("HX-Request")) {
-      res.set("HX-Redirect", returnTo);
-      return res.status(200).end();
-    }
-
-    return res.redirect(returnTo);
-  },
-  function(err, req, res, next) {
-    res.send(modalAlert(strings.errors.invalidLogin));
-  }
+  [loginLimiter(MODAL_ALERT), passport.authenticate("local", { failWithError: true })],
+  loginSuccess,
+  loginFailure(MODAL_ALERT)
 );
 
 export { ROUTER as loginRoute };

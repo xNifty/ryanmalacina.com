@@ -1,0 +1,10 @@
+{{!-- Dismissible alert, rendered alone as an HTMX response (see utils/renderPartial.js).
+      type: success | danger; messages: list of lines, escaped --}}
+<div class="container">
+    <div class="text-center">
+        <div class="alert alert-{{ type }} center-block">
+            <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
+            {{#each messages}}{{ this }}{{#unless @last}}<br>{{/unless}}{{/each}}
+        </div>
+    </div>
+</div>

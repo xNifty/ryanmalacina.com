@@ -11,7 +11,7 @@ const ROUTER = express.Router();
 
 ROUTER.get("/", [auth.ValidateLoggedIn()], async (req, res) => {
   return res.render("profile", {
-    layout: "profile",
+    pageScripts: ["profile.js"],
     title: strings.pageHeader.profile,
     user_name: req.user.realName,
     user_email: req.user.email,

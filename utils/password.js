@@ -1,18 +1,9 @@
 import bcrypt from "bcrypt";
-import fs from "fs";
-import path from "path";
 
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
 import { sendMail } from "./sendMail.js";
-
-// Define consts
-const __dirname = path.resolve();
-const filePath = path.join(
-  __dirname,
-  "/views/layouts/templates/passwordResetSuccess.handlebars"
-);
-const source = fs.readFileSync(filePath, "utf-8").toString();
+import { renderEmail } from "./renderEmail.js";
 
 export async function resetPassword(userId, token, password) {
   let passwordToken = await Token.findOne({ userId: { $eq: userId } });
@@ -29,11 +20,9 @@ export async function resetPassword(userId, token, password) {
     { new: true }
   );
 
-  var template = source;
-
   let user = await User.findById({ _id: { $eq: userId } });
 
-  template = template.replace("{{user}}", user.realName);
+  const template = await renderEmail("passwordResetSuccess", { user: user.realName });
 
   await sendMail(
     process.env.mailgunFromEmail,

@@ -52,6 +52,7 @@
                         <i class="fa fa-sun-o theme-toggle-icon theme-toggle-icon--dark" aria-hidden="true"></i>
                     </button>
                 </li>
+                {{#unless hideLogin}}
                 {{#if authenticated }} {{!-- This is coming from res.locals --}}
 		            <li class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">Hello, {{ realName }}</a>
@@ -68,6 +69,7 @@
                 {{ else }}
                     <li><a href="#loginModal" class="trigger-btn" data-csp-modal-open="loginModal">Login <span class="fa fa-sign-in"></span></a></li>
                 {{/if}}
+                {{/unless}}
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->

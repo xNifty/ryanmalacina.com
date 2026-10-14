@@ -21,14 +21,13 @@ import { prepareImageUpload, MAX_IMAGE_BYTES } from "../utils/imageUpload.js";
 import config from "config";
 import _ from "lodash";
 import mongoose from "mongoose";
-import { sanitizeText } from "../utils/sanitizeText.js";
 
 import { Project, validateProject } from "../models/projects.js";
 import { clearProjectSession } from "../utils/sessionHandler.js";
 import auth from "../utils/auth.js";
 import { strings } from "../config/constants.js";
 import logErrorToFile from "../utils/errorLogging.js";
-import deleteModal from "../utils/delete-modal.js";
+import { renderAlert, renderDeleteModal } from "../utils/renderPartial.js";
 
 // highlight.js language imports
 import js from "highlight.js/lib/languages/javascript";
@@ -127,7 +126,8 @@ ROUTER.get(
     }
 
     res.render("admin/projects/new-project", {
-      layout: "new-project",
+      layout: "admin",
+      markdownEditor: true,
       new_project: true,
       return_to: returnTo,
       csrfToken: res.locals._csrf,
@@ -142,109 +142,41 @@ ROUTER.post(
   [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
   async (req, res) => {
     const { _csrf, ...FormData } = req.body;
+    const { error } = validateProject(FormData);
+
+    if (error) {
+      return projectFormError(req, res, projectValidationErrors(error), "/projects/new");
+    }
+
+    const imageFile = req.files?.project_image;
+    const upload = imageFile ? prepareImageUpload(imageFile) : null;
+
+    if (upload?.error) {
+      return projectFormError(req, res, upload.error, "/projects/new");
+    }
+
+    const project = new Project(
+      _.pick(req.body, ["project_name", "project_title", "project_source"])
+    );
+    project.project_description_markdown = req.body.project_description;
+    project.project_description_html = renderProjectHtml(req.body.project_description);
+    project.project_image = upload ? upload.fileName : "default.png";
 
     try {
-      const { error } = validateProject(FormData);
-      var errorMessage = "";
-
-      if (error) {
-        // Handle validation error
-        for (let i = 0; i < error.details.length; i++) {
-          if (error.details[i].context.key === "project_description") {
-            errorMessage += strings.errors.projectDescriptionLength + "<br>";
-          }
-          if (error.details[i].context.key === "project_name") {
-            errorMessage += strings.errors.projectName + "<br>";
-          }
-          if (error.details[i].context.key === "project_title") {
-            errorMessage += strings.errors.projectTitle + "<br>";
-          }
-          if (error.details[i].context.key === "project_source") {
-            errorMessage += strings.errors.projectSource + "<br>";
-          }
-        }
-        throw new Error(errorMessage);
-      }
-
-      let project = new Project(
-        _.pick(req.body, ["project_name", "project_title", "project_source"])
-      );
-
-      let projectDescription = MARKDOWN.render(req.body.project_description);
-      let projectSanitized = sanitize(projectDescription, {
-        allowedTags: safeTags,
-      });
-
-      /*
-        Default the project image to blank and if it exists, we can then set the image to the image from the
-        body of the page.  If there is no image found, we will use the default image that we set.
-      */
-      let projectImage = "";
-      let adjustedFileName = "";
-
-      if (req.files && req.files.project_image) {
-        const upload = prepareImageUpload(req.files.project_image);
-        if (upload.error) {
-          errorMessage = upload.error;
-          throw new Error(errorMessage);
-        }
-        projectImage = req.files.project_image;
-        adjustedFileName = upload.fileName;
-        project.project_image = adjustedFileName;
-      } else {
-        if (!project.project_image) {
-          project.project_image = "default.png";
-        }
-      }
-
-      project.project_description_markdown = req.body.project_description;
-      project.project_description_html = projectSanitized;
-
       // Save first so a validation or duplicate-key failure doesn't leave an orphaned upload
       const result = await project.save();
 
-      if (projectImage) {
-        await projectImage.mv("./public/images/" + adjustedFileName);
+      if (upload) {
+        await imageFile.mv("./public/images/" + upload.fileName);
       }
 
       req.flash("success", strings.success.projectAdded);
       res.setHeader("HX-Redirect", "/projects/" + result._id + "/edit");
-      res.status(200).end();
+      return res.status(200).end();
     } catch (ex) {
-      if (ex.code === 11000) {
-        const indexNameMatch = ex.message.match(/index: (\w+)/);
-        const indexName = indexNameMatch ? indexNameMatch[1] : null;
-
-        if (indexName === "project_name_1") {
-          errorMessage += strings.errors.projectNameUnique;
-        } else if (indexName === "project_title_1") {
-          errorMessage += strings.errors.projectTitleUnique;
-        } else {
-          errorMessage += strings.errors.genericError;
-        }
-      } else if (errorMessage === "") {
-        logErrorToFile(ex);
-      }
-
-      let error = errorMessage
-        ? errorMessage
-        : strings.errors.allFieldsRequired;
-
-      if (req.headers["hx-request"]) {
-        return res.status(200).send(`
-          <div class="container">
-            <div class="text-center">
-              <div class="alert alert-danger center-block">
-                <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
-                ${error}
-              </div>
-            </div>
-          </div>
-        `);
-      } else {
-        req.flash("error", error);
-        res.redirect("/projects/new");
-      }
+      const duplicate = duplicateKeyMessage(ex);
+      if (!duplicate) logErrorToFile(ex);
+      return projectFormError(req, res, duplicate ?? strings.errors.genericError, "/projects/new");
     }
   }
 );
@@ -260,7 +192,9 @@ ROUTER.get(
     }
 
     res.render("admin/projects/update-project", {
-      layout: "update-project",
+      layout: "admin",
+      markdownEditor: true,
+      pageScripts: ["update-project.js"],
       update_project: true,
       project_name: project.project_name,
       project_title: project.project_title,
@@ -277,135 +211,62 @@ ROUTER.post(
   "/:id/edit",
   [auth.ValidateLoggedIn(true), auth.ValidateAdmin],
   async (req, res) => {
-    const { _csrf, ...FormData } = req.body;
-
     const projectUpdate = await findProjectById(req.params.id);
 
     if (!projectUpdate) {
       return renderProjectNotFound(res);
     }
 
-    try {
-      const { error } = validateProject(FormData);
-      var errorMessage = "";
+    const editUrl = `/projects/${projectUpdate._id}/edit`;
+    const { _csrf, ...FormData } = req.body;
+    const { error } = validateProject(FormData);
 
-      if (error) {
-        // Handle validation error
-        for (let i = 0; i < error.details.length; i++) {
-          if (error.details[i].context.key === "project_description") {
-            errorMessage += strings.errors.projectDescriptionLength + "<br>";
-          }
-          if (error.details[i].context.key === "project_name") {
-            errorMessage += strings.errors.projectName + "<br>";
-          }
-          if (error.details[i].context.key === "project_title") {
-            errorMessage += strings.errors.projectTitle + "<br>";
-          }
-          if (error.details[i].context.key === "project_source") {
-            errorMessage += strings.errors.projectSource + "<br>";
-          }
-        }
-        throw new Error(errorMessage);
+    if (error) {
+      return projectFormError(req, res, projectValidationErrors(error), editUrl);
+    }
+
+    let projectImage = projectUpdate.project_image;
+    const imageFile = req.files?.project_image;
+
+    if (imageFile) {
+      const upload = prepareImageUpload(imageFile);
+      if (upload.error) {
+        return projectFormError(req, res, upload.error, editUrl);
       }
 
-      let projectDescription = MARKDOWN.render(req.body.project_description);
-      let projectSanitized = sanitize(projectDescription, {
-        allowedTags: safeTags,
-      });
-
-      let saveDate = new Date(Date.now());
-      let projectImage = projectUpdate.project_image;
-
-      if (req.files && req.files.project_image) {
-        const upload = prepareImageUpload(req.files.project_image);
-        if (upload.error) {
-          errorMessage = upload.error;
-          throw new Error(errorMessage);
-        }
-
-        try {
-          await req.files.project_image.mv("./public/images/" + upload.fileName);
-          projectImage = upload.fileName;
-        } catch (error) {
-          // Keep the existing image if the move fails
-          logErrorToFile(error);
-        }
-      }
-
-      projectUpdate.project_name = req.body.project_name;
-      projectUpdate.project_title = req.body.project_title;
-      projectUpdate.project_source = req.body.project_source;
-      projectUpdate.project_description_markdown = req.body.project_description;
-      projectUpdate.project_description_html = projectSanitized;
-      projectUpdate.project_image = projectImage;
-      projectUpdate.last_edited = saveDate;
-
-      await projectUpdate.save();
-
-      if (req.headers["hx-request"]) {
-        // Assuming success
-        const successHtml = `
-      <div class="container">
-            <div class="text-center">
-                <div class="alert alert-success center-block">
-                    <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
-                    ${strings.success.projectUpdated}
-                </div>
-            </div>
-        </div>
-    `;
-
-        const updatedImageHtml = `
-      <div class="thumbnail">
-        <img class="img-responsive" src="/images/${projectImage}" alt="Updated Image">
-        <div class="caption center-block">Current Image</div>
-      </div>
-    `;
-
-        return res
-          .status(200)
-          .set("HX-Trigger", JSON.stringify({ updateImage: updatedImageHtml }))
-          .send(`${successHtml}`);
-      } else {
-        req.flash("success", strings.success.projectUpdated);
-        res.redirect(`/projects/${req.params.id}`);
-      }
-    } catch (ex) {
-      if (ex.code === 11000) {
-        const indexNameMatch = ex.message.match(/index: (\w+)/);
-        const indexName = indexNameMatch ? indexNameMatch[1] : null;
-
-        if (indexName === "project_name_1") {
-          errorMessage = strings.errors.projectNameUnique;
-        } else if (indexName === "project_title_1") {
-          errorMessage = strings.errors.projectTitleUnique;
-        } else {
-          errorMessage = strings.errors.genericError;
-        }
-      } else {
-        if (errorMessage === "") {
-          errorMessage = strings.errors.genericError;
-        }
-
-        logErrorToFile(ex);
-      }
-
-      if (req.headers["hx-request"]) {
-        return res.status(200).send(`
-          <div class="container">
-            <div class="text-center">
-              <div class="alert alert-danger center-block">
-                <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
-                ${errorMessage}
-              </div>
-            </div>
-          </div>
-        `);
-      } else {
-        req.flash("error", errorMessage);
-        res.redirect(`/projects/${req.params.id}/edit`);
+      try {
+        await imageFile.mv("./public/images/" + upload.fileName);
+        projectImage = upload.fileName;
+      } catch (err) {
+        // Keep the existing image if the move fails
+        logErrorToFile(err);
       }
     }
+
+    projectUpdate.project_name = req.body.project_name;
+    projectUpdate.project_title = req.body.project_title;
+    projectUpdate.project_source = req.body.project_source;
+    projectUpdate.project_description_markdown = req.body.project_description;
+    projectUpdate.project_description_html = renderProjectHtml(req.body.project_description);
+    projectUpdate.project_image = projectImage;
+    projectUpdate.last_edited = new Date();
+
+    try {
+      await projectUpdate.save();
+    } catch (ex) {
+      const duplicate = duplicateKeyMessage(ex);
+      if (!duplicate) logErrorToFile(ex);
+      return projectFormError(req, res, duplicate ?? strings.errors.genericError, editUrl);
+    }
+
+    if (req.get("HX-Request")) {
+      // update-project.js swaps the thumbnail to this URL
+      res.set("HX-Trigger", JSON.stringify({ updateImage: { src: `/images/${projectImage}` } }));
+      return renderAlert(res, "success", strings.success.projectUpdated);
+    }
+
+    req.flash("success", strings.success.projectUpdated);
+    return res.redirect(`/projects/${projectUpdate._id}`);
   }
 );
 
@@ -429,10 +290,7 @@ ROUTER.put(
 );
 
 ROUTER.get("/delete-modal/:id", [auth.ValidateLoggedIn(), auth.ValidateAdmin], (req, res) => {
-  let sanitizedID = sanitizeText(req.params.id);
-  let sanitizedCSRFToken = sanitizeText(res.locals._csrf);
-  let modal = deleteModal(sanitizedID, sanitizedCSRFToken, "/projects/delete/");
-  res.send(modal);
+  return renderDeleteModal(res, "/projects/delete/", req.params.id);
 });
 
 ROUTER.get("/:id", async (req, res) => {
@@ -511,6 +369,54 @@ ROUTER.put(
     }
   }
 );
+
+// Validation message per form field, in the order they are reported
+const PROJECT_FIELD_ERRORS = {
+  project_description: strings.errors.projectDescriptionLength,
+  project_name: strings.errors.projectName,
+  project_title: strings.errors.projectTitle,
+  project_source: strings.errors.projectSource,
+};
+
+/**
+ * @param {Object} error - A Joi validation error
+ * @returns {string[]} - One message per failing field
+ */
+function projectValidationErrors(error) {
+  const failed = new Set(error.details.map((detail) => detail.context.key));
+  const messages = Object.keys(PROJECT_FIELD_ERRORS)
+    .filter((key) => failed.has(key))
+    .map((key) => PROJECT_FIELD_ERRORS[key]);
+  return messages.length > 0 ? messages : [strings.errors.allFieldsRequired];
+}
+
+/**
+ * @param {Error} ex - An error from saving a project
+ * @returns {string|null} - The message for a unique-index violation, or null for anything else
+ */
+function duplicateKeyMessage(ex) {
+  if (ex.code !== 11000) return null;
+  const index = ex.message.match(/index: (\w+)/)?.[1];
+  if (index === "project_name_1") return strings.errors.projectNameUnique;
+  if (index === "project_title_1") return strings.errors.projectTitleUnique;
+  return strings.errors.genericError;
+}
+
+/**
+ * Show form errors: an alert for HTMX requests, otherwise a flash message and a redirect
+ */
+function projectFormError(req, res, messages, redirectTo) {
+  if (req.get("HX-Request")) {
+    return renderAlert(res, "danger", messages);
+  }
+  // status.handlebars renders flash errors unescaped; these messages are all constants
+  req.flash("error", [].concat(messages).join("<br>"));
+  return res.redirect(redirectTo);
+}
+
+function renderProjectHtml(markdown) {
+  return sanitize(MARKDOWN.render(markdown), { allowedTags: safeTags });
+}
 
 /**
  * Find a project by id, treating malformed ids as not found

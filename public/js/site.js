@@ -62,6 +62,11 @@ $(document).ready(function() {
 
   /* Initialize reCAPTCHA on load */
   initializeRecaptcha();
+
+  /* Syntax highlighting (highlight.js is only loaded on public pages) */
+  if (window.hljs) {
+    hljs.highlightAll();
+  }
 });
 
 document.body.addEventListener("click", function(event) {

@@ -36,7 +36,8 @@ export function versionedFile(filename, basePath, type) {
   const manifestPath = path.resolve(resolvedPath, "manifest.json");
   const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
 
-  const contentHash = manifest[filename]?.split(".")[1];
+  // e.g. "js/jquery.simplePagination.8e2ff96df596aba62859.js" -> "8e2ff96df596aba62859"
+  const contentHash = manifest[filename]?.match(/\.([0-9a-f]+)\.[a-z]+$/)?.[1];
 
   return `/${type}/${filename}?v=${contentHash}`;
 }

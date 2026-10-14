@@ -47,6 +47,30 @@ export async function sendMail(
   }
 }
 
+/**
+ * Send a contact-form message to the site owner as plain text. It goes out from the site's
+ * own address (so it passes SPF/DMARC) with the visitor in Reply-To.
+ * @returns {Promise<boolean>} - Whether Mailgun accepted the message
+ */
+export async function sendContactMessage(replyTo, subject, text) {
+  try {
+    const messageOptions = createMessageOptions(
+      process.env.mailgunFromEmail,
+      process.env.mailgunToEmail,
+      subject,
+      text,
+      false
+    );
+    messageOptions["h:Reply-To"] = replyTo;
+
+    await mg.messages.create(domain, messageOptions);
+    return true;
+  } catch (err) {
+    logErrorToFile(err);
+    return false;
+  }
+}
+
 function createMessageOptions(fromEmail, toEmail, subject, text, ishtml) {
   const messageOptions = {
     from: fromEmail,

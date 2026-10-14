@@ -1,19 +1,14 @@
-/**
-  * @param {string} id - The id of the entry to be deleted
-  * @param {string} csrf - The CSRF token to be sent with the request
-  * @param {string} url - The URL to send the delete request to
-  * @returns {string} - The HTML for the delete modal
-*/
-function deleteModal(id, csrf, url) {
-  return `<div id="confirmModal" class="modal csp-modal is-visible" aria-hidden="false">
+{{!-- Delete confirmation, loaded into #confirmation-modal over HTMX.
+      action: the full PUT URL that deletes the entry --}}
+<div id="confirmModal" class="modal csp-modal is-visible" aria-hidden="false">
   <div class="modal-dialog modal-login">
     <div class="modal-content">
-      <form 
-        id="confirmForm" 
-  hx-put="${url}${id}" 
-  hx-headers='{"X-CSRF-TOKEN": "${csrf}" }'
-  hx-target="#statusBox"
-  hx-swap="outerHTML"
+      <form
+        id="confirmForm"
+        hx-put="{{ action }}"
+        hx-headers='{"X-CSRF-TOKEN": "{{ csrfToken }}"}'
+        hx-target="#statusBox"
+        hx-swap="outerHTML"
       >
         <div class="modal-header">
           <h4 class="modal-title">Confirm Delete</h4>
@@ -29,7 +24,4 @@ function deleteModal(id, csrf, url) {
       </form>
     </div>
   </div>
-</div>`;
-}
-
-export default deleteModal;
+</div>

@@ -1,13 +1,14 @@
 import rateLimit from "express-rate-limit";
 
 import { strings } from "../config/constants.js";
+import { renderAlert } from "./renderPartial.js";
 
 /**
  * Limit failed logins per IP. Successful logins (status < 400) are not counted,
  * so only bad passwords use up the allowance.
- * @param {Function} renderError - Builds the HTML alert for the endpoint's own error markup
+ * @param {string} view - The alert partial the login form expects (see utils/renderPartial.js)
  */
-export function loginLimiter(renderError) {
+export function loginLimiter(view) {
   return rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 10,
@@ -15,7 +16,7 @@ export function loginLimiter(renderError) {
     standardHeaders: "draft-8",
     legacyHeaders: false,
     handler: (req, res) => {
-      res.status(429).send(renderError(strings.errors.tooManyLoginAttempts));
+      renderAlert(res, "danger", strings.errors.tooManyLoginAttempts, { status: 429, view });
     },
   });
 }

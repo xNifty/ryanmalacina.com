@@ -1,5 +1,5 @@
 import mailgunConfig from "../config/mailgunConfig";
-import { sendMail } from "../utils/sendMail.js";
+import { sendMail, sendContactMessage } from "../utils/sendMail.js";
 import logErrorToFile from "../utils/errorLogging.js";
 import handleResponse from "../utils/responseHandler.js";
 
@@ -155,6 +155,42 @@ describe("Mail Service", () => {
       expect(logErrorToFile).toHaveBeenCalledWith(mockError);
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe("sendContactMessage", () => {
+    const env = process.env;
+
+    beforeEach(() => {
+      process.env = { ...env, mailgunFromEmail: "site@example.com", mailgunToEmail: "owner@example.com" };
+    });
+
+    afterEach(() => {
+      process.env = env;
+    });
+
+    it("should send plain text from the site address with the visitor in Reply-To", async () => {
+      mailgunConfig.mg.messages.create.mockResolvedValueOnce();
+
+      const result = await sendContactMessage("visitor@example.com", "Hi", "<b>not html</b>");
+
+      expect(result).toBe(true);
+      expect(mailgunConfig.mg.messages.create).toHaveBeenCalledWith("mockDomain", {
+        from: "site@example.com",
+        to: "owner@example.com",
+        subject: "Hi",
+        text: "<b>not html</b>",
+        "h:Reply-To": "visitor@example.com",
+      });
+    });
+
+    it("should log and return false when Mailgun fails", async () => {
+      mailgunConfig.mg.messages.create.mockRejectedValueOnce(new Error("down"));
+
+      const result = await sendContactMessage("visitor@example.com", "Hi", "text");
+
+      expect(result).toBe(false);
+      expect(logErrorToFile).toHaveBeenCalled();
     });
   });
 });

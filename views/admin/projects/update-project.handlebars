@@ -26,7 +26,7 @@
             </div>
             <div class="form-group">
                 <label for="project_description">Project Description</label>
-                <textarea class="form-control" id="project_description" name="project_description">{{#if project_description}}{{{ project_description }}}{{/if}}</textarea>
+                <textarea class="form-control" id="project_description" name="project_description" data-markdown-editor data-placeholder="Project Description Here - Write in Markdown">{{#if project_description}}{{ project_description }}{{/if}}</textarea>
             </div>
             <div id="image-container" class="col-md-3 col-xs-6">
                 <div class="thumbnail">

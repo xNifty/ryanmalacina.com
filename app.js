@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express from "express";
-import exphbs from "express-handlebars";
+import { createViewEngine } from "./utils/viewEngine.js";
 import config from "config";
 import session from "express-session";
 import flash from "connect-flash";
@@ -14,7 +14,6 @@ import { generateNonce, getDirectives } from "nonce-simple";
 import helmet from "helmet";
 
 import { User } from "./models/user.js";
-import { iff, versionedFile } from "./utils/helpers.js";
 import renderError from "./utils/renderErrorPage.js";
 import { strings } from "./config/constants.js";
 import connectToDatabase from "./utils/database.js";
@@ -63,20 +62,7 @@ const NONCE_OPTIONS = {
   images: urls.imgSrc,
 };
 
-// Set default layout, can be overridden per-route as needed
-// We also load any helper functions we wrote within helpers.js inside the functions folder
-const HBS = exphbs.create({
-  defaultLayout: "main",
-  partialsDir: "views/partials/",
-  layoutsDir: "views/layouts/",
-  compilerOptions: {
-    preventIndent: true,
-  },
-  helpers: {
-    iff: iff,
-    versionedFile: versionedFile,
-  },
-});
+const HBS = createViewEngine();
 
 // Connect to the database
 try {

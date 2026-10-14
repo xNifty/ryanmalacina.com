@@ -24,7 +24,7 @@ ROUTER.get("/", async (req, res) => {
   }
 
   return res.render("news-index", {
-    layout: "newsIndex",
+    pageScripts: ["jquery.simplePagination.js", "news.js"],
     title: "Ryan Malacina | News",
     news: news_list["newsItems"],
     totalPages: news_list["totalPages"],

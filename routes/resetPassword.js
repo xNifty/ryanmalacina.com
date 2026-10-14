@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("resetPassword", {
-    layout: "reset",
+    hideLogin: true,
     title: strings.pageHeader.forgotPassword,
     csrfToken: res.locals._csrf,
   });

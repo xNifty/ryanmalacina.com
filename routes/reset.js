@@ -1,8 +1,6 @@
 import express from "express";
 import crypto from "crypto";
 import config from "config";
-import fs from "fs";
-import path from "path";
 import bcrypt from "bcrypt";
 
 import auth from "../utils/auth.js";
@@ -12,6 +10,7 @@ import { Token } from "../models/token.js";
 import { sendMail } from "../utils/sendMail.js";
 import logErrorToFile from "../utils/errorLogging.js";
 import { resetLimiter } from "../utils/rateLimits.js";
+import { renderEmail } from "../utils/renderEmail.js";
 
 const ROUTER = express.Router();
 
@@ -20,7 +19,7 @@ const BCRYPT_SALT = process.env.BCRYPT_SALT;
 
 ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("reset", {
-    layout: "reset",
+    hideLogin: true,
     title: strings.pageHeader.forgotPassword,
     csrfToken: res.locals._csrf,
   });
@@ -114,22 +113,8 @@ const generateInvalidateLink = (userId, resetToken) => {
   )}/resetPassword/invalidate?token=${resetToken}&id=${userId}`;
 };
 
-const generateEmailTemplate = async (userName, link, invalidateLink) => {
-  try {
-    const __dirname = path.resolve();
-    const templatePath = path.join(
-      __dirname,
-      "/views/layouts/templates/passwordReset.handlebars"
-    );
-    const source = await fs.promises.readFile(templatePath, "utf-8");
-    return source
-      .replace("{{user}}", userName)
-      .replace("{{link}}", link)
-      .replace("{{invalidateLink}}", invalidateLink);
-  } catch (error) {
-    console.error("Error generating email template:", error);
-    throw error;
-  }
+const generateEmailTemplate = (userName, link, invalidateLink) => {
+  return renderEmail("passwordReset", { user: userName, link, invalidateLink });
 };
 
 export { ROUTER as resetRoute };

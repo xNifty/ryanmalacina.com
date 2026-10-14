@@ -1,0 +1,19 @@
+{{!-- Scripts shared by every layout. Routes opt in to extras:
+      markdownEditor: true  -> SimpleMDE on every textarea[data-markdown-editor]
+      pageScripts: [...]    -> webpack entries for that page, e.g. ["news.js"] --}}
+<script src="https://unpkg.com/htmx.org@2.0.10/dist/htmx.min.js" nonce="{{nonce}}"></script>
+<script src="https://unpkg.com/htmx-ext-response-targets@2.0.4/dist/response-targets.js" nonce="{{nonce}}"></script>
+<script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous" nonce="{{nonce}}">
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" nonce="{{nonce}}"></script>
+<script src="{{ versionedFile 'site.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
+{{#if markdownEditor}}
+<script src="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.js" nonce="{{nonce}}"></script>
+<script src="{{ versionedFile 'editor.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
+{{/if}}
+{{#each pageScripts}}
+<script src="{{ versionedFile this 'dist' 'js'}}" nonce="{{@root.nonce}}"></script>
+{{/each}}

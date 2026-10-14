@@ -1,4 +1,4 @@
-{{!-- Main Layout Template --}}
+{{!-- Public layout. Set hideLogin: true to drop the login link and modal (e.g. password reset) --}}
 <!doctype HTML>
 <html>
 {{> header}}
@@ -6,8 +6,8 @@
     {{> theme-script}}
     {{> splash-screen}}
     {{> nav}}
-    <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load" nonce="{{nonce}}">{{> status}}</div>
-    {{> login}}
+    <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">{{> status}}</div>
+    {{#unless authenticated}}{{#unless hideLogin}}{{> login}}{{/unless}}{{/unless}}
     {{{ body }}}
 
     {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
@@ -21,16 +21,8 @@
             document.head.appendChild(script);
         }
     </script>
-    <script src="https://unpkg.com/htmx.org@2.0.10/dist/htmx.min.js" nonce="{{nonce}}"></script>
-    <script src="https://unpkg.com/htmx-ext-response-targets@2.0.4/dist/response-targets.js" nonce="{{nonce}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js" nonce="{{nonce}}"></script>
-    <script rel="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" nonce="{{nonce}}"></script>
-    <script rel="text/javascript" src="{{ versionedFile 'site.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.14.1/jquery-ui.min.js" nonce="{{nonce}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js" nonce="{{nonce}}"></script>
-    <script nonce="{{nonce}}">hljs.highlightAll();</script>
-    <script rel="text/javascript" src="{{ versionedFile 'welcome.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
-    {{!-- <script type="text/javascript" nonce="{{nonce}}" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script> --}}
-    {{!-- <script src="https://www.google.com/recaptcha/api.js?trustedtypes=true&render={{recaptchaSiteKey}}" nonce="{{nonce}}" async defer></script> --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" nonce="{{nonce}}"></script>
+    {{> scripts}}
+    <script src="{{ versionedFile 'welcome.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
 </body>
 </html>

@@ -22,6 +22,7 @@ const config = {
     site: "@js/site.js",
     welcome: "@js/welcome.js",
     "update-project": "@js/update-project.js",
+    editor: "@js/editor.js",
     theme: "@js/theme.js",
     trustedtype: "@js/trustedtype.js",
     simplePagination: "@css/simplePagination.css",

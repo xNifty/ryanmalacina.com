@@ -29,11 +29,10 @@ import dateFormat from "dateformat";
 import MarkdownIt from "markdown-it";
 import _ from "lodash";
 import mongoose from "mongoose";
-import { sanitizeText } from "../utils/sanitizeText.js";
 
 import auth from "../utils/auth.js";
 import logErrorToFile from "../utils/errorLogging.js";
-import deleteModal from "../utils/delete-modal.js";
+import { renderDeleteModal } from "../utils/renderPartial.js";
 
 import { Project } from "../models/projects.js";
 import { News, validateNews } from "../models/news.js";
@@ -120,7 +119,8 @@ ROUTER.get(
     });
 
     res.render("admin/news/news", {
-      layout: "news",
+      layout: "admin",
+      markdownEditor: true,
       title: strings.pageHeader.adminProject,
       news: news_list,
       csrfToken: res.locals._csrf,
@@ -154,7 +154,8 @@ ROUTER.post(
 
       return res.status(400).render("admin/news/news", {
         error: errorMessage,
-        layout: "news",
+        layout: "admin",
+        markdownEditor: true,
         news_title: req.body.news_title,
         news_description: req.body.news_description,
         loadJS: true,
@@ -181,7 +182,8 @@ ROUTER.post(
     } catch (ex) {
       return res.status(400).render("admin/news/news", {
         error: strings.errors.allFieldsRequired,
-        layout: "news",
+        layout: "admin",
+        markdownEditor: true,
         news_title: req.body.news_title,
         news_description: req.body.news_description,
         loadJS: true,
@@ -270,7 +272,8 @@ ROUTER.get(
     req.session.news_id = news._id.toString();
 
     res.render("admin/news/edit", {
-      layout: "news",
+      layout: "admin",
+      markdownEditor: true,
       title: news.news_title,
       news_title: news.news_title,
       news_description: news.news_description_markdown,
@@ -292,7 +295,8 @@ ROUTER.post(
 
     if (error) {
       return res.status(400).render("admin/news/edit", {
-        layout: "news",
+        layout: "admin",
+        markdownEditor: true,
         error: strings.errors.allFieldsRequired,
         title: req.body.news_title,
         news_title: req.body.news_title,
@@ -330,7 +334,8 @@ ROUTER.post(
     } catch (ex) {
       console.log("Error in news edit: ", ex.message);
       return res.status(400).render("admin/news/edit", {
-        layout: "news",
+        layout: "admin",
+        markdownEditor: true,
         error: strings.errors.allFieldsRequired,
         title: req.body.news_title,
         news_title: req.body.news_title,
@@ -344,14 +349,7 @@ ROUTER.post(
 );
 
 ROUTER.get("/news/delete-modal/:id", [auth.ValidateLoggedIn(), auth.ValidateAdmin], (req, res) => {
-  let sanitizedID = sanitizeText(req.params.id);
-  let sanitizedCSRFToken = sanitizeText(res.locals._csrf);
-  let modal = deleteModal(
-    sanitizedID,
-    sanitizedCSRFToken,
-    "/admin/news/delete/"
-  );
-  res.send(modal);
+  return renderDeleteModal(res, "/admin/news/delete/", req.params.id);
 });
 
 async function publishProject(id) {
