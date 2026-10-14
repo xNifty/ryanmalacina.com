@@ -38,10 +38,20 @@
             </div>
             <ul class="post-list">
                 {{#each news}}
-                    <li class="post-row">
-                        <time class="post-row__date" datetime="{{ formatDate publishedAt "isoUtcDateTime" }}">{{ formatDate publishedAt "mmm d, yyyy" }}</time>
-                        <a class="post-row__title" href="/news/{{ slug }}">{{ title }}</a>
-                        <span class="post-row__arrow" aria-hidden="true">→</span>
+                    <li>
+                        <details class="post-entry">
+                            <summary class="post-row">
+                                <time class="post-row__date" datetime="{{ formatDate publishedAt "isoUtcDateTime" }}">{{ formatDate publishedAt "mmm d, yyyy" }}</time>
+                                <span class="post-row__title">{{ title }}</span>
+                                <span class="post-row__arrow post-entry__chevron" aria-hidden="true">›</span>
+                            </summary>
+                            <div class="post-entry__body">
+                                <div class="markdown-body">
+                                    {{{ bodyHtml }}}
+                                </div>
+                                <a class="post-entry__link" href="/news/{{ slug }}">permalink →</a>
+                            </div>
+                        </details>
                     </li>
                 {{/each}}
             </ul>

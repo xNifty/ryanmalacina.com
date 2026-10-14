@@ -726,6 +726,52 @@ select.input {
   color: var(--text-faint);
 }
 
+/* Home page news: each row expands to show the whole entry */
+.post-entry {
+  border-bottom: 1px solid var(--border);
+}
+
+.post-entry > .post-row {
+  border-bottom: 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.post-entry > .post-row::-webkit-details-marker {
+  display: none;
+}
+
+.post-entry > .post-row:hover .post-row__title,
+.post-entry[open] .post-row__title {
+  color: var(--accent);
+}
+
+.post-entry > .post-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.post-entry__chevron {
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.post-entry[open] .post-entry__chevron {
+  transform: rotate(90deg);
+}
+
+.post-entry__body {
+  padding: 4px 4px 20px calc(110px + 20px);
+}
+
+.post-entry__link {
+  display: inline-block;
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
 .news-search {
   display: flex;
   flex-wrap: wrap;
@@ -1199,6 +1245,22 @@ select.input {
 
   .post-row__arrow {
     display: none;
+  }
+
+  /* Keep the chevron so the rows still look expandable */
+  .post-entry > .post-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .post-entry .post-entry__chevron {
+    display: block;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
+  .post-entry__body {
+    padding-left: 4px;
   }
 
   .contact,

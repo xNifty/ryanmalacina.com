@@ -164,7 +164,7 @@ describe("layouts", () => {
         { name: "GoTodo", title: "GoTodo", slug: "gotodo", image: "gotodo.png", tags: [] },
       ],
       showNews: true,
-      news: [{ title: "Launch", slug: "launch", publishedAt: new Date(2026, 5, 10, 7, 52) }],
+      news: [{ title: "Launch", slug: "launch", bodyHtml: "<p>We're live</p>", publishedAt: new Date(2026, 5, 10, 7, 52) }],
     });
     expect(html).toContain('<a href="/projects/ninja">Snoring Ninja</a>');
     // The placeholder image becomes a monogram; a real one is shown
@@ -174,7 +174,10 @@ describe("layouts", () => {
     // A title identical to the name isn't repeated
     expect(html).not.toContain('<p class="project-card__title">GoTodo</p>');
     expect(html).toContain("all two projects");
-    expect(html).toContain('<a class="post-row__title" href="/news/launch">Launch</a>');
+    // News entries expand in place, with a link to their own page
+    expect(html).toContain('<span class="post-row__title">Launch</span>');
+    expect(html).toContain("<p>We're live</p>");
+    expect(html).toContain('<a class="post-entry__link" href="/news/launch">permalink →</a>');
     expect(html).toContain("Jun 10, 2026");
     expect(html).toContain('id="contactformdiv"');
     expect(html).not.toContain("from the blog");

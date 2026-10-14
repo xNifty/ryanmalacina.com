@@ -38,10 +38,10 @@ const projectSchema = new mongoose.Schema(
       minlength: 10,
       maxlength: 25000,
     },
+    // Rendered from descriptionMarkdown, so its size is bounded by that limit; capping it too
+    // rejected long descriptions, since the HTML is always longer than the markdown
     descriptionHtml: {
       type: String,
-      minlength: 10,
-      maxlength: 25000,
     },
     image: {
       type: String,

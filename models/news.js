@@ -22,15 +22,13 @@ const newsSchema = new mongoose.Schema(
       minlength: 10,
       maxlength: 1000,
     },
+    // Rendered from bodyMarkdown, so their size is bounded by that limit
     bodyHtml: {
       type: String,
-      minlength: 10,
-      maxlength: 5000, // rendered HTML can be much longer than the markdown
     },
     // The body with tags stripped, for text search
     bodyText: {
       type: String,
-      maxlength: 5000,
     },
     isPublished: {
       type: Boolean,

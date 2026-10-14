@@ -158,6 +158,16 @@ describe("projects service", () => {
     expect(saved.isPublished).toBe(false);
   });
 
+  it("should save a description at the markdown limit even though its HTML is longer", async () => {
+    const paragraph = "Some **bold** text with a [link](https://example.com/docs).\n\n";
+    const descriptionMarkdown = paragraph.repeat(Math.floor(25000 / paragraph.length));
+    const project = await createProject(1);
+
+    await projects.update(project, projectData(1, { descriptionMarkdown }));
+    const saved = await Project.findById(project._id);
+    expect(saved.descriptionHtml.length).toBeGreaterThan(25000);
+  });
+
   it("should keep old slugs findable after a rename", async () => {
     const project = await createProject(1);
 
