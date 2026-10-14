@@ -1,164 +1,127 @@
-// sitewide javascript
+// Public site behaviour. Plain JavaScript; loaded at the end of the body after htmx.
+(function() {
+  /* ---------- Mobile menu ---------- */
 
-function openCspModal(modalId) {
-  var modal = document.getElementById(modalId);
-  if (!modal) {
-    return;
-  }
-  modal.classList.add("is-visible");
-  modal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
-}
+  var toggle = document.querySelector("[data-menu-toggle]");
+  var nav = document.getElementById("site-nav");
 
-function closeCspModal(modal) {
-  if (typeof modal === "string") {
-    modal = document.getElementById(modal);
-  }
-  if (!modal) {
-    return;
-  }
-  modal.classList.remove("is-visible");
-  modal.setAttribute("aria-hidden", "true");
-  if (!document.querySelector(".csp-modal.is-visible")) {
-    document.body.classList.remove("modal-open");
-  }
-}
-
-function syncModalBodyClass() {
-  if (document.querySelector(".csp-modal.is-visible")) {
-    document.body.classList.add("modal-open");
-  }
-}
-
-$(document).ready(function() {
-  if ($.support) {
-    $.support.transition = false;
+  function setMenu(open) {
+    if (!toggle || !nav) return;
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    nav.classList.toggle("is-open", open);
   }
 
-  document.body.classList.add("is-scroll-enabled");
-
-  /* Scroll to top */
-  $(window).scroll(function() {
-    var scrollButton = document.getElementById("scroll");
-    if (!scrollButton) {
-      return;
-    }
-    if ($(window).scrollTop() > 100) {
-      scrollButton.classList.add("is-visible");
-    } else {
-      scrollButton.classList.remove("is-visible");
-    }
-  });
-
-  $("#scroll").click(function(event) {
-    event.preventDefault();
-    $("html, body").animate({ scrollTop: 0 }, "slow");
-    return false;
-  });
-
-  /* Login caps lock checks */
-  loginModalCapsLock();
-  loginPageCapsLock();
-
-  /* Initialize reCAPTCHA on load */
-  initializeRecaptcha();
-
-  /* Syntax highlighting (highlight.js is only loaded on public pages) */
-  if (window.hljs) {
-    hljs.highlightAll();
-  }
-});
-
-document.body.addEventListener("click", function(event) {
-  var openTrigger = event.target.closest("[data-csp-modal-open]");
-  if (openTrigger) {
-    event.preventDefault();
-    openCspModal(openTrigger.getAttribute("data-csp-modal-open"));
-    return;
-  }
-
-  var dismissTrigger = event.target.closest("[data-csp-modal-dismiss]");
-  if (dismissTrigger) {
-    event.preventDefault();
-    closeCspModal(dismissTrigger.closest(".csp-modal"));
-    return;
-  }
-
-  var modal = event.target.closest(".csp-modal.is-visible");
-  if (modal && event.target === modal) {
-    closeCspModal(modal);
-  }
-});
-
-function loginModalCapsLock() {
-  const el = document.getElementById("sp_pass");
-  const msg = document.getElementById("sp_pass_message");
-
-  if (!el) return;
-
-  el.addEventListener("keydown", (e) => {
-    if (e.getModifierState("CapsLock")) {
-      msg.classList.remove("capslock-hidden");
-      msg.classList.add("capslock-visible");
-    } else {
-      msg.classList.remove("capslock-visible");
-      msg.classList.add("capslock-hidden");
-    }
-  }, { passive: true });
-}
-
-function loginPageCapsLock() {
-  const el = document.getElementById("password");
-  const msg = document.getElementById("password-message");
-
-  if (!el) return;
-
-  el.addEventListener("keydown", (e) => {
-    if (e.getModifierState("CapsLock")) {
-      msg.classList.remove("capslock-hidden");
-      msg.classList.add("capslock-visible");
-    } else {
-      msg.classList.remove("capslock-visible");
-      msg.classList.add("capslock-hidden");
-    }
-  }, { passive: true });
-}
-
-
-function cb(token) {
-  //console.log('token:', token);
-  $("#g-recaptcha-response").val(token);
-}
-
-function recaptchaSiteKey() {
-  var meta = document.querySelector('meta[name="recaptcha-site-key"]');
-  return meta ? meta.content : '';
-}
-
-function initializeRecaptcha() {
-  if (typeof grecaptcha === 'undefined' || !document.getElementById('g-recaptcha-response')) {
-    return;
-  }
-  try {
-    grecaptcha.ready(function() {
-      grecaptcha.execute(recaptchaSiteKey(), { action: 'homepage' }).then(cb);
+  if (toggle && nav) {
+    toggle.addEventListener("click", function() {
+      setMenu(toggle.getAttribute("aria-expanded") !== "true");
     });
-  } catch (e) {
-    console.warn('reCAPTCHA init skipped:', e);
+    nav.addEventListener("click", function(event) {
+      if (event.target.closest("a")) setMenu(false);
+    });
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+        setMenu(false);
+        toggle.focus();
+      }
+    });
   }
-}
 
-document.body.addEventListener('htmx:afterSwap', function(evt) {
-  var elt = evt.target;
-  syncModalBodyClass();
-  if (elt && elt.querySelector && elt.querySelector('#contactformdiv')) {
-    initializeRecaptcha();
+  /* ---------- Flash messages ---------- */
+
+  document.addEventListener("click", function(event) {
+    var close = event.target.closest("[data-flash-close]");
+    if (close) {
+      var flash = close.closest(".flash");
+      if (flash) flash.remove();
+    }
+  });
+
+  /* ---------- News search: "Clear search" also empties the box ---------- */
+
+  document.addEventListener("click", function(event) {
+    if (!event.target.closest("[data-clear-search]")) return;
+    var box = document.getElementById("news-q");
+    if (box) box.value = "";
+  });
+
+  /* ---------- Caps Lock warnings: <input data-caps-warning="id-of-message"> ---------- */
+
+  document.addEventListener("keydown", function(event) {
+    var input = event.target.closest && event.target.closest("[data-caps-warning]");
+    if (!input || typeof event.getModifierState !== "function") return;
+    var warning = document.getElementById(input.getAttribute("data-caps-warning"));
+    if (warning) warning.hidden = !event.getModifierState("CapsLock");
+  });
+
+  /* ---------- reCAPTCHA v3 for the contact form ---------- */
+
+  function recaptchaSiteKey() {
+    var meta = document.querySelector('meta[name="recaptcha-site-key"]');
+    return meta ? meta.content : "";
   }
-});
 
-document.body.addEventListener("htmx:configRequest", (evt) => {
-  const nonce = document.querySelector('meta[name="htmx-config"]')
-    .getAttribute("content")
-    .match(/"inlineStyleNonce":"([^"]+)"/)[1]; // extract from meta JSON
-  evt.detail.headers['X-CSP-Nonce'] = nonce;
-});
+  function initializeRecaptcha() {
+    var field = document.getElementById("g-recaptcha-response");
+    if (!field || typeof window.grecaptcha === "undefined") return;
+    try {
+      window.grecaptcha.ready(function() {
+        window.grecaptcha.execute(recaptchaSiteKey(), { action: "homepage" }).then(function(token) {
+          field.value = token;
+        });
+      });
+    } catch (e) {
+      console.warn("reCAPTCHA init skipped:", e);
+    }
+  }
+
+  // The reCAPTCHA script loads with the contact form, possibly after this file runs
+  window.addEventListener("load", initializeRecaptcha);
+
+  /* ---------- Code highlighting (highlight.js is only loaded where needed) ---------- */
+
+  function highlight(root) {
+    if (!window.hljs) return;
+    (root || document).querySelectorAll("pre code:not(.hljs)").forEach(function(block) {
+      window.hljs.highlightElement(block);
+    });
+  }
+
+  highlight();
+
+  /* ---------- htmx ---------- */
+
+  // Say so when a search or page change fails, instead of silently doing nothing
+  function showRequestError(event, message) {
+    var target = event.detail.target;
+    if (!target || target.id !== "news-results") return;
+    var notice = document.createElement("p");
+    notice.className = "empty";
+    notice.setAttribute("role", "alert");
+    notice.textContent = message;
+    target.replaceChildren(notice);
+  }
+
+  document.body.addEventListener("htmx:responseError", function(event) {
+    showRequestError(event, "Search isn't working right now. Please try again in a moment.");
+  });
+
+  document.body.addEventListener("htmx:sendError", function(event) {
+    showRequestError(event, "Couldn't reach the site. Check your connection and try again.");
+  });
+
+  document.body.addEventListener("htmx:afterSwap", function(event) {
+    var target = event.detail.target;
+    highlight(target);
+    if (target && target.querySelector && target.querySelector("#g-recaptcha-response")) {
+      initializeRecaptcha();
+    }
+  });
+
+  // Send this page's CSP nonce, so scripts in swapped-in HTML (the contact form's reCAPTCHA
+  // loader) carry a nonce the page allows
+  document.body.addEventListener("htmx:configRequest", function(event) {
+    var meta = document.querySelector('meta[name="htmx-config"]');
+    var match = meta && meta.getAttribute("content").match(/"inlineScriptNonce":"([^"]+)"/);
+    if (match) event.detail.headers["X-CSP-Nonce"] = match[1];
+  });
+})();

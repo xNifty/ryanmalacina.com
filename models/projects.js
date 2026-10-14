@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import Joi from "joi";
 
 const projectSchema = new mongoose.Schema(
   {
@@ -15,12 +14,18 @@ const projectSchema = new mongoose.Schema(
       required: true,
       maxlength: 125,
     },
-    // Set once at creation so public URLs stay stable when the name changes
+    // The public URL: /projects/<slug>. Generated from the name unless set in the editor
     slug: {
       type: String,
       unique: true,
       required: true,
       maxlength: 100,
+    },
+    // Earlier slugs, so links made before a rename still redirect
+    previousSlugs: {
+      type: [String],
+      default: [],
+      index: true,
     },
     source: {
       type: String,
@@ -43,6 +48,11 @@ const projectSchema = new mongoose.Schema(
       maxlength: 150,
       default: "default.png",
     },
+    // Short labels shown on project cards, e.g. ["node", "discord"]
+    tags: {
+      type: [String],
+      default: [],
+    },
     isPublished: {
       type: Boolean,
       default: false,
@@ -56,20 +66,4 @@ const projectSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Validates the admin project form (whose field names predate the schema's)
-export function validateProject(form) {
-  const schema = Joi.object({
-    project_name: Joi.string().max(125).required(),
-    project_title: Joi.string().max(125).required(),
-    project_source: Joi.string().max(100).required(),
-    project_description: Joi.string().min(20).max(10000).required(),
-    project_image: Joi.string().max(150).allow(""),
-  }).options({ abortEarly: false });
-
-  return schema.validate(form);
-}
-
-export default {
-  validateProject,
-};
 export const Project = mongoose.model("Project", projectSchema);

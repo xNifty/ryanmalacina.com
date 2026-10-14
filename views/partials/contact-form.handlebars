@@ -3,66 +3,39 @@
       contactSent (success message), errors (list), invalid.<field>, values.<field> --}}
 <div id="contactformdiv">
 {{#if contactSent}}
-    <div class="text-center emailalert-visible" id="emailalert">
-        <div class="alert alert-success alert-dismissible center-block">
-            <span id="emailerror">{{ contactSent }}</span>
-        </div>
+    <div class="alert alert--success" id="emailalert" role="status">
+        <span id="emailerror">{{ contactSent }}</span>
     </div>
 {{else}}
-    <div class="section-intro">
-        Shoot me a message and I'll get back to you as soon as I can.
-        If you are reporting an issue that is not a security vulnerability, please do so <a href="https://github.com/xNifty/ryanmalacina.com/issues">here</a>.<br>
-    </div>
-    <div class="text-center{{#if errors}} emailalert-visible{{/if}}" id="emailalert">
-        <div class="alert alert-danger center-block">
+    <form id="contact-form" class="contact-form" hx-post="/send" hx-target="#contactformdiv" hx-swap="outerHTML swap:0 settle:0">
+        <div class="alert alert--error{{#if errors}} emailalert-visible{{/if}}" id="emailalert" role="alert">
             <span id="emailerror">{{#each errors}}{{ this }}{{#unless @last}}<br>{{/unless}}{{/each}}</span>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12 mb-md-0 mb-5">
-            <form id="contact-form" hx-post="/send" hx-target="#contactformdiv" hx-swap="outerHTML swap:0 settle:0">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="md-form mb-0">
-                            <label for="name" class="">Your Name</label>
-                            <input type="text" id="name" name="name" class="form-control{{#if invalid.name}} invalid{{/if}}" placeholder="John Doe" autocomplete="off" value="{{ values.name }}">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="md-form mb-0">
-                            <label for="email" class="">Your Email</label>
-                            <input type="text" id="email" name="email" class="form-control{{#if invalid.email}} invalid{{/if}}" placeholder="you@your.email" autocomplete="on" value="{{ values.email }}">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="md-form mb-0">
-                            <label for="subject" class="">Subject</label>
-                            <input type="text" id="subject" name="subject" class="form-control{{#if invalid.subject}} invalid{{/if}}" placeholder="Hello!" autocomplete="off" value="{{ values.subject }}">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="md-form">
-                            <label for="message">Message</label>
-                            <textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea{{#if invalid.message}} invalid{{/if}}" placeholder="This is your email content.">{{ values.message }}</textarea>
-                            <div class="recaptcha-font">This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center">
-                    <input type="text" id="g-recaptcha-response" name="g-recaptcha-response" value="" hidden>
-                    <script src="//www.google.com/recaptcha/api.js?trustedtypes=true&render={{ recaptchaSiteKey }}" nonce="{{ nonce }}"></script>
-                    <div class="text-md-left">
-                        <input class="btn btn-primary" type="submit" value="Send Email">
-                    </div>
-                </div>
-            </form>
-            <div id="status"></div>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <div class="form-grid">
+            <div class="field">
+                <label class="field__label" for="name">Your name</label>
+                <input type="text" id="name" name="name" class="input{{#if invalid.name}} invalid{{/if}}" autocomplete="name" value="{{ values.name }}"{{#if invalid.name}} aria-invalid="true"{{/if}}>
+            </div>
+            <div class="field">
+                <label class="field__label" for="email">Your email</label>
+                <input type="email" id="email" name="email" class="input{{#if invalid.email}} invalid{{/if}}" autocomplete="email" value="{{ values.email }}"{{#if invalid.email}} aria-invalid="true"{{/if}}>
+            </div>
+            <div class="field field--wide">
+                <label class="field__label" for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" class="input{{#if invalid.subject}} invalid{{/if}}" autocomplete="off" value="{{ values.subject }}"{{#if invalid.subject}} aria-invalid="true"{{/if}}>
+            </div>
+            <div class="field field--wide">
+                <label class="field__label" for="message">Message</label>
+                <textarea id="message" name="message" rows="5" class="input{{#if invalid.message}} invalid{{/if}}"{{#if invalid.message}} aria-invalid="true"{{/if}}>{{ values.message }}</textarea>
+            </div>
         </div>
-    </div>
+        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" value="">
+        <script src="https://www.google.com/recaptcha/api.js?trustedtypes=true&render={{ recaptchaSiteKey }}" nonce="{{ nonce }}"></script>
+        <div class="contact-form__footer">
+            <p class="recaptcha-note">Protected by reCAPTCHA. Google's <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms</a> apply.</p>
+            <button class="button button--primary" type="submit">Send message</button>
+        </div>
+    </form>
 {{/if}}
 </div>

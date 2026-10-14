@@ -1,16 +1,56 @@
-<div class="container page-hero" id="welcome" xmlns="http://www.w3.org/1999/html">
-    <div class="text-center"><h1>Ryan Malacina</h1></div>
-    <h2>Hey there, I'm Ryan, and welcome to my site!</h2>
-    <p class="section-intro">I am a software developer who works with SQL and Visual Basic via ASP.NET for my job. I'm a big fan of MongoDB, Express and Node, which is
-        what this site is built on. I am currently in the process of learning Go and making use of HTMX. Please look around the site, and if you need to contact me 
-        you can do so via the contact form on the bottom of this site. Thanks for stopping by!</p>
-    <hr>
-</div>
-{{> projects/projects-homepage }}
+<section class="hero" aria-labelledby="hero-name">
+    <div class="wrap">
+        <p class="hero__prompt"><span>$</span> whoami</p>
+        <h1 class="hero__name" id="hero-name">Ryan Malacina</h1>
+        <p class="hero__lead">
+            Software developer. <strong>SQL and ASP.NET</strong> at work;
+            <strong>Node, Go and HTMX</strong> on my own projects, including this site.
+        </p>
+        <div class="hero__actions">
+            <a class="button button--primary" href="/projects">View projects {{> icon name="arrow-right" }}</a>
+            <a class="button" href="#contact">Get in touch</a>
+        </div>
+    </div>
+</section>
+
+<section class="section" aria-labelledby="featured-heading">
+    <div class="wrap">
+        <div class="section__header">
+            <h2 class="section__title" id="featured-heading">featured projects</h2>
+            <a class="section__more" href="/projects">all {{ project_count }} projects →</a>
+        </div>
+        {{#if projects.length}}
+            <div class="card-grid">
+                {{#each projects}}{{> project-card this }}{{/each}}
+            </div>
+        {{else}}
+            <p class="empty">No featured projects yet. <a href="/projects">See them all</a>.</p>
+        {{/if}}
+    </div>
+</section>
+
 {{#if showNews}}
-    {{> news/news-homepage }}
+    <section class="section" aria-labelledby="news-heading">
+        <div class="wrap">
+            <div class="section__header">
+                <h2 class="section__title" id="news-heading">latest news</h2>
+                <a class="section__more" href="/news">all news →</a>
+            </div>
+            <ul class="post-list">
+                {{#each news}}
+                    <li class="post-row">
+                        <time class="post-row__date" datetime="{{ formatDate publishedAt "isoUtcDateTime" }}">{{ formatDate publishedAt "mmm d, yyyy" }}</time>
+                        <a class="post-row__title" href="/news/{{ slug }}">{{ title }}</a>
+                        <span class="post-row__arrow" aria-hidden="true">→</span>
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+    </section>
 {{/if}}
+
 {{#if showBlog}}
-    {{> blog}}
+    {{> blog }}
 {{/if}}
-{{> contact}}
+
+{{> contact }}

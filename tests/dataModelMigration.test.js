@@ -236,10 +236,12 @@ describe("migrateDataModel", () => {
     // Unique indexes are back
     await expect(
       projects.create({
-        project_name: "Snoring Ninja",
-        project_title: "Another title",
-        project_source: "https://example.com",
-        project_description: "A description long enough to pass.",
+        name: "Snoring Ninja",
+        title: "Another title",
+        slug: "",
+        source: "https://example.com",
+        descriptionMarkdown: "A description long enough to pass.",
+        isPublished: false,
       })
     ).rejects.toMatchObject({ code: 11000 });
   });

@@ -1,0 +1,11 @@
+{{!-- A labelled text input with its error and hint.
+      name, label, value, error, hint, type (default text), required, maxlength, prefix --}}
+<div class="field{{#if error}} field--error{{/if}}">
+    <label class="field__label" for="field-{{ name }}">{{ label }}{{#if required}} <span class="field__required" aria-hidden="true">*</span>{{/if}}</label>
+    <div class="field__control{{#if prefix}} field__control--prefixed{{/if}}">
+        {{#if prefix}}<span class="field__prefix" aria-hidden="true">{{ prefix }}</span>{{/if}}
+        <input class="input" id="field-{{ name }}" name="{{ name }}" type="{{#if type}}{{ type }}{{else}}text{{/if}}" value="{{ value }}"{{#if required}} required{{/if}}{{#if maxlength}} maxlength="{{ maxlength }}"{{/if}}{{#if error}} aria-invalid="true" aria-errormessage="field-{{ name }}-error"{{/if}}{{#if hint}} aria-describedby="field-{{ name }}-hint"{{/if}}>
+    </div>
+    {{#if error}}<p class="field__error" id="field-{{ name }}-error">{{ error }}</p>{{/if}}
+    {{#if hint}}<p class="field__hint" id="field-{{ name }}-hint">{{ hint }}</p>{{/if}}
+</div>

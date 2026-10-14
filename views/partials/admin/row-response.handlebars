@@ -1,0 +1,4 @@
+{{!-- Response to an HTMX row action (routes/admin/helpers.js renderRowAction): the row
+      partial named by rowPartial, or nothing to remove the row, plus an out-of-band toast. --}}
+{{#if rowPartial}}{{> (lookup . "rowPartial") item }}{{/if}}
+{{#if toast}}<div id="toasts" hx-swap-oob="beforeend">{{> admin/toast toast }}</div>{{/if}}

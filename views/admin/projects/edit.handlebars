@@ -1,0 +1,67 @@
+<div class="page-header">
+    <div>
+        <a class="back-link" href="/admin/projects">← Projects</a>
+        <h1>{{#if isNew}}New project{{else}}{{ project.name }}{{/if}}</h1>
+    </div>
+    {{#unless isNew}}{{#if project.isPublished}}
+        <div class="page-header__actions">
+            <a class="button" href="/projects/{{ project.slug }}" target="_blank" rel="noopener">View on site</a>
+        </div>
+    {{/if}}{{/unless}}
+</div>
+
+{{#if errors}}
+    <div class="alert alert--error" role="alert">
+        {{#if errors.form}}{{ errors.form }}{{else}}Nothing was saved. Fix the highlighted fields and try again.{{/if}}
+    </div>
+{{/if}}
+
+{{> admin/draft-banner }}
+
+<form class="editor" method="post" action="{{ action }}" enctype="multipart/form-data" data-draft-key="{{ draftKey }}">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+    <div class="editor__fields">
+        {{> admin/field name="name" label="Name" value=values.name error=errors.name required=true maxlength=125
+            hint="Shown in the browser tab, and the slug is made from it." }}
+        {{> admin/field name="title" label="Title" value=values.title error=errors.title required=true maxlength=125
+            hint="Shown on project cards and as the page heading." }}
+        {{#if isNew}}
+            {{> admin/field name="slug" label="Slug" value=values.slug error=errors.slug maxlength=80 prefix="/projects/"
+                hint="Leave blank to make one from the name." }}
+        {{else}}
+            {{> admin/field name="slug" label="Slug" value=values.slug error=errors.slug maxlength=80 prefix="/projects/"
+                hint="Changing it keeps the old address working." }}
+        {{/if}}
+        {{> admin/field name="source" label="Source URL" type="url" value=values.source error=errors.source required=true maxlength=100
+            hint="Usually the GitHub repository." }}
+        {{> admin/field name="tags" label="Tags" value=(joinList values.tags) error=errors.tags maxlength=150
+            hint="Comma-separated, shown on project cards. For example: node, discord, bot" }}
+
+        <div class="field{{#if errors.image}} field--error{{/if}}">
+            <label class="field__label" for="field-image">Image</label>
+            <div class="image-field">
+                <img class="image-field__current" src="/images/{{#if project.image}}{{ project.image }}{{else}}default.png{{/if}}" alt="Current image" width="96" height="96">
+                <input class="input" id="field-image" name="image" type="file" accept="image/png,image/jpeg,image/gif,image/webp"
+                    aria-describedby="field-image-hint"{{#if errors.image}} aria-invalid="true" aria-errormessage="field-image-error"{{/if}}>
+            </div>
+            {{#if errors.image}}<p class="field__error" id="field-image-error">{{ errors.image }}</p>{{/if}}
+            <p class="field__hint" id="field-image-hint">PNG, JPG, GIF or WebP, up to 5MB. Leave empty to keep the current image.</p>
+        </div>
+
+        <div class="field">
+            <label class="checkbox">
+                <input type="checkbox" name="isPublished"{{#if values.isPublished}} checked{{/if}}>
+                <span>Published <span class="muted">— visible on the site</span></span>
+            </label>
+        </div>
+    </div>
+
+    {{> admin/markdown-field name="descriptionMarkdown" label="Description" kind="project" maxlength=25000
+        value=values.descriptionMarkdown error=errors.descriptionMarkdown }}
+
+    <div class="editor__actions">
+        <button type="submit" class="button button--primary">{{#if isNew}}Create project{{else}}Save changes{{/if}}</button>
+        <a class="button" href="/admin/projects">Cancel</a>
+    </div>
+</form>

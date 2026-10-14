@@ -1,41 +1,24 @@
-/* Set fields required if they should be */
-$(document).ready(function (event) {
-  $("#profile_content").submit(function (event) {
-    var newPassword = $("#pass_change_one").val();
-    var confirmNewPassword = $("#pass_change_two").val();
+// Profile page: the new-password fields must match, and a password change needs all three fields.
+(function() {
+  var form = document.getElementById("profile_content");
+  if (!form) return;
 
-    if (newPassword !== confirmNewPassword) {
-      event.preventDefault();
-    }
-  });
+  var first = document.getElementById("pass_change_one");
+  var second = document.getElementById("pass_change_two");
+  var current = document.getElementById("pass_current");
+  var message = document.getElementById("passwordMatchError");
 
-  $("#pass_change_one, #pass_change_two")
-    .on("input", validatePasswords)
-    .on("input", toggleRequired);
+  function update() {
+    var changing = first.value !== "" || second.value !== "";
+    [first, second, current].forEach(function(input) {
+      input.required = changing;
+    });
 
-  function validatePasswords() {
-    var newPassword = $("#pass_change_one").val();
-    var confirmPassword = $("#pass_change_two").val();
-
-    if (newPassword !== confirmPassword) {
-      $("#passwordMatchError").text("Passwords do not match");
-    } else {
-      $("#passwordMatchError").text("");
-    }
+    var mismatch = changing && second.value !== "" && first.value !== second.value;
+    message.textContent = mismatch ? "The new passwords don't match." : "";
+    second.setCustomValidity(mismatch ? "The new passwords don't match." : "");
   }
 
-  function toggleRequired() {
-    var newPassword = $("#pass_change_one").val();
-    var confirmNewPassword = $("#pass_change_two").val();
-
-    if (newPassword !== "" || confirmNewPassword !== "") {
-      $("#pass_change_one").prop("required", true);
-      $("#pass_change_two").prop("required", true);
-      $("#pass_current").prop("required", true);
-    } else {
-      $("#pass_change_one").prop("required", false);
-      $("#pass_change_two").prop("required", false);
-      $("#pass_current").prop("required", false);
-    }
-  }
-});
+  first.addEventListener("input", update);
+  second.addEventListener("input", update);
+})();

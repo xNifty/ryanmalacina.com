@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import Joi from "joi";
 import mongoosePaginate from "mongoose-paginate-v2";
 
 const newsSchema = new mongoose.Schema(
@@ -10,7 +9,7 @@ const newsSchema = new mongoose.Schema(
       required: true,
       maxlength: 125,
     },
-    // Set once at creation, for permalinks
+    // For permalinks. Generated from the title unless set in the editor
     slug: {
       type: String,
       unique: true,
@@ -48,20 +47,7 @@ const newsSchema = new mongoose.Schema(
 
 newsSchema.plugin(mongoosePaginate);
 
-// A collection only allows one text index, so after changing this run
-// `npm run sync-indexes` to swap the old one out.
-newsSchema.index({ title: "text", bodyText: "text" }, { name: "news_text_search" });
-
-// Validates the admin news form (whose field names predate the schema's)
-function validateNews(form) {
-  const schema = Joi.object({
-    news_title: Joi.string().max(125).required(),
-    news_description: Joi.string().min(10).max(1000).required(),
-  });
-
-  return schema.validate(form);
-}
-
-export { validateNews as validateNews };
+// Search scans title and bodyText directly (services/news.js), so there's no text index;
+// `npm run sync-indexes` drops the one earlier versions created.
 
 export const News = mongoose.model("News", newsSchema);

@@ -1,0 +1,30 @@
+{{!-- One row of the admin projects table; returned on its own after row actions --}}
+<tr id="project-{{ _id }}">
+    <td>
+        <div class="row-title">
+            <img class="row-title__thumb" src="/images/{{ image }}" alt="" width="40" height="40" loading="lazy">
+            <div>
+                <a class="row-title__link" href="/admin/projects/{{ _id }}/edit">{{ name }}</a>
+                <div class="row-title__sub">{{ title }}</div>
+            </div>
+        </div>
+    </td>
+    <td>{{#if isPublished}}<span class="badge badge--published">Published</span>{{else}}<span class="badge badge--draft">Draft</span>{{/if}}</td>
+    <td>
+        <button type="button" class="switch" role="switch" aria-checked="{{#if featured}}true{{else}}false{{/if}}" aria-label="Feature {{ name }} on the home page"
+            hx-put="/admin/projects/{{ _id }}/feature" hx-target="closest tr" hx-swap="outerHTML"><span class="switch__thumb"></span></button>
+    </td>
+    <td><time datetime="{{ formatDate updatedAt "isoUtcDateTime" }}">{{ formatDate updatedAt "mmm d, yyyy" }}</time></td>
+    <td>
+        <div class="row-actions">
+            {{#if isPublished}}
+                <a class="button button--small" href="/projects/{{ slug }}" target="_blank" rel="noopener">View</a>
+                <button type="button" class="button button--small" hx-put="/admin/projects/{{ _id }}/unpublish" hx-target="closest tr" hx-swap="outerHTML">Unpublish</button>
+            {{else}}
+                <button type="button" class="button button--small" hx-put="/admin/projects/{{ _id }}/publish" hx-target="closest tr" hx-swap="outerHTML">Publish</button>
+            {{/if}}
+            <button type="button" class="button button--small button--danger" hx-delete="/admin/projects/{{ _id }}" hx-target="closest tr" hx-swap="outerHTML"
+                hx-confirm="Delete “{{ name }}”? This can’t be undone.">Delete</button>
+        </div>
+    </td>
+</tr>

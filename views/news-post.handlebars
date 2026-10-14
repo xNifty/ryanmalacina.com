@@ -1,0 +1,12 @@
+<div class="wrap page">
+    <article class="article">
+        <a class="back-link" href="/news">← all news</a>
+        <header class="article__header">
+            <p class="article__meta"><time datetime="{{ formatDate post.publishedAt "isoUtcDateTime" }}">{{ formatDate post.publishedAt "mmmm d, yyyy" }}</time></p>
+            <h1 class="article__title">{{ post.title }}</h1>
+        </header>
+        <div class="markdown-body">
+            {{{ post.bodyHtml }}}
+        </div>
+    </article>
+</div>

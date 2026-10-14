@@ -1,17 +1,47 @@
-<div class="container">
-    <a class="back-button" href="/admin/news" data-toogle="tooltip" title="Return to news"></a>
-    <form action="/admin/news/{{ id }}/edit" method="post">
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
-        <div class="form-group">
-            <label for="news_title">News Title</label><br>
-            <input type="text" class="custom-text" name="news_title" placeholder="News Title" value="{{#if news_title}}{{news_title}}{{/if}}"><br><br>
-            <div class="form-group">
-                <label for="news_description">News Content - Max 1000 characters</label><br>
-                <textarea class="input-block-level" id="editor" name="news_description" data-markdown-editor data-placeholder="News Description Here - Write in Markdown">{{#if news_description}}{{news_description}}{{/if}}</textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">
-                <span class="glyphicon glyphicon-pencil"></span> Submit Edited News
-            </button>
-        </div>
-    </form>
+<div class="page-header">
+    <div>
+        <a class="back-link" href="/admin/news">← News</a>
+        <h1>{{#if isNew}}New post{{else}}{{ entry.title }}{{/if}}</h1>
+    </div>
 </div>
+
+{{#if errors}}
+    <div class="alert alert--error" role="alert">
+        {{#if errors.form}}{{ errors.form }}{{else}}Nothing was saved. Fix the highlighted fields and try again.{{/if}}
+    </div>
+{{/if}}
+
+{{> admin/draft-banner }}
+
+<form class="editor" method="post" action="{{ action }}" data-draft-key="{{ draftKey }}">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+    <div class="editor__fields">
+        {{> admin/field name="title" label="Title" value=values.title error=errors.title required=true maxlength=125 }}
+        {{#if isNew}}
+            {{> admin/field name="slug" label="Slug" value=values.slug error=errors.slug maxlength=80
+                hint="Leave blank to make one from the title." }}
+        {{else}}
+            {{> admin/field name="slug" label="Slug" value=values.slug error=errors.slug maxlength=80
+                hint="Used in the post's link." }}
+        {{/if}}
+
+        <div class="field">
+            <label class="checkbox">
+                <input type="checkbox" name="isPublished"{{#if values.isPublished}} checked{{/if}}>
+                <span>Published <span class="muted">— visible on the site</span></span>
+            </label>
+            {{#if entry.isPublished}}
+                <p class="field__hint">Published {{ formatDate entry.publishedAt }}. Unpublishing and publishing again moves it to today.</p>
+            {{/if}}
+        </div>
+    </div>
+
+    {{> admin/markdown-field name="bodyMarkdown" label="Body" kind="news" maxlength=1000
+        value=values.bodyMarkdown error=errors.bodyMarkdown }}
+
+    <div class="editor__actions">
+        <button type="submit" class="button button--primary">{{#if isNew}}Create post{{else}}Save changes{{/if}}</button>
+        <a class="button" href="/admin/news">Cancel</a>
+    </div>
+</form>

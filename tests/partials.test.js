@@ -32,16 +32,17 @@ describe("contact form partial", () => {
     });
     expect(html).toContain("emailalert-visible");
     expect(html).toContain("Name is a required field.<br>Please provide a valid email.");
-    expect(html).toContain('class="form-control invalid" placeholder="John Doe"');
-    expect(html).toContain('class="form-control invalid" placeholder="you@your.email"');
-    expect(html).toContain('class="form-control" placeholder="Hello!"');
+    expect(html).toMatch(/id="name" name="name" class="input invalid"[^>]*aria-invalid="true"/);
+    expect(html).toMatch(/id="email" name="email" class="input invalid"/);
+    expect(html).toMatch(/id="subject" name="subject" class="input"[^>]*>/);
+    expect(html).not.toMatch(/id="subject"[^>]*aria-invalid/);
     expect(html).not.toContain("<script>alert(1)</script>");
     expect(html).toContain("&lt;/textarea&gt;");
   });
 
   it("should replace the form with the success message once sent", async () => {
     const html = await render("partials/contact-form", { contactSent: "Message sent!" });
-    expect(html).toContain("alert-success");
+    expect(html).toContain("alert--success");
     expect(html).toContain("Message sent!");
     expect(html).not.toContain('id="contact-form"');
   });
@@ -50,19 +51,52 @@ describe("contact form partial", () => {
 describe("alert partials", () => {
   it.each(["partials/alert", "partials/modal-alert"])("%s should escape each line", async (view) => {
     const html = await render(view, { type: "danger", messages: ["One", XSS] });
-    expect(html).toContain("alert-danger");
+    expect(html).toContain('class="form-message" role="alert"');
     expect(html).toContain("One<br>");
     expect(html).not.toContain("<script>");
   });
 });
 
-describe("delete modal partial", () => {
-  it("should escape the action and token", async () => {
-    const html = await render("partials/delete-modal", {
-      action: "/projects/delete/" + encodeURIComponent(XSS),
-      csrfToken: XSS,
+describe("admin row responses", () => {
+  const project = {
+    _id: "abc",
+    name: XSS,
+    title: "Title",
+    slug: "slug",
+    image: "a.png",
+    isPublished: false,
+    featured: true,
+    updatedAt: new Date(2026, 9, 14),
+  };
+
+  it("should return the row with escaped values and the right actions", async () => {
+    const html = await render("partials/admin/row-response", { rowPartial: "admin/project-row", item: project });
+    expect(html).toMatch(/^\s*<tr id="project-abc">/);
+    expect(html).toContain('hx-put="/admin/projects/abc/publish"');
+    expect(html).not.toContain("/unpublish");
+    expect(html).toContain('aria-checked="true"');
+    expect(html).not.toContain("<script>");
+    expect(html).not.toContain("hx-swap-oob");
+  });
+
+  it("should add an out-of-band toast, and send no row when one was deleted", async () => {
+    const html = await render("partials/admin/row-response", {
+      toast: { type: "success", message: "Deleted “x”." },
     });
-    expect(html).toContain('hx-put="/projects/delete/%22%3E%3Cscript%3E');
+    expect(html).not.toContain("<tr");
+    expect(html).toContain('<div id="toasts" hx-swap-oob="beforeend">');
+    expect(html).toContain("Deleted “x”.");
+  });
+
+  it("should label service health for screen readers as well as by colour", async () => {
+    const html = await render("partials/admin/health", {
+      services: [
+        { name: "Database", status: "ok", detail: "Connected" },
+        { name: "Blog (Ghost)", status: "error", detail: XSS },
+      ],
+    });
+    expect(html).toMatch(/health--ok[\s\S]*OK/);
+    expect(html).toMatch(/health--error[\s\S]*Problem/);
     expect(html).not.toContain("<script>");
   });
 });

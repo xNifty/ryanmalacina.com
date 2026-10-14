@@ -1,44 +1,19 @@
-<div class="container" id="reset">
-    <div class="container">
-        <div class="row vertical-offset-100">
-            <div class="col-md-4 col-md-offset-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Forgot Password</h3>
-                    </div>
-                    <div class="panel-body">
-                        <form accept-charset="UTF-8" role="form" method="post" id="forgotpassword">
-                            <input type="hidden" name="_csrf" value="{{csrfToken}}">
-                            <fieldset>
-                                <div class="form-group">
-				                    <div class="input-group loginformtext">
-                                        <div class="input-group addon">
-                                            <span class="input-group-addon" id="basic-addon1">
-                                                <i class="fa fa-user"></i>
-                                            </span>
-                                            <input class="form-control" placeholder="Email"
-                                                   name="email_one" type="text" id="email_one" required>
-					                    </div>
-				                    </div>
-                                </div>
-                                <div class="form-group">
-				                    <div class="input-group loginformtext">
-                                        <div class="input-group addon">
-                                            <span class="input-group-addon" id="basic-addon1">
-                                                <i class="fa fa-user"></i>
-                                            </span>
-                                            <input class="form-control" placeholder="Confirm Email"
-                                                   name="email_two" type="text" id="email_two" required>
-					                    </div>
-                                        <span id="password-message">Caps Lock is On!</span>
-				                    </div>
-                                </div>
-                                <input class="btn btn-lg btn-primary btn-block" type="submit" value="Reset Password">
-                            </fieldset>
-                        </form>
-                    </div>
-                </div>
+<div class="wrap auth">
+    <div class="auth-card">
+        <h1 class="auth-card__title">Forgot your password?</h1>
+        <p class="auth-card__intro">Enter your account's email and we'll send a reset link if it matches.</p>
+        <form class="auth-form" method="post" action="/reset">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            <div class="field">
+                <label class="field__label" for="email_one">Email</label>
+                <input class="input" id="email_one" name="email_one" type="email" autocomplete="email" required>
             </div>
-        </div>
+            <div class="field">
+                <label class="field__label" for="email_two">Confirm email</label>
+                <input class="input" id="email_two" name="email_two" type="email" autocomplete="email" required>
+            </div>
+            <button class="button button--primary" type="submit">Send reset link</button>
+        </form>
+        <p class="auth-card__links"><a href="/login">Back to log in</a></p>
     </div>
 </div>

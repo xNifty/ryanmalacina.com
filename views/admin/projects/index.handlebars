@@ -1,0 +1,32 @@
+<div class="page-header">
+    <h1>Projects</h1>
+    <div class="page-header__actions">
+        <a class="button button--primary" href="/admin/projects/new">New project</a>
+    </div>
+</div>
+
+{{> admin/tabs base="/admin/projects" }}
+
+{{#if projects.length}}
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th scope="col">Project</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Featured <span class="muted">(max {{ featuredLimit }})</span></th>
+                    <th scope="col">Updated</th>
+                    <th scope="col"><span class="visually-hidden">Actions</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each projects}}{{> admin/project-row this }}{{/each}}
+            </tbody>
+        </table>
+    </div>
+{{else}}
+    <div class="empty-state">
+        <p>No projects here.</p>
+        <a class="button button--primary" href="/admin/projects/new">New project</a>
+    </div>
+{{/if}}

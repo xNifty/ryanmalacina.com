@@ -1,0 +1,11 @@
+{{!-- Service status list for the dashboard (GET /admin/health) --}}
+<ul class="health-list">
+    {{#each services}}
+        <li class="health health--{{ status }}">
+            <span class="health__dot" aria-hidden="true"></span>
+            <span class="health__name">{{ name }}</span>
+            <span class="health__status">{{#iff status "==" "ok"}}OK{{/iff}}{{#iff status "==" "error"}}Problem{{/iff}}{{#iff status "==" "off"}}Off{{/iff}}</span>
+            <span class="health__detail">{{ detail }}</span>
+        </li>
+    {{/each}}
+</ul>

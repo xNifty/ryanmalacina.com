@@ -1,28 +1,20 @@
-{{!-- Public layout. Set hideLogin: true to drop the login link and modal (e.g. password reset) --}}
-<!doctype HTML>
-<html>
-{{> header}}
+{{!-- Public layout. Routes can set:
+      section: projects | news | about  (current nav link)
+      highlight: true                   (code highlighting, for pages with markdown)
+      pageScripts: ["profile.js"]       (extra webpack entries)
+      hideLogin: true                   (no "Log in" link, e.g. on the reset pages) --}}
+<!doctype html>
+<html lang="en">
+{{> header }}
 <body>
-    {{> theme-script}}
-    {{> splash-screen}}
-    {{> nav}}
-    <div id="statusBox" hx-target="this" hx-swap="innerHTML" hx-trigger="load">{{> status}}</div>
-    {{#unless authenticated}}{{#unless hideLogin}}{{> login}}{{/unless}}{{/unless}}
-    {{{ body }}}
-
-    {{!-- In the footer we display the currentyear variable that we set in the app.js file --}}
-    {{> footer currentyear=currentyear}}
-    <script nonce="{{nonce}}">
-        if (!window.grecaptcha) {
-            const script = document.createElement('script');
-            script.src = 'https://www.google.com/recaptcha/api.js?trustedtypes=true&render={{recaptchaSiteKey}}';
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-        }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" nonce="{{nonce}}"></script>
-    {{> scripts}}
-    <script src="{{ versionedFile 'welcome.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
+    {{> theme-script }}
+    <a class="skip-link" href="#main">Skip to content</a>
+    {{> nav }}
+    <div id="statusBox">{{> status }}</div>
+    <main id="main" tabindex="-1">
+        {{{ body }}}
+    </main>
+    {{> footer }}
+    {{> scripts }}
 </body>
 </html>

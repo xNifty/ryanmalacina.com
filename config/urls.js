@@ -1,9 +1,6 @@
 const defaultSrc = [];
 const scriptSrc = [
   `https://cdnjs.cloudflare.com/`,
-  `https://code.jquery.com`,
-  `https://maxcdn.bootstrapcdn.com`,
-  `https://cdn.jsdelivr.net`,
   `https://unpkg.com`,
   `https://www.google.com/recaptcha/`,
   `https://www.gstatic.com/recaptcha/`,
@@ -12,16 +9,12 @@ const scriptSrc = [
 const styleSrc = [
   `https://cdnjs.cloudflare.com`,
   `https://fonts.googleapis.com`,
-  `https://maxcdn.bootstrapcdn.com`,
-  `https://cdn.jsdelivr.net`,
 ];
 const styleSrcAttr = [`'none'`];
 const imgSrc = [`https://i.imgur.com`, `*.s3.amazonaws.com`, `https://github.githubassets.com`, `https://github.com/user-attachments/`];
-const connectSrc = [`https://cdn.jsdelivr.net`, `https://www.google.com/recaptcha/`, `https://maxcdn.bootstrapcdn.com/`];
+const connectSrc = [`https://www.google.com/recaptcha/`];
 const fontSrc = [
-  `https://cdnjs.cloudflare.com`,
   `https://fonts.gstatic.com`,
-  `https://maxcdn.bootstrapcdn.com`,
 ];
 const frameSrc = [`https://www.google.com/recaptcha/`];
 const reportUri = [];

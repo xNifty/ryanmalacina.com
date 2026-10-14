@@ -1,0 +1,6 @@
+{{!-- Status filter links. base: the list URL; tabs from routes/admin/helpers.js statusTabs --}}
+<nav class="tabs" aria-label="Filter">
+    {{#each tabs}}
+        <a class="tabs__tab" href="{{ ../base }}{{#if key}}?status={{ key }}{{/if}}"{{#if active}} aria-current="page"{{/if}}>{{ label }}</a>
+    {{/each}}
+</nav>

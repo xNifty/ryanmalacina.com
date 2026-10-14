@@ -1,76 +1,30 @@
-<nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">Home</a>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <!--<li><a href="/">Home</a></li>-->
+{{!-- Site header. section (projects | news | about) marks the current link. --}}
+<header class="site-header">
+    <div class="wrap site-header__inner">
+        <a class="brand" href="/" aria-label="Ryan Malacina, home">
+            <span class="brand__host">ryan@malacina</span>:<span class="brand__path">~</span>$<span class="brand__cursor" aria-hidden="true"></span>
+        </a>
+        <button type="button" class="icon-button menu-toggle" aria-expanded="false" aria-controls="site-nav" data-menu-toggle>
+            <span class="visually-hidden">Menu</span>
+            {{> icon name="menu" }}
+        </button>
+        <nav class="site-nav" id="site-nav" aria-label="Main">
+            <ul class="site-nav__list">
+                <li><a class="site-nav__link" href="/projects"{{#iff section "==" "projects"}} aria-current="page"{{/iff}}>Projects</a></li>
+                <li><a class="site-nav__link" href="/news"{{#iff section "==" "news"}} aria-current="page"{{/iff}}>News</a></li>
                 {{#if displayBlogNav}}
-                    <li><a class="nav-link" href="/#blog">Blog</a></li>
+                    <li><a class="site-nav__link" href="/blog/">Blog</a></li>
                 {{/if}}
-                <li><a class="nav-link" href="/about">About</a></li>
-                {{!-- <li><a class="nav-link" href="https://xnifty.github.io" target="_blank">Projects Documentation</a></li> --}}
-                {{#iff authenticated '&&' isAdmin}}
-                    <li class="dropdown">
-                        <a href="/#projects">Projects</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/projects/new"><span class="glyphicon glyphicon-pencil"></span> New Project</a></li>
-                            <li><a href="/projects">Projects Index</a></li>
-                        </ul>
-                    </li>
-                {{ else }}
-                    <li class="dropdown">
-                        <a href="/#projects">Projects</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/projects">Projects Index</a></li>
-                        </ul>
-                    </li>
-                {{/iff}}
-                <li class="dropdown">
-                    <a href="/#site-news">Site News</a>
-                    <ul class="dropdown-menu">
-                            <li><a href="/news">News Index</a></li>
-                        </ul>
-                </li>
-                <li><a class="nav-link" href="/#contact">Contact</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <button type="button" class="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
-                        <i class="fa fa-moon-o theme-toggle-icon theme-toggle-icon--light" aria-hidden="true"></i>
-                        <i class="fa fa-sun-o theme-toggle-icon theme-toggle-icon--dark" aria-hidden="true"></i>
-                    </button>
-                </li>
-                {{#unless hideLogin}}
-                {{#if authenticated }} {{!-- This is coming from res.locals --}}
-		            <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Hello, {{ realName }}</a>
-			            <ul class="dropdown-menu">
-                            {{#if authenticated}}
-                            <li><a class="nav-link" href="/profile">Profile <span class="fa fa-user"></span></a></li>
-                            {{/if}}
-                            {{#if isAdmin}}
-                                <li><a class="nav-link" href="/admin">Admin <span class="fa fa-unlock"></span></a></li>
-                            {{/if}}
-                            <li><a class="nav-link" href="/logout" id="logoutlink">Logout <span class="fa fa-sign-out"></span></a></li>
-			            </ul>
-		            </li>
-                {{ else }}
-                    <li><a href="#loginModal" class="trigger-btn" data-csp-modal-open="loginModal">Login <span class="fa fa-sign-in"></span></a></li>
+                <li><a class="site-nav__link" href="/about"{{#iff section "==" "about"}} aria-current="page"{{/iff}}>About</a></li>
+                <li><a class="site-nav__link" href="/#contact">Contact</a></li>
+                {{#if isAdmin}}
+                    <li><a class="site-nav__link" href="/admin">Admin</a></li>
                 {{/if}}
-                {{/unless}}
             </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
-</nav>
+        </nav>
+        <button type="button" class="icon-button theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+            {{> icon name="moon" }}
+            {{> icon name="sun" }}
+        </button>
+    </div>
+</header>

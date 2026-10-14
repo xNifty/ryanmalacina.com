@@ -7,7 +7,7 @@ const ROUTER = express.Router();
 ROUTER.get("/", function(req, res) {
   res.render("about", {
     title: strings.pageHeader.about,
-    csrfToken: req.csrfToken(),
+    section: "about",
   });
 });
 

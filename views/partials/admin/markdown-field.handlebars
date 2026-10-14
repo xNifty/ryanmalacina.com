@@ -1,0 +1,19 @@
+{{!-- Markdown textarea with a live preview rendered by the same pipeline as the public site
+      (POST /admin/preview/:kind). name, label, value, error, maxlength, kind: project | news --}}
+<div class="field field--markdown{{#if error}} field--error{{/if}}">
+    <div class="markdown-editor__header">
+        <label class="field__label" for="field-{{ name }}">{{ label }} <span class="field__required" aria-hidden="true">*</span></label>
+        <span class="field__hint" id="field-{{ name }}-hint">Markdown. <span data-char-count="field-{{ name }}">Up to {{ maxlength }} characters.</span></span>
+    </div>
+    {{#if error}}<p class="field__error" id="field-{{ name }}-error">{{ error }}</p>{{/if}}
+    <div class="markdown-editor">
+        <textarea class="input markdown-editor__input" id="field-{{ name }}" name="{{ name }}" rows="20" required maxlength="{{ maxlength }}"
+            aria-describedby="field-{{ name }}-hint"{{#if error}} aria-invalid="true" aria-errormessage="field-{{ name }}-error"{{/if}}
+            hx-post="/admin/preview/{{ kind }}" hx-trigger="input changed delay:400ms, load" hx-params="{{ name }}"
+            hx-target="#preview-{{ name }}" hx-swap="innerHTML" hx-sync="this:replace">{{ value }}</textarea>
+        <section class="markdown-editor__preview" aria-labelledby="preview-{{ name }}-heading">
+            <h2 class="markdown-editor__preview-heading" id="preview-{{ name }}-heading">Preview</h2>
+            <div class="markdown-body" id="preview-{{ name }}"></div>
+        </section>
+    </div>
+</div>

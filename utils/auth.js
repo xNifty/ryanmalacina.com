@@ -49,23 +49,31 @@ function ValidateLoggedOut(req, res, next) {
 }
 
 /**
-  * @param {Object} req - The request object
-  * @param {Object} res - The response object
-  * @param {Function} next - The next middleware function
-  * @returns {void}
-  * @description Make sure the user is an admin
-*/
-function ValidateAdmin(req, res, next) {
-  if (req.user?.isAdmin) next();
-  else {
+ * Guard for the whole /admin router: signed-in admins only. Signed-out visitors go to the
+ * login page and come back afterwards; HTMX requests get an HX-Redirect instead of a 302,
+ * which htmx would otherwise follow and swap into the page.
+ */
+function requireAdmin(req, res, next) {
+  if (req.isAuthenticated() && req.user?.isAdmin) return next();
+
+  let target = "/";
+  if (req.isAuthenticated()) {
     req.flash("error", strings.errors.accessDenied);
-    res.status(401);
-    res.redirect("/");
+  } else {
+    req.flash("error", strings.errors.loginRequired);
+    const returnTo = req.get("HX-Request") ? req.get("HX-Current-URL") || "/admin" : req.originalUrl;
+    target = "/login?returnTo=" + encodeURIComponent(returnTo);
   }
+
+  if (req.get("HX-Request")) {
+    res.set("HX-Redirect", target);
+    return res.status(req.isAuthenticated() ? 403 : 401).end();
+  }
+  return res.redirect(target);
 }
 
 export default {
   ValidateLoggedIn,
   ValidateLoggedOut,
-  ValidateAdmin,
+  requireAdmin,
 };

@@ -15,19 +15,12 @@ const config = {
     extensions: [".js"],
   },
   entry: {
-    admin: "@js/admin.js",
-    "jquery.simplePagination": "@js/jquery.simplePagination.js",
-    news: "@js/news.js",
+    // Paired entries share a chunk, so the manifest has both e.g. site.js and site.css
+    admin: ["@js/admin.js", "@css/admin.css"],
+    site: ["@js/site.js", "@css/site.css"],
     profile: "@js/profile.js",
-    site: "@js/site.js",
-    welcome: "@js/welcome.js",
-    "update-project": "@js/update-project.js",
-    editor: "@js/editor.js",
     theme: "@js/theme.js",
     trustedtype: "@js/trustedtype.js",
-    simplePagination: "@css/simplePagination.css",
-    style: "@css/style.css",
-    github: "@css/github.css",
   },
   output: {
     filename: "js/[name].[contenthash].js",

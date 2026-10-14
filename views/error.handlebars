@@ -1,3 +1,10 @@
-<div class="container">
-    <p>{{{ error }}}</p>
+{{!-- error: the message (may hold HTML, e.g. a dev stack trace or a link); status_code: e.g. "404 - Not Found" --}}
+<div class="wrap error-page">
+    <p class="error-page__code">{{#if status_code}}{{ status_code }}{{else}}error{{/if}}</p>
+    <h1 class="page-title">Something's not right</h1>
+    <p class="page-intro error-page__detail">{{{ error }}}</p>
+    <div class="hero__actions">
+        <a class="button button--primary" href="/">Go home</a>
+        <a class="button" href="/projects">Browse projects</a>
+    </div>
 </div>

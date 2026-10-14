@@ -32,18 +32,25 @@ afterAll(async () => {
   await mongo.stop();
 });
 
-// The admin form's field names
-function projectForm(n) {
+// Validated editor data, as utils/validation.js returns it
+function projectData(n, overrides = {}) {
   return {
-    project_name: `Project ${n}`,
-    project_title: `Title ${n}`,
-    project_source: `https://example.com/${n}`,
-    project_description: "A description long enough to pass validation.",
+    name: `Project ${n}`,
+    title: `Title ${n}`,
+    slug: "",
+    source: `https://example.com/${n}`,
+    descriptionMarkdown: "A description long enough to pass validation.",
+    isPublished: false,
+    ...overrides,
   };
 }
 
+function newsData(title, overrides = {}) {
+  return { title, slug: "", bodyMarkdown: "A news body long enough.", isPublished: true, ...overrides };
+}
+
 async function createProject(n, flags = {}) {
-  const project = await projects.create(projectForm(n));
+  const project = await projects.create(projectData(n));
   if (Object.keys(flags).length) {
     await Project.updateOne({ _id: project._id }, flags);
   }
@@ -51,14 +58,14 @@ async function createProject(n, flags = {}) {
 }
 
 describe("projects service", () => {
-  it("should create a project with rendered HTML, a slug and the default image", async () => {
-    const project = await projects.create({
-      ...projectForm(1),
-      project_name: "My Cool Project!",
-      project_description: "Some **bold** text <script>alert(1)</script>",
-    });
+  it("should create a project with rendered HTML, a generated slug and the default image", async () => {
+    const project = await projects.create(
+      projectData(1, {
+        name: "My Cool Project!",
+        descriptionMarkdown: "Some **bold** text <script>alert(1)</script>",
+      })
+    );
 
-    expect(project.name).toBe("My Cool Project!");
     expect(project.slug).toBe("my-cool-project");
     expect(project.image).toBe("default.png");
     expect(project.isPublished).toBe(false);
@@ -67,16 +74,19 @@ describe("projects service", () => {
     expect(project.descriptionHtml).not.toContain("<script>");
   });
 
-  it("should give colliding names distinct slugs", async () => {
-    const first = await projects.create({ ...projectForm(1), project_name: "C#" });
-    const second = await projects.create({ ...projectForm(2), project_name: "C++" });
-    expect(first.slug).toBe("c");
-    expect(second.slug).toBe("c-2");
+  it("should use a slug given in the editor, and number generated ones that collide", async () => {
+    expect((await projects.create(projectData(1, { slug: "custom" }))).slug).toBe("custom");
+    expect((await projects.create(projectData(2, { name: "C#" }))).slug).toBe("c");
+    expect((await projects.create(projectData(3, { name: "C++" }))).slug).toBe("c-2");
+    await expect(projects.create(projectData(4, { slug: "custom" }))).rejects.toMatchObject({
+      code: 11000,
+      keyPattern: { slug: 1 },
+    });
   });
 
   it("should reject duplicate names", async () => {
     await createProject(1);
-    await expect(projects.create(projectForm(1))).rejects.toMatchObject({
+    await expect(projects.create(projectData(1))).rejects.toMatchObject({
       code: 11000,
       keyPattern: { name: 1 },
     });
@@ -89,20 +99,32 @@ describe("projects service", () => {
 
     const published = await projects.listPublished();
     expect(published.map((p) => p.name).sort()).toEqual(["Project 1", "Project 2"]);
-    expect(published[0].slug).toBeTruthy();
     expect(await projects.countPublished()).toBe(2);
     expect((await projects.listFeatured()).map((p) => p.name)).toEqual(["Project 1"]);
-    expect(await projects.listAll()).toHaveLength(3);
+    expect(await projects.stats()).toEqual({ total: 3, published: 2, drafts: 1, featured: 2 });
   });
 
-  it("should publish and unpublish, reporting unknown or malformed ids", async () => {
+  it("should filter the admin list by status, most recently edited first", async () => {
+    const first = await createProject(1, { isPublished: true });
+    await createProject(2);
+    await projects.update(await projects.findById(first._id), projectData(1, { title: "Edited", isPublished: true }));
+
+    expect((await projects.listAll()).map((p) => p.name)).toEqual(["Project 1", "Project 2"]);
+    expect((await projects.listAll("drafts")).map((p) => p.name)).toEqual(["Project 2"]);
+    expect((await projects.listAll("published")).map((p) => p.name)).toEqual(["Project 1"]);
+    expect(await projects.listAll("featured")).toEqual([]);
+    expect((await projects.recentlyUpdated(1))[0].name).toBe("Project 1");
+  });
+
+  it("should publish and unpublish, returning the updated row", async () => {
     const project = await createProject(1);
 
-    expect(await projects.setPublished(project._id.toString(), true)).toBe(true);
-    expect((await Project.findById(project._id)).isPublished).toBe(true);
+    const row = await projects.setPublished(project._id.toString(), true);
+    expect(row).toMatchObject({ name: "Project 1", isPublished: true });
+    expect(row).not.toHaveProperty("descriptionMarkdown");
 
-    expect(await projects.setPublished(new mongoose.Types.ObjectId().toString(), true)).toBe(false);
-    expect(await projects.setPublished("not-an-id", true)).toBe(false);
+    expect(await projects.setPublished(new mongoose.Types.ObjectId().toString(), true)).toBeNull();
+    expect(await projects.setPublished("not-an-id", true)).toBeNull();
   });
 
   it("should feature up to the limit, then refuse, and unfeature", async () => {
@@ -120,31 +142,47 @@ describe("projects service", () => {
     expect(await projects.toggleFeatured("not-an-id")).toBe("notFound");
   });
 
-  it("should update fields, keep the slug and image unless given one, and bump updatedAt", async () => {
+  it("should update fields, keep the image unless given one, and set publish state", async () => {
     const project = await createProject(1);
-    const firstUpdatedAt = project.updatedAt;
 
-    await projects.update(project, { ...projectForm(1), project_name: "Renamed", project_title: "New title" });
+    await projects.update(project, projectData(1, { title: "New title", isPublished: true }));
     let saved = await Project.findById(project._id);
-    expect(saved.name).toBe("Renamed");
     expect(saved.title).toBe("New title");
     expect(saved.slug).toBe("project-1");
     expect(saved.image).toBe("default.png");
-    expect(saved.updatedAt.getTime()).toBeGreaterThanOrEqual(firstUpdatedAt.getTime());
+    expect(saved.isPublished).toBe(true);
 
-    await projects.update(saved, projectForm(1), "new-image.png");
+    await projects.update(saved, projectData(1), "new-image.png");
     saved = await Project.findById(project._id);
     expect(saved.image).toBe("new-image.png");
+    expect(saved.isPublished).toBe(false);
   });
 
-  it("should find by id or slug, treating malformed ids as not found", async () => {
+  it("should keep old slugs findable after a rename", async () => {
+    const project = await createProject(1);
+
+    await projects.update(project, projectData(1, { slug: "renamed" }));
+    await projects.update(await projects.findById(project._id), projectData(1, { slug: "renamed-again" }));
+
+    const saved = await Project.findById(project._id);
+    expect(saved.slug).toBe("renamed-again");
+    expect(saved.previousSlugs).toEqual(["project-1", "renamed"]);
+    expect((await projects.findBySlug("project-1")).slug).toBe("renamed-again");
+    expect((await projects.findBySlug("renamed")).slug).toBe("renamed-again");
+
+    // Renaming back to an old slug takes it out of the history
+    await projects.update(saved, projectData(1, { slug: "project-1" }));
+    expect((await Project.findById(project._id)).previousSlugs).toEqual(["renamed", "renamed-again"]);
+  });
+
+  it("should find by id or slug, treating malformed input as not found", async () => {
     const project = await createProject(1);
     expect((await projects.findById(project._id.toString())).name).toBe("Project 1");
+    expect((await projects.findRow(project._id.toString())).name).toBe("Project 1");
     expect((await projects.findBySlug("project-1")).name).toBe("Project 1");
     expect(await projects.findBySlug("nope")).toBeNull();
     expect(await projects.findBySlug(["project-1"])).toBeNull();
     expect(await projects.findById("not-an-id")).toBeNull();
-    expect(await projects.findById(new mongoose.Types.ObjectId().toString())).toBeNull();
   });
 
   it("should remove projects", async () => {
@@ -156,20 +194,23 @@ describe("projects service", () => {
 });
 
 describe("news service", () => {
-  it("should create a published entry with HTML, search text, a slug and a date", async () => {
-    const entry = await news.create("Hello World", "Some **news** here");
+  it("should create entries with HTML, search text, a slug and a date", async () => {
+    const entry = await news.create(newsData("Hello World", { bodyMarkdown: "Some **news** here" }));
 
     expect(entry.isPublished).toBe(true);
     expect(entry.slug).toBe("hello-world");
     expect(entry.bodyHtml).toContain("<strong>news</strong>");
     expect(entry.bodyText).toBe("Some news here\n");
     expect(entry.publishedAt).toBeInstanceOf(Date);
+
+    const draft = await news.create(newsData("A draft", { isPublished: false, slug: "my-draft" }));
+    expect(draft.isPublished).toBe(false);
+    expect(draft.slug).toBe("my-draft");
   });
 
   it("should never return unpublished entries from the public listings", async () => {
-    await news.create("Visible", "Published entry body");
-    const hidden = await news.create("Hidden", "Unpublished entry body");
-    await news.setPublished(hidden._id.toString(), false);
+    await news.create(newsData("Visible", { bodyMarkdown: "Published entry body" }));
+    await news.create(newsData("Hidden", { bodyMarkdown: "Unpublished entry body", isPublished: false }));
 
     const page = await news.paginatePublished();
     expect(page.newsItems.map((n) => n.title)).toEqual(["Visible"]);
@@ -179,12 +220,13 @@ describe("news service", () => {
     expect(search.newsItems.map((n) => n.title)).toEqual(["Visible"]);
 
     expect((await news.listLatestPublished()).map((n) => n.title)).toEqual(["Visible"]);
-    expect(await news.listAll()).toHaveLength(2);
+    expect((await news.listAll("drafts")).map((n) => n.title)).toEqual(["Hidden"]);
+    expect(await news.stats()).toEqual({ total: 2, published: 1, drafts: 1 });
   });
 
   it("should paginate newest first by default and support sorting", async () => {
     for (const title of ["Bravo", "Alpha", "Charlie"]) {
-      await news.create(title, "A news body for sorting");
+      await news.create(newsData(title));
     }
 
     const newest = await news.paginatePublished({ limit: 2 });
@@ -195,42 +237,62 @@ describe("news service", () => {
     expect(byTitle.newsItems.map((n) => n.title)).toEqual(["Alpha", "Bravo", "Charlie"]);
   });
 
-  it("should search title and body, with an exact-phrase option", async () => {
-    await news.create("Deploy notes", "The server moved to a new host today");
-    await news.create("Unrelated", "Nothing about servers or hosts here at all");
+  it("should search title and body, requiring every word, partial words included", async () => {
+    await news.create(newsData("Deploy notes", { bodyMarkdown: "The server moved to a new host today" }));
+    await news.create(newsData("Unrelated", { bodyMarkdown: "Nothing about servers or hosts here at all" }));
 
-    const anyWord = await news.paginatePublished({ term: "host" });
-    expect(anyWord.totalDocs).toBe(2);
+    const titles = async (term) => (await news.paginatePublished({ term })).newsItems.map((n) => n.title).sort();
 
-    const phrase = await news.paginatePublished({ term: "new host", exactPhrase: true });
-    expect(phrase.newsItems.map((n) => n.title)).toEqual(["Deploy notes"]);
+    expect(await titles("host")).toEqual(["Deploy notes", "Unrelated"]);
+    expect(await titles("HOST new")).toEqual(["Deploy notes"]); // any order, any case
+    expect(await titles("depl")).toEqual(["Deploy notes"]); // partial word, in the title
+    expect(await titles('"moved"')).toEqual(["Deploy notes"]); // quotes are ignored
+    expect(await titles("host nowhere")).toEqual([]);
+    expect(await titles("a.b (")).toEqual([]); // regex characters are literal
+    expect(await titles("   ")).toEqual(["Deploy notes", "Unrelated"]);
   });
 
-  it("should update content, keep the slug, and report unknown ids", async () => {
-    const entry = await news.create("Original", "Original body text");
+  it("should not need a text index to search", async () => {
+    await news.create(newsData("Indexless", { bodyMarkdown: "Searching without a text index." }));
+    const indexes = await News.collection.indexes();
+    expect(indexes.some((index) => index.key?._fts === "text")).toBe(false);
+    expect((await news.paginatePublished({ term: "without" })).totalDocs).toBe(1);
+  });
 
-    expect(await news.update(entry._id.toString(), "Edited", "Edited *body* text")).toBe(true);
-    const saved = await News.findById(entry._id);
+  it("should update content and slug, stamping the date only when newly published", async () => {
+    const entry = await news.create(newsData("Original", { isPublished: false }));
+
+    await news.update(entry, newsData("Edited", { bodyMarkdown: "Edited *body* text", isPublished: false }));
+    let saved = await News.findById(entry._id);
     expect(saved.title).toBe("Edited");
     expect(saved.slug).toBe("original");
     expect(saved.bodyHtml).toContain("<em>body</em>");
-    expect(saved.bodyText).toContain("Edited body text");
 
-    expect(await news.update(new mongoose.Types.ObjectId().toString(), "x", "Some body text")).toBe(false);
-    expect(await news.update("not-an-id", "x", "Some body text")).toBe(false);
+    await News.updateOne({ _id: entry._id }, { publishedAt: new Date("2020-01-01") });
+    saved = await News.findById(entry._id);
+    await news.update(saved, newsData("Edited", { slug: "edited", isPublished: true }));
+    saved = await News.findById(entry._id);
+    expect(saved.slug).toBe("edited");
+    expect(saved.publishedAt.getFullYear()).toBeGreaterThan(2020);
+
+    // Saving an already-published entry keeps its date
+    const stamped = saved.publishedAt.getTime();
+    await news.update(saved, newsData("Edited again", { isPublished: true }));
+    expect((await News.findById(entry._id)).publishedAt.getTime()).toBe(stamped);
   });
 
-  it("should restamp the date when publishing", async () => {
-    const entry = await news.create("Dated", "A body with a date");
+  it("should publish and unpublish, returning the updated row", async () => {
+    const entry = await news.create(newsData("Dated"));
     await News.updateOne({ _id: entry._id }, { publishedAt: new Date("2020-01-01") });
 
-    await news.setPublished(entry._id.toString(), true);
-    const saved = await News.findById(entry._id);
-    expect(saved.publishedAt.getFullYear()).toBeGreaterThan(2020);
+    const row = await news.setPublished(entry._id.toString(), true);
+    expect(row).toMatchObject({ title: "Dated", isPublished: true });
+    expect(row.publishedAt.getFullYear()).toBeGreaterThan(2020);
+    expect(await news.setPublished("not-an-id", true)).toBeNull();
   });
 
   it("should remove entries", async () => {
-    const entry = await news.create("Doomed", "This one gets deleted");
+    const entry = await news.create(newsData("Doomed"));
     expect(await news.remove(entry._id.toString())).toBe(true);
     expect(await news.remove(entry._id.toString())).toBe(false);
   });

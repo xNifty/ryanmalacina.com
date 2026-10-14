@@ -1,0 +1,62 @@
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <div class="page-header__actions">
+        <a class="button" href="/admin/news/new">New post</a>
+        <a class="button button--primary" href="/admin/projects/new">New project</a>
+    </div>
+</div>
+
+<section aria-labelledby="glance-heading">
+    <h2 class="visually-hidden" id="glance-heading">At a glance</h2>
+    <div class="stat-grid">
+        <a class="stat" href="/admin/projects?status=published">
+            <span class="stat__value">{{ projectStats.published }}</span>
+            <span class="stat__label">Published projects</span>
+        </a>
+        <a class="stat" href="/admin/projects?status=drafts">
+            <span class="stat__value">{{ projectStats.drafts }}</span>
+            <span class="stat__label">Project drafts</span>
+        </a>
+        <a class="stat" href="/admin/projects?status=featured">
+            <span class="stat__value">{{ projectStats.featured }}<span class="stat__of"> / {{ featuredLimit }}</span></span>
+            <span class="stat__label">Featured on home</span>
+        </a>
+        <a class="stat" href="/admin/news?status=published">
+            <span class="stat__value">{{ newsStats.published }}</span>
+            <span class="stat__label">Published posts</span>
+        </a>
+        <a class="stat" href="/admin/news?status=drafts">
+            <span class="stat__value">{{ newsStats.drafts }}</span>
+            <span class="stat__label">Post drafts</span>
+        </a>
+    </div>
+</section>
+
+<div class="dashboard-columns">
+    <section class="panel" aria-labelledby="recent-heading">
+        <h2 class="panel__heading" id="recent-heading">Recently edited</h2>
+        {{#if recent.length}}
+            <ul class="recent-list">
+                {{#each recent}}
+                    <li class="recent-list__item">
+                        <a href="{{ url }}">{{ title }}</a>
+                        <span class="recent-list__meta">
+                            {{ kind }} ·
+                            {{#if isPublished}}<span class="badge badge--published">Published</span>{{else}}<span class="badge badge--draft">Draft</span>{{/if}}
+                            · <time datetime="{{ formatDate updatedAt "isoUtcDateTime" }}">{{ formatDate updatedAt "mmm d, yyyy" }}</time>
+                        </span>
+                    </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <p class="muted">Nothing yet. Start with a <a href="/admin/projects/new">new project</a>.</p>
+        {{/if}}
+    </section>
+
+    <section class="panel" aria-labelledby="services-heading">
+        <h2 class="panel__heading" id="services-heading">Services</h2>
+        <div hx-get="/admin/health" hx-trigger="load" hx-swap="innerHTML">
+            <p class="muted">Checking…</p>
+        </div>
+    </section>
+</div>

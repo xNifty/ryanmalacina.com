@@ -3,7 +3,7 @@ import express from "express";
 import { createViewEngine } from "./utils/viewEngine.js";
 import config from "config";
 import session from "express-session";
-import flash from "connect-flash";
+import flash from "./utils/flash.js";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import LocalStrategy from "passport-local";
@@ -26,7 +26,9 @@ import { keybaseRoute } from "./routes/keybase.js";
 import { projectsRoute } from "./routes/projects.js";
 import { loginRoute } from "./routes/login.js";
 import { logoutRoute } from "./routes/logout.js";
-import { adminRoute } from "./routes/admin.js";
+import { adminRoute } from "./routes/admin/index.js";
+import { parseUploads } from "./utils/imageUpload.js";
+import { getSettings } from "./services/settings.js";
 import { newsRoute } from "./routes/news.js";
 import { resetRoute } from "./routes/reset.js";
 import { passwordReset } from "./routes/resetPassword.js";
@@ -47,7 +49,6 @@ const SECRET_KEY = process.env.privateKey;
 const MONGO_STORE = createMongoStore(MONGO_URL);
 
 const BLOG_URL = config.get("blogURL");
-const SHOW_BLOG = config.get("showBlog");
 const DOCS_URL = config.get("docsURL");
 const SHOW_DOCS = config.get("showDocs");
 
@@ -155,6 +156,12 @@ const LOCAL_STRATEGY = new LocalStrategy(async (username, password, done) => {
 });
 passport.use("local", LOCAL_STRATEGY);
 
+// The admin editor posts multipart forms (image uploads). Parse them before lusca so it can
+// read the form's _csrf field, and only for admins so nobody else can make us buffer a file.
+APP.use("/admin", (req, res, next) =>
+  req.isAuthenticated() && req.user?.isAdmin ? parseUploads(req, res, next) : next()
+);
+
 APP.use(
   lusca.csrf({
     cookie: true,
@@ -172,19 +179,17 @@ APP.locals = {
   recaptchaSiteKey: config.get("recaptchaSiteKey"),
 };
 
-APP.use(function(req, res, next) {
+APP.use(async function(req, res, next) {
   res.locals.realName = req.session.name;
   res.locals.token = req.session.token;
   res.locals.authenticated = req.isAuthenticated();
-  res.locals.showSplashScreen =
-    !req.get("HX-Request") &&
-    req.cookies?.siteSplashSeen !== "true" &&
-    req.cookies?.welcomeShown !== "true";
+  // lusca's per-request token, for any template that needs it
+  res.locals.csrfToken = res.locals._csrf;
 
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
 
-  res.locals.displayBlogNav = SHOW_BLOG;
+  res.locals.displayBlogNav = (await getSettings()).showBlog;
 
   if (req.user) {
     res.locals.realName = req.user.realName;
@@ -208,11 +213,11 @@ APP.use("/reset", resetRoute);
 APP.use("/resetPassword", passwordReset);
 APP.use("/profile", profileRoute);
 
-if (SHOW_BLOG) {
-  APP.get("/blog/", function(req, res) {
-    res.redirect(301, BLOG_URL);
-  });
-}
+// Switched on and off in /admin/settings. A 302, since browsers cache a 301 forever.
+APP.get("/blog/", async function(req, res, next) {
+  if (!(await getSettings()).showBlog) return next();
+  res.redirect(302, BLOG_URL);
+});
 
 if (SHOW_DOCS) {
   APP.get("/docs/", function(req, res) {

@@ -56,8 +56,29 @@ export function formatDate(date, mask) {
   return dateFormat(value, typeof mask === "string" ? mask : DATE_FORMAT);
 }
 
+/**
+ * {{joinList tags}} -> "node, discord". Passes strings through, so a form re-rendered with
+ * what was typed shows it unchanged.
+ */
+export function joinList(value) {
+  if (Array.isArray(value)) return value.join(", ");
+  return typeof value === "string" ? value : "";
+}
+
+/**
+ * {{initials "Snoring Ninja"}} -> "SN": up to two letters for project monograms.
+ */
+export function initials(name) {
+  const words = String(name ?? "").match(/[\p{L}\p{N}]+/gu) ?? [];
+  if (words.length === 0) return "?";
+  const letters = words.length === 1 ? words[0].slice(0, 2) : words[0][0] + words[1][0];
+  return letters.toUpperCase();
+}
+
 export default {
   iff,
   versionedFile,
   formatDate,
+  joinList,
+  initials,
 };

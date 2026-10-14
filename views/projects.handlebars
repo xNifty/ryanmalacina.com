@@ -1,12 +1,45 @@
-{{!--
-    I intentionally built this page with partials, because it's made of two parts.
-    By splitting it, it allows me to easily update either portion of the page with ease without risking breaking
-    something in the other portion.
-
-    is_valid gets passed if the project is valid; otherwise, render project index
---}}
+{{!-- /projects (the index) and /projects/:slug (is_valid + project) --}}
 {{#if is_valid}}
-    {{> project-info}}
+    <div class="wrap page">
+        <article class="article">
+            <a class="back-link" href="/projects">← all projects</a>
+            <header class="article__header">
+                <h1 class="article__title">{{ project.name }}</h1>
+                {{#iff project.title "!==" project.name}}<p class="article__subtitle">{{ project.title }}</p>{{/iff}}
+                {{#if project.tags.length}}
+                    <ul class="tags" aria-label="Tags">
+                        {{#each project.tags}}<li class="tag">{{ this }}</li>{{/each}}
+                    </ul>
+                {{/if}}
+                <div class="article__actions">
+                    {{#if project.source}}
+                        <a class="button button--primary" href="{{ project.source }}">{{> icon name="github" }} View source</a>
+                    {{/if}}
+                    {{#if isAdmin}}
+                        <a class="button" href="/admin/projects/{{ project._id }}/edit">Edit</a>
+                    {{/if}}
+                    {{#if project.updatedAt}}
+                        <span class="muted mono">updated <time datetime="{{ formatDate project.updatedAt "isoUtcDateTime" }}">{{ formatDate project.updatedAt "mmm d, yyyy" }}</time></span>
+                    {{/if}}
+                </div>
+            </header>
+            <div class="markdown-body">
+                {{{ descriptionHtml }}}
+            </div>
+        </article>
+    </div>
 {{else}}
-    {{> project-index}}
+    <div class="wrap page">
+        <h1 class="page-title">Projects</h1>
+        <p class="page-intro">Things I've built, am building, or have contributed to. Not everything is here; there's more on <a href="https://github.com/xNifty">my GitHub</a>.</p>
+        <div class="section">
+            {{#if projects.length}}
+                <div class="card-grid">
+                    {{#each projects}}{{> project-card this }}{{/each}}
+                </div>
+            {{else}}
+                <p class="empty">No published projects yet.</p>
+            {{/if}}
+        </div>
+    </div>
 {{/if}}

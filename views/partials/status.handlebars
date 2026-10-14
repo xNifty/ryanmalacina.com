@@ -1,28 +1,23 @@
-{{#if success}}
-    {{#iff success.length '>' 0}}
-        <div class="container">
-            <div class="text-center">
-                <div class="alert alert-success center-block">
-                    <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
-                    {{ success }}
+{{!-- One-time flash messages (req.flash). Not on the error page, which uses "error" for its own message. --}}
+{{#unless status_code}}
+    {{#if success.length}}
+        <div class="wrap flash-stack">
+            {{#each success}}
+                <div class="flash" role="status">
+                    <span class="flash__message">{{ this }}</span>
+                    <button type="button" class="flash__close" data-flash-close aria-label="Dismiss">&times;</button>
                 </div>
-            </div>
+            {{/each}}
         </div>
-    {{/iff}}
-{{/if}}
-{{#if error}}
-    {{#iff error.length '>' 0}}
-        <div class="container">
-            <div class="text-center">
-                <div class="alert alert-danger center-block">
-                    <a href="#" class="alert-close" data-dismiss="alert" aria-label="close">&times;</a>
-                    {{#if status_code}}
-                        {{ status_code }}
-                    {{else}}
-                        {{{ error }}}
-                    {{/if}}
+    {{/if}}
+    {{#if error.length}}
+        <div class="wrap flash-stack">
+            {{#each error}}
+                <div class="flash flash--error" role="alert">
+                    <span class="flash__message">{{ this }}</span>
+                    <button type="button" class="flash__close" data-flash-close aria-label="Dismiss">&times;</button>
                 </div>
-            </div>
+            {{/each}}
         </div>
-    {{/iff}}
-{{/if}}
+    {{/if}}
+{{/unless}}

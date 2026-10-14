@@ -1,48 +1,36 @@
-<div class="container" id="profile">
-    <div class="container">
-      <h1>Welcome to Your Profile</h1>
-      <p>On this page you can change your email, name, and password. Your username is locked to what it was created as.</p>
+<div class="wrap auth">
+    <div class="auth-card auth-card--wide">
+        <h1 class="auth-card__title">Your profile</h1>
+        <p class="auth-card__intro">Change your name, email or password. Your username can't be changed.</p>
+        <form class="auth-form" method="post" action="/profile" id="profile_content">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            <div class="field">
+                <label class="field__label" for="user_name">Name</label>
+                <input class="input" id="user_name" name="user_name" type="text" autocomplete="name" value="{{ user_name }}" required>
+            </div>
+            <div class="field">
+                <label class="field__label" for="user_email">Email</label>
+                <input class="input" id="user_email" name="user_email" type="email" autocomplete="email" value="{{ user_email }}" required>
+            </div>
+            <details class="disclosure">
+                <summary>Change password</summary>
+                <div class="disclosure__body">
+                    <div class="field">
+                        <label class="field__label" for="pass_change_one">New password</label>
+                        <input class="input" id="pass_change_one" name="pass_change_one" type="password" autocomplete="new-password" minlength="8">
+                    </div>
+                    <div class="field">
+                        <label class="field__label" for="pass_change_two">Confirm new password</label>
+                        <input class="input" id="pass_change_two" name="pass_change_two" type="password" autocomplete="new-password" minlength="8" aria-describedby="passwordMatchError">
+                        <p class="field__hint caps-warning" id="passwordMatchError" aria-live="polite"></p>
+                    </div>
+                    <div class="field">
+                        <label class="field__label" for="pass_current">Current password</label>
+                        <input class="input" id="pass_current" name="pass_current" type="password" autocomplete="current-password">
+                    </div>
+                </div>
+            </details>
+            <button class="button button--primary" type="submit">Save profile</button>
+        </form>
     </div>
-    <form action="/profile" method="post" id="profile_content">
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
-      <div class="form-group">
-        <div class="form-group">
-          <label for="user_name">Your Name</label>
-          <input type="text" class="form-control custom-text" id="user_name" name="user_name" value="{{#if user_name}}{{user_name}}{{/if}}">
-        </div>
-        <div class="form-group">
-          <label for="user_email">Email</label>
-          <input type="text" class="form-control custom-text" name="user_email" value="{{#if user_email}}{{user_email}}{{/if}}">
-        </div>
-        <div class="accordion" id="passwordAccordion">
-          <div class="card">
-            <div class="card-header" id="passwordHeading">
-                <h2 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#passwordCollapse" aria-expanded="true" aria-controls="passwordCollapse">
-                        Change Password <span class="fa fa-lock"></span>
-                    </button>
-                </h2>
-            </div>
-            <div id="passwordCollapse" class="collapse" aria-labelledby="passwordHeading" data-parent="#passwordAccordion">
-              <div class="card-body">
-                <div class="form-group">
-                    <label for="newPassword">New Password</label>
-                    <input type="password" class="form-control" id="pass_change_one" placeholder="New Password" name="pass_change_one" autocomplete="new-password" minlength="8">
-                </div>
-                <div class="form-group">
-                    <label for="newPassword">Confirm New Password</label>
-                    <input type="password" class="form-control" id="pass_change_two" placeholder="New Password" name="pass_change_two" autocomplete="new-password" minlength="8">
-                    <small class="text-danger" id="passwordMatchError"></small>
-                </div>
-                <div class="form-group">
-                    <label for="pass_current">Current Password</label>
-                    <input type="password" class="form-control" id="pass_current" placeholder="Current Password" name="pass_current" autocomplete="off">
-                </div>
-              </div>
-            </div>
-        </div>
-      </div>
-      <button type="submit" class="btn btn-primary" id="profileUpdate">
-        <span class="glyphicon glyphicon-pencil"></span> Update Profile</button>
-    </form>
 </div>

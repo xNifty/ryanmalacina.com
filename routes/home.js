@@ -6,6 +6,7 @@ import { RecaptchaV3 as Recaptcha } from "express-recaptcha";
 import * as projects from "../services/projects.js";
 import * as news from "../services/news.js";
 import { listRecentPosts } from "../services/blog.js";
+import { getSettings } from "../services/settings.js";
 import { sendContactMessage } from "../utils/sendMail.js";
 
 const ROUTER = express.Router();
@@ -25,8 +26,8 @@ ROUTER.get("/", recaptcha.middleware.render, async (req, res) => {
     projects.countPublished(),
   ]);
 
-  // Only query the blog if it's enabled, and hide the section if Ghost is unreachable
-  let showBlog = config.get("showBlog");
+  // Only query the blog if it's switched on, and hide the section if Ghost is unreachable
+  let { showBlog } = await getSettings();
   let blogPosts;
   if (showBlog) {
     try {
@@ -38,7 +39,7 @@ ROUTER.get("/", recaptcha.middleware.render, async (req, res) => {
   }
 
   return res.render("index", {
-    title: "Ryan Malacina | Home",
+    title: "Ryan Malacina",
     projects: featuredProjects,
     captcha: res.recaptcha,
     siteKey: config.get("recaptchaSiteKey"),

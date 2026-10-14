@@ -1,0 +1,26 @@
+<div class="page-header">
+    <h1>Settings</h1>
+</div>
+
+<form class="settings" method="post" action="/admin/settings">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+    <section class="panel" aria-labelledby="blog-heading">
+        <h2 class="panel__heading" id="blog-heading">Blog</h2>
+        <div class="field">
+            <label class="checkbox">
+                <input type="checkbox" name="showBlog" aria-describedby="show-blog-hint"{{#if settings.showBlog}} checked{{/if}}>
+                <span>Show the blog</span>
+            </label>
+            <p class="field__hint" id="show-blog-hint">
+                Shows the Blog link in the site menu, the latest posts on the home page, and makes
+                <code>/blog</code> go to {{#if blogURL}}{{ blogURL }}{{else}}the blog{{/if}}.
+                When it's off, the site never contacts the blog.
+            </p>
+        </div>
+    </section>
+
+    <div class="editor__actions">
+        <button type="submit" class="button button--primary">Save settings</button>
+    </div>
+</form>

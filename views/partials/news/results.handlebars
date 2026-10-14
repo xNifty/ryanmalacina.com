@@ -1,0 +1,30 @@
+{{!-- News results: rendered in news-index, and alone for htmx searches and paging (routes/news.js) --}}
+{{#if q}}
+    <p class="results-summary">{{ totalItems }} {{#iff totalItems "==" 1}}post matches{{else}}posts match{{/iff}} “{{ q }}”. <a href="/news" hx-get="/news" hx-target="#news-results" hx-push-url="true" data-clear-search>Clear search</a></p>
+{{/if}}
+
+{{#if news.length}}
+    <div class="news-feed">
+        {{#each news}}
+            <article class="news-item">
+                <p class="news-item__meta"><time datetime="{{ formatDate publishedAt "isoUtcDateTime" }}">{{ formatDate publishedAt "mmmm d, yyyy" }}</time></p>
+                <h2 class="news-item__title"><a href="/news/{{ slug }}">{{{ titleHtml }}}</a></h2>
+                <div class="markdown-body">{{{ bodyHtml }}}</div>
+            </article>
+        {{/each}}
+    </div>
+
+    {{#iff pagination.totalPages ">" 1}}
+        <nav class="pager" aria-label="Pages">
+            {{#if pagination.prev}}
+                <a class="button button--small" href="{{ pagination.prev }}" hx-get="{{ pagination.prev }}" hx-target="#news-results" hx-push-url="true">← Newer</a>
+            {{else}}<span class="pager__spacer"></span>{{/if}}
+            <span class="pager__status">page {{ pagination.page }} of {{ pagination.totalPages }}</span>
+            {{#if pagination.next}}
+                <a class="button button--small" href="{{ pagination.next }}" hx-get="{{ pagination.next }}" hx-target="#news-results" hx-push-url="true">Older →</a>
+            {{else}}<span class="pager__spacer"></span>{{/if}}
+        </nav>
+    {{/iff}}
+{{else}}
+    <p class="empty">{{#if q}}Nothing matches that search.{{else}}No news yet.{{/if}}</p>
+{{/if}}

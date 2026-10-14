@@ -1,4 +1,5 @@
 import path from "path";
+import fileUpload from "express-fileupload";
 
 import { strings } from "../config/constants.js";
 
@@ -49,4 +50,11 @@ export function prepareImageUpload(file) {
   return { fileName: `${base}-${Date.now()}${ext}` };
 }
 
-export default { prepareImageUpload, MAX_IMAGE_BYTES };
+/**
+ * Multipart parsing for image uploads: puts files on req.files and fields on req.body.
+ * Files over the limit arrive with truncated: true, which prepareImageUpload rejects.
+ * app.js runs this before CSRF checking so the form's _csrf field can be read.
+ */
+export const parseUploads = fileUpload({ limits: { fileSize: MAX_IMAGE_BYTES } });
+
+export default { prepareImageUpload, parseUploads, MAX_IMAGE_BYTES };

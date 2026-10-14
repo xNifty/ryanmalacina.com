@@ -1,5 +1,9 @@
 <head>
-    <script nonce="{{nonce}}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    {{!-- Set the theme before anything paints: the cookie from the toggle, else the system setting --}}
+    <script nonce="{{ nonce }}">
     (function() {
         var match = document.cookie.match(/(?:^|; )theme=([^;]*)/);
         var theme = match ? decodeURIComponent(match[1]) : null;
@@ -9,45 +13,25 @@
         document.documentElement.setAttribute('data-theme', theme);
     })();
     </script>
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css"
-          href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    {{#if markdownEditor}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css">
+    <meta name="htmx-config" content='{"inlineScriptNonce":"{{ nonce }}","inlineStyleNonce":"{{ nonce }}","includeIndicatorStyles":false,"attributesToSettle":["class","width","height"]}'>
+    <meta name="recaptcha-site-key" content="{{ recaptchaSiteKey }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="{{ versionedFile 'site.css' 'dist' 'css' }}">
+    {{#if highlight}}
+        {{!-- Code highlighting colours; theme.js switches between them with the site theme --}}
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+        <script nonce="{{ nonce }}">
+        (function() {
+            var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.getElementById('hljs-light').media = dark ? 'not all' : 'all';
+            document.getElementById('hljs-dark').media = dark ? 'all' : 'not all';
+        })();
+        </script>
     {{/if}}
-    <link rel="stylesheet" href="{{ versionedFile 'style.css' 'dist' 'css'}}">
-    <link rel="stylesheet" href="{{ versionedFile 'simplePagination.css' 'dist' 'css'}}"/>
-    <link rel="stylesheet" href="{{ versionedFile 'github.css' 'dist' 'css'}}">
-    <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
-    <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
-    <script rel="text/javascript" src="{{ versionedFile 'trustedtype.js' 'dist' 'js'}}" nonce="{{nonce}}"></script>
-    <script nonce="{{nonce}}">
-    (function() {
-        var theme = document.documentElement.getAttribute('data-theme');
-        var lightLink = document.getElementById('hljs-light');
-        var darkLink = document.getElementById('hljs-dark');
-        if (lightLink && darkLink) {
-            if (theme === 'dark') {
-                lightLink.media = 'not all';
-                darkLink.media = 'all';
-            } else {
-                lightLink.media = 'all';
-                darkLink.media = 'not all';
-            }
-        }
-    })();
-    </script>
-    <link rel="shortcut icon" href="/images/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="utf-8">
-    <meta name="recaptcha-site-key" content="{{recaptchaSiteKey}}">
-    <meta name="htmx-config" content='{
-                  "inlineScriptNonce":"{{nonce}}",
-                  "inlineStyleNonce":"{{nonce}}",
-                  "includeIndicatorStyles": false,
-                  "attributesToSettle": ["class", "width", "height"]
-                  }'>
-    <title>{{ title }}</title>
+    {{!-- The CSP requires Trusted Types; this defines the policy htmx's swaps go through --}}
+    <script src="{{ versionedFile 'trustedtype.js' 'dist' 'js' }}" nonce="{{ nonce }}"></script>
+    <link rel="icon" href="/images/favicon.ico">
 </head>

@@ -1,20 +1,20 @@
-<div class="container" id="site-news">
-    <input type="hidden" name="_csrf" id="_csrf" value="{{csrfToken}}">
-    <h1>Site News and Updates</h1>
-    <div class="input-group custom-search">
-        <input type="search" class="form-control" id="news-search-box">
-        <span class="input-group-btn">
-            <button class="btn btn-primary" type="button" id="news-search">
-                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                Search!
-            </button>
-        </span>
+<div class="wrap page">
+    <h1 class="page-title">News</h1>
+    <p class="page-intro">Updates about the site and what I'm working on.</p>
+
+    {{!-- A plain GET form, so search works without JavaScript; htmx swaps just the results --}}
+    <form class="news-search" role="search" action="/news" method="get"
+        hx-get="/news" hx-target="#news-results" hx-push-url="true" hx-trigger="submit, change from:#news-sort">
+        <label class="visually-hidden" for="news-q">Search news</label>
+        <input class="input" type="search" id="news-q" name="q" value="{{ q }}" placeholder="Search news…" maxlength="100">
+        <label class="visually-hidden" for="news-sort">Sort</label>
+        <select class="input" id="news-sort" name="sort">
+            {{#each sorts}}<option value="{{ key }}"{{#if selected}} selected{{/if}}>{{ label }}</option>{{/each}}
+        </select>
+        <button class="button button--primary" type="submit">Search</button>
+    </form>
+
+    <div id="news-results" aria-live="polite">
+        {{> news/results }}
     </div>
-    <select id="sort" name="sort" class="btn btn-trigger">
-        <option name="dateAsc" value="dateAsc">Date (Asc)</option>
-        <option name="dateDesc" selected value="dateDesc">Date (Desc)</option>
-        <option name="titleAsc" value="titleAsc">Title (Asc)</option>
-        <option name="titleDesc" value="titleDesc">Title (Desc)</option>
-    </select>
-    <div id="news-results">{{> news/news-display }}</div>
 </div>

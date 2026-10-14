@@ -1,2 +1,2 @@
-{{!-- Alert shown inside the login modal's #loginStatus --}}
-<div class="modalAlert alert alert-{{ type }} alert-dismissible center-block text-center">{{#each messages}}{{ this }}{{#unless @last}}<br>{{/unless}}{{/each}}</div>
+{{!-- Kept for POST /login/modal; same markup as partials/alert --}}
+{{> alert }}

@@ -1,0 +1,32 @@
+<div class="page-header">
+    <h1>News</h1>
+    <div class="page-header__actions">
+        <a class="button button--primary" href="/admin/news/new">New post</a>
+    </div>
+</div>
+
+{{> admin/tabs base="/admin/news" }}
+
+{{#if news.length}}
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Published</th>
+                    <th scope="col">Updated</th>
+                    <th scope="col"><span class="visually-hidden">Actions</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each news}}{{> admin/news-row this }}{{/each}}
+            </tbody>
+        </table>
+    </div>
+{{else}}
+    <div class="empty-state">
+        <p>No posts here.</p>
+        <a class="button button--primary" href="/admin/news/new">New post</a>
+    </div>
+{{/if}}

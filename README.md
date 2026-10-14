@@ -50,7 +50,7 @@ his file is used to store configuration information that is not sensitive and ca
 7. maxAge - This is the maximum age of the cookie in milliseconds.
 8. blogURL - This is the URL to the Ghost blog. This is used to link to the blog from the site.
 9. docsURL - I use this to link to my documentation URL; however, you can use this for any URL that you want to link to, technically.
-10. showBlog - Boolen value that determines if the blog should be shown on the site.
+10. showBlog - Whether the blog is shown before it has been set in the admin. Once you save Settings at /admin/settings, that choice is used instead.
 11. blogVersion - Ghost version, in Major.Minor format (e.g. v5.0)
 12. rootURL - This is the root URL of the site. This is used to generate URLs for the site.
 13. recapchaSiteKey - This is the site key for Google's reCAPTCHA. This is used to prevent bots from submitting forms. This is a public key, and is different from the key in .env

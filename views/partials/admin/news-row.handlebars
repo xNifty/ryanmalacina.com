@@ -1,0 +1,18 @@
+{{!-- One row of the admin news table; returned on its own after row actions --}}
+<tr id="news-{{ _id }}">
+    <td><a class="row-title__link" href="/admin/news/{{ _id }}/edit">{{ title }}</a></td>
+    <td>{{#if isPublished}}<span class="badge badge--published">Published</span>{{else}}<span class="badge badge--draft">Draft</span>{{/if}}</td>
+    <td>{{#if isPublished}}<time datetime="{{ formatDate publishedAt "isoUtcDateTime" }}">{{ formatDate publishedAt "mmm d, yyyy" }}</time>{{else}}<span class="muted">Not published</span>{{/if}}</td>
+    <td><time datetime="{{ formatDate updatedAt "isoUtcDateTime" }}">{{ formatDate updatedAt "mmm d, yyyy" }}</time></td>
+    <td>
+        <div class="row-actions">
+            {{#if isPublished}}
+                <button type="button" class="button button--small" hx-put="/admin/news/{{ _id }}/unpublish" hx-target="closest tr" hx-swap="outerHTML">Unpublish</button>
+            {{else}}
+                <button type="button" class="button button--small" hx-put="/admin/news/{{ _id }}/publish" hx-target="closest tr" hx-swap="outerHTML">Publish</button>
+            {{/if}}
+            <button type="button" class="button button--small button--danger" hx-delete="/admin/news/{{ _id }}" hx-target="closest tr" hx-swap="outerHTML"
+                hx-confirm="Delete “{{ title }}”? This can’t be undone.">Delete</button>
+        </div>
+    </td>
+</tr>

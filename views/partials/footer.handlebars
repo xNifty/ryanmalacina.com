@@ -1,15 +1,17 @@
-<div class="container" id="footer-container">
-    <hr class="footer">
-    <a id="scroll" title="Back to top" href="#">&#10148;</a>
-    <footer class="site-footer clearfix">
-        <section class="builtwith">
-            Built with <i class="fa fa-heart"></i> | <a href="https://github.com/xnifty/ryanmalacina.com" target="_blank">Source</a> |
-	    <a href="https://github.com/xNifty/ryanmalacina.com/issues" target="_blank">Report A Bug</a><br>
-            copyright &copy; 2017 - {{ currentyear }} ryanmalacina.com
-        </section>
-        <section class="social">
-            <a href="https://github.com/xNifty" target="_blank"><i class="fa fa-github fa-3x" aria-hidden="true"></i></a>
-	    <a href="https://twitter.com/ryanmalacina" target="_blank"><i class="fa fa-twitter fa-3x" aria-hidden="true"></i></a>
-        </section>
-    </footer>
-</div>
+<footer class="site-footer">
+    <div class="wrap site-footer__inner">
+        <p class="mono">&copy; 2017–{{ currentyear }} Ryan Malacina</p>
+        <ul class="site-footer__links">
+            <li><a class="social-link" href="https://github.com/xNifty">{{> icon name="github" }} GitHub</a></li>
+            <li><a href="https://twitter.com/ryanmalacina">Twitter</a></li>
+            <li><a href="https://github.com/xNifty/ryanmalacina.com">Site source</a></li>
+            <li><a href="https://github.com/xNifty/ryanmalacina.com/issues">Report a bug</a></li>
+            {{#if authenticated}}
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/logout">Log out</a></li>
+            {{else}}
+                {{#unless hideLogin}}<li><a href="/login">Log in</a></li>{{/unless}}
+            {{/if}}
+        </ul>
+    </div>
+</footer>

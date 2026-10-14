@@ -1,0 +1,5 @@
+{{!-- type: success | error --}}
+<div class="toast toast--{{ type }}"{{#iff type "==" "error"}} role="alert"{{/iff}}>
+    <span class="toast__message">{{ message }}</span>
+    <button type="button" class="toast__close" data-toast-close aria-label="Dismiss">&times;</button>
+</div>

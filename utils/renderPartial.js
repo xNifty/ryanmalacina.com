@@ -16,18 +16,4 @@ export function renderAlert(res, type, messages, { status, view = "partials/aler
   });
 }
 
-/**
- * Render the delete-confirmation modal for an entry.
- * @param {Object} res - The response object
- * @param {string} basePath - The delete route without the id, e.g. "/projects/delete/"
- * @param {string} id - The entry's id (escaped by the template)
- */
-export function renderDeleteModal(res, basePath, id) {
-  return res.render("partials/delete-modal", {
-    layout: false,
-    action: basePath + encodeURIComponent(id),
-    csrfToken: res.locals._csrf,
-  });
-}
-
-export default { renderAlert, renderDeleteModal };
+export default { renderAlert };
