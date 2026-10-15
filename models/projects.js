@@ -53,6 +53,23 @@ const projectSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    // Shown as a badge on cards; empty shows none
+    status: {
+      type: String,
+      enum: ["", "active", "maintained", "paused", "archived"],
+      default: "",
+    },
+    // Years worked on, e.g. 2019 to 2022, or 2019 alone for "2019–present"
+    startYear: {
+      type: Number,
+      min: 1990,
+      max: 2100,
+    },
+    endYear: {
+      type: Number,
+      min: 1990,
+      max: 2100,
+    },
     isPublished: {
       type: Boolean,
       default: false,

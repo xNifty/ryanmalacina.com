@@ -32,5 +32,7 @@ export default function renderErrorPage(env, status, err, req, res) {
         : message,
     status_code: strings.status[status] ?? String(status),
     title: strings.pageHeader.error,
+    // Also set in app.js, but errors can be raised before that middleware runs
+    requestPath: String(req?.path ?? "").slice(0, 200),
   });
 }

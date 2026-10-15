@@ -1,0 +1,60 @@
+<div class="page-header">
+    <div>
+        <a class="back-link" href="/admin/pages">← Pages</a>
+        <h1>{{ page.label }} <span class="muted page-header__path">{{ page.path }}</span></h1>
+    </div>
+    {{#if page.isPublished}}
+        <div class="page-header__actions">
+            <a class="button" href="{{ page.path }}" target="_blank" rel="noopener">View on site</a>
+        </div>
+    {{/if}}
+</div>
+
+{{#if errors}}
+    <div class="alert alert--error" role="alert">
+        {{#if errors.form}}{{ errors.form }}{{else}}Nothing was saved. Fix the highlighted fields and try again.{{/if}}
+    </div>
+{{/if}}
+
+{{#unless page.saved}}
+    <div class="alert alert--info">This page hasn't been saved yet, so it's showing starter content. Make it yours.</div>
+{{/unless}}
+
+{{> admin/draft-banner }}
+
+<form class="editor" method="post" action="{{ action }}" data-draft-key="{{ draftKey }}">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+    <div class="editor__fields">
+        {{> admin/field name="title" label="Title" value=values.title error=errors.title required=true maxlength=125
+            hint="The page heading." }}
+        {{> admin/field name="intro" label="Intro" value=values.intro error=errors.intro maxlength=300
+            hint="Optional line under the heading. Also used as the description in link previews." }}
+
+        {{#if page.hasTimeline}}
+            <div class="field field--wide{{#if errors.timeline}} field--error{{/if}}">
+                <label class="field__label" for="field-timeline">Timeline</label>
+                <textarea class="input input--mono" id="field-timeline" name="timeline" rows="6"
+                    aria-describedby="field-timeline-hint"{{#if errors.timeline}} aria-invalid="true" aria-errormessage="field-timeline-error"{{/if}}
+                    placeholder="2019 – now | Software developer at Somewhere | SQL and ASP.NET">{{ values.timeline }}</textarea>
+                {{#if errors.timeline}}<p class="field__error" id="field-timeline-error">{{ errors.timeline }}</p>{{/if}}
+                <p class="field__hint" id="field-timeline-hint">One entry per line: <code>when | what | detail</code>. Detail is optional. Shown below the page, in this order. Leave empty to hide it.</p>
+            </div>
+        {{/if}}
+
+        <div class="field">
+            <label class="checkbox">
+                <input type="checkbox" name="isPublished"{{#if values.isPublished}} checked{{/if}}>
+                <span>Published <span class="muted">— visible at {{ page.path }} and linked from the site</span></span>
+            </label>
+        </div>
+    </div>
+
+    {{> admin/markdown-field name="bodyMarkdown" label="Body" kind="page" maxlength=25000
+        value=values.bodyMarkdown error=errors.bodyMarkdown }}
+
+    <div class="editor__actions">
+        <button type="submit" class="button button--primary">Save page</button>
+        <a class="button" href="/admin/pages">Cancel</a>
+    </div>
+</form>

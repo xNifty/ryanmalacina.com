@@ -75,10 +75,31 @@ export function initials(name) {
   return letters.toUpperCase();
 }
 
+/**
+ * {{yearRange startYear endYear status}} -> "2019–2022", "2019–present", or "2019" for a
+ * finished one-year or archived project. Empty without a start year.
+ */
+export function yearRange(start, end, status) {
+  if (!Number.isInteger(start)) return "";
+  if (Number.isInteger(end)) return end === start ? String(start) : `${start}–${end}`;
+  return status === "archived" ? String(start) : `${start}–present`;
+}
+
+/**
+ * {{compactNumber 1234}} -> "1.2k", for star counts.
+ */
+export function compactNumber(value) {
+  const number = Number(value) || 0;
+  if (number < 1000) return String(number);
+  return `${(number / 1000).toFixed(number < 10000 ? 1 : 0).replace(/\.0$/, "")}k`;
+}
+
 export default {
   iff,
   versionedFile,
   formatDate,
   joinList,
   initials,
+  yearRange,
+  compactNumber,
 };

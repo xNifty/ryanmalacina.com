@@ -11,6 +11,7 @@ import express from "express";
 
 import * as projects from "../services/projects.js";
 import { renderProjectPage } from "../services/markdown.js";
+import { getRepoStats, withRepoStats } from "../services/github.js";
 import { strings } from "../config/constants.js";
 
 const ROUTER = express.Router();
@@ -19,7 +20,9 @@ ROUTER.get("/", async (req, res) => {
   res.render("projects", {
     title: "Projects | Ryan Malacina",
     section: "projects",
-    projects: await projects.listPublished(),
+    description: "Things Ryan Malacina has built, is building, or has contributed to.",
+    ogImage: "/og/projects.png",
+    projects: await withRepoStats(await projects.listPublished()),
   });
 });
 
@@ -50,7 +53,10 @@ ROUTER.get("/:slug", async (req, res) => {
     is_valid: true,
     section: "projects",
     highlight: true,
-    project: project.toObject(),
+    project: { ...project.toObject(), github: await getRepoStats(project.source) },
+    description: project.title,
+    ogImage: `/og/projects/${project.slug}.png`,
+    ogType: "article",
     descriptionHtml: renderProjectPage(project.descriptionMarkdown),
     title: project.name + " | Ryan Malacina",
   });

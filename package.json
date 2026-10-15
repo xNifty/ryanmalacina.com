@@ -23,6 +23,9 @@
   },
   "homepage": "https://github.com/xNifty/ryanmalacina.com#readme",
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.4.2",
+    "@expo-google-fonts/jetbrains-mono": "^0.4.1",
+    "@resvg/resvg-js": "^2.6.2",
     "@tryghost/content-api": "^1.12.10",
     "bcrypt": "^6.0.0",
     "config": "~5.0.0",

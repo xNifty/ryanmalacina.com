@@ -1,0 +1,9 @@
+{{!-- Years, language, stars and last push for a project, where known --}}
+{{#iff startYear "||" github}}
+    <p class="facts">
+        {{#if startYear}}<span class="fact">{{ yearRange startYear endYear status }}</span>{{/if}}
+        {{#if github.language}}<span class="fact"><span class="lang-dot" data-lang="{{ github.language }}" aria-hidden="true"></span>{{ github.language }}</span>{{/if}}
+        {{#if github}}<span class="fact" title="GitHub stars"><span aria-hidden="true">★</span><span class="visually-hidden">Stars:</span> {{ compactNumber github.stars }}</span>{{/if}}
+        {{#if github.pushedAt}}<span class="fact">pushed <time datetime="{{ formatDate github.pushedAt "isoUtcDateTime" }}">{{ formatDate github.pushedAt "mmm yyyy" }}</time></span>{{/if}}
+    </p>
+{{/iff}}

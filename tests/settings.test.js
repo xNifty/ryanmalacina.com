@@ -48,13 +48,13 @@ afterAll(async () => {
 
 describe("settings service", () => {
   it("should start from config until saved", async () => {
-    expect(await getSettings()).toEqual({ showBlog: true });
+    expect(await getSettings()).toMatchObject({ showBlog: true });
   });
 
   it("should save, and the saved value wins over config", async () => {
-    expect(await updateSettings({ showBlog: false })).toEqual({ showBlog: false });
+    expect(await updateSettings({ showBlog: false })).toMatchObject({ showBlog: false });
     clearSettingsCache();
-    expect(await getSettings()).toEqual({ showBlog: false });
+    expect(await getSettings()).toMatchObject({ showBlog: false });
     expect(await Settings.countDocuments()).toBe(1);
 
     await updateSettings({ showBlog: true });
@@ -74,7 +74,7 @@ describe("settings service", () => {
     const spy = jest.spyOn(Settings, "findById").mockImplementationOnce(() => {
       throw new Error("db down");
     });
-    expect(await getSettings()).toEqual({ showBlog: true });
+    expect(await getSettings()).toMatchObject({ showBlog: true });
     expect(logErrorToFile).toHaveBeenCalled();
     spy.mockRestore();
   });

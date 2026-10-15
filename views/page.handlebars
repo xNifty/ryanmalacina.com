@@ -1,0 +1,47 @@
+{{!-- /about, /now and /uses (routes/pages.js). page: from services/pages.js --}}
+<div class="wrap page">
+    <article class="article">
+        <header class="article__header">
+            <p class="hero__prompt"><span>$</span> {{ page.prompt }}</p>
+            <h1 class="page-title">{{ page.title }}</h1>
+            {{#if page.intro}}<p class="page-intro">{{ page.intro }}</p>{{/if}}
+            {{#if page.showUpdated}}{{#if page.updatedAt}}
+                <p class="page-updated">last updated <time datetime="{{ formatDate page.updatedAt "isoUtcDateTime" }}">{{ formatDate page.updatedAt "mmmm d, yyyy" }}</time></p>
+            {{/if}}{{/if}}
+        </header>
+
+        <div class="markdown-body">
+            {{{ bodyHtml }}}
+        </div>
+
+        {{#if page.timeline.length}}
+            <section class="section" aria-labelledby="timeline-heading">
+                <h2 class="section__title" id="timeline-heading">timeline</h2>
+                <ol class="timeline">
+                    {{#each page.timeline}}
+                        <li class="timeline__entry">
+                            <span class="timeline__when">{{ when }}</span>
+                            <div class="timeline__body">
+                                <p class="timeline__what">{{ what }}</p>
+                                {{#if detail}}<p class="timeline__detail">{{ detail }}</p>{{/if}}
+                            </div>
+                        </li>
+                    {{/each}}
+                </ol>
+            </section>
+        {{/if}}
+
+        {{#if isAbout}}
+            <ul class="link-list page-links">
+                <li><a class="button" href="https://github.com/xNifty">{{> icon name="github" }} GitHub</a></li>
+                {{#if navPages.now}}<li><a class="button" href="/now">What I'm doing now</a></li>{{/if}}
+                {{#if navPages.uses}}<li><a class="button" href="/uses">What I use</a></li>{{/if}}
+                <li><a class="button" href="/#contact">Get in touch</a></li>
+            </ul>
+        {{/if}}
+
+        {{#if isNow}}
+            <p class="page-footnote">This is a <a href="https://nownownow.com/about">now page</a>. If you have your own site, you should make one too.</p>
+        {{/if}}
+    </article>
+</div>

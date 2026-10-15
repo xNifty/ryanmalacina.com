@@ -652,6 +652,84 @@ h1 {
   font-weight: 500;
 }
 
+.alert--warning {
+  background: var(--draft-bg);
+  color: var(--draft-text);
+}
+
+.alert--info {
+  background: var(--surface-muted);
+  color: var(--text-muted);
+}
+
+.page-lede {
+  margin: -8px 0 16px;
+}
+
+.page-header__path {
+  font: 400 0.9rem var(--mono);
+}
+
+.field--wide {
+  grid-column: 1 / -1;
+}
+
+.input--mono {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+}
+
+/* Settings: accent colour */
+.accent-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+  margin: 16px 0;
+}
+
+.color-input {
+  width: 96px;
+  height: 40px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.presets {
+  display: grid;
+  gap: 8px;
+}
+
+.presets[hidden] {
+  display: none;
+}
+
+.presets__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.preset {
+  gap: 6px;
+}
+
+.preset__swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+}
+
+.preset__swatch + .preset__swatch {
+  margin-left: -10px;
+}
+
 .draft-banner {
   display: flex;
   align-items: center;
@@ -1033,4 +1111,11 @@ h1 {
     grid-template-columns: minmax(0, 1fr);
     padding: 16px;
   }
+}
+
+/* Two short fields sharing one grid cell, e.g. the project's years */
+.field-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }

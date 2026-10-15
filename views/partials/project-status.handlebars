@@ -1,0 +1,6 @@
+{{!-- A project's status badge; an unset status falls back to "archived" for archived repos --}}
+{{#if status}}
+    <span class="status status--{{ status }}">{{ status }}</span>
+{{else if github.archived}}
+    <span class="status status--archived">archived</span>
+{{/if}}

@@ -14,7 +14,7 @@
 import express from "express";
 
 import * as projects from "../../services/projects.js";
-import { validateProjectForm } from "../../utils/validation.js";
+import { validateProjectForm, PROJECT_STATUSES } from "../../utils/validation.js";
 import { prepareImageUpload } from "../../utils/imageUpload.js";
 import logErrorToFile from "../../utils/errorLogging.js";
 import { strings } from "../../config/constants.js";
@@ -183,6 +183,7 @@ function renderEditor(res, { isNew = false, project, values, errors }) {
     project: project?.toObject?.() ?? project,
     action: isNew ? "/admin/projects" : `/admin/projects/${project._id}`,
     draftKey: isNew ? "project:new" : `project:${project._id}`,
+    statuses: PROJECT_STATUSES,
     values,
     errors,
   });

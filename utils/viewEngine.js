@@ -1,6 +1,6 @@
 import { create } from "express-handlebars";
 
-import { iff, versionedFile, formatDate, joinList, initials } from "./helpers.js";
+import { iff, versionedFile, formatDate, joinList, initials, yearRange, compactNumber } from "./helpers.js";
 
 /**
  * The site's Handlebars engine. Two layouts: "main" (public, the default) and "admin".
@@ -20,6 +20,8 @@ export function createViewEngine() {
       formatDate: formatDate,
       joinList: joinList,
       initials: initials,
+      yearRange: yearRange,
+      compactNumber: compactNumber,
     },
   });
 }

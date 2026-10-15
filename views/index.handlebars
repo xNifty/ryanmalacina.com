@@ -1,15 +1,14 @@
 <section class="hero" aria-labelledby="hero-name">
-    <div class="wrap">
-        <p class="hero__prompt"><span>$</span> whoami</p>
-        <h1 class="hero__name" id="hero-name">Ryan Malacina</h1>
-        <p class="hero__lead">
-            Software developer. <strong>SQL and ASP.NET</strong> at work;
-            <strong>Node, Go and HTMX</strong> on my own projects, including this site.
-        </p>
-        <div class="hero__actions">
-            <a class="button button--primary" href="/projects">View projects {{> icon name="arrow-right" }}</a>
-            <a class="button" href="#contact">Get in touch</a>
+    <div class="wrap hero__grid">
+        <div class="hero__intro">
+            <p class="hero__prompt"><span>$</span> echo $NAME</p>
+            <h1 class="hero__name" id="hero-name">Ryan Malacina</h1>
+            <div class="hero__actions">
+                <a class="button button--primary" href="/projects">View projects {{> icon name="arrow-right" }}</a>
+                <a class="button" href="#contact">Get in touch</a>
+            </div>
         </div>
+        {{> terminal }}
     </div>
 </section>
 

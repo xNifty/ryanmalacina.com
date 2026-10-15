@@ -215,6 +215,22 @@
     update();
   }
 
+  /* ---------- Accent presets (settings) ---------- */
+
+  function setUpPresets(presets) {
+    presets.querySelectorAll("[data-swatch]").forEach(function(swatch) {
+      // CSSOM, since the CSP blocks style attributes
+      swatch.style.background = swatch.dataset.swatch;
+    });
+    presets.addEventListener("click", function(event) {
+      var preset = event.target.closest("[data-accent-light]");
+      if (!preset) return;
+      document.getElementById("field-accentLight").value = preset.dataset.accentLight;
+      document.getElementById("field-accentDark").value = preset.dataset.accentDark;
+    });
+    presets.hidden = false;
+  }
+
   /* ---------- Start ---------- */
 
   scheduleToasts();
@@ -223,4 +239,5 @@
     setUpSlug(form);
   });
   document.querySelectorAll("[data-char-count]").forEach(setUpCounter);
+  document.querySelectorAll("[data-accent-presets]").forEach(setUpPresets);
 })();

@@ -33,6 +33,12 @@ jest.mock("../utils/errorLogging.js", () => ({
   default: jest.fn(),
 }));
 
+jest.mock("../services/github.js", () => ({
+  __esModule: true,
+  getRepoStats: jest.fn(async () => null),
+  withRepoStats: jest.fn(async (projects) => projects.map((project) => ({ ...project, github: null }))),
+}));
+
 jest.setTimeout(120000);
 
 const ADMIN = { isAdmin: true, realName: "Ryan" };

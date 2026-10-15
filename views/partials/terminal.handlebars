@@ -1,0 +1,21 @@
+{{!-- The home page terminal. heroLines: [{ key, value }] from Settings. public/js/site.js
+      types the command out and adds a prompt visitors can use; without JavaScript it's a
+      static window showing the same lines. --}}
+<div class="terminal" data-terminal data-pages="{{#each navPages}}{{ @key }} {{/each}}">
+    <div class="terminal__bar" aria-hidden="true">
+        <span class="terminal__dots"><i></i><i></i><i></i></span>
+        <span class="terminal__title">ryan@malacina: ~</span>
+    </div>
+    <div class="terminal__body" data-terminal-body>
+        <div data-terminal-output role="log" aria-label="Terminal output">
+            <p class="terminal__line terminal__line--command"><span class="terminal__prompt" aria-hidden="true">$</span> <span data-terminal-command>whoami --verbose</span></p>
+            {{#each heroLines}}
+                <p class="terminal__line" data-terminal-reveal><span class="terminal__key">{{ key }}</span><span class="terminal__sep">:</span> {{ value }}</p>
+            {{/each}}
+        </div>
+        <form class="terminal__form" data-terminal-form hidden>
+            <label class="terminal__prompt" for="terminal-input"><span aria-hidden="true">$</span><span class="visually-hidden">Command</span></label>
+            <input class="terminal__input" id="terminal-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="type help and press enter" maxlength="80">
+        </form>
+    </div>
+</div>

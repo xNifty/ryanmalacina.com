@@ -1,9 +1,19 @@
 <footer class="site-footer">
     <div class="wrap site-footer__inner">
-        <p class="mono">&copy; 2017–{{ currentyear }} Ryan Malacina</p>
+        <div class="site-footer__meta">
+            <p class="mono">&copy; 2017–{{ currentyear }} Ryan Malacina</p>
+            <p class="site-footer__build mono">
+                {{#if build}}
+                    <a href="{{ build.url }}" title="The commit this site is running">{{ build.short }}</a>{{#if build.date}} · <time datetime="{{ formatDate build.date "isoUtcDateTime" }}">{{ formatDate build.date "mmm d, yyyy" }}</time>{{/if}}<span class="site-footer__keys"> · </span>
+                {{/if}}
+                <span class="site-footer__keys">press <kbd>?</kbd> for shortcuts</span>
+            </p>
+        </div>
         <ul class="site-footer__links">
             <li><a class="social-link" href="https://github.com/xNifty">{{> icon name="github" }} GitHub</a></li>
             <li><a href="https://twitter.com/ryanmalacina">Twitter</a></li>
+            {{#if navPages.uses}}<li><a href="/uses">Uses</a></li>{{/if}}
+            {{#if navPages.now}}<li><a href="/now">Now</a></li>{{/if}}
             <li><a href="https://github.com/xNifty/ryanmalacina.com">Site source</a></li>
             <li><a href="https://github.com/xNifty/ryanmalacina.com/issues">Report a bug</a></li>
             {{#if authenticated}}
@@ -15,3 +25,4 @@
         </ul>
     </div>
 </footer>
+{{> shortcuts }}

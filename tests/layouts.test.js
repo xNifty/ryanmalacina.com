@@ -7,6 +7,7 @@ const hbs = createViewEngine();
 const VIEWS = path.resolve("views");
 
 const base = {
+  navPages: { about: { path: "/about", label: "About" } },
   settings: { views: VIEWS },
   nonce: "test-nonce",
   csrfToken: "test-csrf",
@@ -15,13 +16,21 @@ const base = {
   title: "Test",
 };
 
+// The about page as routes/pages.js renders it
+const ABOUT = {
+  section: "about",
+  page: { key: "about", path: "/about", title: "About me", prompt: "cat about.md", timeline: [] },
+  bodyHtml: "<p>Hey there</p>",
+  isAbout: true,
+};
+
 function render(view, context = {}) {
   return hbs.renderView(path.join(VIEWS, `${view}.handlebars`), { ...base, ...context });
 }
 
 describe("layouts", () => {
   it("should render public pages on the new stylesheet with no old libraries or splash", async () => {
-    const html = await render("about", { section: "about" });
+    const html = await render("page", ABOUT);
     expect(html).toContain("/css/site.css");
     expect(html).toContain("fonts.googleapis.com/css2?family=Inter");
     expect(html).toContain("trustedtype.js");
@@ -33,14 +42,14 @@ describe("layouts", () => {
   });
 
   it("should load highlight.js and its themes only when asked", async () => {
-    const html = await render("about", { highlight: true });
+    const html = await render("page", { ...ABOUT, highlight: true });
     expect(html).toContain("highlight.min.js");
     expect(html).toContain('id="hljs-light"');
     expect(html).toContain('id="hljs-dark"');
   });
 
   it("should show account links and the admin link to a signed-in admin", async () => {
-    const html = await render("about", { authenticated: true, isAdmin: true, realName: "Ryan" });
+    const html = await render("page", { ...ABOUT, authenticated: true, isAdmin: true, realName: "Ryan" });
     expect(html).toContain('href="/profile">Profile</a>');
     expect(html).toContain('href="/logout">Log out</a>');
     expect(html).toContain('href="/admin">Admin</a>');
@@ -53,12 +62,12 @@ describe("layouts", () => {
   });
 
   it("should show the blog link only while the blog is switched on", async () => {
-    expect(await render("about", { displayBlogNav: true })).toContain('href="/blog/">Blog</a>');
-    expect(await render("about", { displayBlogNav: false })).not.toContain('href="/blog/"');
+    expect(await render("page", { ...ABOUT, displayBlogNav: true })).toContain('href="/blog/">Blog</a>');
+    expect(await render("page", { ...ABOUT, displayBlogNav: false })).not.toContain('href="/blog/"');
   });
 
   it("should show flash messages escaped, except on the error page", async () => {
-    const html = await render("about", { success: ["Saved <b>it</b>."], error: ["Nope."] });
+    const html = await render("page", { ...ABOUT, success: ["Saved <b>it</b>."], error: ["Nope."] });
     expect(html).toContain("Saved &lt;b&gt;it&lt;/b&gt;.");
     expect(html).toMatch(/class="flash flash--error" role="alert"/);
 
@@ -199,7 +208,7 @@ describe("layouts", () => {
 
   it.each([
     ["index", "main", { projects: [], news: [] }],
-    ["about", "main", {}],
+    ["page", "main", ABOUT],
     ["projects", "main", { projects: [] }],
     ["login", "main", {}],
     ["error", "main", { error: "x" }],
@@ -214,8 +223,93 @@ describe("layouts", () => {
     ["admin/projects/edit", "admin", { isNew: true, values: {} }],
     ["admin/news/index", "admin", { tabs: [], news: [{ _id: "1", title: "A", isPublished: false, updatedAt: new Date() }] }],
     ["admin/news/edit", "admin", { entry: { _id: "1", title: "A", isPublished: true, publishedAt: new Date() }, values: {} }],
+    ["admin/pages/index", "admin", { pages: [{ key: "now", label: "Now", path: "/now", isPublished: false }] }],
+    ["admin/pages/edit", "admin", { page: { key: "about", label: "About", path: "/about", hasTimeline: true }, values: {} }],
+    ["admin/settings", "admin", { values: {}, presets: [{ name: "A", light: "#000000", dark: "#ffffff" }], defaultAccents: {} }],
   ])("should render %s with the %s layout", async (view, layout, context) => {
     const html = await render(view, { layout, ...context });
     expect(html).toMatch(/<\/html>\s*$/);
+  });
+});
+
+describe("personal touches", () => {
+  it("should render the home terminal with escaped lines and the published pages", async () => {
+    const html = await render("index", {
+      projects: [],
+      news: [],
+      navPages: { about: {}, now: {} },
+      heroLines: [{ key: "editor", value: "<vim>" }],
+    });
+    expect(html).toContain('data-pages="about now "');
+    expect(html).toContain('<span class="terminal__key">editor</span><span class="terminal__sep">:</span> &lt;vim&gt;');
+    expect(html).toContain('<form class="terminal__form" data-terminal-form hidden>');
+  });
+
+  it("should link now and uses only once they're published", async () => {
+    const before = await render("page", ABOUT);
+    expect(before).not.toContain('href="/now"');
+    expect(before).not.toContain('href="/uses"');
+
+    const after = await render("page", { ...ABOUT, navPages: { about: {}, now: {}, uses: {} } });
+    expect(after).toContain('<a class="site-nav__link" href="/now">Now</a>');
+    expect(after).toContain('<li><a href="/uses">Uses</a></li>');
+    expect(after).toContain('<kbd>g</kbd> <kbd>u</kbd>');
+  });
+
+  it("should show a terminal on the 404 page with the escaped path", async () => {
+    const html = await render("error", { error: "Gone", status_code: "404 - Not Found", requestPath: "/<b>nope" });
+    expect(html).toContain("bash: cd: /&lt;b&gt;nope: No such file or directory");
+
+    const serverError = await render("error", { error: "Oops", status_code: "500 - Server Error", requestPath: "/x" });
+    expect(serverError).toContain("HTTP/1.1 500 - Server Error");
+  });
+
+  it("should show a project's status, years and GitHub details", async () => {
+    const html = await render("projects", {
+      projects: [
+        {
+          name: "GoTodo",
+          title: "GoTodo",
+          slug: "gotodo",
+          image: "default.png",
+          tags: [],
+          status: "active",
+          startYear: 2024,
+          github: { stars: 1520, language: "Go", pushedAt: new Date(2026, 8, 1), archived: false },
+        },
+        { name: "Old", title: "Old", slug: "old", image: "default.png", tags: [], github: { stars: 0, archived: true } },
+      ],
+    });
+    expect(html).toContain('<span class="status status--active">active</span>');
+    expect(html).toContain('<span class="fact">2024–present</span>');
+    expect(html).toContain('data-lang="Go"');
+    expect(html).toContain("1.5k");
+    expect(html).toContain("Sep 2026");
+    // No status set, but the repo is archived
+    expect(html).toContain('<span class="status status--archived">archived</span>');
+  });
+
+  it("should add link-preview tags and the accent override", async () => {
+    const html = await render("page", {
+      ...ABOUT,
+      siteURL: "https://ryanmalacina.com",
+      requestPath: "/about",
+      description: "All about <me>",
+      ogImage: "/og/page/about.png",
+      accentCss: ':root[data-theme="dark"] { --accent: #a78bfa; }',
+    });
+    expect(html).toContain('<meta name="description" content="All about &lt;me&gt;">');
+    expect(html).toContain('<meta property="og:image" content="https://ryanmalacina.com/og/page/about.png">');
+    expect(html).toContain('<link rel="canonical" href="https://ryanmalacina.com/about">');
+    expect(html).toContain('<style nonce="test-nonce">:root[data-theme="dark"] { --accent: #a78bfa; }</style>');
+  });
+
+  it("should show the running commit in the footer", async () => {
+    const html = await render("page", {
+      ...ABOUT,
+      build: { short: "6021602", url: "https://github.com/xNifty/ryanmalacina.com/commit/6021602", date: new Date(2026, 9, 14) },
+    });
+    expect(html).toContain('<a href="https://github.com/xNifty/ryanmalacina.com/commit/6021602" title="The commit this site is running">6021602</a>');
+    expect(html).toContain("Oct 14, 2026");
   });
 });

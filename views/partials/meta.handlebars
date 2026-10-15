@@ -1,0 +1,15 @@
+{{!-- Description and link-preview tags. Routes can set description, ogImage (a path) and
+      ogType; siteURL and requestPath come from app.js. --}}
+<meta name="description" content="{{#if description}}{{ description }}{{else}}Ryan Malacina, software developer. Projects I've built, news, and what I'm up to.{{/if}}">
+<meta property="og:site_name" content="ryanmalacina.com">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:description" content="{{#if description}}{{ description }}{{else}}Ryan Malacina, software developer. Projects I've built, news, and what I'm up to.{{/if}}">
+<meta property="og:type" content="{{#if ogType}}{{ ogType }}{{else}}website{{/if}}">
+{{#if siteURL}}
+    <meta property="og:url" content="{{ siteURL }}{{ requestPath }}">
+    <meta property="og:image" content="{{ siteURL }}{{#if ogImage}}{{ ogImage }}{{else}}/og/home.png{{/if}}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <link rel="canonical" href="{{ siteURL }}{{ requestPath }}">
+{{/if}}
+<meta name="twitter:card" content="summary_large_image">

@@ -21,7 +21,8 @@ import urls from "./config/urls.js";
 
 // Routes
 import { homeRoute } from "./routes/home.js";
-import { aboutRoute } from "./routes/about.js";
+import { pageRoute } from "./routes/pages.js";
+import { ogRoute } from "./routes/og.js";
 import { keybaseRoute } from "./routes/keybase.js";
 import { projectsRoute } from "./routes/projects.js";
 import { loginRoute } from "./routes/login.js";
@@ -29,6 +30,9 @@ import { logoutRoute } from "./routes/logout.js";
 import { adminRoute } from "./routes/admin/index.js";
 import { parseUploads } from "./utils/imageUpload.js";
 import { getSettings } from "./services/settings.js";
+import { publishedPages } from "./services/pages.js";
+import { accentCss } from "./utils/accent.js";
+import { getBuildInfo } from "./utils/buildInfo.js";
 import { newsRoute } from "./routes/news.js";
 import { resetRoute } from "./routes/reset.js";
 import { passwordReset } from "./routes/resetPassword.js";
@@ -177,6 +181,9 @@ APP.locals = {
   environment: APP.get("env"),
   notAuthorized: strings.errors.notAuthorized,
   recaptchaSiteKey: config.get("recaptchaSiteKey"),
+  // For absolute links in link-preview tags
+  siteURL: String(config.get("rootURL")).replace(/\/+$/, ""),
+  build: getBuildInfo(),
 };
 
 APP.use(async function(req, res, next) {
@@ -189,7 +196,12 @@ APP.use(async function(req, res, next) {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
 
-  res.locals.displayBlogNav = (await getSettings()).showBlog;
+  const [settings, navPages] = await Promise.all([getSettings(), publishedPages()]);
+  res.locals.displayBlogNav = settings.showBlog;
+  res.locals.accentCss = accentCss(settings);
+  res.locals.navPages = navPages;
+  // For the error page and link previews
+  res.locals.requestPath = req.path.slice(0, 200);
 
   if (req.user) {
     res.locals.realName = req.user.realName;
@@ -201,7 +213,10 @@ APP.use(async function(req, res, next) {
 
 // All of our paths
 APP.use("/", homeRoute);
-APP.use("/about", aboutRoute);
+APP.use("/about", pageRoute("about"));
+APP.use("/now", pageRoute("now"));
+APP.use("/uses", pageRoute("uses"));
+APP.use("/og", ogRoute);
 APP.use("/keybase", keybaseRoute);
 APP.use("/keybase.txt", keybaseRoute); // for Keybase.io
 APP.use("/projects", projectsRoute);

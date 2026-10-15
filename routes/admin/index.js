@@ -4,11 +4,12 @@
 
   GET  /admin                  - dashboard
   GET  /admin/health           - service status panel (loaded by the dashboard)
-  POST /admin/preview/:kind    - rendered markdown for the editor preview (project | news)
-  GET  /admin/settings         - site settings (blog on/off)
+  POST /admin/preview/:kind    - rendered markdown for the editor preview (project | news | page)
+  GET  /admin/settings         - site settings (blog on/off, accent colour, home terminal)
   POST /admin/settings         - save them
   /admin/projects/...          - see projects.js
   /admin/news/...              - see news.js
+  /admin/pages/...             - see pages.js
 */
 import express from "express";
 import config from "config";
@@ -18,10 +19,13 @@ import * as projects from "../../services/projects.js";
 import * as news from "../../services/news.js";
 import { checkHealth } from "../../services/health.js";
 import { getSettings, updateSettings } from "../../services/settings.js";
-import { renderProjectPage, renderNews } from "../../services/markdown.js";
+import { renderProjectPage, renderPage, renderNews } from "../../services/markdown.js";
 import { strings } from "../../config/constants.js";
+import { validateSettingsForm } from "../../utils/validation.js";
+import { DEFAULT_ACCENTS, accentWarnings } from "../../utils/accent.js";
 import { adminProjectsRoute } from "./projects.js";
 import { adminNewsRoute } from "./news.js";
+import { adminPagesRoute } from "./pages.js";
 
 const ROUTER = express.Router();
 
@@ -76,6 +80,7 @@ ROUTER.get("/health", async (req, res) => {
 const PREVIEWS = {
   project: (markdown) => renderProjectPage(markdown),
   news: (markdown) => renderNews(markdown).html,
+  page: (markdown) => renderPage(markdown),
 };
 
 ROUTER.post("/preview/:kind", (req, res) => {
@@ -89,22 +94,50 @@ ROUTER.post("/preview/:kind", (req, res) => {
   return res.send(render(markdown));
 });
 
-ROUTER.get("/settings", async (req, res) => {
+// Starting points for the accent pickers, one colour per theme
+const ACCENT_PRESETS = [
+  { name: "Terminal green", light: DEFAULT_ACCENTS.light, dark: DEFAULT_ACCENTS.dark },
+  { name: "Amber", light: "#a15c07", dark: "#fbbf24" },
+  { name: "Cyan", light: "#0e7490", dark: "#22d3ee" },
+  { name: "Violet", light: "#6d28d9", dark: "#a78bfa" },
+  { name: "Pink", light: "#be185d", dark: "#f472b6" },
+  { name: "Red", light: "#c2410c", dark: "#fb7185" },
+];
+
+function renderSettings(res, { values, errors }) {
   res.render("admin/settings", {
     title: "Settings | Admin",
     section: "settings",
-    settings: await getSettings(),
+    values,
+    errors,
     blogURL: config.get("blogURL"),
+    presets: ACCENT_PRESETS,
+    defaultAccents: DEFAULT_ACCENTS,
+    warnings: errors ? [] : accentWarnings(values),
   });
+}
+
+ROUTER.get("/settings", async (req, res) => {
+  renderSettings(res, { values: await getSettings() });
 });
 
 ROUTER.post("/settings", async (req, res) => {
-  const { showBlog } = await updateSettings({ showBlog: req.body.showBlog === "on" });
-  req.flash("success", showBlog ? "The blog is switched on." : "The blog is switched off.");
+  const { value, errors } = validateSettingsForm(req.body);
+  if (errors) {
+    return renderSettings(res.status(400), { values: { ...req.body, showBlog: value.showBlog }, errors });
+  }
+
+  // Colour inputs always post a value; the stylesheet's own colours are stored as "not set"
+  if (value.accentLight === DEFAULT_ACCENTS.light) value.accentLight = "";
+  if (value.accentDark === DEFAULT_ACCENTS.dark) value.accentDark = "";
+
+  const { showBlog } = await updateSettings(value);
+  req.flash("success", `Settings saved. ${showBlog ? "The blog is switched on." : "The blog is switched off."}`);
   res.redirect("/admin/settings");
 });
 
 ROUTER.use("/projects", adminProjectsRoute);
 ROUTER.use("/news", adminNewsRoute);
+ROUTER.use("/pages", adminPagesRoute);
 
 export { ROUTER as adminRoute };

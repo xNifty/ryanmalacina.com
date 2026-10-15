@@ -1,10 +1,30 @@
-{{!-- error: the message (may hold HTML, e.g. a dev stack trace or a link); status_code: e.g. "404 - Not Found" --}}
+{{!-- error: the message (may hold HTML, e.g. a dev stack trace or a link); status_code: e.g. "404 - Not Found";
+      requestPath: from app.js --}}
 <div class="wrap error-page">
+    <div class="terminal terminal--static error-page__terminal" aria-hidden="true">
+        <div class="terminal__bar">
+            <span class="terminal__dots"><i></i><i></i><i></i></span>
+            <span class="terminal__title">ryan@malacina: ~</span>
+        </div>
+        <div class="terminal__body">
+            {{#iff status_code "==" "404 - Not Found"}}
+                <p class="terminal__line"><span class="terminal__prompt">$</span> cd {{ requestPath }}</p>
+                <p class="terminal__line terminal__line--error">bash: cd: {{ requestPath }}: No such file or directory</p>
+                <p class="terminal__line"><span class="terminal__prompt">$</span> ls</p>
+                <p class="terminal__line"><span class="terminal__dir">projects/</span>  <span class="terminal__dir">news/</span>  about.md{{#if navPages.now}}  now.md{{/if}}{{#if navPages.uses}}  uses.md{{/if}}</p>
+            {{else}}
+                <p class="terminal__line"><span class="terminal__prompt">$</span> curl -I {{ requestPath }}</p>
+                <p class="terminal__line terminal__line--error">HTTP/1.1 {{#if status_code}}{{ status_code }}{{else}}500{{/if}}</p>
+            {{/iff}}
+            <p class="terminal__line"><span class="terminal__prompt">$</span> <span class="terminal__cursor"></span></p>
+        </div>
+    </div>
     <p class="error-page__code">{{#if status_code}}{{ status_code }}{{else}}error{{/if}}</p>
     <h1 class="page-title">Something's not right</h1>
     <p class="page-intro error-page__detail">{{{ error }}}</p>
     <div class="hero__actions">
         <a class="button button--primary" href="/">Go home</a>
         <a class="button" href="/projects">Browse projects</a>
+        <a class="button" href="/news">Read the news</a>
     </div>
 </div>

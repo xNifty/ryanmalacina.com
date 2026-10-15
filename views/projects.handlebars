@@ -4,8 +4,17 @@
         <article class="article">
             <a class="back-link" href="/projects">← all projects</a>
             <header class="article__header">
-                <h1 class="article__title">{{ project.name }}</h1>
+                <div class="article__heading">
+                    {{#iff project.image "!==" "default.png"}}
+                        <img class="article__icon" src="/images/{{ project.image }}" alt="" width="56" height="56">
+                    {{else}}
+                        <span class="monogram article__icon" aria-hidden="true">{{ initials project.name }}</span>
+                    {{/iff}}
+                    <h1 class="article__title">{{ project.name }}</h1>
+                    {{#with project}}{{> project-status }}{{/with}}
+                </div>
                 {{#iff project.title "!==" project.name}}<p class="article__subtitle">{{ project.title }}</p>{{/iff}}
+                {{#with project}}{{> project-facts }}{{/with}}
                 {{#if project.tags.length}}
                     <ul class="tags" aria-label="Tags">
                         {{#each project.tags}}<li class="tag">{{ this }}</li>{{/each}}

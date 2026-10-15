@@ -1,4 +1,5 @@
-{{!-- Site header. section (projects | news | about) marks the current link. --}}
+{{!-- Site header. section (projects | news | about | now | uses) marks the current link;
+      navPages (services/pages.js publishedPages) says which pages to link. --}}
 <header class="site-header">
     <div class="wrap site-header__inner">
         <a class="brand" href="/" aria-label="Ryan Malacina, home">
@@ -15,7 +16,12 @@
                 {{#if displayBlogNav}}
                     <li><a class="site-nav__link" href="/blog/">Blog</a></li>
                 {{/if}}
-                <li><a class="site-nav__link" href="/about"{{#iff section "==" "about"}} aria-current="page"{{/iff}}>About</a></li>
+                {{#if navPages.now}}
+                    <li><a class="site-nav__link" href="/now"{{#iff section "==" "now"}} aria-current="page"{{/iff}}>Now</a></li>
+                {{/if}}
+                {{#if navPages.about}}
+                    <li><a class="site-nav__link" href="/about"{{#iff section "==" "about"}} aria-current="page"{{/iff}}>About</a></li>
+                {{/if}}
                 <li><a class="site-nav__link" href="/#contact">Contact</a></li>
                 {{#if isAdmin}}
                     <li><a class="site-nav__link" href="/admin">Admin</a></li>

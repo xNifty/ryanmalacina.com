@@ -1,0 +1,36 @@
+<div class="page-header">
+    <h1>Pages</h1>
+</div>
+
+<p class="muted page-lede">Standalone pages written in markdown. Unpublished pages aren't linked anywhere and show a 404.</p>
+
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th scope="col">Page</th>
+                <th scope="col">Status</th>
+                <th scope="col">Updated</th>
+                <th scope="col"><span class="visually-hidden">Actions</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each pages}}
+                <tr>
+                    <td>
+                        <a class="row-title__link" href="/admin/pages/{{ key }}/edit">{{ label }}</a>
+                        <div class="row-title__sub">{{ path }}</div>
+                    </td>
+                    <td>{{#if isPublished}}<span class="badge badge--published">Published</span>{{else}}<span class="badge badge--draft">Draft</span>{{/if}}</td>
+                    <td>{{#if updatedAt}}<time datetime="{{ formatDate updatedAt "isoUtcDateTime" }}">{{ formatDate updatedAt "mmm d, yyyy" }}</time>{{else}}<span class="muted">Never saved</span>{{/if}}</td>
+                    <td>
+                        <div class="row-actions">
+                            {{#if isPublished}}<a class="button button--small" href="{{ path }}" target="_blank" rel="noopener">View</a>{{/if}}
+                            <a class="button button--small" href="/admin/pages/{{ key }}/edit">Edit</a>
+                        </div>
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>

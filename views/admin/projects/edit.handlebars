@@ -38,6 +38,25 @@
         {{> admin/field name="tags" label="Tags" value=(joinList values.tags) error=errors.tags maxlength=150
             hint="Comma-separated, shown on project cards. For example: node, discord, bot" }}
 
+        <div class="field{{#if errors.status}} field--error{{/if}}">
+            <label class="field__label" for="field-status">Status</label>
+            <select class="input" id="field-status" name="status" aria-describedby="field-status-hint"{{#if errors.status}} aria-invalid="true" aria-errormessage="field-status-error"{{/if}}>
+                <option value=""{{#unless values.status}} selected{{/unless}}>No badge</option>
+                {{#each statuses}}
+                    <option value="{{ this }}"{{#iff this "==" ../values.status}} selected{{/iff}}>{{ this }}</option>
+                {{/each}}
+            </select>
+            {{#if errors.status}}<p class="field__error" id="field-status-error">{{ errors.status }}</p>{{/if}}
+            <p class="field__hint" id="field-status-hint">A badge on the card. With no badge, archived GitHub repos show as archived.</p>
+        </div>
+
+        <div class="field-pair">
+            {{> admin/field name="startYear" label="Started" type="number" value=values.startYear error=errors.startYear
+                hint="Year, e.g. 2019." }}
+            {{> admin/field name="endYear" label="Ended" type="number" value=values.endYear error=errors.endYear
+                hint="Leave empty if ongoing." }}
+        </div>
+
         <div class="field{{#if errors.image}} field--error{{/if}}">
             <label class="field__label" for="field-image">Image</label>
             <div class="image-field">

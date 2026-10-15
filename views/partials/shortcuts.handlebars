@@ -1,0 +1,19 @@
+{{!-- Keyboard shortcuts help, opened with "?" (public/js/site.js) --}}
+<dialog class="shortcuts" id="shortcuts" aria-labelledby="shortcuts-heading">
+    <div class="shortcuts__header">
+        <h2 class="shortcuts__title" id="shortcuts-heading"><span>$</span> man shortcuts</h2>
+        <form method="dialog"><button class="icon-button" aria-label="Close">×</button></form>
+    </div>
+    <dl class="shortcuts__list">
+        <div><dt><kbd>g</kbd> <kbd>h</kbd></dt><dd>Home</dd></div>
+        <div><dt><kbd>g</kbd> <kbd>p</kbd></dt><dd>Projects</dd></div>
+        <div><dt><kbd>g</kbd> <kbd>n</kbd></dt><dd>News</dd></div>
+        <div><dt><kbd>g</kbd> <kbd>a</kbd></dt><dd>About</dd></div>
+        {{#if navPages.now}}<div><dt><kbd>g</kbd> <kbd>w</kbd></dt><dd>Now</dd></div>{{/if}}
+        {{#if navPages.uses}}<div><dt><kbd>g</kbd> <kbd>u</kbd></dt><dd>Uses</dd></div>{{/if}}
+        <div><dt><kbd>g</kbd> <kbd>c</kbd></dt><dd>Contact</dd></div>
+        <div><dt><kbd>t</kbd></dt><dd>Switch light and dark</dd></div>
+        <div><dt><kbd>/</kbd></dt><dd>Search news, or use the terminal on the home page</dd></div>
+        <div><dt><kbd>?</kbd></dt><dd>Show this</dd></div>
+    </dl>
+</dialog>

@@ -7,6 +7,8 @@ import * as projects from "../services/projects.js";
 import * as news from "../services/news.js";
 import { listRecentPosts } from "../services/blog.js";
 import { getSettings } from "../services/settings.js";
+import { withRepoStats } from "../services/github.js";
+import { parseHeroLines } from "../utils/validation.js";
 import { sendContactMessage } from "../utils/sendMail.js";
 
 const ROUTER = express.Router();
@@ -27,7 +29,8 @@ ROUTER.get("/", recaptcha.middleware.render, async (req, res) => {
   ]);
 
   // Only query the blog if it's switched on, and hide the section if Ghost is unreachable
-  let { showBlog } = await getSettings();
+  const settings = await getSettings();
+  let { showBlog } = settings;
   let blogPosts;
   if (showBlog) {
     try {
@@ -40,7 +43,8 @@ ROUTER.get("/", recaptcha.middleware.render, async (req, res) => {
 
   return res.render("index", {
     title: "Ryan Malacina",
-    projects: featuredProjects,
+    projects: await withRepoStats(featuredProjects),
+    heroLines: parseHeroLines(settings.heroLines),
     captcha: res.recaptcha,
     siteKey: config.get("recaptchaSiteKey"),
     news: latestNews,

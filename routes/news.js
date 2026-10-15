@@ -10,6 +10,7 @@ import express from "express";
 import * as news from "../services/news.js";
 import { highlightTerm } from "../utils/highlight.js";
 import { strings } from "../config/constants.js";
+import { formatDate } from "../utils/helpers.js";
 
 const ROUTER = express.Router();
 
@@ -67,6 +68,9 @@ ROUTER.get("/:slug", async (req, res) => {
     title: `${post.title} | News | Ryan Malacina`,
     section: "news",
     highlight: true,
+    description: `News from Ryan Malacina, ${formatDate(post.publishedAt, "mmmm d, yyyy")}.`,
+    ogImage: `/og/news/${post.slug}.png`,
+    ogType: "article",
     post,
   });
 });

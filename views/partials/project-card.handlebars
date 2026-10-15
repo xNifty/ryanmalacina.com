@@ -1,4 +1,5 @@
-{{!-- One project card. Uses the project's image if it has its own, else a monogram. --}}
+{{!-- One project card. Uses the project's image if it has its own, else a monogram.
+      github (services/github.js) adds the language, stars and last push when available. --}}
 <article class="project-card">
     <div class="project-card__media">
         {{#iff image "!==" "default.png"}}
@@ -6,7 +7,10 @@
         {{else}}
             <span class="monogram" aria-hidden="true">{{ initials name }}</span>
         {{/iff}}
-        <span class="project-card__arrow">{{> icon name="arrow-right" }}</span>
+        <span class="project-card__corner">
+            {{> project-status }}
+            <span class="project-card__arrow">{{> icon name="arrow-right" }}</span>
+        </span>
     </div>
     <h3 class="project-card__name"><a href="/projects/{{ slug }}">{{ name }}</a></h3>
     {{#iff title "!==" name}}<p class="project-card__title">{{ title }}</p>{{/iff}}
@@ -15,4 +19,5 @@
             {{#each tags}}<li class="tag">{{ this }}</li>{{/each}}
         </ul>
     {{/if}}
+    {{> project-facts }}
 </article>

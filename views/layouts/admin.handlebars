@@ -19,6 +19,8 @@
     </script>
     <meta name="htmx-config" content='{"inlineScriptNonce":"{{ nonce }}","inlineStyleNonce":"{{ nonce }}","includeIndicatorStyles":false}'>
     <link rel="stylesheet" href="{{ versionedFile 'admin.css' 'dist' 'css' }}">
+    {{!-- The accent colour from Settings --}}
+    {{#if accentCss}}<style nonce="{{ nonce }}">{{{ accentCss }}}</style>{{/if}}
     <link rel="shortcut icon" href="/images/favicon.ico">
     {{!-- The CSP requires Trusted Types; this defines the policy htmx's swaps go through --}}
     <script src="{{ versionedFile 'trustedtype.js' 'dist' 'js' }}" nonce="{{ nonce }}"></script>
@@ -33,6 +35,7 @@
                     <li><a href="/admin"{{#iff section "==" "dashboard"}} aria-current="page"{{/iff}}>Dashboard</a></li>
                     <li><a href="/admin/projects"{{#iff section "==" "projects"}} aria-current="page"{{/iff}}>Projects</a></li>
                     <li><a href="/admin/news"{{#iff section "==" "news"}} aria-current="page"{{/iff}}>News</a></li>
+                    <li><a href="/admin/pages"{{#iff section "==" "pages"}} aria-current="page"{{/iff}}>Pages</a></li>
                     <li><a href="/admin/settings"{{#iff section "==" "settings"}} aria-current="page"{{/iff}}>Settings</a></li>
                 </ul>
             </nav>

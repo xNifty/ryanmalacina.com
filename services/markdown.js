@@ -48,6 +48,14 @@ export function renderProjectPage(markdown) {
 }
 
 /**
+ * HTML for the about, now and uses pages. The same pipeline as the project page: raw HTML in
+ * the markdown is escaped, and fenced code is highlighted.
+ */
+export function renderPage(markdown) {
+  return projectMarkdown.render(markdown);
+}
+
+/**
  * Sanitised HTML stored alongside a project's markdown
  */
 export function renderProjectHtml(markdown) {
@@ -65,4 +73,4 @@ export function renderNews(markdown) {
   };
 }
 
-export default { renderProjectPage, renderProjectHtml, renderNews };
+export default { renderProjectPage, renderPage, renderProjectHtml, renderNews };

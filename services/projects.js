@@ -10,7 +10,17 @@ import { slugify, uniqueSlug } from "../utils/slug.js";
 // How many projects can be featured on the home page
 export const FEATURED_LIMIT = 3;
 
-const CARD_FIELDS = { name: 1, title: 1, slug: 1, image: 1, tags: 1 };
+const CARD_FIELDS = {
+  name: 1,
+  title: 1,
+  slug: 1,
+  image: 1,
+  tags: 1,
+  source: 1,
+  status: 1,
+  startYear: 1,
+  endYear: 1,
+};
 const ADMIN_FIELDS = { ...CARD_FIELDS, isPublished: 1, featured: 1, updatedAt: 1 };
 
 const STATUS_FILTERS = {
@@ -89,6 +99,9 @@ function applyData(project, data) {
   project.descriptionMarkdown = data.descriptionMarkdown;
   project.descriptionHtml = renderProjectHtml(data.descriptionMarkdown);
   project.tags = data.tags ?? [];
+  project.status = data.status ?? "";
+  project.startYear = data.startYear ?? undefined;
+  project.endYear = data.endYear ?? undefined;
   project.isPublished = Boolean(data.isPublished);
 }
 

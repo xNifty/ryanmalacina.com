@@ -2,6 +2,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ title }}</title>
+    {{> meta }}
     {{!-- Set the theme before anything paints: the cookie from the toggle, else the system setting --}}
     <script nonce="{{ nonce }}">
     (function() {
@@ -19,6 +20,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap">
     <link rel="stylesheet" href="{{ versionedFile 'site.css' 'dist' 'css' }}">
+    {{#if accentCss}}<style nonce="{{ nonce }}">{{{ accentCss }}}</style>{{/if}}
     {{#if highlight}}
         {{!-- Code highlighting colours; theme.js switches between them with the site theme --}}
         <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">

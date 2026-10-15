@@ -2,14 +2,69 @@
     <h1>Settings</h1>
 </div>
 
+{{#if errors}}
+    <div class="alert alert--error" role="alert">Nothing was saved. Fix the highlighted fields and try again.</div>
+{{/if}}
+
 <form class="settings" method="post" action="/admin/settings">
     <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+    <section class="panel" aria-labelledby="accent-heading">
+        <h2 class="panel__heading" id="accent-heading">Accent colour</h2>
+        <p class="field__hint">Used for links, buttons, the terminal prompt and highlights across the public site and this admin. Each theme has its own, so both stay readable.</p>
+
+        {{#each warnings}}<p class="alert alert--warning">{{ this }}</p>{{/each}}
+
+        <div class="accent-fields">
+            <div class="field{{#if errors.accentLight}} field--error{{/if}}">
+                <label class="field__label" for="field-accentLight">Light theme</label>
+                <input class="color-input" type="color" id="field-accentLight" name="accentLight" value="{{#if values.accentLight}}{{ values.accentLight }}{{else}}{{ defaultAccents.light }}{{/if}}"
+                    {{#if errors.accentLight}} aria-invalid="true" aria-errormessage="field-accentLight-error"{{/if}}>
+                {{#if errors.accentLight}}<p class="field__error" id="field-accentLight-error">{{ errors.accentLight }}</p>{{/if}}
+            </div>
+            <div class="field{{#if errors.accentDark}} field--error{{/if}}">
+                <label class="field__label" for="field-accentDark">Dark theme</label>
+                <input class="color-input" type="color" id="field-accentDark" name="accentDark" value="{{#if values.accentDark}}{{ values.accentDark }}{{else}}{{ defaultAccents.dark }}{{/if}}"
+                    {{#if errors.accentDark}} aria-invalid="true" aria-errormessage="field-accentDark-error"{{/if}}>
+                {{#if errors.accentDark}}<p class="field__error" id="field-accentDark-error">{{ errors.accentDark }}</p>{{/if}}
+            </div>
+        </div>
+
+        <div class="presets" data-accent-presets hidden>
+            <span class="field__label" id="presets-label">Presets</span>
+            <ul class="presets__list" aria-labelledby="presets-label">
+                {{#each presets}}
+                    <li>
+                        <button type="button" class="button button--small preset" data-accent-light="{{ light }}" data-accent-dark="{{ dark }}">
+                            <span class="preset__swatch" data-swatch="{{ light }}" aria-hidden="true"></span>
+                            <span class="preset__swatch" data-swatch="{{ dark }}" aria-hidden="true"></span>
+                            {{ name }}
+                        </button>
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+    </section>
+
+    <section class="panel" aria-labelledby="terminal-heading">
+        <h2 class="panel__heading" id="terminal-heading">Home page terminal</h2>
+        <div class="field{{#if errors.heroLines}} field--error{{/if}}">
+            <label class="field__label" for="field-heroLines">Lines</label>
+            <textarea class="input input--mono" id="field-heroLines" name="heroLines" rows="6" maxlength="1000"
+                aria-describedby="field-heroLines-hint"{{#if errors.heroLines}} aria-invalid="true" aria-errormessage="field-heroLines-error"{{/if}}>{{ values.heroLines }}</textarea>
+            {{#if errors.heroLines}}<p class="field__error" id="field-heroLines-error">{{ errors.heroLines }}</p>{{/if}}
+            <p class="field__hint" id="field-heroLines-hint">
+                What <code>whoami --verbose</code> prints on the home page, one <code>key: value</code> per line (up to 8).
+                For example <code>editor: VS Code</code> or <code>currently: learning Rust</code>.
+            </p>
+        </div>
+    </section>
 
     <section class="panel" aria-labelledby="blog-heading">
         <h2 class="panel__heading" id="blog-heading">Blog</h2>
         <div class="field">
             <label class="checkbox">
-                <input type="checkbox" name="showBlog" aria-describedby="show-blog-hint"{{#if settings.showBlog}} checked{{/if}}>
+                <input type="checkbox" name="showBlog" aria-describedby="show-blog-hint"{{#if values.showBlog}} checked{{/if}}>
                 <span>Show the blog</span>
             </label>
             <p class="field__hint" id="show-blog-hint">
