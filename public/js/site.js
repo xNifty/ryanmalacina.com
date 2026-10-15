@@ -53,29 +53,28 @@
     if (warning) warning.hidden = !event.getModifierState("CapsLock");
   });
 
-  /* ---------- reCAPTCHA v3 for the contact form ---------- */
+  /* ---------- Cloudflare Turnstile for the contact form ---------- */
 
-  function recaptchaSiteKey() {
-    var meta = document.querySelector('meta[name="recaptcha-site-key"]');
-    return meta ? meta.content : "";
-  }
-
-  function initializeRecaptcha() {
-    var field = document.getElementById("g-recaptcha-response");
-    if (!field || typeof window.grecaptcha === "undefined") return;
-    try {
-      window.grecaptcha.ready(function() {
-        window.grecaptcha.execute(recaptchaSiteKey(), { action: "homepage" }).then(function(token) {
-          field.value = token;
+  // Render any widget not yet rendered. Called on load (the API script is async) and after
+  // htmx swaps the form back in, e.g. to show an error, since each token works only once.
+  function renderTurnstile() {
+    if (!window.turnstile) return;
+    document.querySelectorAll("[data-turnstile]:not([data-rendered])").forEach(function(el) {
+      el.setAttribute("data-rendered", "");
+      try {
+        window.turnstile.render(el, {
+          sitekey: el.dataset.sitekey,
+          theme: document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light",
+          appearance: "interaction-only",
+          action: "contact",
         });
-      });
-    } catch (e) {
-      console.warn("reCAPTCHA init skipped:", e);
-    }
+      } catch (e) {
+        console.warn("Turnstile didn't render:", e);
+      }
+    });
   }
 
-  // The reCAPTCHA script loads with the contact form, possibly after this file runs
-  window.addEventListener("load", initializeRecaptcha);
+  window.addEventListener("load", renderTurnstile);
 
   /* ---------- Code highlighting (highlight.js is only loaded where needed) ---------- */
 
@@ -387,13 +386,10 @@
   document.body.addEventListener("htmx:afterSwap", function(event) {
     var target = event.detail.target;
     highlight(target);
-    if (target && target.querySelector && target.querySelector("#g-recaptcha-response")) {
-      initializeRecaptcha();
-    }
+    renderTurnstile();
   });
 
-  // Send this page's CSP nonce, so scripts in swapped-in HTML (the contact form's reCAPTCHA
-  // loader) carry a nonce the page allows
+  // Send this page's CSP nonce, so any scripts in swapped-in HTML carry a nonce the page allows
   document.body.addEventListener("htmx:configRequest", function(event) {
     var meta = document.querySelector('meta[name="htmx-config"]');
     var match = meta && meta.getAttribute("content").match(/"inlineScriptNonce":"([^"]+)"/);

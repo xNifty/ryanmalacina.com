@@ -1079,10 +1079,9 @@ select.input {
   flex-wrap: wrap;
 }
 
-.recaptcha-note {
-  margin: 0;
-  color: var(--text-faint);
-  font-size: 0.8rem;
+/* Takes no space until Turnstile renders; it only shows anything if Cloudflare wants a click */
+.turnstile:empty {
+  display: none;
 }
 
 #emailalert {

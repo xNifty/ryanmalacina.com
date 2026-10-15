@@ -1,7 +1,6 @@
 import express from "express";
 import config from "config";
 import words from "number-to-words";
-import { RecaptchaV3 as Recaptcha } from "express-recaptcha";
 
 import * as projects from "../services/projects.js";
 import * as news from "../services/news.js";
@@ -10,18 +9,11 @@ import { getSettings } from "../services/settings.js";
 import { withRepoStats } from "../services/github.js";
 import { parseHeroLines } from "../utils/validation.js";
 import { sendContactMessage } from "../utils/sendMail.js";
+import * as turnstile from "../services/turnstile.js";
 
 const ROUTER = express.Router();
 
-const recaptcha = new Recaptcha(
-  config.get("recaptchaSiteKey"),
-  process.env.secretKey,
-  {
-    callback: "cb",
-  }
-);
-
-ROUTER.get("/", recaptcha.middleware.render, async (req, res) => {
+ROUTER.get("/", async (req, res) => {
   const [featuredProjects, latestNews, projectCount] = await Promise.all([
     projects.listFeatured(),
     news.listLatestPublished(5),
@@ -45,8 +37,6 @@ ROUTER.get("/", recaptcha.middleware.render, async (req, res) => {
     title: "Ryan Malacina",
     projects: await withRepoStats(featuredProjects),
     heroLines: parseHeroLines(settings.heroLines),
-    captcha: res.recaptcha,
-    siteKey: config.get("recaptchaSiteKey"),
     news: latestNews,
     showNews: latestNews.length > 0,
     showBlog: showBlog,
@@ -60,7 +50,7 @@ ROUTER.get("/", recaptcha.middleware.render, async (req, res) => {
 // Simple shape check; the reply goes to this address, so it only needs to look deliverable
 const EMAIL_PATTERN = /^[^\s@<>()[\]\,;:"]+@[^\s@<>()[\]\,;:"]+\.[a-zA-Z]{2,}$/;
 
-ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
+ROUTER.post("/send", async (req, res) => {
   const values = {
     name: singleLine(req.body.name),
     email: singleLine(req.body.email),
@@ -95,8 +85,10 @@ ROUTER.post("/send", recaptcha.middleware.verify, async (req, res) => {
     return renderContactForm(res, { errors, invalid, values });
   }
 
-  if (req.recaptcha.error) {
-    return renderContactForm(res, { errors: [String(req.recaptcha.error)], values });
+  // Checked after the fields, so a typo doesn't use up the visitor's spam-check token
+  const check = await turnstile.verify(req.body[turnstile.TOKEN_FIELD], req.ip);
+  if (!check.success) {
+    return renderContactForm(res, { errors: [check.error], values });
   }
 
   const sent = await sendContactMessage(

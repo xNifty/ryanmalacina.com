@@ -12,7 +12,7 @@ const base = {
   nonce: "test-nonce",
   csrfToken: "test-csrf",
   currentyear: 2026,
-  recaptchaSiteKey: "test-site-key",
+  turnstileSiteKey: "test-site-key",
   title: "Test",
 };
 

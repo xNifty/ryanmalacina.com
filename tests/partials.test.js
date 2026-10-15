@@ -24,6 +24,12 @@ describe("contact form partial", () => {
     expect(html).not.toContain(" invalid");
   });
 
+  it("should use Cloudflare Turnstile, with no reCAPTCHA or Google notice", async () => {
+    const html = await render("partials/contact-form", { csrfToken: "t", turnstileSiteKey: "0x4AAA" });
+    expect(html).toContain('<div class="turnstile" data-turnstile data-sitekey="0x4AAA"></div>');
+    expect(html).not.toMatch(/recaptcha|google/i);
+  });
+
   it("should show errors, mark invalid fields and keep escaped values", async () => {
     const html = await render("partials/contact-form", {
       errors: ["Name is a required field.", "Please provide a valid email."],

@@ -27,7 +27,7 @@ The following are the list of keys within this file, and what they are used for 
 1. privateKey - This is the secret used to sign session cookies. This key should be a random string of characters and should be kept secret.
 2. mailgunAPIKey - This is used to send emails from the site. This key should be kept secret and is provied by Mailgun.
 3. mailgunDomain - This is used to send emails from the site. This is simply the mailing address domain that you have set up with Mailgun.
-4. secretKey - 
+4. turnstileSecretKey - The secret key for Cloudflare Turnstile, the spam check on the contact form. Create a widget in the Cloudflare dashboard under Turnstile; it gives you this and the site key. For local development you can use Cloudflare's test keys (https://developers.cloudflare.com/turnstile/troubleshooting/testing/). Without it, the contact form refuses to send.
 5. blogAPI - This is the URL to the Ghost blog API. This is used to pull in blog posts from the Ghost blog. Createdv ia custom intrgration in Ghost integration settings.
 7. GitHubAuth - this isn't used for anything at this time
 8. mongoURL - This is the URL to the MongoDB database that the site uses. This should be kept secret.
@@ -53,7 +53,7 @@ his file is used to store configuration information that is not sensitive and ca
 10. showBlog - Whether the blog is shown before it has been set in the admin. Once you save Settings at /admin/settings, that choice is used instead.
 11. blogVersion - Ghost version, in Major.Minor format (e.g. v5.0)
 12. rootURL - This is the root URL of the site. This is used to generate URLs for the site.
-13. recapchaSiteKey - This is the site key for Google's reCAPTCHA. This is used to prevent bots from submitting forms. This is a public key, and is different from the key in .env
+13. turnstileSiteKey - The site key for Cloudflare Turnstile, the spam check on the contact form. This is a public key, and is different from turnstileSecretKey in .env. Add your site's domain (and localhost, for development) to the widget in Cloudflare.
 14. trustProxy - This is a boolean value that determines if the site should trust the proxy. This should be set to true if the site is behind a proxy.
 15. showDocs - Boolean value that determines if the documentation link should be shown on the site.
 

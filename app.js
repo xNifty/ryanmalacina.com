@@ -33,6 +33,7 @@ import { getSettings } from "./services/settings.js";
 import { publishedPages } from "./services/pages.js";
 import { accentCss } from "./utils/accent.js";
 import { getBuildInfo } from "./utils/buildInfo.js";
+import { siteKey as turnstileSiteKey } from "./services/turnstile.js";
 import { newsRoute } from "./routes/news.js";
 import { resetRoute } from "./routes/reset.js";
 import { passwordReset } from "./routes/resetPassword.js";
@@ -180,7 +181,7 @@ APP.locals = {
   serverError: strings.errors.serverError,
   environment: APP.get("env"),
   notAuthorized: strings.errors.notAuthorized,
-  recaptchaSiteKey: config.get("recaptchaSiteKey"),
+  turnstileSiteKey: turnstileSiteKey(),
   // For absolute links in link-preview tags
   siteURL: String(config.get("rootURL")).replace(/\/+$/, ""),
   build: getBuildInfo(),

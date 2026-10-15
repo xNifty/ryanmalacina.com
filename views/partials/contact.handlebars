@@ -7,6 +7,8 @@
                 <p>Found a problem with the site that isn't a security issue? <a href="https://github.com/xNifty/ryanmalacina.com/issues">Open an issue on GitHub</a> instead.</p>
             </div>
             {{> contact-form }}
+            {{!-- Loaded once with the page; the form can be swapped in again after a send --}}
+            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer nonce="{{ nonce }}"></script>
         </div>
     </div>
 </section>

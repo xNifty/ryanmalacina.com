@@ -30,10 +30,10 @@
                 <textarea id="message" name="message" rows="5" class="input{{#if invalid.message}} invalid{{/if}}"{{#if invalid.message}} aria-invalid="true"{{/if}}>{{ values.message }}</textarea>
             </div>
         </div>
-        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" value="">
-        <script src="https://www.google.com/recaptcha/api.js?trustedtypes=true&render={{ recaptchaSiteKey }}" nonce="{{ nonce }}"></script>
+        {{!-- Cloudflare Turnstile; public/js/site.js renders it. It stays out of sight unless
+              Cloudflare wants the visitor to tick a box. --}}
+        <div class="turnstile" data-turnstile data-sitekey="{{ turnstileSiteKey }}"></div>
         <div class="contact-form__footer">
-            <p class="recaptcha-note">Protected by reCAPTCHA. Google's <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms</a> apply.</p>
             <button class="button button--primary" type="submit">Send message</button>
         </div>
     </form>
