@@ -77,15 +77,22 @@ ROUTER.get("/health", async (req, res) => {
   res.render("partials/admin/health", { layout: false, services: await checkHealth() });
 });
 
-// A Map so kinds like "constructor" can't resolve to Object.prototype methods
-const PREVIEWS = new Map([
-  ["project", (markdown) => renderProjectPage(markdown)],
-  ["news", (markdown) => renderNews(markdown).html],
-  ["page", (markdown) => renderPage(markdown)],
-]);
+// A switch rather than a lookup table, so the URL can never pick an arbitrary function
+function previewRenderer(kind) {
+  switch (kind) {
+    case "project":
+      return (markdown) => renderProjectPage(markdown);
+    case "news":
+      return (markdown) => renderNews(markdown).html;
+    case "page":
+      return (markdown) => renderPage(markdown);
+    default:
+      return null;
+  }
+}
 
 ROUTER.post("/preview/:kind", (req, res) => {
-  const render = PREVIEWS.get(req.params.kind);
+  const render = previewRenderer(req.params.kind);
   if (!render) return res.status(404).end();
 
   const markdown = req.body.descriptionMarkdown ?? req.body.bodyMarkdown ?? "";
