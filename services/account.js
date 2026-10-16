@@ -99,7 +99,7 @@ export async function completePasswordReset(userId, token, password) {
   const stored = await findValidToken(userId, token);
   if (!stored) return "invalidToken";
 
-  const user = await User.findById(userId);
+  const user = await User.findById(stored.userId);
   if (!user) return "invalidToken";
 
   await User.updateOne(

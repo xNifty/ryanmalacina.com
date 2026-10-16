@@ -77,14 +77,15 @@ ROUTER.get("/health", async (req, res) => {
   res.render("partials/admin/health", { layout: false, services: await checkHealth() });
 });
 
-const PREVIEWS = {
-  project: (markdown) => renderProjectPage(markdown),
-  news: (markdown) => renderNews(markdown).html,
-  page: (markdown) => renderPage(markdown),
-};
+// A Map so kinds like "constructor" can't resolve to Object.prototype methods
+const PREVIEWS = new Map([
+  ["project", (markdown) => renderProjectPage(markdown)],
+  ["news", (markdown) => renderNews(markdown).html],
+  ["page", (markdown) => renderPage(markdown)],
+]);
 
 ROUTER.post("/preview/:kind", (req, res) => {
-  const render = PREVIEWS[req.params.kind];
+  const render = PREVIEWS.get(req.params.kind);
   if (!render) return res.status(404).end();
 
   const markdown = req.body.descriptionMarkdown ?? req.body.bodyMarkdown ?? "";
