@@ -105,9 +105,14 @@ APP.use(function(req, res, next) {
 
 let sess = createSession(SECRET_KEY, config, MONGO_STORE);
 
+// General limit for anonymous traffic. Admins are skipped: the editor's live preview alone
+// posts every few hundred ms while typing, which burned through this in a few edits.
 var limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
-  max: 100,
+  limit: 300,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  skip: (req) => Boolean(req.user?.isAdmin),
 });
 
 APP.use(

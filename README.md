@@ -54,7 +54,7 @@ his file is used to store configuration information that is not sensitive and ca
 11. blogVersion - Ghost version, in Major.Minor format (e.g. v5.0)
 12. rootURL - This is the root URL of the site. This is used to generate URLs for the site.
 13. turnstileSiteKey - The site key for Cloudflare Turnstile, the spam check on the contact form. This is a public key, and is different from turnstileSecretKey in .env. Add your site's domain (and localhost, for development) to the widget in Cloudflare.
-14. trustProxy - This is a boolean value that determines if the site should trust the proxy. This should be set to true if the site is behind a proxy.
+14. trustProxy - The number of proxies in front of the app, passed to Express's `trust proxy` setting so `req.ip` (used by the rate limiters and Turnstile) is the real visitor IP. Use `false` with no proxy and `1` behind nginx. Avoid `true`: it trusts whatever `X-Forwarded-For` a client sends, so rate limits can be dodged. Behind Cloudflare, have nginx resolve the visitor IP with `real_ip_header CF-Connecting-IP` and overwrite `X-Forwarded-For` with `$remote_addr`, and keep this at `1`.
 15. showDocs - Boolean value that determines if the documentation link should be shown on the site.
 
 ## Installing
