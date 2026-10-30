@@ -5,7 +5,7 @@
 These are the files for my personal website. The site is built on NodeJS, Express and MongoDB and makes use of
 Bootstrap for the styling of the site.
 
-Any branch but master may be broken at any given time and is not guaranteed to work.
+Any branch but main may be broken at any given time and is not guaranteed to work.
 
 ---
 
