@@ -153,9 +153,10 @@ passport.deserializeUser(function(userId, done) {
 });
 
 // Passport Stuff
-const LOCAL_STRATEGY = new LocalStrategy(async (username, password, done) => {
+// Log in by email, ignoring case and stray whitespace
+const LOCAL_STRATEGY = new LocalStrategy({ usernameField: "email" }, async (email, password, done) => {
   try {
-    const user = await User.findOne({ username: { $eq: username } });
+    const user = await User.findOne({ email: { $eq: email.trim() } }).collation({ locale: "en", strength: 2 });
     if (!user || !(await user.validPassword(password))) {
       return done(null, false, { message: strings.errors.invalidLogin });
     }
