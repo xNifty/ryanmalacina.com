@@ -10,6 +10,7 @@ import request from "supertest";
 import lusca from "lusca";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import { testConnectOptions } from "./helpers/mongo.js";
 
 import { createViewEngine } from "../utils/viewEngine.js";
 import { adminRoute } from "../routes/admin/index.js";
@@ -81,7 +82,7 @@ const form = (overrides = {}) => ({
 
 beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
-  await mongoose.connect(mongo.getUri());
+  await mongoose.connect(mongo.getUri(), testConnectOptions);
   await Promise.all([Project.init(), News.init()]);
 });
 

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import { testConnectOptions } from "./helpers/mongo.js";
 import GhostContentAPI from "@tryghost/content-api";
 
 import { Settings } from "../models/settings.js";
@@ -32,7 +33,7 @@ let mongo;
 
 beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
-  await mongoose.connect(mongo.getUri());
+  await mongoose.connect(mongo.getUri(), testConnectOptions);
 });
 
 afterEach(async () => {

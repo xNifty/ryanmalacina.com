@@ -6,6 +6,7 @@ import express from "express";
 import request from "supertest";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import { testConnectOptions } from "./helpers/mongo.js";
 
 import { createViewEngine } from "../utils/viewEngine.js";
 import { newsRoute } from "../routes/news.js";
@@ -21,7 +22,7 @@ let app;
 
 beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
-  await mongoose.connect(mongo.getUri());
+  await mongoose.connect(mongo.getUri(), testConnectOptions);
   await News.init();
 
   const posts = [

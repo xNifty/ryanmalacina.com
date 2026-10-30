@@ -3,6 +3,7 @@ import os from "os";
 import path from "path";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import { testConnectOptions } from "./helpers/mongo.js";
 
 import { Project } from "../models/projects.js";
 import { News } from "../models/news.js";
@@ -19,7 +20,7 @@ const quiet = () => {};
 
 beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
-  await mongoose.connect(mongo.getUri(), { autoIndex: false });
+  await mongoose.connect(mongo.getUri(), { ...testConnectOptions, autoIndex: false });
   db = mongoose.connection.db;
 });
 

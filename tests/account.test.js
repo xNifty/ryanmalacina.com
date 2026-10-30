@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import { testConnectOptions } from "./helpers/mongo.js";
 
 import { User } from "../models/user.js";
 import { Token } from "../models/token.js";
@@ -24,7 +25,7 @@ let user;
 beforeAll(async () => {
   process.env.BCRYPT_SALT = "4"; // fast hashing for tests
   mongo = await MongoMemoryServer.create();
-  await mongoose.connect(mongo.getUri());
+  await mongoose.connect(mongo.getUri(), testConnectOptions);
   await Promise.all([User.init(), Token.init()]);
 });
 

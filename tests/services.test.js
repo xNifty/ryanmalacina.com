@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import { testConnectOptions } from "./helpers/mongo.js";
 
 import { Project } from "../models/projects.js";
 import { News } from "../models/news.js";
@@ -18,7 +19,7 @@ let mongo;
 
 beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
-  await mongoose.connect(mongo.getUri());
+  await mongoose.connect(mongo.getUri(), testConnectOptions);
   // Build the unique and text indexes the services rely on
   await Promise.all([Project.init(), News.init()]);
 });
