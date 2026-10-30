@@ -15,7 +15,6 @@ describe("sessionHandler", () => {
       expect(mockCreate).toHaveBeenCalledWith({
         mongoUrl: mongoURL,
         collectionName: "sessions",
-        clear_interval: 3600,
       });
     });
   });
@@ -46,6 +45,7 @@ describe("sessionHandler", () => {
         proxy: true,
         resave: true,
         saveUninitialized: true,
+        rolling: true,
         name: "test",
         cookie: {
           httpOnly: true,

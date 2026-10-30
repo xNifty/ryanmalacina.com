@@ -6,7 +6,7 @@
   "httpOnly": true,
   "secureCookie": false,
   "sameSite": "lax",
-  "maxAge": 86400000,
+  "maxAge": 604800000,
   "blogURL": "blogurl",
   "docsURL": "docsurl",
   "showBlog": false,

@@ -4,7 +4,6 @@ export function createMongoStore(mongoURL) {
   return MongoStore.create({
     mongoUrl: mongoURL,
     collectionName: "sessions",
-    clear_interval: 3600,
   });
 }
 
@@ -14,6 +13,8 @@ export function createSession(secret_key, config, mongoStore) {
     proxy: config.get("useProxy"),
     resave: config.get("resave"),
     saveUninitialized: config.get("saveUninitialized"),
+    // Re-issue the cookie on every response so the expiry slides with activity
+    rolling: true,
     name: config.get("cookieName"),
     cookie: {
       httpOnly: config.get("httpOnly"),
