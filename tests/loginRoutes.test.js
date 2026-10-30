@@ -42,7 +42,8 @@ function buildApp() {
   app.set("view engine", "handlebars");
   app.set("views", path.resolve("views"));
   app.use(express.urlencoded({ extended: true }));
-  app.use(session({ secret: "test", resave: false, saveUninitialized: true }));
+  // Secure like production; browser() below poses as https behind a proxy so the cookie still flows
+  app.use(session({ secret: "test", resave: false, saveUninitialized: true, proxy: true, cookie: { secure: true } }));
   app.use(flash());
   app.use(passport.initialize(), passport.session());
   // Login tests post without a token; app.js checks those too, but that's lusca's job, not ours
@@ -52,6 +53,24 @@ function buildApp() {
   app.use("/logout", logoutRoute);
   app.get("/whoami", (req, res) => res.json({ user: req.user?.email ?? null, success: req.flash("success") }));
   return app;
+}
+
+// A visitor that keeps its cookies between requests. supertest's agent won't send a Secure cookie
+// over the plain http it tests with, so carry them ourselves and say the proxy saw https.
+function browser(app = buildApp()) {
+  const jar = new Map();
+  const visit = (method) => (url) => {
+    const req = request(app)[method](url).set("X-Forwarded-Proto", "https");
+    if (jar.size) req.set("Cookie", [...jar].map(([name, value]) => `${name}=${value}`).join("; "));
+    return req.on("response", (res) => {
+      for (const cookie of res.headers["set-cookie"] ?? []) {
+        const [pair] = cookie.split(";");
+        const eq = pair.indexOf("=");
+        jar.set(pair.slice(0, eq), pair.slice(eq + 1));
+      }
+    });
+  };
+  return { get: visit("get"), post: visit("post") };
 }
 
 describe("POST /login", () => {
@@ -86,7 +105,7 @@ describe("POST /login", () => {
   });
 
   it("should leave the visitor signed in, with a welcome message", async () => {
-    const agent = request.agent(buildApp());
+    const agent = browser();
     await agent.post("/login").set(HTMX).type("form").send(GOOD);
     const res = await agent.get("/whoami");
     expect(res.body.user).toBe(USER.email);
@@ -106,7 +125,7 @@ describe("POST /login", () => {
 });
 
 async function signedIn() {
-  const agent = request.agent(buildApp());
+  const agent = browser();
   await agent.post("/login").set(HTMX).type("form").send(GOOD);
   const { token } = (await agent.get("/token")).body;
   return { agent, token };
@@ -140,7 +159,7 @@ describe("POST /logout", () => {
   });
 
   it("should just go home when nobody is signed in", async () => {
-    const agent = request.agent(buildApp());
+    const agent = browser();
     const { token } = (await agent.get("/token")).body;
     const res = await agent.post("/logout").type("form").send({ _csrf: token });
     expect(res.headers.location).toBe("/");
