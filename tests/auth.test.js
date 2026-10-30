@@ -19,6 +19,20 @@ function makeRes() {
   return res;
 }
 
+describe("requireLogin", () => {
+  it("should let any signed-in user through", () => {
+    const next = jest.fn();
+    auth.requireLogin(makeReq({ user: { isAdmin: false } }), makeRes(), next);
+    expect(next).toHaveBeenCalled();
+  });
+
+  it("should send signed-out visitors to login and back, encoding the address", () => {
+    const res = makeRes();
+    auth.requireLogin(makeReq({ originalUrl: "/profile?tab=a&b=c" }), res, jest.fn());
+    expect(res.redirect).toHaveBeenCalledWith("/login?returnTo=%2Fprofile%3Ftab%3Da%26b%3Dc");
+  });
+});
+
 describe("requireAdmin", () => {
   it("should let a signed-in admin through", () => {
     const next = jest.fn();

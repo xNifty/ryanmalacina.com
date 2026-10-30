@@ -1238,13 +1238,24 @@ select.input {
   list-style: none;
 }
 
-.site-footer a {
+.site-footer a,
+.site-footer .link-button {
   color: var(--text-muted);
   text-decoration: none;
 }
 
-.site-footer a:hover {
+.site-footer a:hover,
+.site-footer .link-button:hover {
   color: var(--accent);
+}
+
+/* A form button that looks like a link, e.g. Log out (a POST, for CSRF protection) */
+.link-button {
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
 }
 
 .social-link {

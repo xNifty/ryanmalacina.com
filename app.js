@@ -36,7 +36,7 @@ import { getBuildInfo } from "./utils/buildInfo.js";
 import { siteKey as turnstileSiteKey } from "./services/turnstile.js";
 import { newsRoute } from "./routes/news.js";
 import { resetRoute } from "./routes/reset.js";
-import { passwordReset } from "./routes/resetPassword.js";
+import { passwordResetRoute } from "./routes/resetPassword.js";
 import { profileRoute } from "./routes/profile.js";
 import { createMongoStore, createSession } from "./utils/sessionHandler.js";
 
@@ -224,15 +224,14 @@ APP.use("/about", pageRoute("about"));
 APP.use("/now", pageRoute("now"));
 APP.use("/uses", pageRoute("uses"));
 APP.use("/og", ogRoute);
-APP.use("/keybase", keybaseRoute);
-APP.use("/keybase.txt", keybaseRoute); // for Keybase.io
+APP.use(["/keybase", "/keybase.txt"], keybaseRoute); // .txt for Keybase.io
 APP.use("/projects", projectsRoute);
 APP.use("/login", loginRoute);
 APP.use("/logout", logoutRoute);
 APP.use("/admin", adminRoute);
 APP.use("/news", newsRoute);
 APP.use("/reset", resetRoute);
-APP.use("/resetPassword", passwordReset);
+APP.use("/resetPassword", passwordResetRoute);
 APP.use("/profile", profileRoute);
 
 // Switched on and off in /admin/settings. A 302, since browsers cache a 301 forever.

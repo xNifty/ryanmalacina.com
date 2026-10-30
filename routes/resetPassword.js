@@ -5,9 +5,9 @@ import { strings } from "../config/constants.js";
 import { completePasswordReset, invalidatePasswordReset } from "../services/account.js";
 import logErrorToFile from "../utils/errorLogging.js";
 
-const router = express.Router();
+const ROUTER = express.Router();
 
-router.get("/", [auth.ValidateLoggedOut], async (req, res) => {
+ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   return res.render("resetPassword", {
     hideLogin: true,
     title: strings.pageHeader.forgotPassword,
@@ -15,7 +15,7 @@ router.get("/", [auth.ValidateLoggedOut], async (req, res) => {
   });
 });
 
-router.post("/", async function (req, res) {
+ROUTER.post("/", async function (req, res) {
   const { id: userId, token } = req.query;
   const password = req.body.password_one;
   const backToForm =
@@ -47,7 +47,7 @@ router.post("/", async function (req, res) {
   return res.redirect("/");
 });
 
-router.get("/invalidate", async function (req, res) {
+ROUTER.get("/invalidate", async function (req, res) {
   let invalidated = false;
   try {
     invalidated = await invalidatePasswordReset(req.query.id, req.query.token);
@@ -63,4 +63,4 @@ router.get("/invalidate", async function (req, res) {
   return res.redirect("/");
 });
 
-export { router as passwordReset };
+export { ROUTER as passwordResetRoute };

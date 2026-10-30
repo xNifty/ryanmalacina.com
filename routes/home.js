@@ -8,7 +8,7 @@ import { listRecentPosts } from "../services/blog.js";
 import { getSettings } from "../services/settings.js";
 import { withRepoStats } from "../services/github.js";
 import { parseHeroLines } from "../utils/validation.js";
-import { sendContactMessage } from "../utils/sendMail.js";
+import { validateContactForm, sendContactForm } from "../services/contact.js";
 import * as turnstile from "../services/turnstile.js";
 
 const ROUTER = express.Router();
@@ -47,39 +47,8 @@ ROUTER.get("/", async (req, res) => {
   });
 });
 
-// Simple shape check; the reply goes to this address, so it only needs to look deliverable
-const EMAIL_PATTERN = /^[^\s@<>()[\]\,;:"]+@[^\s@<>()[\]\,;:"]+\.[a-zA-Z]{2,}$/;
-
 ROUTER.post("/send", async (req, res) => {
-  const values = {
-    name: singleLine(req.body.name),
-    email: singleLine(req.body.email),
-    subject: singleLine(req.body.subject),
-    message: asText(req.body.message),
-  };
-
-  const errors = [];
-  const invalid = {};
-
-  if (!values.name) {
-    errors.push("Name is a required field.");
-    invalid.name = true;
-  }
-  if (!values.email) {
-    errors.push("Email is a required field.");
-    invalid.email = true;
-  } else if (!EMAIL_PATTERN.test(values.email)) {
-    errors.push("Please provide a valid email.");
-    invalid.email = true;
-  }
-  if (!values.subject) {
-    errors.push("Subject is a required field.");
-    invalid.subject = true;
-  }
-  if (!values.message) {
-    errors.push("Message is a required field.");
-    invalid.message = true;
-  }
+  const { values, errors, invalid } = validateContactForm(req.body);
 
   if (errors.length > 0) {
     return renderContactForm(res, { errors, invalid, values });
@@ -91,13 +60,7 @@ ROUTER.post("/send", async (req, res) => {
     return renderContactForm(res, { errors: [check.error], values });
   }
 
-  const sent = await sendContactMessage(
-    values.email,
-    `Email received on behalf of ${values.name}: ${values.subject}`,
-    `Contact form email on behalf of: ${values.name} <${values.email}>\n\n----\n\n${values.message}`
-  );
-
-  if (sent) {
+  if (await sendContactForm(values)) {
     return renderContactForm(res, {
       contactSent: "Message sent! I'll get back to you as soon as I can!",
     });
@@ -108,15 +71,6 @@ ROUTER.post("/send", async (req, res) => {
     values,
   });
 });
-
-function asText(value) {
-  return typeof value === "string" ? value.trim() : "";
-}
-
-// For values that end up in email headers (subject, Reply-To)
-function singleLine(value) {
-  return asText(value).replace(/[\r\n]+/g, " ");
-}
 
 function renderContactForm(res, context) {
   return res.render("partials/contact-form", {

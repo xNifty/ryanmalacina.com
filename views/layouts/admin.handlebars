@@ -46,7 +46,10 @@
                     <span class="theme-label theme-label--dark">Dark mode</span>
                     <span class="theme-label theme-label--light">Light mode</span>
                 </button>
-                <a href="/logout">Log out</a>
+                <form method="post" action="/logout">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+                    <button type="submit" class="link-button">Log out</button>
+                </form>
             </div>
         </header>
         <main id="main" class="admin-main" tabindex="-1">

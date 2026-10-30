@@ -38,15 +38,10 @@ function getSafeReturnTo(req) {
   return ValidTarget(returnTo) ? returnTo : "/";
 }
 
-const PAGE_ALERT = "partials/alert";
-const MODAL_ALERT = "partials/modal-alert";
-
 // Passport's failWithError hands us a 401 for bad credentials; anything else is a real error
-function loginFailure(view) {
-  return function(err, req, res, next) {
-    if (err.status !== 401) return next(err);
-    return renderAlert(res, "danger", strings.errors.invalidLogin, { view });
-  };
+function loginFailure(err, req, res, next) {
+  if (err.status !== 401) return next(err);
+  return renderAlert(res, "danger", strings.errors.invalidLogin);
 }
 
 function loginSuccess(req, res) {
@@ -70,16 +65,9 @@ ROUTER.get("/", [auth.ValidateLoggedOut], async (req, res) => {
 
 ROUTER.post(
   "/",
-  [loginLimiter(PAGE_ALERT), passport.authenticate("local", { failWithError: true })],
+  [loginLimiter, passport.authenticate("local", { failWithError: true })],
   loginSuccess,
-  loginFailure(PAGE_ALERT)
-);
-
-ROUTER.post(
-  "/modal",
-  [loginLimiter(MODAL_ALERT), passport.authenticate("local", { failWithError: true })],
-  loginSuccess,
-  loginFailure(MODAL_ALERT)
+  loginFailure
 );
 
 export { ROUTER as loginRoute };

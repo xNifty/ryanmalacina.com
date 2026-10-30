@@ -18,7 +18,12 @@
             <li><a href="https://github.com/xNifty/ryanmalacina.com/issues">Report a bug</a></li>
             {{#if authenticated}}
                 <li><a href="/profile">Profile</a></li>
-                <li><a href="/logout">Log out</a></li>
+                <li>
+                    <form method="post" action="/logout">
+                        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+                        <button type="submit" class="link-button">Log out</button>
+                    </form>
+                </li>
             {{else}}
                 {{#unless hideLogin}}<li><a href="/login">Log in</a></li>{{/unless}}
             {{/if}}

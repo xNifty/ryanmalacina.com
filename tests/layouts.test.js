@@ -51,7 +51,8 @@ describe("layouts", () => {
   it("should show account links and the admin link to a signed-in admin", async () => {
     const html = await render("page", { ...ABOUT, authenticated: true, isAdmin: true, realName: "Ryan" });
     expect(html).toContain('href="/profile">Profile</a>');
-    expect(html).toContain('href="/logout">Log out</a>');
+    expect(html).toMatch(/<form method="post" action="\/logout">\s*<input type="hidden" name="_csrf"/);
+    expect(html).not.toContain('href="/logout"');
     expect(html).toContain('href="/admin">Admin</a>');
     expect(html).not.toContain('href="/login">Log in</a>');
   });

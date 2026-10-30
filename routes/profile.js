@@ -14,7 +14,9 @@ const PROFILE_MESSAGES = {
   notFound: ["error", strings.profile.profileUpdateError],
 };
 
-ROUTER.get("/", [auth.ValidateLoggedIn()], async (req, res) => {
+ROUTER.use(auth.requireLogin);
+
+ROUTER.get("/", async (req, res) => {
   return res.render("profile", {
     pageScripts: ["profile.js"],
     title: strings.pageHeader.profile,
@@ -24,7 +26,7 @@ ROUTER.get("/", [auth.ValidateLoggedIn()], async (req, res) => {
   });
 });
 
-ROUTER.post("/", [auth.ValidateLoggedIn()], async (req, res) => {
+ROUTER.post("/", async (req, res) => {
   const newPassword = req.body.pass_change_one;
   const confirmPassword = req.body.pass_change_two;
   const changingPassword = Boolean(newPassword || confirmPassword);

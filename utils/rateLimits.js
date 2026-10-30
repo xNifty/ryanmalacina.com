@@ -6,20 +6,17 @@ import { renderAlert } from "./renderPartial.js";
 /**
  * Limit failed logins per IP. Successful logins (status < 400) are not counted,
  * so only bad passwords use up the allowance.
- * @param {string} view - The alert partial the login form expects (see utils/renderPartial.js)
  */
-export function loginLimiter(view) {
-  return rateLimit({
-    windowMs: 15 * 60 * 1000,
-    limit: 10,
-    skipSuccessfulRequests: true,
-    standardHeaders: "draft-8",
-    legacyHeaders: false,
-    handler: (req, res) => {
-      renderAlert(res, "danger", strings.errors.tooManyLoginAttempts, { status: 429, view });
-    },
-  });
-}
+export const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  skipSuccessfulRequests: true,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  handler: (req, res) => {
+    renderAlert(res, "danger", strings.errors.tooManyLoginAttempts, { status: 429 });
+  },
+});
 
 // Each reset request sends an email, so keep this tight
 export const resetLimiter = rateLimit({

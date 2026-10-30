@@ -54,9 +54,9 @@ describe("contact form partial", () => {
   });
 });
 
-describe("alert partials", () => {
-  it.each(["partials/alert", "partials/modal-alert"])("%s should escape each line", async (view) => {
-    const html = await render(view, { type: "danger", messages: ["One", XSS] });
+describe("alert partial", () => {
+  it("should escape each line", async () => {
+    const html = await render("partials/alert", { type: "danger", messages: ["One", XSS] });
     expect(html).toContain('class="form-message" role="alert"');
     expect(html).toContain("One<br>");
     expect(html).not.toContain("<script>");
